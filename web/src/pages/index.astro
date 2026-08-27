@@ -5,22 +5,23 @@ import { docHref as href } from '../lib/path';
 ---
 
 <BaseLayout
-  title="VxRail Upgrade Planning"
-  description="Pre- and post-upgrade planning for a Dell VxRail 5.2 to VCF 9.1.1 upgrade."
+  title="VCF Upgrade Guide"
+  description="General VCF upgrade planning guidance, plus hardware-specific addenda (currently Dell VxRail)."
   fullWidth
 >
   <section class="hero">
     <div class="hero__inner">
       <p class="itq-eyebrow hero__eyebrow">ITQ Consulting Services &middot; Internal</p>
       <h1 class="hero__title">
-        Dell VxRail <span class="accent">5.2 &rarr; 9.1.1</span> upgrade planning.
+        General VCF upgrade guidance, <span class="accent">plus</span> hardware add-ons.
       </h1>
       <p class="hero__intro itq-intro">
-        Pre-upgrade checks, upgrade execution, and post-upgrade validation for a Dell VxRail
-        environment moving from 5.2 to VMware Cloud Foundation 9.1.1. Work in progress.
+        Pre-upgrade checks, upgrade execution, and post-upgrade validation that apply
+        regardless of underlying hardware, with hardware/HCI-specific extra steps layered
+        on top as their own addendum — currently Dell VxRail. Work in progress.
       </p>
       <div class="hero__actions">
-        <a class="btn btn--primary" href={href('overview')}>
+        <a class="btn btn--primary" href={href('01-overview')}>
           Start with the overview <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </a>
       </div>

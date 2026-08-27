@@ -2,6 +2,10 @@
 // themselves carry no frontmatter (they double as GitLab/GitHub-rendered
 // .md), so labels, icons and the flow order live here. `slug` matches the
 // glob collection id (filename without extension).
+//
+// `step` doubles as a grouping label: general flow steps use "Overview" /
+// "Step N" / etc; hardware-specific addenda use "Addendum" so they render as
+// their own group rather than blending into the general flow.
 export interface NavItem {
   slug: string;
   step: string;
@@ -10,14 +14,21 @@ export interface NavItem {
   blurb: string;
 }
 
-// TODO: replace with the actual pre-/post-upgrade doc set as it's written.
+// TODO: replace with the actual general upgrade-flow doc set as it's written.
 export const NAV: NavItem[] = [
   {
-    slug: 'overview',
+    slug: '01-overview',
     step: 'Overview',
     label: 'Overview',
     icon: 'clipboard-check',
-    blurb: 'Scope and approach for the Dell VxRail 5.2 to VCF 9.1.1 upgrade.',
+    blurb: 'General VCF upgrade guidance, independent of underlying hardware.',
+  },
+  {
+    slug: 'vxrail-addendum',
+    step: 'Addendum',
+    label: 'VxRail Addendum',
+    icon: 'server',
+    blurb: 'Dell VxRail-specific extra steps layered on top of the general upgrade flow.',
   },
 ];
 

@@ -16,7 +16,7 @@ interface Props {
 const { title, description, active, fullWidth = false } = Astro.props;
 const asset = withBase;
 const year = 2026;
-const repoUrl = 'https://gitlab.msp.itq.eu/ugt_con_sddc_nl/vcfvxrailupgrade';
+const repoUrl = 'https://gitlab.msp.itq.eu/ugt_con_sddc_nl/vcfupgradeguide';
 const feedbackUrl = `${repoUrl}/-/issues/new`;
 ---
 
@@ -66,7 +66,7 @@ const feedbackUrl = `${repoUrl}/-/issues/new`;
             aria-hidden="true"
           />
           <span class="site-header__divider" aria-hidden="true"></span>
-          <span class="site-header__product">VxRail Upgrade Planning</span>
+          <span class="site-header__product">VCF Upgrade Guide</span>
         </a>
         <nav class="site-header__nav">
           <a href={asset('search/')}><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Search</a>
@@ -104,7 +104,7 @@ const feedbackUrl = `${repoUrl}/-/issues/new`;
       <div class="site-footer__inner">
         <img src={asset('itq/assets/logo/itq-logo-white.png')} alt="ITQ" height="26" />
         <p>
-          <strong>ITQ &ndash; What's Next.</strong> VxRail upgrade-planning material.
+          <strong>ITQ &ndash; What's Next.</strong> VCF upgrade-planning material.
           Internal / ITQ Consulting Services. &copy; {year} ITQ.
         </p>
         <div class="site-footer__meta">
