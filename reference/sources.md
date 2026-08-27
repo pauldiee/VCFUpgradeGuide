@@ -6,21 +6,21 @@ planner tool are supplementary orientation only.
 
 > **Verbatim rule.** Before any version number, IP-count, or ordered step from
 > these pages lands in `docs/`, re-fetch the specific TechDocs page and quote
-> the literal table rows / notes / footnotes — summarised fetches drop
+> the literal table rows / notes / footnotes – summarised fetches drop
 > footnotes and conditions. See `MEMORY.md` → "Quote TechDocs verbatim".
 
 _Last reviewed: 2026-08-27 (against VCF 9.1.0.0). Re-check on each patch line._
 
 ---
 
-## 1. Broadcom TechDocs — authoritative
+## 1. Broadcom TechDocs – authoritative
 
 ### Upgrade guide tree
 
 | Page | Covers |
 | --- | --- |
 | [Deployment, Convergence, and Upgrade](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment.html) | Top of the 9.1 deployment/upgrade doc tree |
-| [Upgrading to VMware Cloud Foundation 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation.html) | Master upgrade guide — fleet-level + management-domain components, prerequisites, approach |
+| [Upgrading to VMware Cloud Foundation 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation.html) | Master upgrade guide – fleet-level + management-domain components, prerequisites, approach |
 | [Deploy VCF Management Services and License Server as Part of VCF Upgrade to 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html) | New 9.1 mandatory component: Management Services cluster + headless License Server; IP/DNS requirements |
 | [Upgrade ESX to 9.1 (from 5.2 mgmt domain)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-esxi-for-vmware-cloud-foundation-5-2-1.html) | ESX host upgrade step, rolling maintenance mode |
 | [Upgrade vSphere Distributed Switch Versions](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html) | Post-upgrade vDS version bump |
@@ -50,7 +50,7 @@ _Last reviewed: 2026-08-27 (against VCF 9.1.0.0). Re-check on each patch line._
 
 | Article | Covers |
 | --- | --- |
-| [KB 440630 — Upgrade Sequence and Related Issues for VCF and vSphere Foundation 9.1](https://knowledge.broadcom.com/external/article/440630/upgrade-sequence-and-related-issues-for.html) | Mandatory sequence + rolled-up known issues per component (License Server connect failures, Fleet Mgmt Appliance replacement, Identity Broker consolidation, cert SAN issues, import failures). Living document — re-check. |
+| [KB 440630 – Upgrade Sequence and Related Issues for VCF and vSphere Foundation 9.1](https://knowledge.broadcom.com/external/article/440630/upgrade-sequence-and-related-issues-for.html) | Mandatory sequence + rolled-up known issues per component (License Server connect failures, Fleet Mgmt Appliance replacement, Identity Broker consolidation, cert SAN issues, import failures). Living document – re-check. |
 
 ---
 
@@ -77,11 +77,11 @@ Useful for orientation and gotchas; do not cite as the procedure.
 | [Modernizing Infrastructure: VCF 9.0.x → 9.1 Upgrade Guide](https://blogs.vmware.com/cloud-foundation/2026/07/28/modernizing-infrastructure-vmware-cloud-foundation-9-0-x-to-9-1-upgrade-guide/) | Ordered path: VCF Operations + Cloud Proxy → SDDC Manager → deploy Management Services + License Server → license transfer → NSX Global Manager (federated only) → NSX Manager + vCenter → ESX + vSAN witness → NSX Edge + finalize. Post: VMware Tools 13.1, VM compat, vSAN on-disk format, vSAN File Service |
 | [VCFA 9.0 → 9.1 Upgrade: Precheck and Execution Stages (deep dive)](https://blogs.vmware.com/cloud-foundation/2026/07/27/modernizing-infrastructure-a-deep-dive-into-the-vmware-cloud-foundation-automation-9-0-to-9-1-upgrade-precheck-and-execution-stages/) | VCF Automation-specific precheck + execution detail |
 | [How to Upgrade to VMware Cloud Foundation 9.1](https://blogs.vmware.com/cloud-foundation/2026/06/18/how-to-upgrade-to-vmware-cloud-foundation-9-1/) | High-level overview / entry point |
-| [Angry Admin — 9.0.2 → 9.1 practical runbook notes](https://angrysysops.com/2026/05/27/upgrading-vmware-cloud-foundation-from-9-0-2-to-9-1-practical-runbook-notes/) | Field notes, third-party |
+| [Angry Admin – 9.0.2 → 9.1 practical runbook notes](https://angrysysops.com/2026/05/27/upgrading-vmware-cloud-foundation-from-9-0-2-to-9-1-practical-runbook-notes/) | Field notes, third-party |
 
 ---
 
-## Consolidated sequence — from the VCF Upgrade Planner
+## Consolidated sequence – from the VCF Upgrade Planner
 
 Driven through the planner on 2026-08-27 for the engagement shape:
 **Deployment = VCF · Current env = VCF 5.2 + Dell VxRail (HCI) · Goal = Create
@@ -95,18 +95,18 @@ Source patch matters. Against target **9.1.0.0400** the planner reports:
 
 | Source | Result |
 | --- | --- |
-| VCF **5.2.2** | ✅ supported — can upgrade directly to 9.1.0.0400 |
+| VCF **5.2.2** | ✅ supported – can upgrade directly to 9.1.0.0400 |
 | VCF 5.2.1 | ❌ "Upgrade Path Not Supported" |
 | VCF 5.2.3.0 | ❌ not offered / unsupported |
 | VCF 5.2.4.0 | ❌ "No Destination Available … wait for a future VCF 9.1.x" |
 
 VxRail source versions the planner recognises: 8.0.300 / 8.0.310 / 8.0.361 /
-8.0.380. Planner target builds: 9.1.0.0, .0100, .0200, .0300, .0400 — there
+8.0.380. Planner target builds: 9.1.0.0, .0100, .0200, .0300, .0400 – there
 is **no "9.1.1"** in the tool; the engagement's "VCF 9.1.1" must be pinned to
-a concrete 9.1.0.0x00 build. **Confirm the customer's exact 5.2.x patch —
+a concrete 9.1.0.0x00 build. **Confirm the customer's exact 5.2.x patch –
 if it is not 5.2.2, the direct path may not exist yet.**
 
-### Core sequence (core components only) — 9 phases / 10 steps
+### Core sequence (core components only) – 9 phases / 10 steps
 
 Each phase is a **safe stopping point** (pause, validate, resume).
 
@@ -118,18 +118,18 @@ Each phase is a **safe stopping point** (pause, validate, resume).
    **/28 CIDR minimum**, 12 IPs minimum (30 recommended); FQDNs for Fleet
    component service, Instance component service, VCF services runtime,
    Identity Broker, License server. VCF services runtime uses internal range
-   **198.18.0.0/15** — must not overlap the mgmt network (changeable to
+   **198.18.0.0/15** – must not overlap the mgmt network (changeable to
    240.0.0.0/15 or 250.0.0.0/15 only via JSON spec at deploy time). MS nodes:
    Small = 4 nodes × 12 vCPU / 24 GB / 3 TB; License server 1 × 2 vCPU / 4 GB / 12 GB.
 4. **VCF Automation** upgrade. New instance; existing FQDN + node IPs
    auto-transferred as VIPs; external LB config unchanged. Automation must
    sit on the Management Cluster before VCF can upgrade it. (8.18.x → 9.1.)
-5. **NSX Local Manager(s)** upgrade — check the Product Interoperability Matrix first.
-6. **vCenter** upgrade — via VCF Operations → Fleet Management. Replace
+5. **NSX Local Manager(s)** upgrade – check the Product Interoperability Matrix first.
+6. **vCenter** upgrade – via VCF Operations → Fleet Management. Replace
    Integrated Windows Authentication with another IdP first. Documented RDU
    rollback: shut down target vCenter → stop RDU → roll back the 8.0 vCenter
    Workspace ONE broker precheck change → reboot.
-7. **Dell VxRail** upgrade — planner defers entirely to Dell: "Reach out to
+7. **Dell VxRail** upgrade – planner defers entirely to Dell: "Reach out to
    Dell on steps and services." Pre-checks and Solve procedures vary by
    hardware/version; do **not** use the online VxRail Manager UI / vCenter
    plugin path. → feeds `docs/vxrail-addendum.md`.
@@ -138,26 +138,26 @@ Each phase is a **safe stopping point** (pause, validate, resume).
    ESX/vSphere **9.1.0.0200**, NSX Local Manager **9.1.0.0200**; SDDC Manager
    **9.1.0.0400**, VCF Operations **9.1.0.0400**, VCF Automation **9.1.0.0200**.
 
-### How optional components extend the sequence — 15 phases / 17 steps
+### How optional components extend the sequence – 15 phases / 17 steps
 
 Selecting SRM, Avi, HCX, NSX Federation, vSphere Supervisor, VCF Operations
 for Logs, and vSAN File Service expands the plan to:
 
 1. VCF Operations upgrade
-2. **Disaster Recovery Products** — SRM / vSphere Replication upgrade
-3. **Upgrade Avi Load Balancer + Deploy License Hub** — License Hub 2.0
+2. **Disaster Recovery Products** – SRM / vSphere Replication upgrade
+3. **Upgrade Avi Load Balancer + Deploy License Hub** – License Hub 2.0
    appliance: 1 mgmt IP + a 2-contiguous-IP pool; Default size 1 × 6 vCPU / 12 GB / 256 GB
 4. SDDC Manager upgrade
 5. Deploy VCF Management Services + License Server
 6. VCF Automation upgrade
 7. **VMware HCX** upgrade
-8. **NSX Global Manager** upgrade — Federation only; all sites on compatible
+8. **NSX Global Manager** upgrade – Federation only; all sites on compatible
    versions, connectivity between sites, **before** Local Managers
 9. NSX Local Manager(s) upgrade
 10. vCenter upgrade
 11. Dell VxRail
 12. **NSX Edge & NSX Finalize** (Edge nodes now explicit, after ESX/VxRail)
-13. **Post-Infrastructure Products** — Log Management: **no in-place upgrade**,
+13. **Post-Infrastructure Products** – Log Management: **no in-place upgrade**,
     deploy fresh
 14. **vSAN File Service** upgrade
 15. Effective versions at 9.1.0.0400
