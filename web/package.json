@@ -1,0 +1,20 @@
+{
+  "name": "vcfvxrailupgrade-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node -e \"const fs=require('fs'); for (const p of ['.astro','node_modules/.astro']) fs.rmSync(p,{recursive:true,force:true}); fs.mkdirSync('public/scripts',{recursive:true}); if (fs.existsSync('../tools')) { for (const f of fs.readdirSync('../tools').filter(f=>f.endsWith('.ps1'))) { fs.copyFileSync('../tools/'+f,'public/scripts/'+f); console.log('copied tools/'+f+' -> public/scripts/'+f); } }\"",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^5.6.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "pagefind": "^1.5.2"
+  }
+}

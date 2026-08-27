@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { NAV } from '../nav';
+import { docHref as href } from '../lib/path';
+---
+
+<BaseLayout
+  title="VxRail Upgrade Planning"
+  description="Pre- and post-upgrade planning for a Dell VxRail 5.2 to VCF 9.1.1 upgrade."
+  fullWidth
+>
+  <section class="hero">
+    <div class="hero__inner">
+      <p class="itq-eyebrow hero__eyebrow">ITQ Consulting Services &middot; Internal</p>
+      <h1 class="hero__title">
+        Dell VxRail <span class="accent">5.2 &rarr; 9.1.1</span> upgrade planning.
+      </h1>
+      <p class="hero__intro itq-intro">
+        Pre-upgrade checks, upgrade execution, and post-upgrade validation for a Dell VxRail
+        environment moving from 5.2 to VMware Cloud Foundation 9.1.1. Work in progress.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href={href('overview')}>
+          Start with the overview <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="workflow">
+    <div class="workflow__inner">
+      <p class="itq-eyebrow">The flow</p>
+      <h2 class="workflow__heading">Upgrade planning docs</h2>
+      <div class="card-grid">
+        {
+          NAV.map((item) => (
+            <a class="planning-card" href={href(item.slug)}>
+              <div class="planning-card__top">
+                <i class={`fa-solid fa-${item.icon} planning-card__icon`} aria-hidden="true" />
+              </div>
+              <span class="planning-card__step itq-eyebrow">{item.step}</span>
+              <h3 class="planning-card__title">{item.label}</h3>
+              <p class="planning-card__blurb">{item.blurb}</p>
+              <span class="planning-card__cta">
+                Open <i class="fa-solid fa-arrow-right" aria-hidden="true" />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

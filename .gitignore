@@ -1,0 +1,16 @@
+# Customer-specific artifacts — never commit
+customers/
+*-customer.md
+*-filled.xlsx
+*-filled.docx
+
+# Office / OS temp
+~$*
+*.tmp
+*.log
+
+# Working dumps from the workbook
+_workbook_dump/
+
+# Generated at build time from tools/*.ps1 (see web/package.json prebuild)
+web/public/scripts/

@@ -1,0 +1,120 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { NAV, navBySlug } from '../../nav';
+import { docHref as href } from '../../lib/path';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  return docs.map((doc) => ({
+    params: { slug: doc.id },
+    props: { doc },
+  }));
+}
+
+const { doc } = Astro.props;
+const { Content, headings } = await render(doc);
+const sections = headings.filter((h) => h.depth === 2);
+
+const meta = navBySlug(doc.id);
+const idx = NAV.findIndex((n) => n.slug === doc.id);
+const prev = idx > 0 ? NAV[idx - 1] : undefined;
+const next = idx >= 0 && idx < NAV.length - 1 ? NAV[idx + 1] : undefined;
+
+const title = meta ? `${meta.label} — VxRail Upgrade Planning` : 'VxRail Upgrade Planning';
+---
+
+<BaseLayout title={title} description={meta?.blurb} active={doc.id}>
+  {meta && <p class="doc-eyebrow itq-eyebrow">{meta.step}</p>}
+  {
+    sections.length > 2 && (
+      <nav class="doc-toc" aria-label="On this page" data-pagefind-ignore>
+        <span class="doc-toc__label">On this page</span>
+        <ul class="doc-toc__list">
+          {sections.map((h) => (
+            <li>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
+  <article class="doc prose">
+    <Content />
+  </article>
+
+  <nav class="doc-pager" aria-label="Between documents" data-pagefind-ignore>
+    {
+      prev ? (
+        <a class="doc-pager__link doc-pager__link--prev" href={href(prev.slug)}>
+          <span class="doc-pager__dir"><i class="fa-solid fa-arrow-left" aria-hidden="true" /> Previous</span>
+          <span class="doc-pager__title">{prev.label}</span>
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    {
+      next && (
+        <a class="doc-pager__link doc-pager__link--next" href={href(next.slug)}>
+          <span class="doc-pager__dir">Next <i class="fa-solid fa-arrow-right" aria-hidden="true" /></span>
+          <span class="doc-pager__title">{next.label}</span>
+        </a>
+      )
+    }
+  </nav>
+</BaseLayout>
+
+<style>
+  .doc-toc {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 0 0 1.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface-subtle);
+    border-left: 3px solid var(--itq-orange);
+    border-radius: 4px;
+  }
+  .doc-toc__label {
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-body);
+  }
+  .doc-toc__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* The ITQ tokens (base.css) draw a brand square on every ul > li::before;
+     in this inline chip list it lands at the end of the previous chip. */
+  .doc-toc__list li::before {
+    display: none;
+  }
+  .doc-toc__list a {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-active);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: var(--text-body);
+  }
+  .doc-toc__list a:hover {
+    border-color: var(--itq-orange);
+    color: var(--itq-orange);
+  }
+  /* Anchor targets inside the rendered markdown: keep headings clear of the sticky header */
+  :global(.doc.prose h2),
+  :global(.doc.prose h3) {
+    scroll-margin-top: 90px;
+  }
+</style>
