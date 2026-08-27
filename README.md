@@ -1,8 +1,8 @@
 # VCFUpgradeGuide
 
-**ITQ Consulting Services — internal, private.** General guidance for
-planning a **VCF upgrade** — pre-upgrade checks, the upgrade sequence, and
-post-upgrade validation — applicable regardless of underlying hardware.
+**ITQ Consulting Services – internal, private.** General guidance for
+planning a **VCF upgrade** – pre-upgrade checks, the upgrade sequence, and
+post-upgrade validation – applicable regardless of underlying hardware.
 Hardware/HCI-specific extra steps (currently: **Dell VxRail**) are layered on
 top as their own addendum, not baked into the general flow.
 
@@ -13,14 +13,14 @@ Not a public tool. Do not link this repo from public-facing pages.
 **[VCF9-DeploymentPlanning](https://github.com/pauldiee/VCF9-DeploymentPlanning)**
 (public) is the from-scratch deployment-planning field guide this repo's
 site scaffolding was seeded from. It also holds foundational VCF9 knowledge
-that's directly useful during an upgrade — check there rather than
+that's directly useful during an upgrade – check there rather than
 duplicating it here:
 
-- `docs/13-shutdown-startup.md` — the ordered fleet shutdown/startup runbook
-- `docs/07-firewall-ports.md` — firewall flows by zone
-- `docs/prerequisites.md` — environment prerequisites, incl. certificate authority setup
-- `docs/12-sso-configuration.md` — fleet SSO / Identity Broker
-- `docs/16-remove-components.md` — cleanly removing/reinstalling optional Day-N components
+- `docs/13-shutdown-startup.md` – the ordered fleet shutdown/startup runbook
+- `docs/07-firewall-ports.md` – firewall flows by zone
+- `docs/prerequisites.md` – environment prerequisites, incl. certificate authority setup
+- `docs/12-sso-configuration.md` – fleet SSO / Identity Broker
+- `docs/16-remove-components.md` – cleanly removing/reinstalling optional Day-N components
 
 ## Contents
 

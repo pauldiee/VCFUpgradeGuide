@@ -1,4 +1,4 @@
-# Customer-specific artifacts — never commit
+# Customer-specific artifacts – never commit
 customers/
 *-customer.md
 *-filled.xlsx

@@ -1,4 +1,4 @@
-# GitLab CI/CD — publishes the ITQ-branded Astro site to GitLab Pages. GitLab
+# GitLab CI/CD – publishes the ITQ-branded Astro site to GitLab Pages. GitLab
 # is the primary host for this repo (internal engagement), so there is no
 # equivalent GitHub Actions workflow.
 #
@@ -8,7 +8,7 @@
 # instead, `image:` provides Node and the download is skipped.
 #
 # The Astro `base` (URL path prefix) and `site` origin are derived at run time
-# from CI_PAGES_URL, so they always match where GitLab actually serves the site —
+# from CI_PAGES_URL, so they always match where GitLab actually serves the site –
 # including a unique-domain path suffix like /<project>-<hash>.
 
 stages:
