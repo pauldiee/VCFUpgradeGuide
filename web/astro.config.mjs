@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import { readdirSync } from 'node:fs';
 
-// GitLab Pages is the only deploy target for this internal repo — the
+// GitLab Pages is the only deploy target for this internal repo – the
 // `.gitlab-ci.yml` job sets SITE_URL / SITE_BASE at build time from the
 // project's actual Pages URL (CI_PAGES_URL), including its unique-domain path
 // suffix. BASE is the URL path prefix; SITE the origin. Both feed the

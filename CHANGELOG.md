@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.4.7 – 2026-08-28
+- **`docs/01-overview.md` – Log Management conditional phase** (issue #9).
+  Expanded the table row into a **"Post-Infrastructure Products – Log
+  Management in detail"** subsection: it is now a component of VCF Management
+  Services deployed from VCF Operations, not an in-place upgrade; the 9.0.x
+  path transfers config automatically, the 8.x / VCF 5.x path is a fresh
+  deploy with manual re-pointing; custom dashboards/alerts/queries need the
+  Content Pack → Management Pack conversion; log forwarders copy across
+  inactive; historical data via transfer utility / archive import / 90-day
+  parallel query; the new instance must be on the management network (not a
+  custom NSX overlay) with a new FQDN; log-data transfer needs the
+  split-proxy Cloud Proxy; decommission the legacy appliances after cut-over.
+  Added to the Contents list and cross-linked from Phase 1 and the field
+  notes. Sources: Broadcom "Upgrade to Log Management 9.1" + "Deploy Log
+  Management".
+- **`web/` source – cleared the last em-dashes** (issue #2). U+2014 → spaced
+  U+2013 in `astro.config.mjs`, `src/content.config.ts`,
+  `src/layouts/BaseLayout.astro` (comments) and the two visible strings in
+  `src/pages/index.astro` and `src/pages/docs/[...slug].astro`. The
+  no-em-dash rule now holds across the whole repo including `web/`.
+
 ## v0.4.6 – 2026-08-28
 - **`web/src/nav.ts`:** regrouped `04-field-notes` from "Guide" to
   "Reference" – it is a companion symptom/cause/fix list, not a step-by-step

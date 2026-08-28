@@ -34,6 +34,7 @@ core guidance stays reusable across engagements.
   – [NSX Federation](#nsx-global-manager--federation-in-detail)
   · [vSphere Supervisor](#vsphere-supervisor-in-detail)
   · [Avi + License Hub](#avi-load-balancer--license-hub-in-detail)
+  · [Log Management](#post-infrastructure-products--log-management-in-detail)
   · companion docs: [Disaster Recovery](02-disaster-recovery.md)
   · [Identity Broker migration](03-identity-broker-migration.md)
 - [Post-upgrade validation](#post-upgrade-validation)
@@ -385,7 +386,7 @@ they slot into the core spine:
 | **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** See [NSX Federation in detail](#nsx-global-manager--federation-in-detail) |
 | **vSphere Supervisor** | after vCenter (Phase 6), before the ESX host phase (Phase 7) | See [vSphere Supervisor in detail](#vsphere-supervisor-in-detail) |
 | **NSX Edge & NSX Finalize** | replaces the plain "NSX finalize", after the host phase | Edge nodes upgraded last, after ESX/host kernels, then finalize |
-| **Post-Infrastructure Products → Log Management** | after NSX finalize | **No in-place upgrade path** – deploy fresh Log Management services |
+| **Post-Infrastructure Products → Log Management** | after NSX finalize (after Operations for Networks, before Identity Broker) | Deploy fresh Log Management as part of VCF Management Services. See [Log Management in detail](#post-infrastructure-products--log-management-in-detail) |
 | **Operations for Networks** (vRNI / Aria Operations for Networks) | with the operations tier | Upgrade-path is version-gated – e.g. 6.14.1 reaches 9.1.0.0100 but not 9.1.0.0200 directly, and the newest 6.14.x may have no 9.x path. Collector nodes are version-locked to the platform – redeploy / re-pair |
 | **vSAN File Service** | after Log Management | Upgrade vSAN File Service |
 
@@ -482,6 +483,59 @@ is in scope** – never on the strength of the Security Services Platform alone.
   connected mode polls the Avi Cloud Console.
 - **Confirm which version applies** before re-using any 5.1.2 IP-pool / FQDN
   guidance – the 2.0 single-OVA deploy prompts for different inputs.
+
+### Post-Infrastructure Products – Log Management in detail
+
+**Position: after NSX finalize**, inside the post-infrastructure / operations
+products run – **after Operations for Networks, before the Identity Broker
+migration**. Applies whenever **VCF Operations for Logs** (Aria Operations for
+Logs / vRLI) is in use.
+
+Log Management is now a component of **VCF Management Services**
+([Phase 3](#phase-3--deploy-vcf-management-services--license-server)) and is
+deployed from **VCF Operations**, not upgraded in place.
+
+- **Path depends on the running version.**
+  - **From 9.0.x:** VCF Operations runs an upgrade operation that deploys
+    Log Management 9.1 and *transfers the configuration* from the 9.0.x
+    Operations for Logs instance. Agents and log sources are re-pointed
+    automatically.
+  - **From 8.x (VCF 5.x source):** no direct path. Deploy 9.1 fresh, then
+    migrate configuration by hand and re-point every agent / log source.
+- **What does not carry automatically.** Custom dashboards, alerts and saved
+  queries are **not** transferred – convert them with the Content Pack →
+  Management Pack tool. **Log forwarders are copied but left inactive** –
+  activate each one by hand after cut-over. Integrations (SIEM, webhook,
+  ticketing) are re-pointed manually.
+- **Historical log data.** Three options: the transfer utility, an archived
+  data import, or simply query the legacy cluster for **up to 90 days**
+  post-upgrade while it runs in parallel for retention.
+- **Networking.** The new Log Management **must sit on the management network
+  that hosts VCF Management Services**. It **cannot be upgraded / migrated if
+  it is on a custom NSX overlay network** – move it to the management network
+  first. Its FQDN must resolve *outside* the IP range assigned to VCF
+  Management Services. Prepare a **new FQDN** for the 9.1 instance (the old one
+  stays with the legacy appliance during parallel run). The clustered form has
+  its own integrated load balancer ("Cluster VIP"); size per the current
+  deployment guide.
+- **Decommission.** Once post-upgrade configuration is done and ingestion is
+  confirmed on 9.1, **shut down and remove the legacy Operations for Logs
+  appliances**. Repoint or retire anything still aimed at the old FQDN.
+- **Log-data transfer needs the split-proxy Cloud Proxy.** Moving log data off
+  the old appliance goes through a **Universal Cloud Proxy in split-proxy
+  mode** – without it the Control Panel transfer fails with "Transfer failed
+  due to an error" (see [Phase 1](#phase-1--vcf-operations-upgrade)
+  and [Field notes](04-field-notes.md#observability--cloud-proxy-logs-networks)).
+- **Newly added vCenters are not auto-collected** – activate their log
+  collectors by hand in the VCF Operations UI.
+- **Before moving on:** ingestion flowing from every source on the 9.1
+  instance; forwarders active; alerts firing; custom content converted and
+  present; legacy appliances powered off.
+
+Broadcom reference:
+[Upgrade to Log Management 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-operations-for-logs.html)
+and [Deploy Log Management](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html)
+(fresh deploy).
 
 ### Identity: VIDM / Workspace ONE Access → VCF Identity Broker
 
