@@ -35,6 +35,7 @@ core guidance stays reusable across engagements.
   · [vSphere Supervisor](#vsphere-supervisor-in-detail)
   · [Avi + License Hub](#avi-load-balancer--license-hub-in-detail)
   · [Log Management](#post-infrastructure-products--log-management-in-detail)
+  · [vSAN File Service](#vsan-file-service-in-detail)
   · companion docs: [Disaster Recovery](02-disaster-recovery.md)
   · [Identity Broker migration](03-identity-broker-migration.md)
 - [Post-upgrade validation](#post-upgrade-validation)
@@ -388,7 +389,7 @@ they slot into the core spine:
 | **NSX Edge & NSX Finalize** | replaces the plain "NSX finalize", after the host phase | Edge nodes upgraded last, after ESX/host kernels, then finalize |
 | **Post-Infrastructure Products → Log Management** | after NSX finalize (after Operations for Networks, before Identity Broker) | Deploy fresh Log Management as part of VCF Management Services. See [Log Management in detail](#post-infrastructure-products--log-management-in-detail) |
 | **Operations for Networks** (vRNI / Aria Operations for Networks) | with the operations tier | Upgrade-path is version-gated – e.g. 6.14.1 reaches 9.1.0.0100 but not 9.1.0.0200 directly, and the newest 6.14.x may have no 9.x path. Collector nodes are version-locked to the platform – redeploy / re-pair |
-| **vSAN File Service** | after Log Management | Upgrade vSAN File Service |
+| **vSAN File Service** | after Log Management, after the vSAN on-disk format upgrade | Rolling File Service agent (OVF) refresh, driven from the vSphere Client. See [vSAN File Service in detail](#vsan-file-service-in-detail) |
 
 Re-run the planner with the real component list for the authoritative
 insert points.
@@ -537,6 +538,34 @@ Broadcom reference:
 and [Deploy Log Management](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/installing-vcf-logs.html)
 (fresh deploy).
 
+### vSAN File Service in detail
+
+**Position: last of the conditional phases** – after Log Management, at the
+tail of the host-domain work, alongside the other post-host vSAN tasks in
+[Post-upgrade validation](#post-upgrade-validation). Applies only when
+**vSAN File Service** is enabled on a cluster.
+
+- **Order: after the vSAN on-disk format upgrade.** Prerequisites are ESX
+  hosts upgraded → vCenter upgraded → **vSAN on-disk format upgraded**; the
+  File Service agent upgrade runs after all three.
+- **What is upgraded.** The per-host **File Service agent VMs** (OVF). In the
+  vSphere Client: cluster → **Configure → vSAN → Services → File Service →
+  Edit → Check upgrade**, choose **Automatic** (pull the OVF) or **Manual**
+  (supply the OVF), then **Upgrade**.
+- **Rolling.** "The upgrade is performed on a rolling basis" – agents are
+  replaced host by host. File server containers **fail over to other agent
+  VMs** as each is refreshed.
+- **Triggered from the vSphere Client**, not SDDC Manager / VCF Operations and
+  not Skyline Health.
+- **File shares stay accessible during the upgrade**, with **brief
+  interruptions** possible as containers fail over.
+- **Before moving on:** every File Service agent on the new version and
+  healthy (no degraded / redeploying agents), all file shares served, vSAN
+  Skyline Health clean for File Service.
+
+Broadcom reference:
+[Upgrade vSAN File Service](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsan-file-service.html).
+
 ### Identity: VIDM / Workspace ONE Access → VCF Identity Broker
 
 VCF 9 replaces VMware Identity Manager (VIDM) / Workspace ONE Access with
@@ -557,7 +586,8 @@ Full procedure, prerequisites, and what does / does not carry:
 - **VMware Tools** – upgrade guests to **13.1**.
 - **VM hardware compatibility** – bump VM compatibility where appropriate.
 - **vSAN on-disk format** – upgrade the on-disk format version.
-- **vSAN File Service** – upgrade if in use.
+- **vSAN File Service** – upgrade if in use; runs *after* the on-disk format
+  upgrade – see [vSAN File Service in detail](#vsan-file-service-in-detail).
 - **vSphere Distributed Switch** – upgrade vDS versions
   ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html)).
 - **Licensing** – all vCenter/NSX/host licenses assigned from the License

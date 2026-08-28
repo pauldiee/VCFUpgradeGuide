@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.4.8 – 2026-08-28
+- **`docs/01-overview.md` – vSAN File Service conditional phase** (issue #10).
+  Expanded the table row into a **"vSAN File Service in detail"** subsection:
+  it is the last conditional phase, runs **after the vSAN on-disk format
+  upgrade** (prereqs: ESX hosts → vCenter → on-disk format), refreshes the
+  per-host **File Service agent VMs (OVF)** on a **rolling** basis with
+  container fail-over, is driven from the **vSphere Client** (Configure → vSAN
+  → Services → File Service → Check upgrade; Automatic or Manual OVF), keeps
+  file shares accessible with brief interruptions, and finishes with a
+  Skyline-Health / agent-health check. Added to the Contents list and
+  cross-linked from the post-upgrade validation list. Source: Broadcom
+  "Upgrade vSAN File Service".
+
 ## v0.4.7 – 2026-08-28
 - **`docs/01-overview.md` – Log Management conditional phase** (issue #9).
   Expanded the table row into a **"Post-Infrastructure Products – Log
