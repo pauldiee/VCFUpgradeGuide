@@ -29,13 +29,14 @@
   identity migration guide; Broadcom KB 408127 / 313905 / 306446; the Dell
   KBs (000478885, 000021470) and the RPS Customer Preparation Guide; and notes
   on what the planner data does not model (SRM versions, VIDM, VxRail).
-- **New `reference/identity-vidm-to-identity-broker.md`:** the VIDM /
-  Workspace ONE Access → VCF Identity Broker transition – no in-place upgrade,
-  the parallel-run model, the documented Access Control group-import
-  procedure, what does not carry (directory / IdP connection, federation, MFA
-  policies, branding, WS1A flows), the "embedded → instance" migration it is
-  *not*, and the open items on the release-notes "script". Linked from the
-  overview's Identity section.
+- **New `docs/02-identity-broker-migration.md`:** the VIDM / Workspace ONE
+  Access → VCF Identity Broker transition as its own doc (not a subsection) –
+  no in-place upgrade, the parallel-run model, the documented Access Control
+  group-import procedure, what does not carry (directory / IdP connection,
+  federation, MFA policies, branding, WS1A flows), the "embedded → instance"
+  migration it is *not*, and the open items on the release-notes "script".
+  The overview's Identity subsection is slimmed to a pointer; added to the
+  site nav and the README.
 - **`docs/01-overview.md` navigation and depth:** added a **Contents** list, a
   **"What changes in VCF 9.x"** primer (fleet construct, Management Services,
   subscription licensing, Identity Broker, vLCM-only, unified Cloud Proxy,

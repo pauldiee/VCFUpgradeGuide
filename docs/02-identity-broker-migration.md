@@ -1,23 +1,28 @@
-# Reference: VIDM / Workspace ONE Access → VCF Identity Broker
+# Identity: VIDM / Workspace ONE Access → VCF Identity Broker
 
-Detail behind the [Identity section](../docs/01-overview.md#identity-vidm--workspace-one-access--vcf-identity-broker)
-of the overview. VCF 9 replaces VMware Identity Manager (VIDM / Workspace ONE
-Access) with **VCF Identity Broker (VIDB)** as the fleet identity layer.
+A companion to the [Overview](01-overview.md). VCF 9 replaces **VMware
+Identity Manager (VIDM)** / Workspace ONE Access with **VCF Identity Broker
+(VIDB)** as the fleet identity layer. This is a distinct workstream, not a
+step in the core upgrade sequence – run it **after** the core upgrade, in
+parallel with the Aria → VCF component migration.
+
+Applies whenever VIDM / Workspace ONE Access is present (typically because the
+Aria / operations stack authenticates through it).
 
 > **Status: partial.** The 9.1.0.0 release notes state "Support for
 > script-based migration of data from VMware Identity Manager to identity
 > broker", but Broadcom has not published a prominent standalone procedure for
-> it. What is documented is the **Access Control group import** (below). Treat
-> the "script" as a thing to confirm against the current 9.1 identity guide or
-> a KB before relying on it.
+> it. What *is* documented is the **Access Control group import** (below).
+> Treat the "script" as a thing to confirm against the current 9.1 identity
+> guide or a KB before relying on it.
 
 ---
 
 ## The short version
 
 - **No in-place upgrade for VIDM.** Identity Broker 9.1 is deployed fresh as
-  part of **VCF Management Services** (overview Phase 3). VIDM is not consumed
-  by VCF 9.
+  part of **VCF Management Services** ([Overview](01-overview.md) Phase 3).
+  VIDM is not consumed by VCF 9.
 - **Parallel run.** Identity Broker is an *additional* authentication source
   alongside VIDM and each component's native auth. Keep VIDM running until
   every component that uses it has been re-pointed.

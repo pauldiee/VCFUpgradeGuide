@@ -32,7 +32,7 @@ core guidance stays reusable across engagements.
 - [Windows, ordering and rollback](#windows-ordering-and-rollback)
 - [Conditional phases (optional components)](#conditional-phases-optional-components)
   – [Disaster Recovery in detail](#disaster-recovery-products-in-detail)
-  · [Identity: VIDM → Identity Broker](#identity-vidm--workspace-one-access--vcf-identity-broker)
+  · [Identity Broker migration](02-identity-broker-migration.md) (own doc)
 - [Post-upgrade validation](#post-upgrade-validation)
 - [Cleanup / decommission](#cleanup--decommission)
 - [Hardware addenda](#hardware-addenda) – [VxRail Addendum](vxrail-addendum.md)
@@ -441,27 +441,14 @@ installation guide); KB 313905 (VLSR / SRM build numbers).
 ### Identity: VIDM / Workspace ONE Access → VCF Identity Broker
 
 VCF 9 replaces VMware Identity Manager (VIDM) / Workspace ONE Access with
-**VCF Identity Broker (VIDB)** as the fleet identity layer. Identity Broker
-ships with VCF Management Services (deployed in Phase 3).
+**VCF Identity Broker (VIDB)**. It is **not an in-place upgrade** – Identity
+Broker ships fresh with VCF Management Services (Phase 3), and the transition
+is a distinct workstream run **after** the core upgrade: parallel-run,
+bring users/groups across, rebuild the directory / IdP connection, federation,
+MFA policies and branding by hand, re-point the components, then retire VIDM.
 
-- **Not an in-place upgrade.** VIDM is not consumed by VCF 9.
-- **Users and groups can be brought across** – via the VCF Operations Access
-  Control group import (source: VMware Identity Manager), and/or the
-  script-based migration named in the 9.1.0.0 release notes. Everything else –
-  the directory / IdP connection, federation to the upstream IdP, end-user
-  authentication and MFA policies, custom branding, and any Workspace ONE
-  Access-specific flows – is **re-created by hand** on Identity Broker. The
-  upstream identity source (AD / LDAP / SAML IdP) itself is unchanged.
-- **Sequence.** Keep VIDM running → Identity Broker deployed (Phase 3) →
-  configure it against the upstream IdP and test on vCenter / NSX first →
-  import the VIDM user groups and re-assign roles → re-point the Aria / VCF
-  components → deactivate Enhanced Linked Mode ("ELM break") once every
-  vCenter in the ring is on 9.1 → **then** decommission the VIDM appliances.
-- **Do not confuse** the VIDM → Identity Broker transition with "Identity
-  Broker embedded → instance" (moving an embedded broker to the HA cluster) –
-  that is a separate migration.
-- Full procedure, prerequisites, and what does / does not carry:
-  [`reference/identity-vidm-to-identity-broker.md`](../reference/identity-vidm-to-identity-broker.md).
+Full procedure, prerequisites, and what does / does not carry:
+**[Identity Broker migration](02-identity-broker-migration.md)**.
 
 ---
 

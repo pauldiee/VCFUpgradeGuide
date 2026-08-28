@@ -24,6 +24,13 @@ export const NAV: NavItem[] = [
     blurb: 'General VCF upgrade guidance, independent of underlying hardware.',
   },
   {
+    slug: '02-identity-broker-migration',
+    step: 'Guide',
+    label: 'Identity Broker migration',
+    icon: 'key',
+    blurb: 'VIDM / Workspace ONE Access to VCF Identity Broker: a distinct workstream after the core upgrade.',
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     label: 'VxRail Addendum',
