@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.4.3 – 2026-08-28
+- **`docs/01-overview.md` conditional phases – expanded two of the table rows
+  into subsections** (issues #7, #5).
+  - **NSX Global Manager / Federation in detail:** what Federation is and how
+    to detect it, the Global-Manager-before-Local-Manager order, prerequisites
+    (compatible versions per site, inter-site connectivity, GM backup), and
+    that the whole NSX upgrade is driven from SDDC Manager / VCF Operations in
+    a VCF context.
+  - **Avi Load Balancer + License Hub in detail:** Avi Controller upgrades
+    ahead of the core tier; **License Hub is not the License Server**; License
+    Hub gates on **vDefend or Avi**, not SSP alone; License Hub 2.0 is a
+    single standalone OVA (no SSP Installer, no 5.1.2 → 2.0 upgrade path);
+    the older 5.1.2 three-VM / IP-pool shape kept for environments still on it.
+- Closed #3, #4, #12 (superseded by v0.4.2's `02-disaster-recovery.md`,
+  `03-identity-broker-migration.md`, and the built-out `vxrail-addendum.md`).
+
 ## v0.4.2 – 2026-08-28
 
 Folded a full VxRail 5.2.2 → VCF 9.1 planning cycle into the guides (issue #13).
