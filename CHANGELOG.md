@@ -1,5 +1,35 @@
 # Changelog
 
+## v0.4.2 – 2026-08-28
+- **Folded a full VxRail 5.2.2 → VCF 9.1 planning cycle into the docs** (issue
+  #13). `docs/01-overview.md`: generalised the "source patch level matters"
+  note into a per-component principle (the *newest* patch often has no 9.x
+  path yet – e.g. VCF Operations 8.18.7, Operations for Networks 6.14.3, SDDC
+  Manager 5.2.4.0 – so patching to latest as "prep" can strip the qualified
+  path); added the two interop-matrix tools; a point release re-qualifies both
+  source and target; VCF 9 licensing is subscription-only via the VCF Business
+  Services console; Phase 1 now covers the unified Cloud Proxy (legacy 8.18
+  proxies do not upgrade in place), Operations for Logs having no in-place
+  path, and vRSLCM being left behind; new **Disaster Recovery Products in
+  detail** section (combined Protection and Recovery appliance, convergence
+  for VLSR 9.0.2.3 and earlier, the 9.0.2.2 Converge floor, the bridge-version
+  reason DR goes first, Enhanced vSphere Replication prerequisites, the
+  per-site Converge procedure); new **Identity: VIDM → VCF Identity Broker**
+  section (9.1's users/groups migration script vs. what is rebuilt by hand).
+- **Built out `docs/vxrail-addendum.md`** from a stub: the Dell-coordinated
+  release stream and minimum source; the 9.x architecture change (SDDC Manager
+  decoupled from VxRail Manager, the new hardware-lifecycle component, vLCM
+  mandatory, single codebase); the VxRail Manager → VxRail Operations Manager
+  conversion; unsupported deployment types (stretched / dynamic / 2-node /
+  satellite); the Dell RPS engagement – Technical Consultation output, the
+  11-step order with the Customer / Dell RPS responsibility split, the
+  credential list; and a table of which general phases it replaces or wraps.
+- **`reference/sources.md`:** added the interoperability matrix as a first-class
+  tool; the Protection and Recovery "Convergence and Upgrade" guide; the
+  identity migration guide; Broadcom KB 408127 / 313905 / 306446; the Dell
+  KBs (000478885, 000021470) and the RPS Customer Preparation Guide; and notes
+  on what the planner data does not model (SRM versions, VIDM, VxRail).
+
 ## v0.4.1 – 2026-08-27
 - **Adopted a no-em-dash prose rule.** Converted every em-dash (U+2014) to a
   spaced en-dash (U+2013) across `CLAUDE.md`, `README.md`, `CHANGELOG.md`,
