@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.4.9 – 2026-08-28
+- **`docs/01-overview.md` – NSX Edge & NSX Finalize conditional phase**
+  (issue #8). Expanded Phase 8 / the table row into an **"NSX Edge & NSX
+  Finalize in detail"** subsection: it is the last core step, running after
+  the ESX / host phase because the Edge dataplane aligns with the host
+  transport-node dataplane – VCF LCM greys out the Configure button until
+  every vCenter and ESX in the domain (and dependent domains) is on 9.1.
+  Driven from SDDC Manager / VCF Operations (NSX Upgrade Coordinator), run
+  prechecks first; Edge clusters upgrade in parallel, edges within a cluster
+  serially, each via maintenance mode + reboot with Active/Standby failover;
+  brief north-south blip per node, with the missed-GARP ~10-min stale-ARP
+  risk (KB 440381); the shared-NSX rule (finalize from the management domain
+  only); what "finalize" commits; and the stale / orphaned Host Transport
+  Node gotcha that blocks the step (KB 444026). Added to the Contents list.
+  Sources: Broadcom "Upgrading vCenter and NSX Manager", NSX upgrade guide,
+  KB 444026, KB 440381.
+
 ## v0.4.8 – 2026-08-28
 - **`docs/01-overview.md` – vSAN File Service conditional phase** (issue #10).
   Expanded the table row into a **"vSAN File Service in detail"** subsection:
