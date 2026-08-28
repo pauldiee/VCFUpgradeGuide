@@ -38,6 +38,13 @@ export const NAV: NavItem[] = [
     blurb: 'VIDM / Workspace ONE Access to VCF Identity Broker, after the core upgrade.',
   },
   {
+    slug: '04-field-notes',
+    step: 'Guide',
+    label: 'Field notes',
+    icon: 'triangle-exclamation',
+    blurb: 'Known issues and gotchas from real VCF 5.2 to 9.x upgrades, grouped by phase.',
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     label: 'VxRail Addendum',

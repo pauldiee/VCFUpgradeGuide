@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.4.5 – 2026-08-28
+- **New `docs/04-field-notes.md`** (issue #15) – de-identified known issues
+  and gotchas from a prior VCF 5.2.2 → 9.0.2 multi-domain upgrade, grouped by
+  phase / component (symptom → cause → fix / KB): entitlement + the
+  three-place depot token drift; the "back in time" patch trap; the Fleet
+  Manager "stage 17" migration failure chain (443 → TLS 1.3 → cert node IPs →
+  inverted `is_admin_node` → manual registration); SDDC Manager 502 /
+  `/etc/hosts` (KB 412614); NSX Manager → Policy promotion (KB 385606) and
+  the vCenter 9 IWA-removal / AD-unjoin (KB 373004); ESX gotchas (Sub-NUMA
+  PSOD, NSX host locks, scripted Tools, HBA failures); Supervisor bridging
+  version + K8s gating (KB 92227); Identity Broker key desync (KB 377519),
+  NTP skew, ELM drift; the UCP / split-proxy log-transfer requirement;
+  Operations for Networks intermediate hop; the upgrade-specific firewall
+  port set; and the deprecations to expect. Linked from the overview and
+  from `03-identity-broker-migration.md`.
+- **Inline sharpenings:** `01-overview.md` – the "back in time" term in the
+  source-patch note, the AD-unjoin KB and installer-UI-deprecated note in
+  Phase 6, the depot-token re-check after vCenter, and "Universal Cloud Proxy
+  / UCP" naming plus the split-proxy pointer in Phase 1.
+- Added the doc to `web/src/nav.ts`, `README.md`, and the CLAUDE.md
+  file-layout table.
+
 ## v0.4.4 – 2026-08-28
 - **`docs/01-overview.md` – vSphere Supervisor placement** (issue #11). Added
   a conditional-phases row and a **"vSphere Supervisor in detail"** subsection.
