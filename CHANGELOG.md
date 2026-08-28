@@ -1,5 +1,54 @@
 # Changelog
 
+## v0.4.2 – 2026-08-28
+
+Folded a full VxRail 5.2.2 → VCF 9.1 planning cycle into the guides (issue #13).
+
+- **`docs/01-overview.md`.** Generalised the "source patch level matters" note
+  into a per-component principle – the *newest* patch after a qualified source
+  often has no 9.x path yet (VCF Operations 8.18.7, Operations for Networks
+  6.14.3, SDDC Manager 5.2.4.0), so patching to latest as "prep" can strip
+  the path; added the two interop-matrix tools. A point release re-qualifies
+  both source and target. VCF 9 licensing is subscription-only via the VCF
+  Business Services console. Phase 1 now covers the unified Cloud Proxy
+  (legacy 8.18 proxies do not upgrade in place), Operations for Logs having no
+  in-place path, and vRSLCM being left behind. Phase 2 notes NSX and vCenter
+  are driven from SDDC Manager / VCF Operations from that point. New
+  **Contents** list, a **"What changes in VCF 9.x"** primer, and a
+  **"Windows, ordering and rollback"** section (sequential method, attended /
+  unattended window split, safe stopping points, per-phase backout position,
+  prechecks as a loop). Added an Operations for Networks row to the
+  conditional phases; expanded post-upgrade validation (certificates,
+  identity, integrations, DR re-test, backups).
+- **New `docs/02-disaster-recovery.md`.** SRM / vSphere Replication →
+  VCF Protection and Recovery as its own doc: the combined appliance,
+  convergence for VLSR 9.0.2.3 and earlier, the 9.0.2.2 Converge floor
+  (KB 408127), the bridge-version reason DR goes first, the Enhanced vSphere
+  Replication prerequisites, and the per-site Converge procedure.
+- **New `docs/03-identity-broker-migration.md`.** VIDM / Workspace ONE Access
+  → VCF Identity Broker as its own doc: no in-place upgrade, the parallel-run
+  model, the documented Access Control group-import procedure, what does not
+  carry (directory / IdP connection, federation, MFA policies, branding, WS1A
+  flows), the "embedded → instance" migration it is *not*, and the open items
+  on the release-notes "script". The overview's DR and Identity subsections
+  are slimmed to pointers.
+- **Built out `docs/vxrail-addendum.md`** from a stub: the Dell-coordinated
+  release stream and minimum source; the 9.x architecture change (SDDC Manager
+  decoupled from VxRail Manager, the new hardware-lifecycle component, vLCM
+  mandatory, single codebase); the VxRail Manager → VxRail Operations Manager
+  conversion; unsupported deployment types; the Dell RPS engagement –
+  Technical Consultation output, the 11-step order with the Customer / Dell
+  RPS responsibility split, the credential list; and which general phases it
+  replaces or wraps.
+- **`reference/sources.md`:** added the interoperability matrix as a
+  first-class tool; the Protection and Recovery "Convergence and Upgrade"
+  guide; the identity import procedure; Broadcom KB 408127 / 313905 / 306446;
+  the Dell KBs (000478885, 000021470) and the RPS Customer Preparation Guide;
+  and notes on what the planner data does not model (SRM versions, VIDM,
+  VxRail).
+- **`web/`:** the two new docs added to the nav (grouped as "Guide"); the "On
+  this page" nav now nests H3 sub-topics under the H2 flow.
+
 ## v0.4.1 – 2026-08-27
 - **Adopted a no-em-dash prose rule.** Converted every em-dash (U+2014) to a
   spaced en-dash (U+2013) across `CLAUDE.md`, `README.md`, `CHANGELOG.md`,

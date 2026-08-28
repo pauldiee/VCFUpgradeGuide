@@ -51,15 +51,35 @@ _Last reviewed: 2026-08-27 (against VCF 9.1.0.0). Re-check on each patch line._
 | Article | Covers |
 | --- | --- |
 | [KB 440630 – Upgrade Sequence and Related Issues for VCF and vSphere Foundation 9.1](https://knowledge.broadcom.com/external/article/440630/upgrade-sequence-and-related-issues-for.html) | Mandatory sequence + rolled-up known issues per component (License Server connect failures, Fleet Mgmt Appliance replacement, Identity Broker consolidation, cert SAN issues, import failures). Living document – re-check. |
+| [KB 408127 – Converge workflow source-version requirement](https://knowledge.broadcom.com/) | VMware Live Site Recovery / vSphere Replication must be at **9.0.2.2 or later** for the Converge workflow onto the combined Protection and Recovery appliance |
+| [KB 313905 – Build numbers and versions of VMware Live Site Recovery / SRM](https://knowledge.broadcom.com/external/article/313905/) | Maps SRM / VLSR build numbers to versions – needed to place a running DR pair against the Converge floor |
+| [KB 306446 – Supported versions of VMware Cloud Foundation on VxRail](https://knowledge.broadcom.com/external/article/306446/) | The VCF-on-VxRail support matrix; terminates at the highest VxRail-brownfield-supported VCF version |
+| VCF 9.1.0.0 release notes – "What's new" (VCF Operations / identity) | Script-based migration of users and groups from VMware Identity Manager to Identity Broker |
+
+### Disaster Recovery / Protection and Recovery
+
+| Page | Covers |
+| --- | --- |
+| [Convergence and Upgrade (VCF Protection and Recovery 9.1 installation guide)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade.html) | The combined appliance; "convergence" for VLSR 9.0.2.3 and earlier; prerequisites, upgrade order, per-site Converge procedure, what is preserved |
+| "Migrating VMware Identity Manager to Identity Broker" (VCF 9.1 identity guide) | The users/groups migration script; what it carries vs. what is rebuilt by hand |
+
+### Dell VxRail
+
+| Article | Covers |
+| --- | --- |
+| Dell KB **000478885** – "VxRail: How to perform an upgrade to VCF 9.1" | The VxRail plugin bundle step; VxRail Manager → VxRail Operations Manager conversion |
+| Dell KB **000021470** – "VCF on VxRail: General Upgrade Information" | General VCF-on-VxRail upgrade information |
+| Dell – "RPS General Procedure: VCF on VxRail Upgrade – Customer Preparation Guide" | The Dell RPS engagement: Technical Consultation, responsibility split, prerequisites |
 
 ---
 
-## 3. VCF Upgrade Planner (tool)
+## 3. Interoperability matrix + VCF Upgrade Planner (tools)
 
 | Resource | Notes |
 | --- | --- |
+| [Broadcom Product Interoperability Matrix](https://interopmatrix.broadcom.com/) | **Upgrade Path** tool (source version → target build, per product; untick "Hide Patch Releases" for patch rows) and **Interoperability** tool (does A work with B). The authority for per-component source floors and cross-product compatibility. Moves over time – re-check per point release. |
 | [VCF Upgrade Planner (hosted)](https://vmware.github.io/vcf-upgrade-planner/) | Interactive scenario planner → VCF 9.1: pick current env (vSphere / VCF) + installed products + versions + goal → phased workflow, networking/resource requirements, PDF export |
-| [vmware/vcf-upgrade-planner (GitHub)](https://github.com/vmware/vcf-upgrade-planner) | Source. Data/logic under `site/`, docs under `docs/`. Community issues accepted. Useful for cross-checking our sequence against VMware's own rule set. |
+| [vmware/vcf-upgrade-planner (GitHub)](https://github.com/vmware/vcf-upgrade-planner) | Source. `docs/compat-data.json` (product + version catalogue) and per-scenario phase files. **Not modelled:** current SRM version data (link-only / stale), VIDM vs. Identity Broker interop, VxRail (link-only). |
 
 Goal options the planner offers (VCF source): create new 9.1 fleet; expand
 fleet by upgrading current instance; upgrade a workload domain within an
