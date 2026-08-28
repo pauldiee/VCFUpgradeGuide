@@ -17,6 +17,28 @@ core guidance stays reusable across engagements.
 
 ---
 
+## Contents
+
+- [How to use this doc](#how-to-use-this-doc)
+- [What changes in VCF 9.x](#what-changes-in-vcf-9x)
+- [Before you start](#before-you-start)
+  – [supported path](#confirm-a-supported-upgrade-path)
+  · [target build](#pin-a-target-build)
+  · [prerequisites & guardrails](#prerequisites-and-architectural-guardrails)
+  · [pre-upgrade precheck](#run-the-pre-upgrade-precheck)
+- [The upgrade sequence](#the-upgrade-sequence) – Phases 1–9: VCF Operations →
+  SDDC Manager → Management Services + License Server → VCF Automation → NSX
+  Local Manager → vCenter → ESX / host → NSX finalize → effective versions
+- [Windows, ordering and rollback](#windows-ordering-and-rollback)
+- [Conditional phases (optional components)](#conditional-phases-optional-components)
+  – [Disaster Recovery in detail](#disaster-recovery-products-in-detail)
+  · [Identity: VIDM → Identity Broker](#identity-vidm--workspace-one-access--vcf-identity-broker)
+- [Post-upgrade validation](#post-upgrade-validation)
+- [Cleanup / decommission](#cleanup--decommission)
+- [Hardware addenda](#hardware-addenda) – [VxRail Addendum](vxrail-addendum.md)
+
+---
+
 ## How to use this doc
 
 1. Work through **[Before you start](#before-you-start)** – confirm your
@@ -32,6 +54,37 @@ core guidance stays reusable across engagements.
    (VxRail: [VxRail Addendum](vxrail-addendum.md)).
 5. Finish with **[Post-upgrade validation](#post-upgrade-validation)** and
    **[Cleanup](#cleanup--decommission)**.
+
+---
+
+## What changes in VCF 9.x
+
+A 5.2 → 9.1 upgrade is more than a version bump. What is structurally new –
+know these before planning the sequence:
+
+- **The fleet construct.** VCF Operations manages a *fleet* of VCF instances.
+  For a 5.2.x source the planner labels the upgrade **"Create New VCF 9.1
+  Fleet"** – still an in-place upgrade of the existing environment; the
+  wording reflects the new construct. A 9.0.x source uses "Expand existing
+  VCF Fleet by upgrading the current instance".
+- **VCF Management Services + a headless License Server** (Phase 3) – a new
+  cluster hosting Fleet Lifecycle and SDDC Lifecycle services. It **replaces**
+  the standalone 9.0 Fleet Management Appliance and **consolidates** the
+  standalone Identity Broker.
+- **Subscription licensing** – no perpetual model, no 25-character keys;
+  managed through VCF Operations and the VCF Business Services console.
+- **VCF Identity Broker replaces VIDM / Workspace ONE Access** as the fleet
+  identity layer – not an in-place upgrade
+  ([detail](#identity-vidm--workspace-one-access--vcf-identity-broker)).
+- **vLCM images only** – baseline / VUM-managed clusters are not supported in
+  vSphere 9; convert them first.
+- **Unified Cloud Proxy** – one appliance for VCF Operations, Operations for
+  Logs, and the SDDC integration; legacy per-purpose 8.18 Cloud Proxies do not
+  upgrade in place.
+- **Operations for Logs has no in-place upgrade path** – it is a fresh 9.1
+  deployment plus content re-import.
+- **Behaviour changes** – vCLS deactivated by default; vCenter syslog on TLS
+  port 1514; vCenter root password 15–20 characters.
 
 ---
 
@@ -96,15 +149,6 @@ build number.
 > level with no path to 9.1.0 (for example VCF Operations 8.18.7), and rolling
 > it back would lose data (historical metrics), the whole engagement may have
 > to wait for the point release that adds that path. Check this early.
-
-### Framing: "Create New VCF 9.1 Fleet"
-
-For a **5.2.x source**, the planner labels the 5.2 → 9.1 upgrade **"Create
-New VCF 9.1 Fleet"**. This is still an in-place upgrade of your existing
-environment – the wording reflects that 9.x introduces the *fleet* construct
-(VCF Operations manages a fleet of VCF instances) and the new **VCF
-Management Services** layer, which 5.2 did not have. A 9.0.x source instead
-uses "Expand existing VCF Fleet by upgrading the current instance".
 
 ### Prerequisites and architectural guardrails
 
@@ -182,7 +226,11 @@ flowing through the (unified) Cloud Proxy.
 
 ### Phase 2 – SDDC Manager upgrade
 
-Upgrade **SDDC Manager** to the target build.
+Upgrade **SDDC Manager** to the target build using the pre-9.1 SDDC Manager
+UI. This is where the 9.1 fleet-management UI and the new upgrade workflow
+appear; from here on, **NSX and vCenter are driven from SDDC Manager / VCF
+Operations Fleet Management**, not their own upgrade tools. Re-run the fleet
+precheck afterwards.
 
 **Before moving on:** SDDC Manager UI healthy; inventory intact; prechecks
 still green.
@@ -281,6 +329,30 @@ Confirm each component landed on its expected build.
 
 ---
 
+## Windows, ordering and rollback
+
+- **Method.** The upgrade runs **sequentially** – one component, one domain at
+  a time. Management domain first, then each workload domain, repeating the
+  same phase order.
+- **Windows.** Size the window per domain, not for the whole estate, and split
+  it into an **unattended block** (host / firmware remediation – the bulk of
+  the elapsed time) and **attended blocks** around it (the VCF Operations
+  upgrade, config updates, prechecks, DR re-test). A single VxRail management
+  + workload domain pair has run to roughly 80 hours end to end.
+- **Safe stopping points.** Every phase boundary is a safe stop – run the
+  "before moving on" checks, then either continue or pause. Do not stop
+  mid-phase.
+- **Rollback.** SDDC Manager and NSX upgrades are **not cleanly reversible** –
+  the backout position for those phases is restore-from-backup, so the
+  pre-upgrade backups must be verified first. vCenter has a reduced-downtime
+  upgrade rollback path (Phase 6). ESX / host upgrades roll forward. Agree the
+  per-phase backout position before the window.
+- **Prechecks are a loop.** The fleet precheck is the entry gate; component
+  prechecks re-run inside each phase. Expect to iterate – clear, re-run,
+  proceed.
+
+---
+
 ## Conditional phases (optional components)
 
 When optional components are present the planner expands the plan (example:
@@ -296,6 +368,7 @@ they slot into the core spine:
 | **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** All sites on compatible versions; inter-site connectivity required; **must precede** Local Manager upgrade |
 | **NSX Edge & NSX Finalize** | replaces the plain "NSX finalize", after the host phase | Edge nodes upgraded last, after ESX/host kernels, then finalize |
 | **Post-Infrastructure Products → Log Management** | after NSX finalize | **No in-place upgrade path** – deploy fresh Log Management services |
+| **Operations for Networks** (vRNI / Aria Operations for Networks) | with the operations tier | Upgrade-path is version-gated – e.g. 6.14.1 reaches 9.1.0.0100 but not 9.1.0.0200 directly, and the newest 6.14.x may have no 9.x path. Collector nodes are version-locked to the platform – redeploy / re-pair |
 | **vSAN File Service** | after Log Management | Upgrade vSAN File Service |
 
 Re-run the planner with the real component list for the authoritative
@@ -401,8 +474,18 @@ ships with VCF Management Services (deployed in Phase 3).
   ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html)).
 - **Licensing** – all vCenter/NSX/host licenses assigned from the License
   Server; no connectivity errors between vCenter and the License Server.
-- **Backups** – re-verify image-based/file-based backups run clean against
-  the upgraded components.
+- **Certificates** – re-issue or replace certificates for every new appliance
+  (Management Services, License Server, Identity Broker, unified Cloud Proxy,
+  Protection and Recovery); update trust on downstream integrations.
+- **Identity** – SSO login works at every portal via Identity Broker;
+  federation to the upstream IdP re-validated.
+- **Integrations** – re-validate ServiceNow round-trips, log forwarding and
+  content packs, custom dashboards and reports, vRO workflows, and any API
+  consumers.
+- **Disaster Recovery** – re-test a recovery plan against the converged
+  Protection and Recovery appliance.
+- **Backups** – reconfigure backup targets for the new appliances; re-verify
+  image-based / file-based backups run clean; take fresh baselines.
 - **Fleet health** – SDDC Manager and VCF Operations report a healthy fleet;
   run a fresh precheck.
 
