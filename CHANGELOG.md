@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.4.4 – 2026-08-28
+- **`docs/01-overview.md` – vSphere Supervisor placement** (issue #11). Added
+  a conditional-phases row and a **"vSphere Supervisor in detail"** subsection.
+  Per the VCF Upgrade Planner scenario, the Supervisor upgrade lands **after
+  vCenter (Phase 6) and before the ESX host phase (Phase 7)** – after NSX
+  Local Manager / Global Manager, ahead of the host kernels. It is driven by
+  vCenter Workload Management / vLCM (not SDDC Manager), requires the
+  Supervisor clusters to be on vLCM images, must match the vCenter version
+  (auto-upgrade removed at vCenter 9.0), rolls each host through maintenance
+  mode for the Spherelet, and is followed by any vSphere Kubernetes Service
+  (VKS / Tanzu) guest-cluster upgrades per the Supervisor-VKS matrix. KB
+  440630's core sequence does not list it.
+
 ## v0.4.3 – 2026-08-28
 - **`docs/01-overview.md` conditional phases – expanded two of the table rows
   into subsections** (issues #7, #5).
