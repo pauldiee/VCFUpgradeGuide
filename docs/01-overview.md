@@ -32,6 +32,7 @@ core guidance stays reusable across engagements.
 - [Windows, ordering and rollback](#windows-ordering-and-rollback)
 - [Conditional phases (optional components)](#conditional-phases-optional-components)
   – [NSX Federation](#nsx-global-manager--federation-in-detail)
+  · [vSphere Supervisor](#vsphere-supervisor-in-detail)
   · [Avi + License Hub](#avi-load-balancer--license-hub-in-detail)
   · companion docs: [Disaster Recovery](02-disaster-recovery.md)
   · [Identity Broker migration](03-identity-broker-migration.md)
@@ -368,6 +369,7 @@ they slot into the core spine:
 | **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | See [Avi + License Hub in detail](#avi-load-balancer--license-hub-in-detail) |
 | **VMware HCX** | after VCF Automation | Upgrade HCX before the NSX/vCenter/host tier |
 | **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** See [NSX Federation in detail](#nsx-global-manager--federation-in-detail) |
+| **vSphere Supervisor** | after vCenter (Phase 6), before the ESX host phase (Phase 7) | See [vSphere Supervisor in detail](#vsphere-supervisor-in-detail) |
 | **NSX Edge & NSX Finalize** | replaces the plain "NSX finalize", after the host phase | Edge nodes upgraded last, after ESX/host kernels, then finalize |
 | **Post-Infrastructure Products → Log Management** | after NSX finalize | **No in-place upgrade path** – deploy fresh Log Management services |
 | **Operations for Networks** (vRNI / Aria Operations for Networks) | with the operations tier | Upgrade-path is version-gated – e.g. 6.14.1 reaches 9.1.0.0100 but not 9.1.0.0200 directly, and the newest 6.14.x may have no 9.x path. Collector nodes are version-locked to the platform – redeploy / re-pair |
@@ -406,6 +408,34 @@ Federation: Yes / No").
 
 Broadcom reference: "Upgrading NSX Global Manager Nodes in a Federated
 Environment" (techdocs, under *Upgrading Cloud Foundation*).
+
+### vSphere Supervisor in detail
+
+**Position: after vCenter, before the ESX host phase** – between core
+[Phase 6](#phase-6--vcenter-upgrade) and [Phase 7](#phase-7--esx--host-cluster-upgrade),
+after NSX Local Manager (and the NSX Global Manager, if federated), ahead of
+any vSAN witness and the host kernels. KB 440630's core sequence does not
+list it – it is an inserted advanced-product step.
+
+- **Driven by vCenter Workload Management / vLCM**, not SDDC Manager or Fleet
+  Management. Follow the "Upgrade a Supervisor cluster" procedure.
+- **Supervisor clusters must be on vLCM images.** A Supervisor on a
+  baseline / VUM cluster is not supported – transition it first. (The general
+  vLCM-only rule, called out explicitly for Supervisor.)
+- **The Supervisor version must match the vCenter version.** Auto-upgrade was
+  removed at vCenter 9.0, so once vCenter is on the target build the
+  Supervisor is out of step until it is upgraded.
+- **It touches the hosts.** The Supervisor upgrade rolls each ESX host in the
+  cluster through maintenance mode to install the Spherelet – budget for that
+  on top of the Phase 7 host remediation.
+- **vSphere Kubernetes Service (VKS / Tanzu guest) clusters** upgrade *after*
+  the Supervisor, against the Supervisor ↔ VKS compatibility matrix.
+- **Before moving on:** Supervisor control plane healthy and on the matching
+  version; namespaces and workloads intact.
+
+Broadcom reference: "Upgrade a Supervisor cluster" (vSphere Supervisor
+installation and configuration → *Updating vSphere Supervisor* → *Managing a
+Supervisor cluster using vLCM*); vSphere Supervisor release notes.
 
 ### Avi Load Balancer + License Hub in detail
 
