@@ -31,7 +31,9 @@ core guidance stays reusable across engagements.
   Local Manager → vCenter → ESX / host → NSX finalize → effective versions
 - [Windows, ordering and rollback](#windows-ordering-and-rollback)
 - [Conditional phases (optional components)](#conditional-phases-optional-components)
-  – companion docs: [Disaster Recovery](02-disaster-recovery.md)
+  – [NSX Federation](#nsx-global-manager--federation-in-detail)
+  · [Avi + License Hub](#avi-load-balancer--license-hub-in-detail)
+  · companion docs: [Disaster Recovery](02-disaster-recovery.md)
   · [Identity Broker migration](03-identity-broker-migration.md)
 - [Post-upgrade validation](#post-upgrade-validation)
 - [Cleanup / decommission](#cleanup--decommission)
@@ -363,9 +365,9 @@ they slot into the core spine:
 | Inserted phase | Position | Notes |
 | --- | --- | --- |
 | **Disaster Recovery Products** | before the core (ahead of SDDC Manager) | Converge SRM / vSphere Replication to **Protection and Recovery** – own doc: [Disaster Recovery](02-disaster-recovery.md) |
-| **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | License Hub 2.0 appliance: 1 management IP + a pool of **2 contiguous IPs**; Default size 1 node / 6 vCPU / 12 GB / 256 GB |
+| **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | See [Avi + License Hub in detail](#avi-load-balancer--license-hub-in-detail) |
 | **VMware HCX** | after VCF Automation | Upgrade HCX before the NSX/vCenter/host tier |
-| **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** All sites on compatible versions; inter-site connectivity required; **must precede** Local Manager upgrade |
+| **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** See [NSX Federation in detail](#nsx-global-manager--federation-in-detail) |
 | **NSX Edge & NSX Finalize** | replaces the plain "NSX finalize", after the host phase | Edge nodes upgraded last, after ESX/host kernels, then finalize |
 | **Post-Infrastructure Products → Log Management** | after NSX finalize | **No in-place upgrade path** – deploy fresh Log Management services |
 | **Operations for Networks** (vRNI / Aria Operations for Networks) | with the operations tier | Upgrade-path is version-gated – e.g. 6.14.1 reaches 9.1.0.0100 but not 9.1.0.0200 directly, and the newest 6.14.x may have no 9.x path. Collector nodes are version-locked to the platform – redeploy / re-pair |
@@ -380,6 +382,62 @@ Two of the conditional workstreams have their own docs:
   convergence to VCF Protection and Recovery (runs *before* the core upgrade).
 - **[Identity Broker migration](03-identity-broker-migration.md)** – VIDM /
   Workspace ONE Access → VCF Identity Broker (runs *after* the core upgrade).
+
+### NSX Global Manager / Federation in detail
+
+**NSX Federation** = one or more **NSX Global Manager** clusters (Active +
+Standby) coordinating the NSX Local Manager instances across sites. Detect it
+from NSX Manager (**System → Location Manager**), from the presence of Global
+Manager appliances, or from the Dell Technical Consultation checklist ("NSX
+Federation: Yes / No").
+
+- **Order.** The Global Managers upgrade **before** the Local Managers – the
+  upgrade coordinator does the GM cluster (standby node first, then active).
+  Only then does the Local Manager phase (core [Phase 5](#phase-5--nsx-local-manager-upgrade))
+  run, followed by Edge and finalize.
+- **Prerequisites.** Every site's NSX on a version the target supports
+  (check the interoperability matrix); inter-site tunnel / RTEP connectivity
+  healthy; a fresh Global Manager backup.
+- **In a VCF context** the whole NSX upgrade – GM → Local Manager → Edge →
+  hosts → finalize – is driven from **SDDC Manager / VCF Operations Fleet
+  Management** once SDDC Manager is on 9.1, not from NSX's own tooling.
+- **Before moving on:** Location Manager healthy; every location connected;
+  Global Managers on the target build.
+
+Broadcom reference: "Upgrading NSX Global Manager Nodes in a Federated
+Environment" (techdocs, under *Upgrading Cloud Foundation*).
+
+### Avi Load Balancer + License Hub in detail
+
+Two separate things that travel together because License Hub licenses Avi.
+
+**Avi Load Balancer (NSX Advanced Load Balancer).** Upgrade the **Avi
+Controller** cluster ahead of the core NSX / vCenter / host tier; Service
+Engines follow. Follow the dedicated
+[Upgrade Avi Load Balancer to VCF 9.1](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer-vmware-cloud-foundation/9-1/upgrade-avi-load-balancer-to-vcf-9-1/upgrade-avi-to-9-1.html)
+procedure.
+
+**License Hub** licenses **vDefend and Avi** subscription license files
+(replacing the 25-character keys). It is needed **only when vDefend *or* Avi
+is in scope** – never on the strength of the Security Services Platform alone.
+
+> **License Hub is not the License Server.** The **License Server** is
+> deployed automatically at bring-up / [Phase 3](#phase-3--deploy-vcf-management-services--license-server)
+> and licenses the VCF *fleet*. **License Hub** is a separate Day-N appliance
+> for vDefend / Avi. Both exist in a fleet that runs Avi.
+
+- **License Hub 2.0** (2026) ships as a **single standalone OVA** (~11 GB),
+  listed under the **Avi Load Balancer** download page → *Primary Downloads*.
+  It no longer uses the Security Services Platform Installer / `.tar` flow.
+  **There is no 5.1.2 → 2.0 upgrade path** – a fresh 2.0 deployment.
+- **License Hub 5.1.2** (older, if that is what is installed): three VMs
+  (installer / controller / worker), roughly **9 IPs** in two pools
+  (installer 1, nodes 4, services 4) whose **node and service pools cannot be
+  changed after deployment**, two FQDNs. Disconnected (air-gapped) mode
+  requires a manual license-file import every six months, indefinitely;
+  connected mode polls the Avi Cloud Console.
+- **Confirm which version applies** before re-using any 5.1.2 IP-pool / FQDN
+  guidance – the 2.0 single-OVA deploy prompts for different inputs.
 
 ### Identity: VIDM / Workspace ONE Access → VCF Identity Broker
 
