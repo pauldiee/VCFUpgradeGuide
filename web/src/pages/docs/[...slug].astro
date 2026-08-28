@@ -14,7 +14,10 @@ export async function getStaticPaths() {
 
 const { doc } = Astro.props;
 const { Content, headings } = await render(doc);
-const sections = headings.filter((h) => h.depth === 2);
+// On-this-page nav: H2 sections plus their H3 subsections, so long docs
+// (the upgrade overview) are navigable to a specific phase / sub-topic.
+const sections = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const topLevel = sections.filter((h) => h.depth === 2);
 
 const meta = navBySlug(doc.id);
 const idx = NAV.findIndex((n) => n.slug === doc.id);
@@ -27,12 +30,12 @@ const title = meta ? `${meta.label} — VCF Upgrade Guide` : 'VCF Upgrade Guide'
 <BaseLayout title={title} description={meta?.blurb} active={doc.id}>
   {meta && <p class="doc-eyebrow itq-eyebrow">{meta.step}</p>}
   {
-    sections.length > 2 && (
+    topLevel.length > 2 && (
       <nav class="doc-toc" aria-label="On this page" data-pagefind-ignore>
         <span class="doc-toc__label">On this page</span>
         <ul class="doc-toc__list">
           {sections.map((h) => (
-            <li>
+            <li class={h.depth === 3 ? 'doc-toc__sub' : undefined}>
               <a href={`#${h.slug}`}>{h.text}</a>
             </li>
           ))}
@@ -111,6 +114,13 @@ const title = meta ? `${meta.label} — VCF Upgrade Guide` : 'VCF Upgrade Guide'
   .doc-toc__list a:hover {
     border-color: var(--itq-orange);
     color: var(--itq-orange);
+  }
+  /* H3 sub-topics: lighter, smaller chips so the H2 sections still read first */
+  .doc-toc__list li.doc-toc__sub a {
+    background: transparent;
+    border-style: dashed;
+    font-size: 0.78rem;
+    opacity: 0.85;
   }
   /* Anchor targets inside the rendered markdown: keep headings clear of the sticky header */
   :global(.doc.prose h2),
