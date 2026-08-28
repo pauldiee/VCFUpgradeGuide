@@ -36,7 +36,9 @@ here – see the Related repo section in `README.md`.
 | `CHANGELOG.md`        | Per-release notes; **newest entry at TOP**                    |
 | `CLAUDE.md`           | This file                                                     |
 | `.gitignore`          | Excludes customer artifacts                                   |
-| `docs/01-overview.md` | General VCF upgrade guidance (any hardware)                    |
+| `docs/01-overview.md` | General VCF upgrade guidance (any hardware) – the spine     |
+| `docs/02-disaster-recovery.md` | SRM / vSphere Replication → Protection and Recovery convergence |
+| `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access → VCF Identity Broker |
 | `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps, on top of the general flow |
 | `reference/`          | Pinned reference material (Dell/VMware docs, KBs, etc.)        |
 | `tools/`              | Helper scripts, if any get added                               |
@@ -46,9 +48,25 @@ here – see the Related repo section in `README.md`.
 **Keep the general/addendum split real, not cosmetic.** When adding upgrade
 content, ask first whether it's true for any VCF upgrade or specific to
 VxRail (or a future second hardware platform). General content goes in
-`01-overview.md` (or a future `02-*.md` etc. as the general flow grows);
+`01-overview.md` (or a numbered `docs/NN-*.md` – see the next rule);
 hardware-specific content goes in its own addendum doc, cross-linking back
 to the general step it modifies or extends rather than repeating it.
+
+**Promote a topic to its own `docs/NN-*.md` when it would bloat
+`01-overview.md`.** `01-overview.md` is the spine – phase list, prerequisites,
+conditional-phase table, validation. When a conditional workstream needs more
+than a table row plus a short subsection (roughly: a full procedure,
+prerequisites, and version detail), give it its own numbered doc. Number by
+position in the flow where it helps (`02-disaster-recovery.md` runs before
+the core, `03-identity-broker-migration.md` after). Add it to
+`web/src/nav.ts` and the `README.md` contents table. A short subsection *in*
+the overview is fine while a topic is still small.
+
+**The overview always links to the guides.** `01-overview.md` is the entry
+point – every promoted `docs/NN-*.md` keeps a one- or two-line summary plus a
+link in the overview, at the point in the flow where it slots in (the
+conditional-phase table row and, where it warrants it, a short pointer
+paragraph). A guide is reached *through* the overview, never orphaned.
 
 ---
 
