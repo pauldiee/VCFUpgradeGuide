@@ -445,21 +445,23 @@ VCF 9 replaces VMware Identity Manager (VIDM) / Workspace ONE Access with
 ships with VCF Management Services (deployed in Phase 3).
 
 - **Not an in-place upgrade.** VIDM is not consumed by VCF 9.
-- **9.1 adds a script-based migration of *users and groups only*.** It runs
-  **after** the upgrade, once Identity Broker is up, and needs the VIDM
-  source live. The directory / IdP connection, federation to the upstream
-  IdP, end-user authentication and MFA policies, and any custom branding or
-  Workspace ONE Access-specific flows are **re-created by hand** on Identity
-  Broker. The upstream identity source (AD / LDAP / SAML IdP) itself is
-  unchanged.
+- **Users and groups can be brought across** – via the VCF Operations Access
+  Control group import (source: VMware Identity Manager), and/or the
+  script-based migration named in the 9.1.0.0 release notes. Everything else –
+  the directory / IdP connection, federation to the upstream IdP, end-user
+  authentication and MFA policies, custom branding, and any Workspace ONE
+  Access-specific flows – is **re-created by hand** on Identity Broker. The
+  upstream identity source (AD / LDAP / SAML IdP) itself is unchanged.
 - **Sequence.** Keep VIDM running → Identity Broker deployed (Phase 3) →
-  configure and test it (vCenter / NSX first) → run the users/groups
-  migration → re-point the Aria / VCF components and re-map role assignments
-  → deactivate Enhanced Linked Mode ("ELM break") once every vCenter in the
-  ring is on 9.1 → **then** decommission the VIDM appliances.
-- The interoperability matrix has no data for VIDM vs. Identity Broker – the
-  Broadcom "Migrating VMware Identity Manager to Identity Broker" guide is the
-  reference. Confirm a clustered VIDM source is supported.
+  configure it against the upstream IdP and test on vCenter / NSX first →
+  import the VIDM user groups and re-assign roles → re-point the Aria / VCF
+  components → deactivate Enhanced Linked Mode ("ELM break") once every
+  vCenter in the ring is on 9.1 → **then** decommission the VIDM appliances.
+- **Do not confuse** the VIDM → Identity Broker transition with "Identity
+  Broker embedded → instance" (moving an embedded broker to the HA cluster) –
+  that is a separate migration.
+- Full procedure, prerequisites, and what does / does not carry:
+  [`reference/identity-vidm-to-identity-broker.md`](../reference/identity-vidm-to-identity-broker.md).
 
 ---
 
