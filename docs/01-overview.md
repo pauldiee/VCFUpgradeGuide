@@ -38,6 +38,7 @@ core guidance stays reusable across engagements.
   · [Identity Broker migration](03-identity-broker-migration.md)
 - [Post-upgrade validation](#post-upgrade-validation)
 - [Cleanup / decommission](#cleanup--decommission)
+- companion doc: [Field notes – known issues and gotchas](04-field-notes.md)
 - [Hardware addenda](#hardware-addenda) – [VxRail Addendum](vxrail-addendum.md)
 
 ---
@@ -57,6 +58,9 @@ core guidance stays reusable across engagements.
    (VxRail: [VxRail Addendum](vxrail-addendum.md)).
 5. Finish with **[Post-upgrade validation](#post-upgrade-validation)** and
    **[Cleanup](#cleanup--decommission)**.
+
+Keep **[Field notes](04-field-notes.md)** open alongside – the list of things
+that went wrong on real upgrades and how they were cleared.
 
 ---
 
@@ -111,7 +115,9 @@ notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-c
 > **The source patch level matters – per component, not just SDDC Manager.**
 > Broadcom qualifies the 9.1 upgrade **from a specific source version** for
 > each product, and the *next* patch after that qualified level often has **no
-> path to any 9.x build yet**. Observed against 9.1.0.0x00: SDDC Manager 5.2.2
+> path to any 9.x build yet** – a patch **released after a target build**
+> upgrades *backwards* to it ("back in time"), which is unsupported. Observed
+> against 9.1.0.0x00: SDDC Manager 5.2.2
 > upgrades directly but 5.2.3.0 / 5.2.4.0 do not; VCF Operations 8.18.6
 > upgrades directly but **8.18.7 has no 9.x path**; Operations for Networks
 > 6.14.1 reaches 9.1.0.0100 but not 9.1.0.0200, and 6.14.3 has no 9.x path.
@@ -208,12 +214,15 @@ Operations is a **required component** in 9.x and must be on the target build
 **before the SDDC Manager upgrade begins**. On a 5.2.x source this is the
 transition **from Aria Operations** (via vRSLCM) to VCF Operations 9.1.
 
-- **Unified Cloud Proxy.** 9.1 collects for VCF Operations, Operations for
-  Logs, and the SDDC Manager / VCF Management integration from a **single**
-  Cloud Proxy appliance (1 node, 1 IP) in the first VCF Instance. **Legacy
-  8.18 vRealize Operations Cloud Proxies do not upgrade in place** into the
-  unified model – deploy the new proxy and reconfigure the collection paths
-  from SDDC Manager alongside this phase.
+- **Unified Cloud Proxy** (also **Universal Cloud Proxy / UCP**). 9.1 collects
+  for VCF Operations, Operations for Logs, and the SDDC Manager / VCF
+  Management integration from a **single** Cloud Proxy appliance (1 node, 1 IP)
+  in the first VCF Instance. **Legacy 8.18 vRealize Operations Cloud Proxies
+  do not upgrade in place** into the unified model – deploy the new proxy and
+  reconfigure the collection paths from SDDC Manager alongside this phase.
+  **The upgrade plan does not deploy the UCP for you** – and log-data transfer
+  from the old Operations for Logs needs a UCP in *split-proxy* mode
+  ([field notes](04-field-notes.md#observability--cloud-proxy-logs-networks)).
 - **Operations for Logs has no in-place upgrade to 9.x** – it is a fresh
   deployment regardless of source. Redeploy at 9.1 and re-import content
   packs, forwarding, agents, and RBAC. Plan it as its own step, not part of
@@ -281,13 +290,18 @@ Global Manager upgrade comes first – see [conditional phases](#conditional-pha
 
 ### Phase 6 – vCenter upgrade
 
-Upgrade **vCenter** via **VCF Operations → Fleet Management**. Two gotchas:
+Upgrade **vCenter** via **VCF Operations → Fleet Management** – the
+installer-UI upgrade path is deprecated. Gotchas:
 
-- **Replace Integrated Windows Authentication** on vCenter with another IdP
-  configuration before upgrading.
+- **Integrated Windows Authentication is removed in vCenter 9.** Dissolve the
+  Active Directory domain join before upgrading – unjoin gracefully per
+  KB 373004; move to another IdP configuration.
 - **RDU (reduced-downtime upgrade) rollback**, if it fails: shut down the
   target vCenter → run the script to stop the RDU → roll back the 8.0
   vCenter Workspace ONE broker precheck change → reboot vCenter.
+- After the upgrade, re-check the vCenter Lifecycle Manager **depot token** –
+  it can silently stop matching SDDC Manager's, and ESXi images vanish from
+  the vCenter depot ([field notes](04-field-notes.md#entitlement-and-the-depot-download-token)).
 
 **Before moving on:** vCenter on the target build; ELM (if used) intact; all
 hosts connected.

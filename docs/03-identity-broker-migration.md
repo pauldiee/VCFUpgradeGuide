@@ -113,6 +113,23 @@ embedded Identity Broker and HA is wanted, that migration is its own step.
 
 ---
 
+## Known issues
+
+Seen on real upgrades – full detail in
+[Field notes → Identity Broker / VCF SSO](04-field-notes.md#identity-broker--vcf-sso):
+
+- **Encryption-key desync** between Identity Broker and the vCenter database
+  (`mac check in GCM failed`, `401 invalid_client` on the token call) –
+  fix is KB 377519 (`recover_ws1b.sh` + `Rotate_WS1B_secrets.sh`).
+- **NTP clock skew** on the Identity Broker expires SAML tokens
+  (`InvalidTimingException`); fix NTP first, but it alone will not clear a
+  key-desync.
+- **ELM drift** after breaking Enhanced Linked Mode – check the SDDC Manager
+  API for drift status and re-run drift remediation; the management vCenter
+  is the one that tends to hold out.
+
+---
+
 ## Open items to confirm
 
 - The **script-based migration** from the 9.1.0.0 release notes: its name,

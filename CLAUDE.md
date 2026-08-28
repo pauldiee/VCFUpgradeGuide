@@ -39,6 +39,7 @@ here – see the Related repo section in `README.md`.
 | `docs/01-overview.md` | General VCF upgrade guidance (any hardware) – the spine     |
 | `docs/02-disaster-recovery.md` | SRM / vSphere Replication → Protection and Recovery convergence |
 | `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access → VCF Identity Broker |
+| `docs/04-field-notes.md` | Known issues and gotchas from real upgrades |
 | `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps, on top of the general flow |
 | `reference/`          | Pinned reference material (Dell/VMware docs, KBs, etc.)        |
 | `tools/`              | Helper scripts, if any get added                               |
