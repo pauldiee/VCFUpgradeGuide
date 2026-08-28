@@ -31,8 +31,8 @@ core guidance stays reusable across engagements.
   Local Manager → vCenter → ESX / host → NSX finalize → effective versions
 - [Windows, ordering and rollback](#windows-ordering-and-rollback)
 - [Conditional phases (optional components)](#conditional-phases-optional-components)
-  – [Disaster Recovery in detail](#disaster-recovery-products-in-detail)
-  · [Identity Broker migration](02-identity-broker-migration.md) (own doc)
+  – companion docs: [Disaster Recovery](02-disaster-recovery.md)
+  · [Identity Broker migration](03-identity-broker-migration.md)
 - [Post-upgrade validation](#post-upgrade-validation)
 - [Cleanup / decommission](#cleanup--decommission)
 - [Hardware addenda](#hardware-addenda) – [VxRail Addendum](vxrail-addendum.md)
@@ -362,7 +362,7 @@ they slot into the core spine:
 
 | Inserted phase | Position | Notes |
 | --- | --- | --- |
-| **Disaster Recovery Products** | before the core (ahead of SDDC Manager) | Converge SRM / vSphere Replication to **Protection and Recovery** – see [detail below](#disaster-recovery-products-in-detail) |
+| **Disaster Recovery Products** | before the core (ahead of SDDC Manager) | Converge SRM / vSphere Replication to **Protection and Recovery** – own doc: [Disaster Recovery](02-disaster-recovery.md) |
 | **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | License Hub 2.0 appliance: 1 management IP + a pool of **2 contiguous IPs**; Default size 1 node / 6 vCPU / 12 GB / 256 GB |
 | **VMware HCX** | after VCF Automation | Upgrade HCX before the NSX/vCenter/host tier |
 | **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** All sites on compatible versions; inter-site connectivity required; **must precede** Local Manager upgrade |
@@ -374,69 +374,12 @@ they slot into the core spine:
 Re-run the planner with the real component list for the authoritative
 insert points.
 
-### Disaster Recovery Products in detail
+Two of the conditional workstreams have their own docs:
 
-If Site Recovery Manager (SRM) / vSphere Replication is present, plan this as
-its own workstream **before** the core upgrade – the current DR release is not
-supported on the upgraded vCenter, so any order that upgrades vCenter first
-leaves the environment unprotected.
-
-**Target: VCF Protection and Recovery.** From 9.1.0.0 the recovery manager,
-vSphere Replication, and vSAN replication ship as a **single combined
-appliance**. SRM is renamed **VMware Live Site Recovery (VLSR)**.
-
-**Convergence.** "Convergence" is the Broadcom path for VLSR **9.0.2.3 and
-earlier** onto the combined appliance. The Converge workflow requires the
-source to be at **9.0.2.2 or later** (Broadcom KB 408127) – a site on an
-earlier 9.0.2.x needs an interim patch first. Versions 9.0.3 and later use a
-normal in-place update instead.
-
-**Bridge version – why DR goes first.** Protection and Recovery 9.1.0.02xx is
-supported on vCenter and ESX at **8.0 U3, 9.0, and 9.1** (not 8.0 U2 or
-earlier). It runs on the pre-upgrade vCenter *and* the upgraded vCenter, so
-converging DR to it before the core upgrade keeps protection continuous.
-Confirm the exact supported set in the interoperability matrix for your build.
-
-**Enhanced vSphere Replication is a prerequisite.** For VCF 9 it is the only
-supported site-to-site configuration; the appliance will not install against a
-site still on legacy replication (unsupported past vSphere Replication
-9.0.2.2). Per site, ahead of the convergence:
-
-1. Permit outbound **TCP 32032** on every ESX host carrying replicated
-   datastore traffic.
-2. Define **Enhanced Replication Mappings** in the Site Recovery interface,
-   per protected site pair.
-3. Convert every legacy VM replication to Enhanced settings – **per VM**, via
-   the Site Recovery UI or the REST API (Broadcom ships a Python sample for
-   large estates).
-
-**Convergence procedure** (per site; run on the protected site first, then the
-recovery site):
-
-1. Pre-work: full backup of the Protection and Recovery database; configuration
-   export via the Import/Export tools; record Site Pair advanced settings; all
-   recovery plans **Ready**, all protection groups and VMs **OK**; custom
-   certificates on SHA1/SHA256 thumbprints (no MD5); have vCenter SSO admin
-   credentials for both sites.
-2. Deploy the Protection and Recovery 9.1 appliance on **both** vCenter sites;
-   enable SSH on all legacy appliances; ensure the new appliance can reach
-   them.
-3. In the Protection and Recovery Appliance Management Interface →
-   **Converge Legacy Appliances** → enter the vCenter and legacy-appliance
-   credentials → select the services → run the configuration wizard.
-4. Repeat on the recovery site.
-5. After: the legacy appliances power off and their IPs/FQDNs move to the
-   single appliance; clean up firewall rules and DNS; reinstall storage
-   replication adapters (SRA) and re-register any VASA provider; re-verify the
-   site pairing.
-
-Convergence preserves advanced settings, datastore groups, protection groups,
-inventory mappings, recovery plans, per-VM IP customizations, custom roles and
-permissions, custom alarms, test-plan history, and certificates – **for
-objects in a valid state only**.
-
-Broadcom reference: "Convergence and Upgrade" (VCF Protection and Recovery 9.1
-installation guide); KB 313905 (VLSR / SRM build numbers).
+- **[Disaster Recovery](02-disaster-recovery.md)** – SRM / vSphere Replication
+  convergence to VCF Protection and Recovery (runs *before* the core upgrade).
+- **[Identity Broker migration](03-identity-broker-migration.md)** – VIDM /
+  Workspace ONE Access → VCF Identity Broker (runs *after* the core upgrade).
 
 ### Identity: VIDM / Workspace ONE Access → VCF Identity Broker
 
@@ -448,7 +391,7 @@ bring users/groups across, rebuild the directory / IdP connection, federation,
 MFA policies and branding by hand, re-point the components, then retire VIDM.
 
 Full procedure, prerequisites, and what does / does not carry:
-**[Identity Broker migration](02-identity-broker-migration.md)**.
+**[Identity Broker migration](03-identity-broker-migration.md)**.
 
 ---
 

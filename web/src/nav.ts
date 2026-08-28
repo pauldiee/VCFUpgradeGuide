@@ -24,11 +24,18 @@ export const NAV: NavItem[] = [
     blurb: 'General VCF upgrade guidance, independent of underlying hardware.',
   },
   {
-    slug: '02-identity-broker-migration',
+    slug: '02-disaster-recovery',
+    step: 'Guide',
+    label: 'Disaster Recovery',
+    icon: 'shield-halved',
+    blurb: 'SRM / vSphere Replication convergence to VCF Protection and Recovery, before the core upgrade.',
+  },
+  {
+    slug: '03-identity-broker-migration',
     step: 'Guide',
     label: 'Identity Broker migration',
     icon: 'key',
-    blurb: 'VIDM / Workspace ONE Access to VCF Identity Broker: a distinct workstream after the core upgrade.',
+    blurb: 'VIDM / Workspace ONE Access to VCF Identity Broker, after the core upgrade.',
   },
   {
     slug: 'vxrail-addendum',
