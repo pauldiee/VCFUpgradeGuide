@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4.6 – 2026-08-28
+- **`web/src/nav.ts`:** regrouped `04-field-notes` from "Guide" to
+  "Reference" – it is a companion symptom/cause/fix list, not a step-by-step
+  guide like `02-disaster-recovery.md` / `03-identity-broker-migration.md`.
+
 ## v0.4.5 – 2026-08-28
 - **New `docs/04-field-notes.md`** (issue #15) – de-identified known issues
   and gotchas from a prior VCF 5.2.2 → 9.0.2 multi-domain upgrade, grouped by

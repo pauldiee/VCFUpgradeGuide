@@ -39,7 +39,7 @@ export const NAV: NavItem[] = [
   },
   {
     slug: '04-field-notes',
-    step: 'Guide',
+    step: 'Reference',
     label: 'Field notes',
     icon: 'triangle-exclamation',
     blurb: 'Known issues and gotchas from real VCF 5.2 to 9.x upgrades, grouped by phase.',
