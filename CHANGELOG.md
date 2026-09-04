@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.5.0 – 2026-09-04
+- **`docs/` – reframe version guidance for VCF 9.1.1 GA** (issue #16).
+  VCF 9.1.1 went GA on 2026-09-03. `01-overview.md`: **"Pin a target build"**
+  no longer says 9.1.1 is unreleased – it is now the current point release,
+  and a component qualified against a 9.1.0.0x00 build is not automatically
+  qualified against 9.1.1. Corrected the **VCF Operations 8.18.7** worked
+  example throughout (the "back in time" note, the "a component can force the
+  wait" note): 8.18.7 has no path to any 9.1.0.x build, but the Broadcom
+  Upgrade Path tool (checked 2026-09-04) shows **8.18.7 → 9.1.1.0 is
+  supported** – "upgrades are only supported from VCF 9.1.1.0 onward" – so it
+  is the textbook case of a point release re-qualifying source versions, not
+  an example of "no 9.x path at all". Status note flags that the 2026-08-27
+  planner run predates 9.1.1. `02-disaster-recovery.md`: note that 9.1.1
+  ships its own Protection and Recovery build with its own qualified
+  vCenter / ESX set. `vxrail-addendum.md`: status note refreshed. No BOM
+  build numbers changed – the docs already defer those to the matrix and the
+  reader's target build.
+
 ## v0.4.9 – 2026-08-28
 - **`docs/01-overview.md` – NSX Edge & NSX Finalize conditional phase**
   (issue #8). Expanded Phase 8 / the table row into an **"NSX Edge & NSX

@@ -9,11 +9,13 @@ core guidance stays reusable across engagements.
 
 > **Status: draft.** The phase *ordering and conditionality* below is
 > verified against the [VCF Upgrade Planner](https://vmware.github.io/vcf-upgrade-planner/)
-> (run 2026-08-27, target build 9.1.0.0400). Per-phase procedure detail, IP
-> counts, and version numbers are transcribed from the planner and the
-> supplementary guides and **must be re-confirmed verbatim against Broadcom
-> TechDocs** (and against your actual target build) before being treated as
-> authoritative. Sources: [`reference/sources.md`](../reference/sources.md).
+> (run 2026-08-27, target build 9.1.0.0400). **VCF 9.1.1 went GA on
+> 2026-09-03** – that run predates it, so re-run the planner and the
+> interoperability matrix for a 9.1.1 target build. Per-phase procedure
+> detail, IP counts, and version numbers are transcribed from the planner and
+> the supplementary guides and **must be re-confirmed verbatim against
+> Broadcom TechDocs** (and against your actual target build) before being
+> treated as authoritative. Sources: [`reference/sources.md`](../reference/sources.md).
 
 ---
 
@@ -122,8 +124,10 @@ notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-c
 > upgrades *backwards* to it ("back in time"), which is unsupported. Observed
 > against 9.1.0.0x00: SDDC Manager 5.2.2
 > upgrades directly but 5.2.3.0 / 5.2.4.0 do not; VCF Operations 8.18.6
-> upgrades directly but **8.18.7 has no 9.x path**; Operations for Networks
-> 6.14.1 reaches 9.1.0.0100 but not 9.1.0.0200, and 6.14.3 has no 9.x path.
+> upgrades directly to a 9.1.0.0x00 build but **8.18.7 skips the 9.1.0 line
+> entirely – its only 9.x target is 9.1.1.0** (Upgrade Path tool, checked
+> 2026-09-04); Operations for Networks 6.14.1 reaches 9.1.0.0100 but not
+> 9.1.0.0200, and 6.14.3 has no 9.x path.
 > **Applying "the latest patch" as preparation can strip the qualified path.**
 > Stay on the version that already has a direct path; only patch a component
 > when the matrix shows the current version is *below* the floor.
@@ -142,25 +146,29 @@ The matrix moves. Re-run every check when a new point release ships (see
 
 ### Pin a target build
 
-VCF 9.1 ships as patch builds: **9.1.0.0, 9.1.0.0100, 9.1.0.0200,
-9.1.0.0300, 9.1.0.0400** (as of 2026-08-27). **VCF 9.1.1 is not yet released
-but is expected imminently** – it will add newly supported source patch
-levels and a new target build. If an engagement calls for "9.1.1":
+VCF 9.1 shipped as patch builds **9.1.0.0, 9.1.0.0100, 9.1.0.0200,
+9.1.0.0300, 9.1.0.0400**; **VCF 9.1.1 went GA on 2026-09-03**, adding newly
+supported source patch levels and its own target build. If an engagement
+calls for "9.1.1":
 
-- Until 9.1.1 is GA, plan against the latest **9.1.0.0x00** build.
-- Once 9.1.1 is GA, **re-verify everything against the matrix**. A point
+- **Re-verify everything against the matrix** for the 9.1.1 target. A point
   release re-qualifies **both** the supported *source* versions and the
   *target* builds – it is not "a smaller step" on top of a 9.1.0 plan. Target
   builds, per-component upgrade paths, and the effective versions below all
   change.
+- A component already qualified against a 9.1.0.0x00 build is **not**
+  automatically qualified against 9.1.1 – re-run the Upgrade Path tool per
+  component.
 
 Do not carry a loose "9.1.1" into a runbook; always resolve it to a concrete
 build number.
 
 > **A component can force the wait.** If a running component sits at a patch
-> level with no path to 9.1.0 (for example VCF Operations 8.18.7), and rolling
-> it back would lose data (historical metrics), the whole engagement may have
-> to wait for the point release that adds that path. Check this early.
+> level with no path to the current target, and rolling it back would lose
+> data (historical metrics), the whole engagement may have to wait for the
+> point release that adds that path. This is exactly what **VCF Operations
+> 8.18.7** did: no path to any 9.1.0.x build, resolved only by 9.1.1.0
+> (Upgrade Path tool, 2026-09-04). Check this early.
 
 ### Prerequisites and architectural guardrails
 

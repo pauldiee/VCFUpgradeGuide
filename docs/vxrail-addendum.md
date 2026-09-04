@@ -8,9 +8,9 @@ additional because the hardware is VxRail. The non-hardware workstreams
 see [Overview](01-overview.md), do not duplicate them here.
 
 > **Status: draft.** Structure and the Dell process below are from a live
-> VxRail 5.2.2 → VCF 9.1 planning cycle. Re-confirm every version, build, and
-> step against the current Dell KBs and the Broadcom matrix for your target
-> build.
+> VxRail 5.2.2 → VCF 9.1 planning cycle (planned against 9.1.0; **VCF 9.1.1
+> went GA on 2026-09-03**). Re-confirm every version, build, and step against
+> the current Dell KBs and the Broadcom matrix for your target build.
 
 ---
 
