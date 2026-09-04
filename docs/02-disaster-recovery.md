@@ -32,7 +32,9 @@ Protection and Recovery 9.1.0.02xx is supported on vCenter and ESX at **8.0
 U3, 9.0, and 9.1** (not 8.0 U2 or earlier). It runs on the pre-upgrade
 vCenter *and* the upgraded vCenter, so converging DR to it before the core
 upgrade keeps protection continuous. Confirm the exact supported set in the
-interoperability matrix for your build.
+interoperability matrix for your build – **VCF 9.1.1 (GA 2026-09-03) ships
+its own Protection and Recovery build** with its own qualified vCenter / ESX
+set.
 
 ## Enhanced vSphere Replication is a prerequisite
 
