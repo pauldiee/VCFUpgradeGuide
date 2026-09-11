@@ -25,6 +25,7 @@ core guidance stays reusable across engagements.
 - [What changes in VCF 9.x](#what-changes-in-vcf-9x)
 - [Before you start](#before-you-start)
   – [supported path](#confirm-a-supported-upgrade-path)
+  · [VVF: is Fleet Management even in scope?](#vvf-confirm-whether-vcf-management-services-is-even-in-scope)
   · [target build](#pin-a-target-build)
   · [prerequisites & guardrails](#prerequisites-and-architectural-guardrails)
   · [pre-upgrade precheck](#run-the-pre-upgrade-precheck)
@@ -144,6 +145,69 @@ Matrix](https://interopmatrix.broadcom.com/)** before committing to a date:
 The matrix moves. Re-run every check when a new point release ships (see
 [Pin a target build](#pin-a-target-build)).
 
+### VVF: confirm whether VCF Management Services is even in scope
+
+This whole doc assumes the fleet is driven through **VCF Management Services /
+Fleet Management** – SDDC Manager, VCF Operations Fleet Management, the
+License Server, and the phase sequence below all sit on that layer. That
+layer is **mandatory for full VCF** but **optional for VMware vSphere
+Foundation (VVF)** – confirm which model an engagement is actually on before
+assuming the phases apply as written (verified against Broadcom TechDocs,
+["Deploying VMware vSphere Foundation 9.1 Without VCF Management
+Services"](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/deploy-vmware-vsphere-foundation-using-the-deployment-wizard/deploying-vmware-vsphere-foundation-9-1-without-vcf-management-services.html),
+2026-09-08):
+
+- **Fleet-managed VVF** (deployed/upgraded through the VCF Installer, VCF
+  Management Services present) – the phase sequence below applies unmodified.
+- **Standalone VVF** (no VCF Management Services layer) – "deploying and
+  running vSphere Foundation 9.1 without VCF management services is a
+  supported deployment model": compute, storage, networking and admin all run
+  through native vSphere management interfaces, and the fleet is patched /
+  upgraded with **standard vSphere lifecycle mechanisms** (vLCM against
+  vCenter/ESXi directly) instead of this doc's SDDC-Manager-driven phases.
+  Giving up VCF Management Services also gives up **log management, binary
+  management (the software depot component), and integrated lifecycle
+  management of VCF Operations** – if any of those are required, VCF
+  Management Services has to be deployed after all.
+
+**Standalone VVF manual upgrade – exact steps.** Broadcom's dedicated
+scenario for this path – ["Upgrading vSphere 8 and Optionally vSAN and Aria
+Operations 8 to
+9.1"](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1/upgrade-to-91-from-vsphere-8-and-aria-8-environments(1).html)
+(applies **only** when there is no SDDC Manager, NSX, or other Aria
+components – plain vSphere, optionally vSAN and Aria Operations) – runs 6
+phases, no SDDC Manager involved at any point:
+
+1. **Aria Operations / VCF Operations.** Upgrade Aria Operations 8.18.x in
+   place, **or** deploy VCF Operations 9.1 fresh if there is no existing Aria
+   Operations to upgrade from.
+2. **License Server.** Add a License Server manually to VCF Operations –
+   **required even in this manual scenario**: *"VCF Operations and the
+   license server components are required to license all 9.1.x
+   environments."* This is the one piece of the VCF Management Services layer
+   you cannot skip, even on the fully standalone path.
+3. **vCenter.** Upgrade the vCenter instance – choose **in-place** or
+   **reduced-downtime upgrade (RDU)** the same as on the fleet-managed path
+   (see [RDU detail](#phase-6--vcenter-upgrade)); driven from vCenter's own
+   VAMI / installer, not Fleet Management.
+4. **ESX hosts.** Upgrade the ESX hosts (vLCM images) – same host-by-host
+   rolling approach as core [Phase 7](#phase-7--esx--host-cluster-upgrade),
+   just triggered from vCenter directly.
+5. **vSAN on-disk format.** Upgrade the vSAN on-disk format version, if vSAN
+   is in use.
+6. **vSAN File Service.** Upgrade File Service agents, if enabled – same
+   procedure as [vSAN File Service in detail](#vsan-file-service-in-detail).
+
+Prerequisites for this scenario: vCenter 8 U3+, ESX 8 U3+, optionally vSAN 8
+U3+ and Aria Operations 8.18.x. Landing here is explicitly a **stable
+intermediate state** – you can extend to full VVF or VCF later (deploying VCF
+Management Services as a Day-N operation) rather than needing to decide
+everything up front.
+
+Establish this **before** running the planner or committing to a phase count
+– it changes whether Phases 2 and 3 (SDDC Manager, VCF Management Services +
+License Server) exist at all for that engagement.
+
 ### Pin a target build
 
 VCF 9.1 shipped as patch builds **9.1.0.0, 9.1.0.0100, 9.1.0.0200,
@@ -178,14 +242,17 @@ your target build.
 | Area | Requirement |
 | --- | --- |
 | **Fleet health** | Healthy source fleet; no failed workflows; all SDDC Manager prechecks green |
+| **CPU & TPM** | No deprecated CPU families for the target build; TPM 2.0 firmware current, or TPM disabled |
 | **Backups** | vCenter file-based backup configured; SDDC Manager + VCF Operations image-based backups to an external SFTP target |
 | **vSphere Lifecycle Manager** | All clusters managed by **vLCM images** – transition any remaining baseline-managed clusters first |
 | **DNS** | Strictly **lowercase** forward *and* reverse records for every existing and new name |
+| **NTP** | Time sync healthy and consistent across all fleet components before the upgrade window |
 | **vCenter root password** | **15–20 characters** (new 9.1 standard) |
 | **Management Services IP block** | Free **/28 CIDR minimum** on the management network (or a dedicated network); **12 IPs minimum, 30 recommended**. FQDNs for: Fleet component service, Instance component service, VCF services runtime, Identity Broker, License Server |
 | **Internal runtime range** | VCF services runtime uses **198.18.0.0/15** internally – must not overlap the management network. Changeable to 240.0.0.0/15 or 250.0.0.0/15 **only** via the deployment JSON spec |
 | **vCenter temp IPs** | A temporary IP per vCenter for the reduced-downtime upgrade |
-| **vSAN HCL** | Update the vSAN Hardware Compatibility database |
+| **vSAN HCL** | Update the vSAN Hardware Compatibility database; confirm Broadcom vSAN plugins are supported on the target build |
+| **vSAN health** | Resolve every red/yellow **Skyline Health** finding (vSAN cluster → Monitor → Skyline Health) before upgrading; only silence alerts that are understood and accepted |
 | **Certificates & passwords** | All component certs valid and not near expiry; all managed credentials valid |
 | **Syslog** | vCenter syslog moves to **TLS on port 1514** |
 | **vCLS** | vSphere Cluster Services is **deactivated by default** in 9.x – expect the behaviour change |
@@ -205,6 +272,24 @@ Run the **upgrade precheck in SDDC Manager** and resolve every error before
 starting. Component-specific prechecks (VCF Automation especially) run again
 inside each phase – a green fleet precheck is the entry gate, not the whole
 story.
+
+Broadcom additionally runs **VCFcheck** during the Technical Consultation
+gate – an in-house health-check script that sweeps every domain, checks all
+VCF components plus ESXi hosts, and produces color-coded, structured
+evidence (`result_<domain>.html` / `.txt` / `.json`, a `result_unsuccessful`
+file, and a run summary) feeding the go / no-go decision. Getting the tool
+requires a Broadcom PSO account (distributed via Broadcom KB, not a public
+download) – confirm with your Broadcom TC contact whether it will be run
+against your site, and if so, copy the result bundles out before closing the
+gate (they are auto-deleted from SDDC Manager after a week). For the
+[VVF manual-upgrade path](#vvf-confirm-whether-vcf-management-services-is-even-in-scope)
+(no SDDC Manager), Broadcom's equivalent `nonvcf-vsan` / `nonvcf-vcenter` /
+`nonvcf-esxi` / `nonvcf-nsxt` modes run the same checks directly against
+vCenter.
+
+No finding should go into the upgrade window unowned: track each one to
+resolution (or an explicit accepted-risk decision) and re-run the precheck
+to confirm it clears before proceeding.
 
 ---
 
@@ -307,9 +392,18 @@ installer-UI upgrade path is deprecated. Gotchas:
 - **Integrated Windows Authentication is removed in vCenter 9.** Dissolve the
   Active Directory domain join before upgrading – unjoin gracefully per
   KB 373004; move to another IdP configuration.
-- **RDU (reduced-downtime upgrade) rollback**, if it fails: shut down the
+- **RDU (reduced-downtime upgrade)** deploys a new appliance on the target
+  build alongside the running one and copies data/config while the source
+  stays online; the only outage is the **switchover** (~10 minutes per
+  Broadcom KB 313288). **If it fails, it auto-reverts** to the source VM in
+  its pre-upgrade state – no manual rollback needed. If the manual rollback
+  procedure below is still required for a specific failure: shut down the
   target vCenter → run the script to stop the RDU → roll back the 8.0
   vCenter Workspace ONE broker precheck change → reboot vCenter.
+- **After a successful RDU switchover, disconnect the source VM's network
+  adapter.** If the old appliance is later powered back on while still
+  connected, it will delete the new target VM (KB 313288). Do this before
+  the source VM leaves the maintenance window, not as an afterthought.
 - After the upgrade, re-check the vCenter Lifecycle Manager **depot token** –
   it can silently stop matching SDDC Manager's, and ESXi images vanish from
   the vCenter depot ([field notes](04-field-notes.md#entitlement-and-the-depot-download-token)).
@@ -367,15 +461,19 @@ Confirm each component landed on its expected build.
   it into an **unattended block** (host / firmware remediation – the bulk of
   the elapsed time) and **attended blocks** around it (the VCF Operations
   upgrade, config updates, prechecks, DR re-test). A single VxRail management
-  + workload domain pair has run to roughly 80 hours end to end.
+  + workload domain pair has run to roughly 80 hours end to end. Broadcom's
+  **Upgrade Time Calculator** gives per-component estimates to build the
+  project plan from – use it alongside a real reference point like the above.
 - **Safe stopping points.** Every phase boundary is a safe stop – run the
   "before moving on" checks, then either continue or pause. Do not stop
   mid-phase.
 - **Rollback.** SDDC Manager and NSX upgrades are **not cleanly reversible** –
   the backout position for those phases is restore-from-backup, so the
   pre-upgrade backups must be verified first. vCenter has a reduced-downtime
-  upgrade rollback path (Phase 6). ESX / host upgrades roll forward. Agree the
-  per-phase backout position before the window.
+  upgrade rollback path (Phase 6). ESX / host upgrades roll forward. **Write
+  down** the agreed per-phase backout position before the window – this is
+  one of the things a Technical Consultation gate expects as evidence, not
+  just a verbal agreement.
 - **Prechecks are a loop.** The fleet precheck is the entry gate; component
   prechecks re-run inside each phase. Expect to iterate – clear, re-run,
   proceed.

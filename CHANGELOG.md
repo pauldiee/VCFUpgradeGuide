@@ -1,5 +1,36 @@
 # Changelog
 
+## v0.5.1 – 2026-09-11
+- **`docs/01-overview.md` – fold in Broadcom Technical Consultation gate
+  content** (issue #17). Sourced from internal Broadcom TC deck screenshots
+  and a Slack thread reviewed with the customer TC process in mind.
+  **Run the pre-upgrade precheck**: added **VCFcheck** as Broadcom's
+  supplementary in-house health-check tool alongside the SDDC Manager
+  precheck – what it produces (color-coded per-domain result files feeding
+  the go/no-go decision), the PSO-account access requirement, and a
+  cross-link to the `nonvcf-*` modes for the VVF manual-upgrade path (no
+  SDDC Manager). **Prerequisites table**: added **CPU & TPM 2.0** and
+  **NTP** rows; extended **vSAN HCL** to cover Broadcom plugin support;
+  added a **vSAN health** row for the Skyline Health workflow. **Windows,
+  ordering and rollback**: cited the Broadcom **Upgrade Time Calculator**
+  for per-component estimates; strengthened the rollback bullet to require
+  a *written* per-phase backout position, not just verbal agreement.
+  Deliberately left out as internal Broadcom SRE process rather than
+  guidance for this repo's audience: remediation ownership tiers, the
+  Issues-on-Site tracker, comms templates, and the Cloud-Builder
+  deployment-checks mode (belongs in `VCF9-DeploymentPlanning` instead).
+- **`docs/02-disaster-recovery.md` – VLSR/SRM licensing section** (issue
+  #18). New **Licensing** section: Advanced Cyber Compliance (a paid VCF
+  Advanced Service) vs. a standalone Site Recovery Manager license; per-VM
+  capacity counted on both sites of a protection pair; the license rides
+  the same VCF License Server as [Phase 3](01-overview.md#phase-3--deploy-vcf-management-services--license-server),
+  not the Protection and Recovery appliance directly; and automatic
+  conversion of an existing legacy SRM key on activation. Added an open
+  question to Field notes: exact point in the convergence procedure to
+  assign the ACC/SRM license relative to deploying the 9.1 appliance – no
+  authoritative source found yet, confirm against the account's actual
+  SPD/entitlement first. Sources added to the reference table.
+
 ## v0.5.0 – 2026-09-04
 - **`docs/` – reframe version guidance for VCF 9.1.1 GA** (issue #16).
   VCF 9.1.1 went GA on 2026-09-03. `01-overview.md`: **"Pin a target build"**

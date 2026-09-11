@@ -78,6 +78,44 @@ recovery plans, per-VM IP customizations, custom roles and permissions, custom
 alarms, test-plan history, and certificates – **for objects in a valid state
 only**.
 
+## Licensing
+
+VMware Live Site Recovery (VLSR) / vSphere Replication / vSAN Data Protection
+is licensed separately from core VCF/VVF:
+
+- **Advanced Cyber Compliance (ACC)** – a paid **VCF Advanced Service** that
+  covers the full VLSR + vSphere Replication + vSAN Data Protection bundle
+  for VCF environments.
+- **Standalone Site Recovery Manager license** – for customers who want DR
+  without the cyber-recovery add-on capabilities; available for VCF, VVF, or
+  pre-9 vSphere.
+
+Ask **who is driving the DR spend** before assuming ACC is in scope – it is a
+commercial decision, not a technical default.
+
+**Capacity is per protected VM, on both sites.** The same license number is
+required on both ends of the pair: one-way protection of 100 VMs needs a
+100-VM license installed on **both** vCenter A and vCenter B; bidirectional
+protection of 100 VMs each way needs a **200-VM** license on both sides.
+
+**Where it's applied.** Not entered into the Protection and Recovery
+appliance directly – it rides the same mechanism as the rest of VCF 9.1
+licensing. Register VCF Operations and a **License Server** with the VCF
+Business Services Console, then add the ACC (or standalone SRM) subscription
+capacity to that License Server and assign it from there. This is the same
+License Server deployed in the Overview's
+[Phase 3](01-overview.md#phase-3--deploy-vcf-management-services--license-server) –
+DR licensing is not a separate appliance.
+
+**Legacy license conversion is automatic.** An existing perpetual / legacy
+SRM license key converts on activation – no manual re-entry: *"When you
+activate VMware Live Site Recovery your existing Site Recovery Manager
+license is converted to VMware Live Site Recovery license. You are no longer
+required to provide Site Recovery Manager license key."* A customer already
+on a **legacy SRM subscription can keep running it until the term ends** and
+only needs to purchase ACC (or the standalone SRM SKU) at renewal, or sooner
+if they want the newer cyber-recovery capabilities before then.
+
 ## Post-core check
 
 After the core upgrade, re-test a recovery plan against the converged
@@ -96,6 +134,10 @@ validation).
   alerts) is only supported once VCF Operations is on 9.x – expect a gap
   between the DR convergence and the VCF Operations upgrade. DR protection
   itself is unaffected.
+- **When in the convergence procedure the ACC / SRM license must be
+  assigned** (before deploying the 9.1 appliance vs. after) – no
+  authoritative source found yet; confirm against the account's actual SPD /
+  entitlement before this goes into a customer runbook. See [Licensing](#licensing).
 
 ---
 
@@ -107,3 +149,6 @@ validation).
 | Broadcom KB 408127 | Converge workflow source-version requirement (VLSR / vSphere Replication 9.0.2.2 or later) |
 | Broadcom KB 313905 | Build numbers and versions of VMware Live Site Recovery / SRM |
 | [Broadcom Product Interoperability Matrix](https://interopmatrix.broadcom.com/) | Protection and Recovery vs. vCenter / ESX / VCF Operations |
+| [VMware Live Site Recovery Licensing (TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-site-recovery/9-0-4/about-vmware-live-site-recovery-installation-and-configuration/overview/srm-licensing.html) | Advanced Cyber Compliance vs. standalone SRM license; per-VM capacity counting; legacy SRM key auto-conversion |
+| [Add a License to VCF Operations and License Server](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/add-a-license-to-vcf-operations.html) / [License Server Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/license-server-overview.html) | How ACC / SRM subscription capacity is registered and assigned via the VCF License Server |
+| [Purchasing a Subscription for VMware Live Recovery (Broadcom KB 428834)](https://knowledge.broadcom.com/external/article/428834/purchasing-a-subscription-for-vmware-liv.html) | ACC as a VCF advanced service; standalone SRM option for VVF / pre-9 vSphere |
