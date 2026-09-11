@@ -9,6 +9,23 @@ parallel with the Aria → VCF component migration.
 Applies whenever VIDM / Workspace ONE Access is present (typically because the
 Aria / operations stack authenticates through it).
 
+---
+
+## 9.0.x source: Identity Broker network transition (before Phase 1)
+
+A **different, unrelated prerequisite** for fleets already on VCF 9.0.x
+(where Identity Broker already exists, rather than being freshly deployed
+from VIDM): if that existing **Identity Broker 9.0.x sits on an NSX
+overlay** network, the VCF Operations upgrade ([Phase 1](01-overview.md#phase-1--vcf-operations-upgrade))
+**fails outright** unless it is first moved to the VCF management network.
+
+- **Condition.** Only applies if Identity Broker is on an NSX overlay. If it
+  is already on the VCF management network, skip this.
+- **Procedure.** Deploy a new Identity Broker on the management network,
+  reusing the **existing certificate and FQDN**; re-point DNS to it.
+- **Impact.** Service-disruptive – plan its own maintenance window, separate
+  from the main upgrade window, and do it **before** Phase 1 starts.
+
 > **Status: partial.** The 9.1.0.0 release notes state "Support for
 > script-based migration of data from VMware Identity Manager to identity
 > broker", but Broadcom has not published a prominent standalone procedure for

@@ -322,9 +322,13 @@ transition **from Aria Operations** (via vRSLCM) to VCF Operations 9.1.
 - **Unified Cloud Proxy** (also **Universal Cloud Proxy / UCP**). 9.1 collects
   for VCF Operations, Operations for Logs, and the SDDC Manager / VCF
   Management integration from a **single** Cloud Proxy appliance (1 node, 1 IP)
-  in the first VCF Instance. **Legacy 8.18 vRealize Operations Cloud Proxies
-  do not upgrade in place** into the unified model – deploy the new proxy and
-  reconfigure the collection paths from SDDC Manager alongside this phase.
+  in the first VCF Instance. **Hard blocker: without a Cloud Proxy on the
+  first VCF Instance, the upgrade cannot complete** – this applies even with
+  no Aria stack present at all (deploy VCF Operations *and* a Cloud Proxy in
+  that case; both are mandatory). **Legacy 8.18 vRealize Operations Cloud
+  Proxies do not upgrade in place** into the unified model – deploy the new
+  proxy and reconfigure the collection paths from SDDC Manager alongside this
+  phase.
   **The upgrade plan does not deploy the UCP for you** – and log-data transfer
   from the old Operations for Logs needs a UCP in *split-proxy* mode
   ([field notes](04-field-notes.md#observability--cloud-proxy-logs-networks)).
@@ -475,6 +479,23 @@ Confirm each component landed on its expected build.
   + workload domain pair has run to roughly 80 hours end to end. Broadcom's
   **Upgrade Time Calculator** gives per-component estimates to build the
   project plan from – use it alongside a real reference point like the above.
+
+  Broadcom's own upgrade-plan template gives these **typical per-component
+  estimates** (single management domain plus workload domains; excludes time
+  to resolve blockers found along the way):
+
+  | Domain | Component | Est. time | Notes |
+  | --- | --- | --- | --- |
+  | MGMT | SDDC Manager | ~1.0 hr | First component upgraded |
+  | MGMT | NSX-T (Edges / TN / Manager) | ~4.0 hrs | |
+  | MGMT | Witness node | ~0.5 hr | If applicable |
+  | MGMT | vCenter Server | ~1.0 hr | |
+  | MGMT | ESXi (per host) | ~11.0 hrs | Scales with host count |
+  | WLD 1+ | NSX-T (shared across WLDs) | ~8.0 hrs | Single upgrade, all WLDs |
+  | WLD 1+ | vCenter Server | ~1.0 hr | Per WLD |
+  | WLD 1+ | ESXi (per host) | ~8-13 hrs | WLDs can run in parallel |
+  | All | Aria Suite LCM | ~1.0 hr | If in scope |
+  | All | Post-upgrade checks (VCFcheck) | TBD | Final step, full environment |
 - **Safe stopping points.** Every phase boundary is a safe stop – run the
   "before moving on" checks, then either continue or pause. Do not stop
   mid-phase.
@@ -644,6 +665,10 @@ Engines follow. Follow the dedicated
 [Upgrade Avi Load Balancer to VCF 9.1](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer-vmware-cloud-foundation/9-1/upgrade-avi-load-balancer-to-vcf-9-1/upgrade-avi-to-9-1.html)
 procedure.
 
+> **Hard blocker: Avi 32.1.1 is the minimum for VCF 9.1.** If NSX and
+> vCenter reach 9.1 while Avi is still below 32.1.1, their own upgrades are
+> blocked. Upgrade Avi first, not as an afterthought.
+
 **License Hub** licenses **vDefend and Avi** subscription license files
 (replacing the 25-character keys). It is needed **only when vDefend *or* Avi
 is in scope** – never on the strength of the Security Services Platform alone.
@@ -762,6 +787,14 @@ Full procedure, prerequisites, and what does / does not carry:
 ---
 
 ## Post-upgrade validation
+
+Broadcom's post-upgrade health assessment mirrors the pre-upgrade gate:
+re-run **VCFcheck**'s post-check mode (`--product sddc-post-check
+--alldomains --pkg`) and compare the results against the pre-upgrade
+baseline, re-check **vSAN Skyline Health**, and confirm every check returns
+GREEN. Document any residual items or exceptions and package the evidence
+for handover, the same way the pre-upgrade findings were tracked to
+closure.
 
 - **Component builds** – every component on its expected build (Phase 9 table).
 - **VMware Tools** – upgrade guests to **13.1**.

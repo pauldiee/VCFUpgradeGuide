@@ -147,6 +147,19 @@ Expect every cluster to behave differently.
 
 ---
 
+## VCF Automation
+
+- **Idem-based Avi load balancer resources need a data migration, not a
+  general upgrade prerequisite.** Broadcom KB 403314 covers migrating
+  `Idem.AVILB.%`-pattern resources to native Avi resource integration on
+  Aria Automation 8.18.1 Patch 3 and later. It only applies if those
+  specific resources exist – it is **not** a blanket "must be on 8.18.1
+  Patch 3 before the VCF 9.1 upgrade" requirement, despite how it can read
+  in a summary slide. Check for Idem-based Avi LB resources first; if there
+  are none, this KB does not apply.
+
+---
+
 ## Identity Broker / VCF SSO
 
 - **Identity Broker encryption keys can desynchronise from the vCenter

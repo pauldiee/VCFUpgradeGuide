@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.5.3 – 2026-09-11
+- **`docs/01-overview.md`, `docs/03-identity-broker-migration.md`,
+  `docs/04-field-notes.md` – more TC deck follow-ups** (issue #17), covering
+  the 9.0.x fleet-transition path, hard blockers, and time estimates.
+  **01-overview.md**: added a hard-blocker callout that **Avi Load Balancer
+  32.1.1 is the minimum for VCF 9.1** (NSX / vCenter upgrades block below
+  it); added a hard-blocker note that the first VCF Instance needs a Cloud
+  Proxy or the upgrade cannot complete, including the no-Aria-present case;
+  added a per-component **time-estimate table** (SDDC Manager, NSX-T,
+  vCenter, ESXi, Aria Suite LCM, post-upgrade checks) from Broadcom's own
+  upgrade-plan template, alongside the existing Upgrade Time Calculator
+  mention; added a lead-in to **Post-upgrade validation** covering
+  VCFcheck's post-check mode, a vSAN Skyline Health re-check, and evidence
+  packaging for handover, mirroring the pre-upgrade gate.
+  **03-identity-broker-migration.md**: new section for the **9.0.x
+  fleet-transition path** – an existing Identity Broker 9.0.x on an NSX
+  overlay network fails the VCF Operations upgrade outright unless first
+  moved to the VCF management network (condition, procedure, and
+  maintenance-window impact). **04-field-notes.md**: new **VCF Automation**
+  section correcting a TC-deck claim – Broadcom KB 403314 only covers
+  migrating Idem-based Avi load-balancer resources, it is not a blanket
+  "must be on Aria Automation 8.18.1 Patch 3" upgrade prerequisite.
+
 ## v0.5.2 – 2026-09-11
 - **`docs/01-overview.md`, `docs/04-field-notes.md`, `docs/vxrail-addendum.md`
   – further Technical Consultation gate follow-ups** (issue #17), continuing
