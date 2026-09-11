@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.5.4 – 2026-09-11
+- **`docs/01-overview.md`, `docs/04-field-notes.md` – TC checklist
+  follow-ups** (issue #17). **01-overview.md**: added a **Bundle staging**
+  prerequisites row – bundles downloaded/staged/integrity-checked, and free
+  disk space confirmed on SDDC Manager (a common, avoidable staging
+  failure). **04-field-notes.md**: logged two TC checklist items as open
+  questions rather than guessing at their meaning – **VCFverify (VoV only)**
+  (listed alongside SOS/VCFcheck as a Dell VxRail pre-check tool, but
+  neither "VoV" nor what it checks is confirmed) and **NSX Intel** (likely
+  NSX Intelligence, not confirmed, no documented upgrade interaction yet).
+
 ## v0.5.3 – 2026-09-11
 - **`docs/01-overview.md`, `docs/03-identity-broker-migration.md`,
   `docs/04-field-notes.md` – more TC deck follow-ups** (issue #17), covering

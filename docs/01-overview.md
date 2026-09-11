@@ -243,6 +243,7 @@ your target build.
 | Area | Requirement |
 | --- | --- |
 | **Fleet health** | Healthy source fleet; no failed workflows; all SDDC Manager prechecks green |
+| **Bundle staging** | All upgrade bundles downloaded, staged, and integrity-checked before the window; confirm **free disk space on SDDC Manager** – a common, avoidable staging failure |
 | **CPU & TPM** | No deprecated CPU families for the target build; TPM 2.0 firmware current, or TPM disabled |
 | **Backups** | vCenter file-based backup configured; SDDC Manager + VCF Operations image-based backups to an external SFTP target |
 | **vSphere Lifecycle Manager** | All clusters managed by **vLCM images** – transition any remaining baseline-managed clusters first |

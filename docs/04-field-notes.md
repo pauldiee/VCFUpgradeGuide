@@ -249,3 +249,13 @@ components are firewalled independently and it is an easy step to miss.
   certificate-validity check in the [prerequisites table](01-overview.md#prerequisites-and-architectural-guardrails) –
   confirm scope against TechDocs or in-product behaviour before treating it
   as fact.
+- **"VCFverify (VoV only)"** – a TC checklist item (reviewed 2026-09-11)
+  listed alongside SOS and VCFcheck as a Dell VxRail pre-check tool (see
+  [VxRail Addendum](vxrail-addendum.md)), but neither what "VoV" stands for
+  nor what VCFverify actually checks has been confirmed yet. Do not describe
+  its purpose in the docs until that's confirmed.
+- **"NSX Intel"** – appears as a bare TC checklist item (reviewed
+  2026-09-11) in an "Environmental Checks" list alongside NSX/SDDC
+  Federation, Aria Suite, Stretched Cluster, and Tanzu. Likely refers to
+  **NSX Intelligence**, but not confirmed – if so, its upgrade
+  interaction/sequencing isn't documented anywhere in this repo yet.
