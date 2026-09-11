@@ -116,7 +116,8 @@ notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-c
 
 - **VCF 5.2.x / vSphere Foundation 5.2.x** – Broadcom calls this the
   **skip-level** path.
-- **VCF 9.0.x / vSphere Foundation 9.0.x** – the **fleet transition** path.
+- **VCF 9.0.x / vSphere Foundation 9.0.x** – the **fleet-lifecycle
+  transition** path.
 - vSphere 8 + Aria Operations 8
 
 > **The source patch level matters – per component, not just SDDC Manager.**
@@ -288,6 +289,22 @@ gate (they are auto-deleted from SDDC Manager after a week). For the
 (no SDDC Manager), Broadcom's equivalent `nonvcf-vsan` / `nonvcf-vcenter` /
 `nonvcf-esxi` / `nonvcf-nsxt` modes run the same checks directly against
 vCenter.
+
+**How it's run** (typically by Broadcom SRE/PSO, included here so the team
+knows what to expect and where the evidence comes from):
+
+- Copy the tool's `tar.gz` to SDDC Manager's `/tmp` via WinSCP; SSH in via
+  PuTTY and switch to root; extract it there.
+- From the extracted directory: `./vcfcheck --product sddc --alldomains
+  --pkg` sweeps every VCF component across every domain. `./vcfcheck
+  --product esxi --alldomains --pkg` runs **separately**, not combined with
+  the SDDC check – on a large environment, ESXi host checks can run in the
+  background while the SDDC results are being analyzed.
+- Post-upgrade: `./vcfcheck --product sddc-post-check --alldomains --pkg`
+  (currently only SDDC post-checks are supported).
+- The `nonvcf-*` modes (VVF path) prompt **interactively** for credentials,
+  per cluster – it asks whether all ESXi hosts in a cluster share the same
+  root password before falling back to per-host prompts.
 
 No finding should go into the upgrade window unowned: track each one to
 resolution (or an explicit accepted-risk decision) and re-run the precheck

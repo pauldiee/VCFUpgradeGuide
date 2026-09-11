@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.5.5 – 2026-09-11
+- **`docs/01-overview.md` – VCFcheck operational detail, small wording fix**
+  (issue #17). Expanded the pre-upgrade precheck section with a "How it's
+  run" block: the actual `--product sddc` / `--product esxi` (run
+  separately so ESXi checks can proceed in parallel on a large environment)
+  / `--product sddc-post-check` commands, the WinSCP-to-`/tmp` +
+  PuTTY-as-root mechanics, and the `nonvcf-*` per-cluster interactive
+  credential-prompt behaviour for the VVF path. Corrected the 9.0.x source
+  path label from "fleet transition" to Broadcom's actual term,
+  **fleet-lifecycle transition**.
+
 ## v0.5.4 – 2026-09-11
 - **`docs/01-overview.md`, `docs/04-field-notes.md` – TC checklist
   follow-ups** (issue #17). **01-overview.md**: added a **Bundle staging**
