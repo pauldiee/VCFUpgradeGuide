@@ -259,3 +259,13 @@ components are firewalled independently and it is an easy step to miss.
   Federation, Aria Suite, Stretched Cluster, and Tanzu. Likely refers to
   **NSX Intelligence**, but not confirmed – if so, its upgrade
   interaction/sequencing isn't documented anywhere in this repo yet.
+- **Combined vCenter + NSX Manager upgrade window.** A TC deck (reviewed
+  2026-09-11) describes an "optimized" combined approach – prep vCenter,
+  upgrade NSX, then switchover – as an alternative to the plain sequential
+  order (NSX Local Manager finishing before vCenter starts, which is what
+  [Phase 5 → Phase 6](01-overview.md#phase-5--nsx-local-manager-upgrade)
+  documents). The exact mechanics of "prep vCenter" relative to the RDU
+  switchover, and how far it can overlap the NSX Local Manager upgrade,
+  were not confirmed. **Treat the sequential Phase 5 → Phase 6 order as the
+  safe default** until this is clarified – do not attempt to interleave
+  them based on this note alone.

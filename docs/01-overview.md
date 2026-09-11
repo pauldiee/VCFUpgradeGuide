@@ -404,8 +404,13 @@ external load balancer needs no config change. **VCF Automation must reside
 on the management cluster** before VCF can upgrade it. Ensure enough
 resources for all Automation components.
 
+**VCF Operations Orchestrator** (formerly Aria Automation Orchestrator, if
+present) upgrades alongside Automation to **Orchestrator 9.1** – on a
+5.2.x source this is a **manual** step; on a 9.0.x source it is **driven by
+VCF Operations**. Confirm which applies for your source build.
+
 **Before moving on:** Automation portal reachable at its original FQDN;
-catalog/deployments intact.
+catalog/deployments intact; Orchestrator (if present) on the target build.
 
 ### Phase 5 – NSX Local Manager upgrade
 

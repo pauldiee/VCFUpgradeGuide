@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.5.6 – 2026-09-11
+- **`docs/01-overview.md`, `docs/04-field-notes.md` – close out the two
+  remaining TC deck gaps** (issue #17). **01-overview.md**: documented
+  **VCF Operations Orchestrator** (formerly Aria Automation Orchestrator)
+  in Phase 4 – upgrades alongside Automation, manual on a 5.2.x source,
+  driven by VCF Operations on a 9.0.x source; a component seen in two TC
+  deck component-order tables but never previously documented in this
+  repo. **04-field-notes.md**: logged the "optimized" combined vCenter +
+  NSX Manager upgrade window (prep vCenter, upgrade NSX, then switchover)
+  as an open question – the mechanics relative to the RDU switchover
+  weren't confirmed, so the doc explicitly defaults to the sequential
+  Phase 5 → Phase 6 order until clarified.
+
 ## v0.5.5 – 2026-09-11
 - **`docs/01-overview.md` – VCFcheck operational detail, small wording fix**
   (issue #17). Expanded the pre-upgrade precheck section with a "How it's
