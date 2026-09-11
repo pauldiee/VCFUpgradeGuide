@@ -211,6 +211,9 @@ components are firewalled independently and it is an easy step to miss.
 - **Enhanced Linked Mode (ELM) is deprecated** and will be removed – broken
   deliberately during the SSO reconfiguration.
 - **The installer-UI vCenter upgrade path is deprecated.**
+- **SDDC Manager's own UI is deprecated** and will be removed in a later
+  release – lifecycle management is moving to VCF Operations. Not yet gone
+  in 9.1.x, but don't build long-term customer processes around it.
 - **vSAN is no longer required for the management domain** – VMFS is
   supported.
 - **vCLS is deprecated / retreat mode** – expect it deactivated by default;
@@ -221,3 +224,15 @@ components are firewalled independently and it is an easy step to miss.
 - **The Data Protection appliance** (vSAN snapshots on ESA) moves into the
   Live Recovery / Protection and Recovery appliance – see
   [Disaster Recovery](02-disaster-recovery.md).
+
+---
+
+## Open items to confirm
+
+- **"Internal certificates renew automatically on upgrade."** Seen in a
+  Broadcom TC deck as a general claim (reviewed 2026-09-11) but no
+  authoritative source found yet, and it is not clear which components /
+  certificate types it covers. Do not rely on it to skip the pre-upgrade
+  certificate-validity check in the [prerequisites table](01-overview.md#prerequisites-and-architectural-guardrails) –
+  confirm scope against TechDocs or in-product behaviour before treating it
+  as fact.

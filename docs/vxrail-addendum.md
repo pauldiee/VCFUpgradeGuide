@@ -102,6 +102,11 @@ Dell's upgrade order and who runs each step:
 
 Then the same sequence for each workload domain.
 
+Findings that trace to a **hardware fault, firmware limit, or Dell design
+guidance** route to Dell for investigation – RPS does not own those items
+directly. Track them the same as any other finding until Dell provides a
+resolution or workaround.
+
 ### Credentials Dell needs before the window
 
 SDDC Manager (vcf + root) · vCenter Server (administrator + root) · NSX-T

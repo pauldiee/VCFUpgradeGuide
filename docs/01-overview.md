@@ -114,8 +114,9 @@ add-on compatibility pre-check.
 Supported **source** versions for a 9.1 upgrade (confirm on the release
 notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes/upgrade-sequence-to-91.html)):
 
-- VCF 5.2.x / vSphere Foundation 5.2.x
-- VCF 9.0.x / vSphere Foundation 9.0.x
+- **VCF 5.2.x / vSphere Foundation 5.2.x** – Broadcom calls this the
+  **skip-level** path.
+- **VCF 9.0.x / vSphere Foundation 9.0.x** – the **fleet transition** path.
 - vSphere 8 + Aria Operations 8
 
 > **The source patch level matters – per component, not just SDDC Manager.**
@@ -289,7 +290,15 @@ vCenter.
 
 No finding should go into the upgrade window unowned: track each one to
 resolution (or an explicit accepted-risk decision) and re-run the precheck
-to confirm it clears before proceeding.
+to confirm it clears before proceeding. This is the **go / no-go gate** –
+the window opens only when every blocker is resolved (or explicitly
+accepted) and the evidence exists to prove it, not on a verbal "looks fine."
+
+Findings typically split across ownership tiers – some resolved directly,
+some needing a customer-executed change (firewall rules, networking,
+company policy), some requiring hardware-vendor investigation, and a small
+remainder needing vendor support escalation. Agree ownership per finding;
+don't assume one team can clear everything.
 
 ---
 
@@ -414,7 +423,9 @@ hosts connected.
 ### Phase 7 – ESX / host-cluster upgrade
 
 Upgrade **ESX hosts** cluster by cluster via rolling maintenance mode, plus
-any **vSAN witness** hosts.
+any **vSAN witness** hosts. **NSX VIBs ship inside the ESX image** and
+upgrade with the host – there is no separate NSX-on-host step between this
+phase and [NSX finalize](#phase-8--nsx-finalize).
 
 > **Hardware addendum replaces or wraps this phase.** On **Dell VxRail**,
 > host/firmware/driver upgrades are delivered as a Dell-validated VxRail
@@ -467,13 +478,22 @@ Confirm each component landed on its expected build.
 - **Safe stopping points.** Every phase boundary is a safe stop – run the
   "before moving on" checks, then either continue or pause. Do not stop
   mid-phase.
-- **Rollback.** SDDC Manager and NSX upgrades are **not cleanly reversible** –
-  the backout position for those phases is restore-from-backup, so the
-  pre-upgrade backups must be verified first. vCenter has a reduced-downtime
-  upgrade rollback path (Phase 6). ESX / host upgrades roll forward. **Write
-  down** the agreed per-phase backout position before the window – this is
-  one of the things a Technical Consultation gate expects as evidence, not
-  just a verbal agreement.
+- **Rollback.** Recovery is **per-component – there is no single "undo"**:
+  - **VCF Operations** – snapshot each node before starting (cluster
+    offline, memory excluded); rollback is a snapshot revert.
+  - **SDDC Manager & NSX Manager** – not cleanly reversible; the backout
+    position is restore-from-backup (NSX Manager: file-level backup only),
+    so pre-upgrade backups must be verified first.
+  - **vCenter** – the reduced-downtime upgrade auto-reverts on failure
+    (Phase 6); no manual rollback needed in the normal case.
+  - **Avi** – follow Avi's own documented rollback procedure, where present
+    as a conditional phase.
+  - **ESX / host** – forward-only; rollback is only possible within the
+    maintenance window, not after.
+
+  **Write down** the agreed per-phase backout position before the window –
+  this is one of the things a Technical Consultation gate expects as
+  evidence, not just a verbal agreement.
 - **Prechecks are a loop.** The fleet precheck is the entry gate; component
   prechecks re-run inside each phase. Expect to iterate – clear, re-run,
   proceed.
@@ -782,6 +802,8 @@ After the fleet is stable on 9.1:
   network).
 - **vRSLCM / standalone Aria appliances** – retire once the Aria → VCF
   Operations / VCF Automation transition is confirmed.
+- **Pre-upgrade snapshots** – delete once the upgrade is confirmed
+  successful; leaving them attached causes performance degradation.
 - General Day-N component removal/reinstall guidance –
   `VCF9-DeploymentPlanning/docs/16-remove-components.md`.
 

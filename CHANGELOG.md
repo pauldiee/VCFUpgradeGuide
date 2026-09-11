@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.5.2 – 2026-09-11
+- **`docs/01-overview.md`, `docs/04-field-notes.md`, `docs/vxrail-addendum.md`
+  – further Technical Consultation gate follow-ups** (issue #17), continuing
+  the TC deck review. **01-overview.md**: expanded the single-line rollback
+  bullet into a per-component breakdown (VCF Operations snapshot-and-revert;
+  SDDC Manager / NSX Manager restore-from-backup; vCenter RDU auto-revert;
+  Avi's own procedure; ESX forward-only) under the explicit principle that
+  recovery is per-component with no single "undo"; named the **go / no-go
+  gate** explicitly in the precheck section and added a short note that
+  findings split across ownership tiers (direct fix, customer-executed
+  change, hardware vendor, support escalation); added a Cleanup step to
+  delete pre-upgrade snapshots after a successful upgrade; added the NSX
+  VIBs-ship-in-the-ESX-image note to Phase 7; labeled the two source paths
+  **skip-level** (5.2.x) and **fleet transition** (9.0.x) per Broadcom's own
+  terminology. **04-field-notes.md**: added an **Open items to confirm**
+  section with the unverified "certificates renew automatically on upgrade"
+  claim; added SDDC Manager's own UI deprecation (separate from the
+  already-noted vCenter installer-UI deprecation) to the deprecations list.
+  **vxrail-addendum.md**: noted that hardware-fault / firmware-limit /
+  Dell-design-guidance findings route to Dell, not RPS, for investigation.
+
 ## v0.5.1 – 2026-09-11
 - **`docs/01-overview.md` – fold in Broadcom Technical Consultation gate
   content** (issue #17). Sourced from internal Broadcom TC deck screenshots
