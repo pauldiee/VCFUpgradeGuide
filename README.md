@@ -31,6 +31,7 @@ duplicating it here:
 | `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access to VCF Identity Broker |
 | `docs/04-field-notes.md` | Known issues and gotchas from real upgrades |
 | `docs/05-operations-modernization.md` | Aria Operations to VCF Operations: in-place vs. fresh install, re-IP, HA setup, vCenter integrations |
+| `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, with a permissions/roles backup |
 | `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps (work in progress) |
 | `reference/`      | Pinned reference material                                |
 | `tools/`          | Helper scripts, if any get added                         |

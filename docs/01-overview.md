@@ -432,7 +432,9 @@ installer-UI upgrade path is deprecated. Gotchas:
 
 - **Integrated Windows Authentication is removed in vCenter 9.** Dissolve the
   Active Directory domain join before upgrading – unjoin gracefully per
-  KB 373004; move to another IdP configuration.
+  KB 373004; move to another IdP configuration. Full walkthrough, including
+  a permissions/roles backup before the switch:
+  [IWA to AD-over-LDAPS migration](06-iwa-ldaps-migration.md).
 - **RDU (reduced-downtime upgrade)** deploys a new appliance on the target
   build alongside the running one and copies data/config while the source
   stays online; the only outage is the **switchover** (~10 minutes per

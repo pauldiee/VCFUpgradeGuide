@@ -52,6 +52,13 @@ export const NAV: NavItem[] = [
     blurb: 'Aria Operations to VCF Operations: in-place upgrade vs. fresh install, re-IP, HA setup, and vCenter integrations.',
   },
   {
+    slug: '06-iwa-ldaps-migration',
+    step: 'Guide',
+    label: 'IWA to LDAPS migration',
+    icon: 'user-lock',
+    blurb: 'Move a vCenter off Integrated Windows Authentication to AD-over-LDAPS before Phase 6, with a permissions/roles backup.',
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     label: 'VxRail Addendum',

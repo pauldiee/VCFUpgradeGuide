@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.6.0 – 2026-09-14
+- **New `docs/06-iwa-ldaps-migration.md`** (issue #22). Step-by-step
+  walkthrough for moving a vCenter off Integrated Windows Authentication
+  to AD-over-LDAPS before its Phase 6 upgrade: VM snapshot + VAMI
+  file-based backup + a permissions/roles export (PowerCLI
+  `Get-VIPermission`/`Get-VIRole`, plus Global Permissions separately) as
+  the "role/rights specific backup", then add-and-verify the LDAPS
+  identity source alongside the existing IWA one, reconcile permissions,
+  remove IWA, leave the AD domain, and clean up the stale AD computer
+  object. Includes a rollback note anchored to the pre-change snapshot.
+  Cross-linked from `01-overview.md` Phase 6; added to the README contents
+  table and `web/src/nav.ts`.
+
 ## v0.5.9 – 2026-09-14
 - **`docs/05-operations-modernization.md` – add connected/disconnected
   licensing registration steps** (issue #21). Full numbered procedures for
