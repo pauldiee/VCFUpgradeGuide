@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.5.9 – 2026-09-14
+- **`docs/05-operations-modernization.md` – add connected/disconnected
+  licensing registration steps** (issue #21). Full numbered procedures for
+  registering VCF Operations + License Server with the VCF Business
+  Services console: connected mode (activation-code flow, 6-month
+  recurring license update) and disconnected mode (JWS registration file,
+  two-way verification/confirmation file exchange, 6-month recurring
+  manual usage-report/license-update task instead of an automatic
+  heartbeat). Cross-referenced from the in-place walkthrough's new
+  License Server step so it isn't duplicated per path.
+
+## v0.5.8 – 2026-09-14
+- **`docs/05-operations-modernization.md` – expand into full numbered
+  walkthroughs** (issue #20). Turned the summary bullets for both paths
+  into step-by-step procedures: pre-upgrade snapshot/assessment, PAK
+  install, and re-IP for the in-place path; OVA deployment + initial setup
+  wizard, HA activation (deploy a Data node, then Activate under High
+  Availability and select it as Replica – not a separate "deploy a
+  Replica node" step), additional Data nodes, License Server deployment,
+  Content Management export/import (Configuration before Content), data
+  source registration, and fleet attach for the fresh-install path. Added
+  a "when VCF Installer is the better fit instead" callout so the
+  walkthrough doesn't read as the only route.
+
 ## v0.5.7 – 2026-09-14
 - **New `docs/05-operations-modernization.md`** (issue #19). Promoted out of
   the Phase 1 discussion in `01-overview.md` into its own guide: Aria
