@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.5.7 – 2026-09-14
+- **New `docs/05-operations-modernization.md`** (issue #19). Promoted out of
+  the Phase 1 discussion in `01-overview.md` into its own guide: Aria
+  Operations to VCF Operations in-place upgrade vs. fresh-install-and-
+  migrate-content decision, the Aria Operations re-IP procedure, deploying
+  VCF Operations standalone without VCF Management Services, VCF
+  Installer's HA-mode and converge prerequisites, HA vs. Continuous
+  Availability (don't conflate a look-alike node/site count with an
+  actual CA deployment), node-removal data-loss behavior, and registering
+  vCenter as a VCF Operations data source (Administration > Integrations,
+  separate from the fleet/SDDC-Manager attach). Cross-linked from
+  `01-overview.md` Phase 1; added to the README contents table and
+  `web/src/nav.ts`.
+
 ## v0.5.6 – 2026-09-11
 - **`docs/01-overview.md`, `docs/04-field-notes.md` – close out the two
   remaining TC deck gaps** (issue #17). **01-overview.md**: documented

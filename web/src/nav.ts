@@ -45,6 +45,13 @@ export const NAV: NavItem[] = [
     blurb: 'Known issues and gotchas from real VCF 5.2 to 9.x upgrades, grouped by phase.',
   },
   {
+    slug: '05-operations-modernization',
+    step: 'Guide',
+    label: 'Operations modernization',
+    icon: 'chart-line',
+    blurb: 'Aria Operations to VCF Operations: in-place upgrade vs. fresh install, re-IP, HA setup, and vCenter integrations.',
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     label: 'VxRail Addendum',

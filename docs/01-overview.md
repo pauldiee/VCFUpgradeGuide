@@ -337,6 +337,11 @@ Operations is a **required component** in 9.x and must be on the target build
 **before the SDDC Manager upgrade begins**. On a 5.2.x source this is the
 transition **from Aria Operations** (via vRSLCM) to VCF Operations 9.1.
 
+> **In-place vs. fresh install, re-IP, HA/CA, and registering vCenters as
+> data sources** are covered in detail in
+> [Operations modernization](05-operations-modernization.md) – read that
+> before committing to a re-IP procedure or a content-migration plan.
+
 - **Unified Cloud Proxy** (also **Universal Cloud Proxy / UCP**). 9.1 collects
   for VCF Operations, Operations for Logs, and the SDDC Manager / VCF
   Management integration from a **single** Cloud Proxy appliance (1 node, 1 IP)
