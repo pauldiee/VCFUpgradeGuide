@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.8.1 – 2026-09-15
+- **Shrink the landing-page hero.** The full-height hero (large title +
+  intro paragraph + CTA button) read as if it were the whole site's
+  identity, when it's really just the one guide in the new "VMware Docs"
+  hub. Replaced with a one-line compact banner (`.hero--compact`) – eyebrow
+  plus a single headline – so the guide-cards grid gets top billing.
+
 ## v0.8.0 – 2026-09-15
 - **Repo goes public.** Dropped the "internal, private" / "ITQ Consulting
   Services" framing across `README.md`, `CLAUDE.md`, `docs/01-overview.md`,
