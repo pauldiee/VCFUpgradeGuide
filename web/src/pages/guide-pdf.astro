@@ -1,0 +1,87 @@
+---
+// A single flattened page holding every NAV-ordered doc, for visitors to
+// print/save-as-PDF straight from the browser (Ctrl/Cmd+P or the button
+// below) – a client-side alternative to `npm run pdf`
+// (scripts/generate-pdf.mjs) that needs no build-time Chromium, so it works
+// on GitLab Pages as-is.
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { NAV } from '../nav';
+
+const sections = await Promise.all(
+  NAV.map(async (item) => {
+    const entry = await getEntry('docs', item.slug);
+    if (!entry) return null;
+    const { Content } = await render(entry);
+    return { item, Content };
+  })
+);
+---
+
+<BaseLayout
+  title="Printable guide – VCF Upgrade Guide"
+  description="The full VCF Upgrade Guide as one document, for printing or saving as a PDF."
+  fullWidth
+>
+  <div class="print-toolbar" data-pagefind-ignore>
+    <p>
+      This page holds the whole guide as one document. Use your browser's
+      print dialog (<kbd>Ctrl/Cmd+P</kbd>) and choose <strong>Save as PDF</strong>
+      to get a single downloadable file.
+    </p>
+    <button type="button" class="btn btn--primary" onclick="window.print()">
+      <i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Print / Save as PDF
+    </button>
+  </div>
+
+  <div class="print-cover">
+    <div class="print-cover__bar" aria-hidden="true"></div>
+    <h1>VCF Upgrade Guide</h1>
+    <p>ITQ Consulting Services</p>
+  </div>
+
+  {
+    sections.map(
+      (section, i) =>
+        section && (
+          <article class="print-doc" style={i > 0 ? 'break-before: page' : undefined}>
+            <p class="itq-eyebrow">{section.item.step}</p>
+            <div class="doc prose">
+              <section.Content />
+            </div>
+          </article>
+        )
+    )
+  }
+</BaseLayout>
+
+<style>
+  .print-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    justify-content: space-between;
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-active);
+    border-radius: var(--radius-sm);
+  }
+  .print-toolbar p { margin: 0; max-width: 60ch; }
+  .print-cover {
+    padding: var(--space-8) 0;
+    margin-bottom: var(--space-6);
+  }
+  .print-cover__bar {
+    width: 64px;
+    height: 6px;
+    background: var(--itq-orange);
+    margin-bottom: var(--space-4);
+  }
+  .print-doc + .print-doc { margin-top: var(--space-8); }
+
+  @media print {
+    .print-toolbar { display: none !important; }
+  }
+</style>

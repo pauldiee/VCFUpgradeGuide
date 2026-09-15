@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.6.6 – 2026-09-15
+- **Live on-site printable guide.** New `web/src/pages/guide-pdf.astro`
+  (`/guide-pdf/`), a single flattened page with every `NAV`-ordered doc in
+  sequence and a page-break between each, plus a "Print / Save as PDF"
+  button that calls the browser's own print. Entirely client-side – no
+  build-time Chromium needed, so unlike `npm run pdf`
+  (`web/scripts/generate-pdf.mjs`) this actually runs live on GitLab
+  Pages. Linked from the site header (new **PDF** entry next to Search/
+  Docs). Documented in `README.md`.
+
 ## v0.6.5 – 2026-09-15
 - **Field-verified: GUI installer "invalid SSO credentials" gotcha.**
   `docs/07-vcenter-manual-upgrade.md` gets a new Stage 1 troubleshooting

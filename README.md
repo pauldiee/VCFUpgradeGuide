@@ -49,8 +49,14 @@ npm install
 npm run dev
 ```
 
-To hand the guide to a customer as a single file (the Pages site itself is
-internal-only), build a combined PDF locally:
+The site itself has a **PDF** link in the header (`/guide-pdf/`) – a
+single flattened page with every doc in order, for a visitor to print or
+save as PDF straight from their own browser (`Ctrl`/`Cmd`+`P`). Works
+entirely client-side, so it runs live on GitLab Pages with no build-time
+Chromium involved.
+
+For a locally-generated file instead (e.g. to email one without sending a
+link), build a combined PDF:
 
 ```
 cd web
