@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.6.3 – 2026-09-15
+- **Customer-handoff PDF export.** `web/scripts/generate-pdf.mjs`
+  (`npm run pdf`, new devDependencies `playwright` + `pdf-lib`) builds the
+  site, renders a cover page plus every `NAV`-ordered doc through headless
+  Chromium, and merges them into `web/dist-pdf/vcf-upgrade-guide.pdf` – a
+  single file that can be handed to a customer, since the GitLab Pages site
+  itself is internal-only. Local/on-demand only, not wired into
+  `.gitlab-ci.yml` (the Pages runner is a bare shell executor with no
+  Chromium). Added a `@media print` block to `site.css` (forces light
+  scheme, drops header nav/sidebar/TOC/pager/copy-buttons) so the same
+  rules also work for a reader's manual browser print-to-PDF. Documented
+  in `README.md`.
+
 ## v0.6.2 – 2026-09-15
 - **`docs/05-operations-modernization.md` clarification.** Explicit note in
   the in-place upgrade walkthrough's "Apply the upgrade" step: install the

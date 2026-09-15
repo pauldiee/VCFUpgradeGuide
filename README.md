@@ -49,6 +49,17 @@ npm install
 npm run dev
 ```
 
+To hand the guide to a customer as a single file (the Pages site itself is
+internal-only), build a combined PDF locally:
+
+```
+cd web
+npm run pdf
+```
+
+Writes `web/dist-pdf/vcf-upgrade-guide.pdf` (not committed – generated
+on demand).
+
 ## Author
 
 Paul van Dieen

@@ -680,3 +680,45 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
   .hero__title { font-size: var(--fs-h1); }
   .doc-pager__link { max-width: none; flex: 1; }
 }
+
+/* ---------- Print (customer PDF export) ----------
+   Forces light scheme regardless of the viewer's stored preference (dark-mode
+   colors read poorly on paper) and drops every chrome element that only
+   makes sense in a browser: header nav/theme toggle, sidebar, on-this-page
+   chips, doc pager, back-to-top links, code-copy buttons, footer meta.
+   Used both for a reader's manual "print to PDF" and by
+   scripts/generate-pdf.mjs, which drives Chromium's print rendering
+   directly. */
+@media print {
+  :root:not([data-theme='light']) { color-scheme: light; }
+  .site-header__nav > a,
+  .theme-toggle,
+  .site-footer__meta,
+  .skip-link,
+  .sidebar,
+  .doc-toc,
+  .doc-pager,
+  .code-copy-btn,
+  .back-to-top {
+    display: none !important;
+  }
+  .layout,
+  .layout--full {
+    grid-template-columns: 1fr;
+    max-width: none;
+  }
+  .content,
+  .content--full {
+    padding: 0;
+  }
+  a { color: var(--text-body); text-decoration: underline; }
+  .doc.prose pre,
+  .doc.prose table,
+  .doc.prose blockquote {
+    break-inside: avoid;
+  }
+  .doc.prose h2,
+  .doc.prose h3 {
+    break-after: avoid;
+  }
+}

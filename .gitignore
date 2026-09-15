@@ -14,3 +14,7 @@ _workbook_dump/
 
 # Generated at build time from tools/*.ps1 (see web/package.json prebuild)
 web/public/scripts/
+
+# Generated locally by `npm run pdf` (web/scripts/generate-pdf.mjs) – the
+# customer-handoff PDF, built on demand, not committed
+web/dist-pdf/
