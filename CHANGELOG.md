@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.8.0 – 2026-09-15
+- **Repo goes public.** Dropped the "internal, private" / "ITQ Consulting
+  Services" framing across `README.md`, `CLAUDE.md`, `docs/01-overview.md`,
+  and the site (header, footer, landing page, PDF cover) in favor of plain
+  **ITQ**. Site-wide brand renamed **VMware Docs** – this repo's content is
+  its first section, with room for future non-upgrade, non-VCF-specific
+  VMware guides without another rebrand.
+- **New public deploy target.** `.github/workflows/pages.yml` builds and
+  publishes to **GitHub Pages** under the custom domain in the new
+  `web/public/CNAME` (`docs.hollebollevsan.nl`) – the `github` remote is no
+  longer just a private backup mirror. Internal GitLab Pages
+  (`.gitlab-ci.yml`) is unaffected and continues serving ITQ-internal use.
+  `web/astro.config.mjs`'s comment updated to describe both deploy targets.
+- Header's repo/feedback links repointed from the internal GitLab project
+  to the public GitHub repo (issues, changelog blob link).
+- **Explicit no-customer-data-with-Claude rule** added to `CLAUDE.md` and
+  `docs/01-overview.md`'s Customer data hygiene section – a plain
+  statement, appropriate for a public reader, that real customer names,
+  IPs, hostnames, or credentials are never entered into a Claude session
+  while working on this repo.
+
 ## v0.7.1 – 2026-09-15
 - **Fix header/footer bleeding onto every printed page.** `.site-header`
   and `.site-footer` are `position: sticky` for normal browsing, and

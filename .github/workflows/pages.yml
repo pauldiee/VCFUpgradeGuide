@@ -1,0 +1,64 @@
+# Publishes the site to GitHub Pages under the custom domain in
+# web/public/CNAME (docs.hollebollevsan.nl). This is the public deploy
+# target; GitLab Pages (.gitlab-ci.yml) remains the separate internal-ITQ
+# deploy and is unaffected by this workflow.
+#
+# The custom domain must also be set once under Settings > Pages >
+# Custom domain on this repo (GitHub re-checks web/public/CNAME on every
+# deploy, but the DNS-verification record is configured there), and a DNS
+# CNAME record for "docs" pointing at <owner>.github.io must exist.
+
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'docs/**'
+      - 'CHANGELOG.md'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Build
+        working-directory: web
+        env:
+          SITE_URL: https://docs.hollebollevsan.nl
+          SITE_BASE: /
+        run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

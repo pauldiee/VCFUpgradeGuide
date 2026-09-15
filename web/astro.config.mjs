@@ -2,12 +2,13 @@
 import { defineConfig } from 'astro/config';
 import { readdirSync } from 'node:fs';
 
-// GitLab Pages is the only deploy target for this internal repo – the
-// `.gitlab-ci.yml` job sets SITE_URL / SITE_BASE at build time from the
-// project's actual Pages URL (CI_PAGES_URL), including its unique-domain path
-// suffix. BASE is the URL path prefix; SITE the origin. Both feed the
-// doc-link rewriter and `import.meta.env.BASE_URL`. Local dev/preview falls
-// back to root.
+// Two deploy targets set SITE_URL / SITE_BASE at build time: `.gitlab-ci.yml`
+// (internal GitLab Pages, derived from CI_PAGES_URL including its
+// unique-domain path suffix) and `.github/workflows/pages.yml` (public
+// GitHub Pages under the custom domain in web/public/CNAME, served at root).
+// BASE is the URL path prefix; SITE the origin. Both feed the doc-link
+// rewriter and `import.meta.env.BASE_URL`. Local dev/preview falls back to
+// root.
 const SITE = process.env.SITE_URL || 'http://localhost:4321';
 const BASE = process.env.SITE_BASE || '';
 

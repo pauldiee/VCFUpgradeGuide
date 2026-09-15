@@ -1,12 +1,14 @@
 # VCFUpgradeGuide
 
-**ITQ Consulting Services – internal, private.** General guidance for
-planning a **VCF upgrade** – pre-upgrade checks, the upgrade sequence, and
-post-upgrade validation – applicable regardless of underlying hardware.
-Hardware/HCI-specific extra steps (currently: **Dell VxRail**) are layered on
-top as their own addendum, not baked into the general flow.
+**ITQ.** General guidance for planning a **VCF upgrade** – pre-upgrade
+checks, the upgrade sequence, and post-upgrade validation – applicable
+regardless of underlying hardware. Hardware/HCI-specific extra steps
+(currently: **Dell VxRail**) are layered on top as their own addendum, not
+baked into the general flow.
 
-Not a public tool. Do not link this repo from public-facing pages.
+Live at **[docs.hollebollevsan.nl](https://docs.hollebollevsan.nl)** – the
+first section of a general VMware docs site; future guides need not be
+upgrade-specific or VCF-specific.
 
 ## Related repo
 
@@ -40,8 +42,9 @@ duplicating it here:
 
 ## Web version
 
-Published internally via **GitLab Pages** (primary hosting for this repo).
-To run it locally:
+Published at **docs.hollebollevsan.nl** via GitHub Pages
+(`.github/workflows/pages.yml`); also mirrored to an internal GitLab Pages
+instance (`.gitlab-ci.yml`) for ITQ-internal use. To run it locally:
 
 ```
 cd web

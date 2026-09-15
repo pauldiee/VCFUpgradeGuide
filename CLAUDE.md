@@ -6,19 +6,21 @@
 
 ## Project overview
 
-ITQ Consulting Services (internal, private) guidance for planning a **VCF
-upgrade** – pre-upgrade checks, the upgrade sequence, and post-upgrade
-validation, applicable **regardless of underlying hardware**.
-Hardware/HCI-specific extra steps are layered on **top** of the general flow
-as their own addendum, not baked into it – currently **Dell VxRail**
-(started from a specific customer engagement: VxRail 5.2 → VCF 9.1.1, but
-the general guidance should stay reusable beyond that one engagement).
+ITQ guidance for planning a **VCF upgrade** – pre-upgrade checks, the
+upgrade sequence, and post-upgrade validation, applicable **regardless of
+underlying hardware**. Hardware/HCI-specific extra steps are layered on
+**top** of the general flow as their own addendum, not baked into it –
+currently **Dell VxRail** (started from a specific customer engagement:
+VxRail 5.2 → VCF 9.1.1, but the general guidance should stay reusable
+beyond that one engagement).
 
-Unlike `VCF9-DeploymentPlanning` (public, generic field guide for
-from-scratch deployment), this repo is **internal by default**. Scaffolded
-2026-08-27 from that repo's conventions (doc/site structure, changelog
-discipline, GitHub/GitLab issues discipline) – see that repo's `CLAUDE.md`
-for the fuller version of these rules if something here is ambiguous.
+**Public.** This repo is public and is the first section of a planned
+general **VMware Docs** site (docs.hollebollevsan.nl) – future guides need
+not be upgrade-specific or even VCF-specific, just VMware. Scaffolded
+2026-08-27 from `VCF9-DeploymentPlanning`'s conventions (doc/site
+structure, changelog discipline, GitHub/GitLab issues discipline) – see
+that repo's `CLAUDE.md` for the fuller version of these rules if something
+here is ambiguous.
 
 **Cross-reference, don't duplicate.** `VCF9-DeploymentPlanning` holds
 foundational VCF9 knowledge that's directly useful during an upgrade (fleet
@@ -43,8 +45,9 @@ here – see the Related repo section in `README.md`.
 | `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps, on top of the general flow |
 | `reference/`          | Pinned reference material (Dell/VMware docs, KBs, etc.)        |
 | `tools/`              | Helper scripts, if any get added                               |
-| `web/`                | ITQ-branded Astro site (GitLab Pages, internal) rendering `docs/` in place |
-| `.gitlab-ci.yml`      | GitLab Pages deploy – the primary hosting for this repo         |
+| `web/`                | ITQ-branded Astro site rendering `docs/` in place, dual-deployed (public + internal) |
+| `.gitlab-ci.yml`      | Internal GitLab Pages deploy                                   |
+| `.github/workflows/pages.yml` | Public GitHub Pages deploy – docs.hollebollevsan.nl      |
 
 **Keep the general/addendum split real, not cosmetic.** When adding upgrade
 content, ask first whether it's true for any VCF upgrade or specific to
@@ -99,18 +102,19 @@ paragraph). A guide is reached *through* the overview, never orphaned.
 
 ## Customer data hygiene
 
-Even though this repo is **internal / private**, do not commit real customer
-names, IPs, hostnames, credentials, or serial numbers – use generic
-placeholders. Per-engagement working files (filled checklists, actual
-upgrade logs with customer identifiers, case numbers) belong **outside** the
-repo, in:
+This repo is **public** – never commit real customer names, IPs, hostnames,
+credentials, or serial numbers – use generic placeholders. Per-engagement
+working files (filled checklists, actual upgrade logs with customer
+identifiers, case numbers) belong **outside** this repo entirely, in
+separate per-engagement storage.
 
-```
-C:/Users/paul/OneDrive - ITQ/<customer>/VCFUpgradeGuide/
-```
+The repo holds the generalized procedure only; per-engagement storage
+holds what actually happened at a specific customer.
 
-The repo holds the generalized procedure; the OneDrive folder holds what
-actually happened at a specific customer.
+**Customer data is never used with Claude on this repo, period, no
+exceptions.** No real customer names, IPs, hostnames, credentials, or
+other identifying details are ever entered into a Claude session while
+working on this repo – not in chat text, not in a screenshot.
 
 ---
 
@@ -140,14 +144,14 @@ this?" before filing – apply the matching label rather than guessing.
 
 ## Git remotes
 
-This repo is set up the **opposite way round** from `VCF9-DeploymentPlanning`
-– **GitLab is primary**, because it hosts the internal Pages site this repo
-needs.
+GitLab remains primary for commit history and ITQ-internal issue tracking;
+GitHub is now also a real hosting target, not just a backup mirror – it
+serves the **public** site.
 
-| Remote   | URL                                                                          | Status                    |
-| -------- | ----------------------------------------------------------------------------- | -------------------------- |
-| `origin` | `https://gitlab.msp.itq.eu/ugt_con_sddc_nl/vcfupgradeguide.git`               | **Primary** – internal ITQ GitLab |
-| `github` | `https://github.com/pauldiee/VCFUpgradeGuide.git`                             | Private mirror (backup, not customer-facing) |
+| Remote   | URL                                                               | Status                                              |
+| -------- | ------------------------------------------------------------------ | ---------------------------------------------------- |
+| `origin` | `https://gitlab.msp.itq.eu/ugt_con_sddc_nl/vcfupgradeguide.git`   | **Primary** – internal ITQ GitLab, issue tracking     |
+| `github` | `https://github.com/pauldiee/VCFUpgradeGuide.git`                 | **Public** – hosts docs.hollebollevsan.nl via GitHub Pages |
 
 `main` tracks `origin/main` (GitLab). To push commits to both remotes use the
 `pushall` alias (configured locally on this repo):
@@ -160,7 +164,13 @@ Regular `git push` only goes to `origin` (GitLab).
 
 ## CI / Pages deploys
 
-`.gitlab-ci.yml`'s `pages` job builds `web/` and publishes to GitLab Pages –
-this is the **primary** way this repo's content gets shared internally. No
-equivalent GitHub Actions workflow exists (the GitHub remote is a private
-backup mirror, not a hosting target).
+Two independent deploys, both driven off `main`:
+
+- `.gitlab-ci.yml` – builds `web/` and publishes to **internal GitLab
+  Pages**, for ITQ-internal use.
+- `.github/workflows/pages.yml` – builds `web/` and publishes to **public
+  GitHub Pages** under the custom domain in `web/public/CNAME`
+  (`docs.hollebollevsan.nl`). This is the public-facing site.
+
+Both read `SITE_URL` / `SITE_BASE` at build time (see `web/astro.config.mjs`)
+so cross-links resolve correctly regardless of which one is serving.

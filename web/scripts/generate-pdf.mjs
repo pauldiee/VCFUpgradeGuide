@@ -96,7 +96,7 @@ async function main() {
     </style></head><body>
       <div class="bar"></div>
       <h1>VCF Upgrade Guide</h1>
-      <p>ITQ Consulting Services</p>
+      <p>ITQ</p>
       <p>Generated ${new Date().toISOString().slice(0, 10)}</p>
     </body></html>`;
     await page.setContent(coverHtml);

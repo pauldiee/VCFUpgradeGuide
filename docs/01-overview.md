@@ -889,7 +889,12 @@ After the fleet is stable on 9.1:
 
 ## Customer data hygiene
 
-This repo is **ITQ-internal** (private). Even so, do not commit real customer
-names, IPs, hostnames, or credentials – use generic placeholders.
-Per-engagement working files (filled checklists, real upgrade logs) belong
-outside the repo, in the customer's OneDrive folder.
+This repo is **public**. Never commit real customer names, IPs, hostnames,
+or credentials – use generic placeholders. Per-engagement working files
+(filled checklists, real upgrade logs) belong outside the repo entirely,
+in separate per-engagement storage.
+
+**Customer data is never used with Claude on this repo, period, no
+exceptions.** No real customer names, IPs, hostnames, credentials, or
+other identifying details are ever entered into a Claude session while
+working on this repo – not in chat text, not in a screenshot.

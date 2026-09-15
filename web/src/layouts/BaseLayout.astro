@@ -16,8 +16,8 @@ interface Props {
 const { title, description, active, fullWidth = false } = Astro.props;
 const asset = withBase;
 const year = 2026;
-const repoUrl = 'https://gitlab.msp.itq.eu/ugt_con_sddc_nl/vcfupgradeguide';
-const feedbackUrl = `${repoUrl}/-/issues/new`;
+const repoUrl = 'https://github.com/pauldiee/VCFUpgradeGuide';
+const feedbackUrl = `${repoUrl}/issues/new`;
 ---
 
 <!doctype html>
@@ -66,7 +66,7 @@ const feedbackUrl = `${repoUrl}/-/issues/new`;
             aria-hidden="true"
           />
           <span class="site-header__divider" aria-hidden="true"></span>
-          <span class="site-header__product">VCF Upgrade Guide</span>
+          <span class="site-header__product">VMware Docs</span>
         </a>
         <nav class="site-header__nav">
           <a href={asset('search/')}><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Search</a>
@@ -87,7 +87,7 @@ const feedbackUrl = `${repoUrl}/-/issues/new`;
             target="_blank"
             rel="noopener"
           >
-            <i class="fa-brands fa-gitlab" aria-hidden="true"></i> GitLab
+            <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
           </a>
         </nav>
       </div>
@@ -105,12 +105,12 @@ const feedbackUrl = `${repoUrl}/-/issues/new`;
         <img src={asset('itq/assets/logo/itq-logo-white.png')} alt="ITQ" height="26" />
         <p>
           <strong>ITQ &ndash; What's Next.</strong> VCF upgrade-planning material.
-          Internal / ITQ Consulting Services. &copy; {year} ITQ.
+          &copy; {year} ITQ.
         </p>
         <div class="site-footer__meta">
           <a
             class="site-footer__version"
-            href={`${repoUrl}/-/blob/main/CHANGELOG.md`}
+            href={`${repoUrl}/blob/main/CHANGELOG.md`}
             target="_blank"
             rel="noopener"
             title="What changed in this release"
