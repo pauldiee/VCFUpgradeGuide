@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6.2 – 2026-09-15
+- **`docs/05-operations-modernization.md` clarification.** Explicit note in
+  the in-place upgrade walkthrough's "Apply the upgrade" step: install the
+  PAK against the running cluster, don't manually bring it online first –
+  the Offline → Online transition happens automatically as part of the
+  update. Also clarifies the separate manual take-offline/bring-online
+  sequence applies only to the re-IP sub-procedure.
+
 ## v0.6.1 – 2026-09-15
 - **New `docs/07-vcenter-manual-upgrade.md`** (issue #23). Manual GUI
   upgrade walkthrough for a standalone vCenter (no Fleet Management):

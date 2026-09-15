@@ -73,7 +73,11 @@ Operations 9.1.x.
    alerts/dashboards should be overwritten back to stock.
 3. Monitor progress. The Admin UI restarts and the cluster automatically
    transitions Offline → Online during the update – this is expected, not a
-   failure.
+   failure. Do **not** manually bring the cluster online first – install the
+   PAK against the running cluster and let the update drive the Offline →
+   Online transition itself. (The separate manual take-offline / bring-online
+   sequence below applies only to the re-IP sub-procedure, not to applying
+   the PAK.)
 4. Confirm cluster health and that metrics are still flowing post-upgrade
    before moving on to the next fleet component.
 
