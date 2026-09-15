@@ -59,6 +59,13 @@ export const NAV: NavItem[] = [
     blurb: 'Move a vCenter off Integrated Windows Authentication to AD-over-LDAPS before Phase 6, with a permissions/roles backup.',
   },
   {
+    slug: '07-vcenter-manual-upgrade',
+    step: 'Guide',
+    label: 'vCenter manual GUI upgrade',
+    icon: 'server',
+    blurb: 'Manual GUI upgrade of a standalone vCenter (no Fleet Management), plus the vCenter-specific back-in-time compatibility check.',
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     label: 'VxRail Addendum',

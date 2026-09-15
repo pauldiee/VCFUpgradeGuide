@@ -1,0 +1,161 @@
+# vCenter manual GUI upgrade (no Fleet Management)
+
+The vCenter upgrade step in the core sequence ([Phase 6](01-overview.md#phase-6--vcenter-upgrade))
+assumes the fleet-managed path: vCenter is upgraded from **VCF Operations →
+Fleet Management**, and the installer-UI path is deprecated for that case.
+
+This doc covers the other case: a **standalone / not-fleet-managed** vCenter
+(see [VVF: confirm whether VCF Management Services is even in scope](01-overview.md#vvf-confirm-whether-vcf-management-services-is-even-in-scope))
+where there is no SDDC Manager or Fleet Management layer driving the
+upgrade. There, vCenter is upgraded the traditional way, from its own
+installer, VAMI, or the CLI. Same underlying two-stage migration mechanism
+as the fleet-driven path, just triggered manually.
+
+---
+
+## Before you start: confirm the source is actually on a supported path
+
+Do not assume "any 8.x can reach any 9.1.x" – the same **back-in-time**
+restriction called out in [Confirm a supported upgrade path](01-overview.md#confirm-a-supported-upgrade-path)
+applies to vCenter itself, patch level by patch level.
+
+Checked against the **Broadcom Product Interoperability Matrix** (Upgrade
+Path tool, vCenter, "Hide Patch Releases" unticked) and **KB 448135**
+("Back-in-Time Upgrade Restriction for vSphere 8.0 Update 3j and later, NSX
+4.2.4 and later, VMware Cloud Foundation 9.1.0.x"):
+
+- **vCenter 8.0 U3j and later → any 9.1.0.x build or 9.0.x build: blocked.**
+  The security patches in those U3j+ builds are chronologically newer than
+  the 9.1.0.x / 9.0.x baseline, so upgrading would regress fixes – VCF
+  refuses the path outright.
+- **vCenter 8.0 U3j and later → 9.1.1.0: open.** KB 448135, verbatim: *"VMware
+  Cloud Foundation 9.1.1.0 has been released with an updated Bill of
+  Materials (BOM) that includes component build versions chronologically
+  newer than the previous 9.1.0.0 restriction baseline. This effectively
+  resolves the 'Back-in-Time' upgrade block for environments running vSphere
+  8.0 Update 3j and later, NSX 4.2.4 and later, VMware Cloud Foundation
+  9.1.0.x."*
+- Confirmed directly in the Upgrade Path tool: vCenter 8.0U3k shows
+  **green / Compatible** against target 9.1.1.0, and **red / Incompatible**
+  against every 9.1.0.x and 9.0.x build.
+
+This is the same pattern as the VCF Operations 8.18.7 example already in
+the overview doc – a patch released after a given target build's baseline
+can lose its path to that build entirely, and only a later point release
+(here, 9.1.1) reopens it. **Re-run the Upgrade Path tool for the exact
+source build before committing to a target** – do not extrapolate from a
+neighbouring patch level.
+
+> **One open question this doc cannot resolve from documentation alone.**
+> The vSphere 9.1 TechDocs page for the GUI installer path is titled
+> *"Upgrade a vCenter Appliance 9.0 or later by Using the GUI"* and states
+> only that 9.0-or-later is a supported source for that installer flow – it
+> does not mention 8.0 anywhere. That is inconsistent with the
+> interoperability matrix and KB 448135 above, both of which say 8.0U3j+ is
+> fine as a source once 9.1.1 is the target. Until this is confirmed with
+> Broadcom support or observed on a real run, treat the matrix and the KB as
+> the more current sources – but validate against a non-production vCenter,
+> or open a support request, before doing this on a production appliance.
+
+---
+
+## Prerequisites
+
+From [Prerequisites for Upgrading the vCenter Appliance](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/prerequisites-for-upgrading-the-appliance.html),
+condensed:
+
+- Download and mount the vCenter 9.1.1 installer.
+- Sync clocks across the vSphere network.
+- Target ESX host (where the *new* appliance deploys): not in lockdown or
+  maintenance mode. If it sits in a DRS cluster, set DRS to **Manual** or
+  **Partially Automated** so nothing reboots mid-upgrade.
+- Source appliance: port **22** open (the upgrade process opens an inbound
+  SSH connection to export data) and port **443** open on the source ESX
+  host.
+- Sufficient free disk space on the source appliance to stage the export.
+- **Take an image-based backup (snapshot) of the source vCenter first** –
+  TechDocs calls this out explicitly as the rollback path if the upgrade
+  fails. In an Enhanced Linked Mode environment, power off every vCenter
+  node, back up each one, then restart them all before proceeding.
+- Static-IP path: forward and reverse DNS records ready for the temporary
+  IP. DHCP path: the target ESX host must be on the same subnet as the
+  source, on a port group that accepts MAC address changes.
+
+---
+
+## Stage 1 – deploy the new 9.1.1 appliance
+
+From [Stage 1 – Deploy the OVA File of the New vCenter Appliance](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso/stage-1-deploy-ova-file-of-new-vcenter-server-appliance-with-embedded-platform-services-controller.html):
+
+1. From the mounted installer, run `vcsa-ui-installer/<your-OS>/installer`
+   (`win32\installer.exe`, `lin64\installer`, or `mac/Installer.app`).
+2. Home page → **Upgrade**. Read the Introduction, **Next**. Accept the
+   EULA, **Next**.
+3. **Connect to source appliance**: source FQDN or IP, HTTPS port (443
+   unless custom), the SSO administrator username (`administrator@your_domain`)
+   and password, and the source appliance's **root** password. Accept the
+   SSL thumbprint prompt.
+4. **Connect to target**: where the new appliance deploys – either an ESX
+   host directly, or a vCenter instance (browse to a datacenter, then an
+   ESX host or DRS cluster). This target must be a *different* vCenter than
+   the one being upgraded – use the ESX host directly if there is only one
+   vCenter in the environment.
+5. Name the new appliance and set its **root** password. Note: the old
+   appliance's root password is **not** carried over to the new one.
+6. Pick a deployment size (Tiny / Small / Medium / Large / X-Large) to
+   match the environment, then a storage size (Default / Large / X-Large).
+7. Pick the datastore, optionally enabling thin provisioning.
+8. Configure the **temporary network** – a network reachable from both
+   appliances, static or DHCP, IPv4 or IPv6. This is throwaway; the new
+   appliance takes over the old one's real IP and FQDN at the end of Stage 2.
+9. Review, **Finish** to start the OVA deployment, then **Continue** into
+   Stage 2. (Clicking **Close** instead leaves the new appliance deployed
+   but unconfigured – no data transferred, no services started – and Stage
+   2 has to be resumed from the new appliance's own VAMI.)
+
+---
+
+## Stage 2 – migrate data and cut over
+
+From [Stage 2 – Transfer the Data and Set up the Newly Deployed vCenter Appliance](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso/stage-2-transfer-data-to-new-vcenter-server-appliance-with-embedded-platform-services-controller.html):
+
+1. Wait for the **pre-upgrade check**. This is where a back-in-time or
+   interoperability block, if there is one, is most likely to surface –
+   fix any reported errors before continuing. If the SSO credentials
+   entered in Stage 1 were wrong, this is also where that authentication
+   error shows up.
+2. Reconnect to the source appliance (same credentials as Stage 1).
+3. Reconnect to the source ESX host or vCenter (same admin credentials).
+4. **Select migration data** – configuration only (fastest, least storage)
+   versus configuration plus historical and performance data (slower).
+   With an external Oracle database, historical/performance data can
+   instead be migrated in the background after the new appliance starts.
+5. CEIP opt-in choice.
+6. **Ready to complete** – review the settings, accept the backup
+   acknowledgment, **Finish**.
+7. Acknowledge the shutdown warning – the source appliance is powered off
+   at this point.
+8. Wait for the data transfer and service startup to finish, then **OK**
+   to reach the new vCenter's Getting Started page.
+
+---
+
+## After cutover
+
+- The new 9.1.1 appliance now holds the old appliance's IP and FQDN; the
+  old appliance is powered off but not deleted – keep it as the rollback
+  position until the upgrade is verified.
+- If the old appliance used a **non-ephemeral distributed virtual port
+  group**, reconnect the new appliance to it manually – that setting is not
+  carried over automatically when deploying straight to an ESX host (not a
+  limitation when deploying through a vCenter instance instead).
+- Continue with the rest of the [Standalone VVF manual upgrade](01-overview.md#vvf-confirm-whether-vcf-management-services-is-even-in-scope)
+  steps (ESX hosts, vSAN on-disk format, vSAN File Service) as applicable,
+  and the general [Post-upgrade validation](01-overview.md#post-upgrade-validation)
+  checklist.
+- This is a single vCenter, not Enhanced Linked Mode – the multi-node
+  backup/restart sequencing called out for ELM environments in the
+  prerequisites does not apply here.
+
+Broadcom reference: [About the Upgrade Process of the vCenter appliance](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/about-the-vcenter-server-appliance-upgrade-process.html);
+KB 448135; the Broadcom Product Interoperability Matrix, Upgrade Path tool.

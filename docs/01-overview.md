@@ -29,6 +29,7 @@ core guidance stays reusable across engagements.
   · [target build](#pin-a-target-build)
   · [prerequisites & guardrails](#prerequisites-and-architectural-guardrails)
   · [pre-upgrade precheck](#run-the-pre-upgrade-precheck)
+  · companion doc: [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md)
 - [The upgrade sequence](#the-upgrade-sequence) – Phases 1–9: VCF Operations →
   SDDC Manager → Management Services + License Server → VCF Automation → NSX
   Local Manager → vCenter → ESX / host → NSX finalize → effective versions
@@ -130,7 +131,11 @@ notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-c
 > upgrades directly to a 9.1.0.0x00 build but **8.18.7 skips the 9.1.0 line
 > entirely – its only 9.x target is 9.1.1.0** (Upgrade Path tool, checked
 > 2026-09-04); Operations for Networks 6.14.1 reaches 9.1.0.0100 but not
-> 9.1.0.0200, and 6.14.3 has no 9.x path.
+> 9.1.0.0200, and 6.14.3 has no 9.x path. **vCenter itself hits the identical
+> pattern**: 8.0 U3j and later has no path to any 9.1.0.x or 9.0.x build, and
+> the only 9.x target is 9.1.1.0 (KB 448135, Upgrade Path tool, checked
+> 2026-09-15) – see [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md)
+> for the full detail and the standalone-path procedure.
 > **Applying "the latest patch" as preparation can strip the qualified path.**
 > Stay on the version that already has a direct path; only patch a component
 > when the matrix shows the current version is *below* the floor.
@@ -191,7 +196,9 @@ phases, no SDDC Manager involved at any point:
 3. **vCenter.** Upgrade the vCenter instance – choose **in-place** or
    **reduced-downtime upgrade (RDU)** the same as on the fleet-managed path
    (see [RDU detail](#phase-6--vcenter-upgrade)); driven from vCenter's own
-   VAMI / installer, not Fleet Management.
+   VAMI / installer, not Fleet Management. Full manual GUI walkthrough,
+   including the vCenter-specific back-in-time compatibility check:
+   [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md).
 4. **ESX hosts.** Upgrade the ESX hosts (vLCM images) – same host-by-host
    rolling approach as core [Phase 7](#phase-7--esx--host-cluster-upgrade),
    just triggered from vCenter directly.

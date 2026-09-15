@@ -32,6 +32,7 @@ duplicating it here:
 | `docs/04-field-notes.md` | Known issues and gotchas from real upgrades |
 | `docs/05-operations-modernization.md` | Aria Operations to VCF Operations: in-place vs. fresh install, re-IP, HA setup, vCenter integrations |
 | `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, with a permissions/roles backup |
+| `docs/07-vcenter-manual-upgrade.md` | Manual GUI upgrade of a standalone vCenter (no Fleet Management), plus the vCenter-specific back-in-time compatibility check |
 | `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps (work in progress) |
 | `reference/`      | Pinned reference material                                |
 | `tools/`          | Helper scripts, if any get added                         |

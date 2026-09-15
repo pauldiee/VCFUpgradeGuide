@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.6.1 – 2026-09-15
+- **New `docs/07-vcenter-manual-upgrade.md`** (issue #23). Manual GUI
+  upgrade walkthrough for a standalone vCenter (no Fleet Management):
+  Stage 1 (deploy the new appliance with a temporary network) and Stage 2
+  (migrate data, cut over), plus the prerequisites (backup/snapshot, port
+  22/443, DRS automation level, DNS/DHCP). Leads with the vCenter-specific
+  back-in-time compatibility finding – 8.0 U3j and later has no path to any
+  9.1.0.x or 9.0.x build, only to 9.1.1.0 (KB 448135, Upgrade Path tool) –
+  and flags an unresolved discrepancy against the GUI installer TechDocs
+  page's own "9.0 or later" wording, recommending validation before a
+  production run. Cross-linked from `01-overview.md` (the VVF manual-upgrade
+  path and the back-in-time callout), the README contents table, and
+  `web/src/nav.ts`.
+
 ## v0.6.0 – 2026-09-14
 - **New `docs/06-iwa-ldaps-migration.md`** (issue #22). Step-by-step
   walkthrough for moving a vCenter off Integrated Windows Authentication
