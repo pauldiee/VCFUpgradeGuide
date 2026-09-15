@@ -140,6 +140,65 @@ From [Stage 2 – Transfer the Data and Set up the Newly Deployed vCenter Applia
 
 ---
 
+## Alternative: CLI-driven upgrade using the OVA directly (vcsa-deploy)
+
+Stages 1 and 2 above are the interactive `vcsa-ui-installer` GUI wizard.
+The same mounted ISO also ships a **CLI installer** that drives the
+identical two-stage deploy-then-migrate process unattended, from a JSON
+template that points straight at the appliance's OVA file – useful for
+scripting or repeating the same upgrade across several vCenter instances.
+
+> **This is not the same thing as manually running "Deploy OVF Template" in
+> the vSphere Client.** Broadcom's upgrade TechDocs for 9.1 document only the
+> GUI wizard and this CLI installer as supported upgrade methods – there is
+> no documented upgrade path that has you drive the vSphere Client's own OVF
+> deployment wizard against the ISO's OVA yourself. (Deploying that OVA
+> straight through the vSphere Client is a real, supported procedure, but
+> it's the **fresh-install** flow – a brand-new, empty appliance configured
+> through its own first-boot VAMI wizard – not an upgrade that migrates an
+> existing vCenter's inventory and config across.) The CLI installer covered
+> here is the closest supported "point it at the OVA file" alternative to
+> the GUI wizard.
+
+1. From the mounted installer, the JSON templates live in
+   `vcsa-cli-installer/templates/upgrade/`. Copy the template matching the
+   source topology (embedded SSO, external PSC, HA cluster, etc.) and edit
+   it in a JSON-aware editor.
+2. Point the template's `image` field at the appliance OVA shipped in the
+   ISO's `vcsa/` folder, for example:
+   ```json
+   "image": "G:\\vcsa\\VMware-vCenter-Server-Appliance-9.1.1.XXXX-YYYYYYY_OVF10.ova"
+   ```
+   The CLI installer reads this JSON and generates an `ovftool` command
+   internally to deploy that exact OVA – there's no separate manual OVF
+   step to perform.
+3. Fill in the same information Stage 1/Stage 2 ask for interactively:
+   source appliance and SSO credentials, target ESX host or vCenter,
+   temporary network, new appliance name/root password, deployment and
+   storage size, and migration-data scope.
+4. **All values ASCII-only** – the CLI machine's own username, the path to
+   the installer, the path to the JSON file, and every string value inside
+   it (passwords included). Extended ASCII / non-ASCII characters are
+   unsupported and fail the run.
+5. Run the CLI machine (Windows, Linux, or Mac) from the same network as
+   the appliance being upgraded:
+   ```
+   vcsa-deploy upgrade --verify-template-only path_to_the_json_file
+   vcsa-deploy upgrade --precheck-only path_to_the_json_file
+   vcsa-deploy upgrade --accept-eula --acknowledge-ceip --log-dir=path_to_the_location path_to_the_json_file
+   ```
+   `--verify-template-only` validates the JSON without deploying anything;
+   `--precheck-only` runs the same pre-upgrade check Stage 2 waits on
+   interactively, without proceeding to migration – useful to catch a
+   back-in-time or interoperability block before committing.
+6. Same outcome as the GUI path: the old appliance is powered off once
+   migration starts, the new one takes over its IP/FQDN, and the same
+   [After cutover](#after-cutover) steps below apply.
+
+Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/cli-upgrade-of-vcenter-server-and-platform-services-controllers-instances/upgrade-vcenter-server-appliance-using-the-cli.html).
+
+---
+
 ## After cutover
 
 - The new 9.1.1 appliance now holds the old appliance's IP and FQDN; the

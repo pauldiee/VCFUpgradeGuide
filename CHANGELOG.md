@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.6.4 – 2026-09-15
+- **`docs/07-vcenter-manual-upgrade.md`: CLI-driven upgrade alternative.**
+  New section covering `vcsa-deploy` (the CLI installer bundled on the same
+  ISO as the GUI wizard) as the closest supported "point it at the OVA
+  file" alternative to Stage 1/Stage 2 of the interactive GUI upgrade:
+  JSON template location, the `image` field pointing at
+  `vcsa/VMware-vCenter-Server-Appliance-*_OVF10.ova`, the ASCII-only
+  caveat, and the `--verify-template-only` / `--precheck-only` / upgrade
+  command sequence. Explicitly distinguishes this from manually running
+  "Deploy OVF Template" in the vSphere Client, which Broadcom TechDocs
+  document only as the fresh-install flow, not a supported upgrade path.
+
 ## v0.6.3 – 2026-09-15
 - **Customer-handoff PDF export.** `web/scripts/generate-pdf.mjs`
   (`npm run pdf`, new devDependencies `playwright` + `pdf-lib`) builds the
