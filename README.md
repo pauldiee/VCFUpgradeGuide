@@ -49,14 +49,12 @@ npm install
 npm run dev
 ```
 
-The site itself has a **PDF** link in the header (`/guide-pdf/`) – a
-single flattened page with every doc in order, for a visitor to print or
-save as PDF straight from their own browser (`Ctrl`/`Cmd`+`P`). Works
-entirely client-side, so it runs live on GitLab Pages with no build-time
-Chromium involved.
+Each doc page has a **Download PDF** button that generates and downloads
+that single doc to the browser's Downloads folder – client-side, no
+build-time Chromium involved, so it works live on GitLab Pages as-is.
 
-For a locally-generated file instead (e.g. to email one without sending a
-link), build a combined PDF:
+For a locally-generated file covering the whole guide instead (e.g. to
+email one without sending a link), build a combined PDF:
 
 ```
 cd web

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.6.8 – 2026-09-15
+- **Removed the whole-guide `/guide-pdf/` print page** and its header
+  link – superseded by the per-doc **Download PDF** button on each guide
+  page (v0.6.7), which is the workflow actually wanted. The local
+  `npm run pdf` generator (`web/scripts/generate-pdf.mjs`) still covers
+  the whole-guide-as-one-file case.
+
 ## v0.6.7 – 2026-09-15
 - **Per-doc "Download PDF" button.** Each guide page
   (`web/src/pages/docs/[...slug].astro`) now has a button that generates
