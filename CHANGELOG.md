@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.6.7 – 2026-09-15
+- **Per-doc "Download PDF" button.** Each guide page
+  (`web/src/pages/docs/[...slug].astro`) now has a button that generates
+  and downloads *that single doc* as an actual PDF file straight to the
+  browser's Downloads folder – no print dialog, no server/CI involved.
+  Client-side via `html2pdf.js` (CDN, loaded on first click only), forcing
+  light theme for the capture regardless of the viewer's current scheme.
+  Verified end to end: `01-overview.md` → a correctly paginated 21-page
+  PDF. Complements, rather than replaces, the whole-guide
+  `/guide-pdf/` print page and the local `npm run pdf` generator.
+
 ## v0.6.6 – 2026-09-15
 - **Live on-site printable guide.** New `web/src/pages/guide-pdf.astro`
   (`/guide-pdf/`), a single flattened page with every `NAV`-ordered doc in
