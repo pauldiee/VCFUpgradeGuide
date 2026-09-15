@@ -691,9 +691,12 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
    directly. */
 @media print {
   :root:not([data-theme='light']) { color-scheme: light; }
-  .site-header__nav > a,
-  .theme-toggle,
-  .site-footer__meta,
+  /* .site-header and .site-footer are position:sticky for on-screen use,
+     and Chrome's print engine repeats sticky/fixed elements on every
+     physical page rather than placing them once – hide both wholesale
+     rather than fight that per sub-element (#print PDF button feedback). */
+  .site-header,
+  .site-footer,
   .skip-link,
   .sidebar,
   .doc-head,

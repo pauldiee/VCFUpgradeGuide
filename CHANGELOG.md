@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.7.1 – 2026-09-15
+- **Fix header/footer bleeding onto every printed page.** `.site-header`
+  and `.site-footer` are `position: sticky` for normal browsing, and
+  Chrome's print engine repeats sticky/fixed elements on every physical
+  page instead of placing them once – the ITQ footer band was overlapping
+  the tail of the doc content on page 1 of the "Print / Save as PDF"
+  output. Fixed by hiding both elements wholesale in `@media print` rather
+  than only their header-nav-links/footer-meta sub-pieces. Verified via a
+  real `@media print`-emulated render (not just CSS review): both computed
+  to `display: none`, and a Chromium print-to-PDF came out clean.
+
 ## v0.7.0 – 2026-09-15
 - **Replaced the rasterized per-doc PDF download with native browser
   print.** The `html2pdf.js`/`html2canvas` approach kept hitting layout
