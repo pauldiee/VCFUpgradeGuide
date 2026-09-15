@@ -109,6 +109,13 @@ with a `DELETE …/casa/auth/users` call.
   SDDC Manager / VCF Operations Fleet Management.
 - After the vCenter 9 upgrade, re-check the vCenter LCM **depot token** (see
   above).
+- **GUI installer "invalid SSO credentials" despite a correct password.**
+  Seen on a manual, non-fleet-managed vCenter upgrade. Confirmed cause: a
+  **customized SSO domain suffix** typed incorrectly – reachability, the
+  cert thumbprint, root, and the SSO password were all independently
+  correct, and there was no clock skew. Full troubleshooting sequence (six
+  other failure modes with the identical error text) in
+  [manual GUI upgrade – Troubleshooting](07-vcenter-manual-upgrade.md#troubleshooting-invalid-single-sign-on-credentials-at-step-3).
 
 ---
 

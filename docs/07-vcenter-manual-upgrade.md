@@ -113,6 +113,50 @@ From [Stage 1 – Deploy the OVA File of the New vCenter Appliance](https://tech
    but unconfigured – no data transferred, no services started – and Stage
    2 has to be resumed from the new appliance's own VAMI.)
 
+### Troubleshooting: "invalid single sign-on credentials" at step 3
+
+Step 3 ("Connect to source appliance") can reject correct credentials with a
+generic invalid-SSO-credentials error. Work through these in order – each
+rules out a distinct failure mode, and the error text is identical for all
+of them, so don't stop at the first plausible-sounding cause without
+actually checking it:
+
+1. **Confirm the credentials really are correct, outside the installer.**
+   Log in to the source vCenter's own UI with the same root and SSO admin
+   credentials being entered in the wizard.
+2. **Clock skew** between the machine running the installer and the source
+   appliance. SSO token validation is time-sensitive – a few minutes of
+   drift produces this exact error even with a correct password. Compare
+   `date` output on both.
+3. **IP vs FQDN against the Machine SSL certificate's SAN.** If the source
+   is entered as an IP address but the cert's SAN only covers the FQDN (or
+   vice versa), SSO auth fails on the mismatched form even though
+   connectivity and the thumbprint-acceptance step both pass. Try the other
+   form.
+4. **Custom SSO domain suffix.** Do not assume `vsphere.local` – confirm
+   the actual domain under **Administration → Single Sign-On →
+   Configuration** on the source vCenter and use `administrator@<that
+   domain>` exactly. **This was the confirmed cause in a field-verified
+   case** – a customized domain suffix typed incorrectly, with reachability,
+   the cert thumbprint, root, and the SSO password all independently correct
+   and no clock skew present.
+5. **Account lockout.** Check **Administration → Single Sign-On →
+   Configuration → Lockout Policy** – prior failed attempts (including the
+   installer's own retries) can lock the account even though the password
+   being tested now is correct.
+6. **Credential entry artifacts.** Retype the password by hand instead of
+   pasting, in case of trailing whitespace or a hidden character from a
+   password manager.
+7. **Read the actual rejection reason from the source appliance's own
+   logs**, rather than continuing to guess from outside it:
+   ```
+   ssh root@<source-appliance>
+   grep -i "invalid credential\|authentication fail\|lockout" /var/log/vmware/sso/vmware-identity-sts.log
+   ```
+   Also check `/var/log/vmware/vmdird/vmdird-syslog.log` for the same
+   timestamp. The STS log records the real reason (locked account, wrong
+   domain, genuine bad password, etc.) behind the wizard's generic message.
+
 ---
 
 ## Stage 2 – migrate data and cut over

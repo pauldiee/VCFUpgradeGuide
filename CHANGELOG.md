@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.6.5 – 2026-09-15
+- **Field-verified: GUI installer "invalid SSO credentials" gotcha.**
+  `docs/07-vcenter-manual-upgrade.md` gets a new Stage 1 troubleshooting
+  subsection covering seven failure modes that all produce the identical
+  error at "Connect to source appliance" (clock skew, IP-vs-FQDN against
+  the Machine SSL cert's SAN, custom SSO domain suffix, account lockout,
+  credential-entry artifacts, and reading the real reason from the source
+  appliance's own STS log). `docs/04-field-notes.md` gets a short
+  cross-linked entry recording the confirmed root cause from a live
+  engagement: a customized SSO domain suffix typed incorrectly, with every
+  other candidate (reachability, cert thumbprint, root, SSO password,
+  clock skew) independently ruled out first.
+
 ## v0.6.4 – 2026-09-15
 - **`docs/07-vcenter-manual-upgrade.md`: CLI-driven upgrade alternative.**
   New section covering `vcsa-deploy` (the CLI installer bundled on the same
