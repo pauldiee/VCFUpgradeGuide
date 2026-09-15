@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6.9 – 2026-09-15
+- **Fix ugly page breaks in the per-doc PDF download.** The `html2pdf.js`
+  slicer was cutting mid-table, mid-code-block, and mid-list-item since it
+  only knew about `mode: ['css', 'legacy']` with no elements to avoid
+  splitting. Added a `pagebreak.avoid` list (`pre`, `table`, `tr`,
+  `blockquote`, `h1`–`h4`, `li`, `img`) so those elements now move to the
+  next page as a whole instead of splitting across the boundary.
+
 ## v0.6.8 – 2026-09-15
 - **Removed the whole-guide `/guide-pdf/` print page** and its header
   link – superseded by the per-doc **Download PDF** button on each guide

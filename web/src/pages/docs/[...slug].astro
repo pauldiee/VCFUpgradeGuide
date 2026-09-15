@@ -120,7 +120,10 @@ const title = meta ? `${meta.label} – VCF Upgrade Guide` : 'VCF Upgrade Guide'
               image: { type: 'jpeg', quality: 0.95 },
               html2canvas: { scale: 2, backgroundColor: '#ffffff', useCORS: true },
               jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-              pagebreak: { mode: ['css', 'legacy'] },
+              pagebreak: {
+                mode: ['css', 'legacy'],
+                avoid: ['pre', 'table', 'tr', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'li', 'img'],
+              },
             })
             .from(article)
             .save();
