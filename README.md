@@ -49,9 +49,10 @@ npm install
 npm run dev
 ```
 
-Each doc page has a **Download PDF** button that generates and downloads
-that single doc to the browser's Downloads folder – client-side, no
-build-time Chromium involved, so it works live on GitLab Pages as-is.
+Each doc page has a **Print / Save as PDF** button – it calls the
+browser's own print dialog against that doc, using the site's print
+styling, so choosing "Save as PDF" there gives a proper, correctly-paginated
+PDF of just that doc.
 
 For a locally-generated file covering the whole guide instead (e.g. to
 email one without sending a link), build a combined PDF:

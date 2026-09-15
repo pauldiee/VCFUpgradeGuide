@@ -30,12 +30,8 @@ const title = meta ? `${meta.label} – VCF Upgrade Guide` : 'VCF Upgrade Guide'
 <BaseLayout title={title} description={meta?.blurb} active={doc.id}>
   <div class="doc-head" data-pagefind-ignore>
     {meta && <p class="doc-eyebrow itq-eyebrow">{meta.step}</p>}
-    <button
-      type="button"
-      class="btn btn--primary btn--sm doc-download-pdf"
-      data-slug={doc.id}
-    >
-      <i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Download PDF
+    <button type="button" class="btn btn--primary btn--sm doc-download-pdf" onclick="window.print()">
+      <i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Print / Save as PDF
     </button>
   </div>
   {
@@ -77,70 +73,6 @@ const title = meta ? `${meta.label} – VCF Upgrade Guide` : 'VCF Upgrade Guide'
     }
   </nav>
 </BaseLayout>
-
-{/* Renders this doc's own <article class="doc prose"> to a downloaded PDF file
-    client-side (no server/CI Chromium involved) via html2pdf.js, loaded from
-    the CDN on first click rather than on every page load. Forces light theme
-    for the capture regardless of the viewer's current scheme, since a
-    rasterized dark-mode PDF reads poorly on paper, then restores it after. */}
-<script is:inline>
-  (function () {
-    var btn = document.querySelector('.doc-download-pdf');
-    if (!btn) return;
-    var HTML2PDF_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-    var loadPromise = null;
-    function loadHtml2pdf() {
-      if (window.html2pdf) return Promise.resolve();
-      if (!loadPromise) {
-        loadPromise = new Promise(function (resolve, reject) {
-          var s = document.createElement('script');
-          s.src = HTML2PDF_SRC;
-          s.onload = resolve;
-          s.onerror = reject;
-          document.head.appendChild(s);
-        });
-      }
-      return loadPromise;
-    }
-    btn.addEventListener('click', function () {
-      var original = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = 'Preparing…';
-      var root = document.documentElement;
-      var priorTheme = root.dataset.theme;
-      loadHtml2pdf()
-        .then(function () {
-          var article = document.querySelector('.doc.prose');
-          root.dataset.theme = 'light';
-          return window
-            .html2pdf()
-            .set({
-              margin: 12,
-              filename: (btn.dataset.slug || 'document') + '.pdf',
-              image: { type: 'jpeg', quality: 0.95 },
-              html2canvas: { scale: 2, backgroundColor: '#ffffff', useCORS: true },
-              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-              pagebreak: {
-                mode: ['css', 'legacy'],
-                avoid: ['pre', 'table', 'tr', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'li', 'img'],
-              },
-            })
-            .from(article)
-            .save();
-        })
-        .catch(function (err) {
-          console.error('PDF generation failed', err);
-          window.alert('Could not generate the PDF. Check your connection and try again.');
-        })
-        .finally(function () {
-          if (priorTheme) root.dataset.theme = priorTheme;
-          else delete root.dataset.theme;
-          btn.disabled = false;
-          btn.innerHTML = original;
-        });
-    });
-  })();
-</script>
 
 <style>
   .doc-head {

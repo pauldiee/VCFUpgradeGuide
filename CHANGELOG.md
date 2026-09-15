@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.7.0 – 2026-09-15
+- **Replaced the rasterized per-doc PDF download with native browser
+  print.** The `html2pdf.js`/`html2canvas` approach kept hitting layout
+  bugs (v0.6.9's page-break fix wasn't enough) because it fundamentally
+  rasterizes the page into one image and slices it, rather than laying out
+  real text. The **Print / Save as PDF** button on each doc page now just
+  calls `window.print()`, reusing the site's existing `@media print` rules
+  (`site.css`) – real text, correct pagination, small files, no CDN
+  dependency. One extra click (the browser's print dialog) in exchange for
+  actually-correct output. Removed the `html2pdf.js` CDN script and all
+  the theme-forcing/canvas-slicing JS that came with it.
+
 ## v0.6.9 – 2026-09-15
 - **Fix ugly page breaks in the per-doc PDF download.** The `html2pdf.js`
   slicer was cutting mid-table, mid-code-block, and mid-list-item since it

@@ -696,6 +696,7 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
   .site-footer__meta,
   .skip-link,
   .sidebar,
+  .doc-head,
   .doc-toc,
   .doc-pager,
   .code-copy-btn,
