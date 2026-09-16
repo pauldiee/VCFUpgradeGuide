@@ -26,16 +26,57 @@ duplicating it here:
 
 ## Contents
 
+### The spine
+
 | Path              | Purpose                                                |
 | ----------------- | ------------------------------------------------------- |
 | `docs/01-overview.md` | General VCF upgrade guidance (work in progress)      |
-| `docs/02-disaster-recovery.md` | SRM / vSphere Replication to VCF Protection and Recovery |
-| `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access to VCF Identity Broker |
+
+### Guides, grouped by where they slot into the flow
+
+The `docs/NN-` file numbers are stable identifiers (linked from across the
+repo), not a reading order. The site sidebar mirrors these bands. **Applies
+to** follows the VCF/VVF split from `01-overview.md`'s
+["VVF: confirm whether VCF Management Services is even in scope"](docs/01-overview.md#vvf-confirm-whether-vcf-management-services-is-even-in-scope) –
+most guides work for either licensing model, some are scoped to one.
+
+**Pre-upgrade prep** – done before the core sequence, or before a specific
+phase:
+
+| Path              | Purpose                                                | Applies to |
+| ----------------- | ------------------------------------------------------- | ---------- |
+| `docs/02-disaster-recovery.md` | SRM / vSphere Replication to VCF Protection and Recovery, before core Phase 3 | VCF, VVF, or pre-9 vSphere |
+| `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, before Phase 6, with a permissions/roles backup | VCF or VVF |
+
+**Phase guides** – detail for a specific core-sequence phase:
+
+| Path              | Purpose                                                | Applies to |
+| ----------------- | ------------------------------------------------------- | ---------- |
+| `docs/05-operations-modernization.md` | Aria Operations to VCF Operations (Phase 1): in-place vs. fresh install, re-IP, HA setup, vCenter integrations | VCF or VVF |
+| `docs/07-vcenter-manual-upgrade.md` | Manual GUI upgrade of a standalone vCenter (Phase 6 alternate path, no Fleet Management), plus the vCenter-specific back-in-time compatibility check | **VVF only** (no VCF Management Services) |
+
+**Post-upgrade:**
+
+| Path              | Purpose                                                | Applies to |
+| ----------------- | ------------------------------------------------------- | ---------- |
+| `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access to VCF Identity Broker, after core (or before Phase 1 for the 9.0.x source case) | **VCF only** (needs VCF Management Services) |
+
+**Reference:**
+
+| Path              | Purpose                                                |
+| ----------------- | ------------------------------------------------------- |
 | `docs/04-field-notes.md` | Known issues and gotchas from real upgrades |
-| `docs/05-operations-modernization.md` | Aria Operations to VCF Operations: in-place vs. fresh install, re-IP, HA setup, vCenter integrations |
-| `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, with a permissions/roles backup |
-| `docs/07-vcenter-manual-upgrade.md` | Manual GUI upgrade of a standalone vCenter (no Fleet Management), plus the vCenter-specific back-in-time compatibility check |
+
+**Hardware addenda:**
+
+| Path              | Purpose                                                |
+| ----------------- | ------------------------------------------------------- |
 | `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps (work in progress) |
+
+### Other
+
+| Path              | Purpose                                                |
+| ----------------- | ------------------------------------------------------- |
 | `reference/`      | Pinned reference material                                |
 | `tools/`          | Helper scripts, if any get added                         |
 | `web/`            | ITQ-branded Astro site rendering `docs/` in place        |
