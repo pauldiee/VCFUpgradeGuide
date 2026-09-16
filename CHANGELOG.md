@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.8.4 – 2026-09-16
+- **Add "rename the old vCenter appliance" step to `docs/07-vcenter-manual-upgrade.md`.**
+  New section before Stage 1: rename the outgoing appliance first so the
+  new appliance can be given the correct destination name at deployment
+  time (Stage 1 step 5) instead of renaming it after cutover, and so the
+  old and new appliances don't briefly share a name once the old one is
+  powered off but not yet deleted.
+
 ## v0.8.3 – 2026-09-16
 - **Fix Stage 2 step order in `docs/07-vcenter-manual-upgrade.md`.**
   Field-verified during a live Stage 2 walkthrough: the pre-upgrade check

@@ -83,6 +83,26 @@ condensed:
 
 ---
 
+## Before Stage 1: rename the old vCenter appliance
+
+Stage 1 step 5 names the *new* appliance – and by default that's the only
+naming decision in the whole flow, since the new appliance takes over the
+old one's IP and FQDN at cutover rather than its display name. Rename the
+**old** vCenter appliance (VM name in the inventory, and its own appliance
+name if surfaced in VAMI) to something clearly marking it as the outgoing
+instance – for example appending `-old` or the source build number – before
+starting Stage 1. Do this as normal procedure, not an afterthought:
+
+- It lets the new appliance be named correctly – the actual destination
+  name – from the moment it's deployed in Stage 1 step 5, instead of
+  deploying it under a throwaway name and renaming it after cutover.
+- It avoids two identically-named vCenter objects existing side by side
+  once the new appliance is up (the old one stays powered off but
+  undeleted per [After cutover](#after-cutover), so the name collision
+  would otherwise persist until it's cleaned up).
+
+---
+
 ## Stage 1 – deploy the new 9.1.1 appliance
 
 From [Stage 1 – Deploy the OVA File of the New vCenter Appliance](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso/stage-1-deploy-ova-file-of-new-vcenter-server-appliance-with-embedded-platform-services-controller.html):
