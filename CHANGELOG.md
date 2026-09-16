@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.8.3 – 2026-09-16
+- **Fix Stage 2 step order in `docs/07-vcenter-manual-upgrade.md`.**
+  Field-verified during a live Stage 2 walkthrough: the pre-upgrade check
+  runs *after* reconnecting to the source appliance and source ESX
+  host/vCenter, not before. The doc had them in the opposite order.
+
+## v0.8.2 – 2026-09-16
+- **Group guides into flow bands, tag VCF/VVF applicability.**
+  `web/src/nav.ts`, the README Contents table, and CLAUDE.md's file-layout
+  table now group each `docs/NN-*.md` guide by where it slots into the
+  upgrade flow (pre-upgrade prep, phase guide, post-upgrade, reference,
+  hardware addendum) instead of a flat "Guide" label, matching
+  `VCF9-DeploymentPlanning`'s convention. Each guide also carries a
+  VCF/VVF applicability tag, since VCF Management Services is optional for
+  VVF and some guides (Identity Broker migration, the standalone vCenter
+  manual upgrade) are scoped to one licensing model. Also fixes CLAUDE.md's
+  file-layout table, which was missing docs 05–07.
+
 ## v0.8.1 – 2026-09-15
 - **Shrink the landing-page hero.** The full-height hero (large title +
   intro paragraph + CTA button) read as if it were the whole site's

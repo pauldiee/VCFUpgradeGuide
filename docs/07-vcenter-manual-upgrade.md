@@ -163,13 +163,14 @@ actually checking it:
 
 From [Stage 2 – Transfer the Data and Set up the Newly Deployed vCenter Appliance](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/gui-upgrade-of-the-vcsa-and-psc-appliance/upgrade-the-vmware-vcenter-server-appliance-with-embedded-sso/stage-2-transfer-data-to-new-vcenter-server-appliance-with-embedded-platform-services-controller.html):
 
-1. Wait for the **pre-upgrade check**. This is where a back-in-time or
+1. Reconnect to the source appliance (same credentials as Stage 1).
+2. Reconnect to the source ESX host or vCenter (same admin credentials).
+3. Wait for the **pre-upgrade check** – it runs only after both
+   reconnections above complete. This is where a back-in-time or
    interoperability block, if there is one, is most likely to surface –
    fix any reported errors before continuing. If the SSO credentials
    entered in Stage 1 were wrong, this is also where that authentication
    error shows up.
-2. Reconnect to the source appliance (same credentials as Stage 1).
-3. Reconnect to the source ESX host or vCenter (same admin credentials).
 4. **Select migration data** – configuration only (fastest, least storage)
    versus configuration plus historical and performance data (slower).
    With an external Oracle database, historical/performance data can
