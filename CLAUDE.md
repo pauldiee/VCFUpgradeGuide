@@ -39,10 +39,13 @@ here – see the Related repo section in `README.md`.
 | `CLAUDE.md`           | This file                                                     |
 | `.gitignore`          | Excludes customer artifacts                                   |
 | `docs/01-overview.md` | General VCF upgrade guidance (any hardware) – the spine     |
-| `docs/02-disaster-recovery.md` | SRM / vSphere Replication → Protection and Recovery convergence |
-| `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access → VCF Identity Broker |
-| `docs/04-field-notes.md` | Known issues and gotchas from real upgrades |
-| `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps, on top of the general flow |
+| `docs/02-disaster-recovery.md` | SRM / vSphere Replication → Protection and Recovery convergence (pre-upgrade prep; VCF, VVF, or pre-9 vSphere) |
+| `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access → VCF Identity Broker (post-upgrade; **VCF only**, needs VCF Management Services) |
+| `docs/04-field-notes.md` | Known issues and gotchas from real upgrades (reference) |
+| `docs/05-operations-modernization.md` | Aria Operations → VCF Operations, Phase 1 (phase guide; VCF or VVF) |
+| `docs/06-iwa-ldaps-migration.md` | IWA → AD-over-LDAPS migration before Phase 6, with a permissions/roles backup (pre-upgrade prep; VCF or VVF) |
+| `docs/07-vcenter-manual-upgrade.md` | Manual GUI vCenter upgrade, Phase 6 alternate path (phase guide; **VVF only**, no Fleet Management) |
+| `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps, on top of the general flow (hardware addendum) |
 | `reference/`          | Pinned reference material (Dell/VMware docs, KBs, etc.)        |
 | `tools/`              | Helper scripts, if any get added                               |
 | `web/`                | ITQ-branded Astro site rendering `docs/` in place, dual-deployed (public + internal) |
