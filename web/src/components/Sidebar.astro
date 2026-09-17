@@ -1,19 +1,21 @@
 ---
-import { NAV } from '../nav';
+import { navFlowItems, navReferenceBands } from '../nav';
 import { docHref as href } from '../lib/path';
 
 interface Props {
   active?: string;
 }
 const { active } = Astro.props;
+const flowItems = navFlowItems();
+const referenceBands = navReferenceBands();
 ---
 
 <aside class="sidebar" aria-label="Upgrade planning docs">
-  <p class="sidebar__eyebrow itq-eyebrow">Planning flow</p>
+  <p class="sidebar__eyebrow itq-eyebrow">Guide</p>
   <nav>
     <ol class="sidebar__list">
       {
-        NAV.map((item) => (
+        flowItems.map((item) => (
           <li>
             <a
               class:list={['sidebar__link', { 'is-active': active === item.slug }]}
@@ -31,4 +33,27 @@ const { active } = Astro.props;
       }
     </ol>
   </nav>
+
+  <details class="sidebar__reference sidebar__eyebrow--spaced" open>
+    <summary class="sidebar__eyebrow itq-eyebrow sidebar__reference-summary">Guides</summary>
+    {
+      referenceBands.map((group) => (
+        <>
+          <p class="sidebar__eyebrow itq-eyebrow sidebar__band">{group.band}</p>
+          {group.items.map((item) => (
+            <a
+              class:list={['sidebar__link', { 'is-active': active === item.slug }]}
+              href={href(item.slug)}
+              aria-current={active === item.slug ? 'page' : undefined}
+            >
+              <i class={`fa-solid fa-${item.icon} sidebar__icon`} aria-hidden="true" />
+              <span class="sidebar__text">
+                <span class="sidebar__label">{item.label}</span>
+              </span>
+            </a>
+          ))}
+        </>
+      ))
+    }
+  </details>
 </aside>
