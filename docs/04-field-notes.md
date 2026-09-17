@@ -207,6 +207,32 @@ Expect every cluster to behave differently.
 
 ---
 
+## VCF Management Services Runtime
+
+- **Day-0-only worker nodes do not rightsize after a 9.1 → 9.1.1+ patch.**
+  VCF Management Services Runtime 9.1.1+ introduces Day-0-optimized worker
+  machine types and minimum worker replica counts, applied automatically on
+  a greenfield 9.1.1+ deployment. A brownfield patch from 9.1 does not
+  reconcile existing worker sizing, so a management domain that has **not**
+  had Log Management or Real-time Metrics added yet stays on its larger
+  pre-patch worker VMs indefinitely. Per Broadcom
+  [KB 455842](https://knowledge.broadcom.com/external/article/455842):
+  1. SSH to the control-plane node as `vmware-system-user`, elevate to `root`.
+  2. Copy Broadcom's `rightsize-day0-workers.sh` remediation script to the
+     control-plane node.
+  3. `chmod +x <directory>/rightsize-day0-workers.sh`, then run it.
+  4. Verify with `kubectl get pd vmsp-platform -n vmsp-platform` – wait for
+     `STATUS` to reach `Successful`.
+
+  **This triggers a worker node rollout, which can disrupt ongoing
+  operations on the cluster** – run it in a maintenance window, not
+  immediately after the patch completes. Only applies if the management
+  domain is still Day-0-only at 9.1.1+; once Log Management or Real-time
+  Metrics is added, worker sizing is no longer Day-0-optimized and this
+  script does not apply.
+
+---
+
 ## Firewall ports opened during the upgrade
 
 Upgrade-specific flows that had to be opened (in addition to the standard

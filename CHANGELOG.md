@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.8.5 – 2026-09-17
+- **`docs/04-field-notes.md`: document KB 455842 (Day-0-only worker nodes
+  don't rightsize after a 9.1 → 9.1.1+ patch).** New "VCF Management
+  Services Runtime" section – a brownfield patch from 9.1 to 9.1.1+ doesn't
+  reconcile worker sizing for a management domain that hasn't had Log
+  Management or Real-time Metrics added yet, leaving it on larger pre-patch
+  worker VMs. Documents Broadcom's `rightsize-day0-workers.sh` remediation
+  script and its worker-rollout/maintenance-window caveat.
+
 ## v0.8.4 – 2026-09-16
 - **Add "rename the old vCenter appliance" step to `docs/07-vcenter-manual-upgrade.md`.**
   New section before Stage 1: rename the outgoing appliance first so the
