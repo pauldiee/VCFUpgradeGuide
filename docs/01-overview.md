@@ -213,6 +213,32 @@ intermediate state** – you can extend to full VVF or VCF later (deploying VCF
 Management Services as a Day-N operation) rather than needing to decide
 everything up front.
 
+**Extending standalone/VSS-based VVF to full VCF needs a VDS migration
+first – it is not handled by any VCF workflow.** VVF itself has no
+distributed-switch requirement (a VVF cluster can run on the Virtual
+Standard Switch indefinitely, same as plain vSphere always could). Full VCF
+does, for two independent reasons that both land on the same prerequisite:
+
+- **NSX only integrates with vSphere Distributed Switch (VDS) on ESXi.**
+  Per Broadcom TechDocs, ["Managing NSX on a vSphere Distributed
+  Switch"](https://techdocs.broadcom.com/us/en/vmware-cis/nsx/vmware-nsx/4-2/administration-guide/host-switches/managing-nsx-on-a-vsphere-distributed-switch.html):
+  *"In NSX 4.0, you can only use a VDS switch to prepare ESXi host nodes as
+  transport nodes"* – N-VDS *"is not supported"* for that purpose (N-VDS
+  remains valid only for NSX Edge VMs, not ESXi hosts). NSX 4.0+ ships in
+  VCF 9, and NSX is mandatory in full VCF, at minimum for the management
+  domain.
+- **SDDC Manager / VCF Operations Fleet Management's own workload-domain
+  automation only creates and manages clusters on VDS** – there is no VSS
+  option anywhere in that create/add-cluster flow, independent of the NSX
+  requirement above.
+
+If an engagement is on standalone VVF with VSS today and the fleet is
+heading toward full VCF (this doc's phases, not just adding VCF Management
+Services), confirm the VSS→VDS migration is scoped as its own prerequisite
+step **before** committing to a phase count – it is a manual, per-cluster
+migration on the vSphere side, not something the VCF Installer or NSX
+deployment does for you.
+
 Establish this **before** running the planner or committing to a phase count
 – it changes whether Phases 2 and 3 (SDDC Manager, VCF Management Services +
 License Server) exist at all for that engagement.

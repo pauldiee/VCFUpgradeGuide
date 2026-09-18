@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.9.1 – 2026-09-18
+- **`docs/01-overview.md`: document the VSS→VDS prerequisite for
+  standalone VVF extending to full VCF.** New note in the "VVF: confirm
+  whether VCF Management Services is even in scope" section – VVF itself
+  has no distributed-switch requirement, but full VCF does, for two
+  independent reasons: NSX 4.0+ (shipped in VCF 9) only supports VDS for
+  ESXi transport nodes (N-VDS removed), and SDDC Manager / VCF Operations
+  Fleet Management's workload-domain automation only creates/manages
+  clusters on VDS, with no VSS option. A VSS-based standalone VVF fleet
+  heading toward full VCF needs this scoped as its own prerequisite step.
+
 ## v0.9.0 – 2026-09-18
 - **`docs/06-iwa-ldaps-migration.md`: fix the CLI Leave AD fallback to
   actually reach Active Directory.** The documented command
