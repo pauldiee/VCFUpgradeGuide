@@ -265,8 +265,19 @@ root):
 
 ```
 /opt/likewise/bin/domainjoin-cli query
-/opt/likewise/bin/domainjoin-cli leave <DomainName.com>
+/opt/likewise/bin/domainjoin-cli leave <DomainName.com> <username> <password>
 ```
+
+**The credentials are not optional if the AD-side object matters.** Per the
+`domainjoin-cli` man page: *"If no credentials are specified, the machine
+will no longer behave as a member of domain but its machine account will
+remain enabled in AD."* Running `leave` bare (no `username`/`password`)
+only disjoins locally – it silently leaves a live, enabled computer object
+behind in AD, which is worse than a merely stale one. Supply UPN-format
+credentials (same requirement as the UI method above) so the CLI actually
+reaches AD. Even then, the man page only promises the account gets
+**disabled**, not deleted – step 7 below is still required regardless of
+which method was used.
 
 Restart vCenter Server afterward either way.
 
@@ -279,10 +290,13 @@ Restart vCenter Server afterward either way.
 
 ## 7. Clean up Active Directory
 
-Delete the stale computer account object left behind in Active Directory
-after the domain leave completes – it doesn't clean itself up automatically
-and can cause confusion (or a naming collision) if the vCenter is ever
-rejoined.
+Delete the computer account object left behind in Active Directory after
+the domain leave completes. This is required regardless of method – the UI
+path and a credentialed CLI leave both stop at *disabling* the account at
+best, and a bare CLI leave (no credentials) doesn't touch the AD side at
+all, leaving it live. An orphaned object doesn't clean itself up
+automatically and can cause confusion (or a naming collision) if the
+vCenter is ever rejoined.
 
 ---
 
@@ -311,3 +325,4 @@ vCenter-side snapshot restore doesn't undo.
 - [Configuring a vCenter Single Sign-On Identity Source using LDAP with SSL (LDAPS)](https://knowledge.broadcom.com/external/article/316596/configuring-a-vcenter-single-signon-iden.html)
 - [Active Directory over LDAP and OpenLDAP Server Identity Source Settings](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/active-directory-ldap-server-identity-source-settings.html)
 - [Enabling secure backup and restore in the vCenter Server Appliance](https://knowledge.broadcom.com/external/article/310399/enabling-secure-backup-and-restore-in-th.html)
+- [domainjoin-cli(8) man page](https://man.cx/domainjoin-cli(8)) – upstream Likewise/PBIS tool docs (not Broadcom-specific), source for the credentials-required-to-touch-AD behavior in step 6's CLI fallback

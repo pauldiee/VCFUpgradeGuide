@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.8.10 – 2026-09-18
+- **`docs/06-iwa-ldaps-migration.md`: fix the CLI Leave AD fallback to
+  actually reach Active Directory.** The documented command
+  (`domainjoin-cli leave <DomainName.com>`, no credentials) only disjoins
+  the appliance locally – per the `domainjoin-cli` man page, *"If no
+  credentials are specified, the machine will no longer behave as a member
+  of domain but its machine account will remain enabled in AD."* Adds
+  `<username> <password>` to the documented command and a note that even
+  with credentials the tool only disables the AD object, not deletes it.
+  Step 7 (cleanup) reworded to state plainly it's required regardless of
+  which method (UI or CLI) was used, not just a tidiness step.
+
 ## v0.8.9 – 2026-09-18
 - **`docs/06-iwa-ldaps-migration.md`: correct the Leave AD error root
   cause, link every Source inline.** Follow-up to v0.8.8 – field-verified
