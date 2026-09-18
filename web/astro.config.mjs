@@ -11,6 +11,13 @@ import { readdirSync } from 'node:fs';
 // root.
 const SITE = process.env.SITE_URL || 'http://localhost:4321';
 const BASE = process.env.SITE_BASE || '';
+// Trailing-slash-stripped form for building hrefs (`${BASE_PATH}/docs/...`).
+// BASE itself is often "/" (root deploys) or a path prefix with no trailing
+// slash - using BASE directly here produced "//docs/..." on every root
+// deploy (SITE_BASE=/), a protocol-relative URL the browser resolves as
+// host "docs" instead of a same-origin path. Mirrors lib/path.ts's
+// withBase(), which already strips this correctly.
+const BASE_PATH = BASE.replace(/\/+$/, '');
 
 /**
  * Rewrite in-repo markdown cross-links (e.g. `01-network-dns-plan.md`,
@@ -29,7 +36,7 @@ function rehypeRewriteDocLinks() {
         const href = node.properties.href;
         if (typeof href === 'string') {
           const m = href.match(DOC_LINK);
-          if (m) node.properties.href = `${BASE}/docs/${m[1]}/${m[2] ?? ''}`;
+          if (m) node.properties.href = `${BASE_PATH}/docs/${m[1]}/${m[2] ?? ''}`;
         }
       }
       if (node.children) node.children.forEach(visit);
@@ -72,7 +79,7 @@ function rehypeLinkCodeSpanDocRefs() {
             return {
               type: 'element',
               tagName: 'a',
-              properties: { href: `${BASE}/docs/${m[1]}/${m[2] ?? ''}` },
+              properties: { href: `${BASE_PATH}/docs/${m[1]}/${m[2] ?? ''}` },
               children: [child],
             };
           }

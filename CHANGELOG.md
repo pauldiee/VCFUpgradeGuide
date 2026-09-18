@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.9.6 – 2026-09-18
+- **Fix every internal doc-to-doc link on the live site.** `astro.config.mjs`'s
+  link rewriter built hrefs as `${BASE}/docs/<slug>/`, and both deploy
+  targets set `SITE_BASE` to a value with **no trailing slash stripped**
+  (GitHub Pages: `/`; GitLab Pages: a path prefix) – so on a root deploy
+  the result was `//docs/<slug>/`, a **protocol-relative URL** the browser
+  resolves as host `docs` (`ERR_NAME_NOT_RESOLVED`) instead of a
+  same-origin path. This broke every markdown cross-link and code-span
+  auto-link between docs on both live deploys, not just the two new
+  track docs that surfaced it. Fixed by stripping trailing slashes from
+  `BASE` before building hrefs, mirroring `lib/path.ts`'s existing
+  `withBase()`. Verified against both `SITE_BASE=/` (GitHub Pages) and a
+  `SITE_BASE=/<project>` prefix (GitLab Pages).
+
 ## v0.9.5 – 2026-09-18
 - **Split `01-overview.md`'s phase-by-phase content into two track-specific
   docs.** Both the `/vcf/` and `/vvf/` landing pages led with the same
