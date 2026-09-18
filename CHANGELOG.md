@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.8.6 – 2026-09-18
+- **`docs/04-field-notes.md`: document Cisco ACI (APIC/VMM) vSphere 8/9
+  interop constraints.** New entry in "Open items to confirm" – VDS-based
+  VMM domain integration is gated by Cisco's own ACI Virtualization
+  Compatibility Matrix independent of the VCF interop matrix, quoting the
+  matrix verbatim: VDS is required for every vSphere version including 9.0
+  (listed there as "VCF (vSphere) 9.0"), and AVE (ACI Virtual Edge) is a
+  confirmed hard blocker for both vSphere 8.0 and VCF 9.0, not just
+  deprecated. Flags the per-APIC-train certification grid as not yet
+  captured – it renders as interactive tooltips, not extractable text.
+
 ## v0.8.5 – 2026-09-17
 - **`docs/04-field-notes.md`: document KB 455842 (Day-0-only worker nodes
   don't rightsize after a 9.1 → 9.1.1+ patch).** New "VCF Management

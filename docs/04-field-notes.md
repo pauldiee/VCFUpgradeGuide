@@ -302,3 +302,38 @@ components are firewalled independently and it is an easy step to miss.
   were not confirmed. **Treat the sequential Phase 5 → Phase 6 order as the
   safe default** until this is clarified – do not attempt to interleave
   them based on this note alone.
+- **Third-party ACI (Cisco APIC/VMM) integration can gate the vSphere
+  upgrade independently of the VCF interop matrix.** (reviewed 2026-09-18
+  against Cisco's live
+  [ACI Virtualization Compatibility Matrix](https://www.cisco.com/c/en/us/td/docs/Website/datacenter/aci/virtualization/matrix/virtmatrix.html),
+  page last revised 2026-09-01; not yet field-verified against a real
+  engagement.) When a customer runs Cisco ACI with a VMM domain against
+  vCenter, the VMM domain integration is gated by that matrix independent of
+  Broadcom's VCF/vSphere interop matrix. Quoted verbatim from the page's
+  VMware section:
+  - Every vSphere row, including 9.x: *"VMM integration requires the
+    Distributed Virtual Switch feature on vCenter"* – VDS-based VMM is the
+    baseline requirement, not just the common deployment choice.
+  - vSphere 9 is listed there as **"VMware VCF (vSphere) 9.0"**, not bare
+    "vSphere 9" – Cisco's own matrix already uses the VCF name.
+  - vSphere 8.0 note: *"vSphere 8.0 does not support the vCenter Plug-in and
+    Cisco ACI Virtual Edge (AVE). If you need to continue to use the vCenter
+    Plug-in and Cisco AVE, use vSphere 7.0."*
+  - VCF (vSphere) 9.0 note: *"VCF (vSphere) 9.0 does not support the vCenter
+    Plug-in and Cisco ACI Virtual Edge (AVE)... Also, VCF 9.0 does not
+    support the SDDC manager."* The SDDC Manager remark needs its own
+    follow-up – unclear yet whether that means Cisco's ACI integration
+    doesn't recognize SDDC-Manager-driven upgrades, or something narrower.
+  - **AVE (ACI Virtual Edge, formerly AVS) is a hard blocker for 8.0 and
+    9.0**, confirmed directly by Cisco, not just "deprecated." A customer
+    still on AVE must migrate to VDS-based VMM integration (and drop the
+    vCenter Plug-in) before the vSphere 8 or 9 upgrade can proceed.
+
+  **Not yet captured**: the exact per-APIC-train cell (which specific APIC
+  release first certifies vSphere 8.0 / VCF 9.0) renders as a tooltip in the
+  interactive grid, not as extractable static text – confirm it for the
+  customer's actual APIC version by hovering the matching cell in the tool
+  directly, or ask Cisco/TAC. APIC and vCenter do not need to upgrade in
+  lockstep, but the VMM domain must always point at a vCenter/ESXi
+  combination certified for the *currently running* APIC version – check the
+  matrix at each hop, not just at the start and end of the upgrade.
