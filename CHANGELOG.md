@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.8.9 – 2026-09-18
+- **`docs/06-iwa-ldaps-migration.md`: correct the Leave AD error root
+  cause, link every Source inline.** Follow-up to v0.8.8 – field-verified
+  the actual error text is `Idm client exception: Error trying to leave AD,
+  error code [11]`, and field-confirmed the cause is an unsupported
+  down-level username format (`DOMAIN\user`), not a missing AD delegated
+  permission. Per Broadcom KB 399350 (documented for the join operation,
+  now confirmed to apply on leave too): use `user@domain` (UPN format)
+  instead. The delegated-rights note from v0.8.8 is kept as a secondary
+  check, not the primary cause. Also adds an inline link at every point a
+  KB/TechDocs source is cited in the body, not just in the trailing
+  Sources list.
+
 ## v0.8.8 – 2026-09-18
 - **`docs/06-iwa-ldaps-migration.md`: fix step ordering for same-AD-domain
   migrations, document AD-leave rights.** Field-reported: adding the

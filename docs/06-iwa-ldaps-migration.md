@@ -5,8 +5,10 @@ A companion to the [Overview](01-overview.md), expanding on the
 **Integrated Windows Authentication (IWA) is removed in vCenter 9.** Every
 vCenter still joined to Active Directory via IWA needs to move to an
 AD-over-LDAP(S) identity source (or another external IdP) and gracefully
-leave the domain **before** its upgrade. Run this per vCenter, ahead of
-Phase 6, not during it.
+leave the domain **before** its upgrade – the upgrade pre-check fails
+otherwise (
+["Leave the vCenter Server from Active Directory domain before proceeding"](https://knowledge.broadcom.com/external/article/373004/leave-the-vcenter-server-from-active-dir.html),
+KB 373004). Run this per vCenter, ahead of Phase 6, not during it.
 
 Applies whenever a vCenter uses native AD join / IWA for authentication –
 typical on long-lived vSphere environments predating LDAPS-only identity
@@ -26,7 +28,9 @@ IWA while it's being verified. It can't, for the common case.** vCenter SSO
 does not allow two identity sources against the same Active Directory
 domain at once. Attempting to add the AD-over-LDAPS source while the native
 IWA source for that same domain still exists fails with **"connection
-already exists"**. Per Broadcom KB 316596: *"If an existing identity source
+already exists"**. Per
+[Broadcom KB 316596](https://knowledge.broadcom.com/external/article/316596/configuring-a-vcenter-single-signon-iden.html):
+*"If an existing identity source
 exists with the same domain, that identity source must be removed before
 configuring an LDAPS identity source."* There is no split-brain,
 add-both-then-cut-over path here – the IWA source has to come out before
@@ -68,7 +72,9 @@ offline/no-memory snapshot, per standard pre-change practice.
 space. This captures full appliance config/inventory state, independent of
 the snapshot – Broadcom's own upgrade guidance treats a valid VAMI backup as
 a hard prerequisite: without one, a failed change means redeploying vCenter
-from scratch.
+from scratch. See
+[Enabling secure backup and restore in the vCenter Server Appliance](https://knowledge.broadcom.com/external/article/310399/enabling-secure-backup-and-restore-in-th.html)
+(KB 310399).
 
 **Permissions/role export – the "role/rights specific backup".** Global and
 per-object permissions in vCenter are keyed to the identity source's
@@ -142,6 +148,10 @@ added and verified.
 
 ## 4. Add the AD-over-LDAPS identity source
 
+See Broadcom TechDocs'
+[Active Directory over LDAP and OpenLDAP Server Identity Source Settings](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/active-directory-ldap-server-identity-source-settings.html)
+for the full field reference behind the wizard below.
+
 **Prerequisites** (line these up *before* step 3, so this step is quick
 once IWA is removed):
 
@@ -207,25 +217,35 @@ confirmed clean.
 
 ## 6. Leave the Active Directory domain
 
-**Required rights – two separate layers, both needed:**
+**Error: `Idm client exception: Error trying to leave AD, error code [11]`,
+followed by the username entered.** Field-verified verbatim. Per
+[Broadcom KB 399350](https://knowledge.broadcom.com/external/article/399350/error-idm-client-exception-error-trying.html)
+(documented for the *join* side, same `error code [11]` and same
+`Idm client exception` source), the cause is an **unsupported username
+format**, not a missing permission: *"The failure was due to the incorrect
+username format used during the domain join operation."* Specifically,
+*"Down-level login name format, for example, DOMAIN\UserName, is
+unsupported in 8.x."* Supply the account as **`user@domain` (UPN format)**
+in the Leave AD dialog, not `DOMAIN\user`, and retry. KB 399350 documents
+this for the join operation; field-confirmed here that the same cause and
+fix apply to leave as well.
+
+**If UPN format doesn't resolve it**, two rights layers still apply and are
+worth checking next:
 
 - **vCenter-side:** the account logged in to perform the leave must be a
   member of the **SystemConfiguration.Administrators** group in vCenter
-  Single Sign-On (per Broadcom TechDocs' Join/Leave AD Domain
+  Single Sign-On (per Broadcom TechDocs'
+  [Join or Leave an Active Directory Domain](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/vcenter-configuration/configuring-vcenter-server-using-the-vsphere-client/join-or-leave-an-active-directory-domain.html)
   prerequisites).
 - **AD-side:** the AD account *supplied to the Leave AD dialog* needs
   delegated rights over the vCenter computer object, specifically the
-  ability to **delete** it. Broadcom KB 322859 (covering the join-side
-  LDAP permission errors) lists Microsoft's minimally required delegated
+  ability to **delete** it.
+  [Broadcom KB 322859](https://knowledge.broadcom.com/external/article/322859/joining-vcenter-server-appliance-or-esxi.html)
+  (covering the join-side LDAP permission errors) lists Microsoft's minimally required delegated
   permissions for this class of operation, which include **"Create and
   Delete Computer objects"** on the target OU – leaving the domain only
-  needs the delete half, but that's the specific right that's usually
-  missing.
-- **"Unable to leave: insufficient rights"** points at the second layer,
-  not the first – a fully-privileged vCenter SSO admin can still hit this
-  if the *AD* account entered in the dialog lacks delegated
-  create/delete-computer-object rights on the OU holding the vCenter's
-  computer account. Check with the customer's AD team what OU the
+  needs the delete half. Check with the customer's AD team what OU the
   computer object lives in and whether the account being used has
   delegated control there, rather than assuming a Domain Admins-equivalent
   account will always work (some environments deliberately restrict even
@@ -235,8 +255,9 @@ confirmed clean.
 
 1. **Administration → Single Sign On → Configuration → Identity Provider**
    tab → **Active Directory Domain**.
-2. Click **Leave AD**, supply AD credentials with rights to remove the
-   computer object, confirm.
+2. Click **Leave AD**, supply AD credentials **in UPN format
+   (`user@domain`)** with rights to remove the computer object, confirm –
+   see the error note above if `DOMAIN\user` format was tried first.
 3. Restart vCenter Server.
 
 **CLI fallback**, if the UI method fails (SSH to the vCenter appliance as
@@ -285,6 +306,7 @@ vCenter-side snapshot restore doesn't undo.
 ## Sources
 
 - ["Leave the vCenter Server from Active Directory domain before proceeding" – pre-check error during VCF 9.0 upgrade (KB 373004)](https://knowledge.broadcom.com/external/article/373004/leave-the-vcenter-server-from-active-dir.html)
+- ["Idm client exception: Error trying to join AD, error code [11]" – down-level username format cause, field-confirmed to also apply on leave (KB 399350)](https://knowledge.broadcom.com/external/article/399350/error-idm-client-exception-error-trying.html)
 - ["Joining vCenter Server Appliance or ESXi host into Active Directory domain fails with error: LW_ERROR_LDAP_CONSTRAINT_VIOLATION or LW_ERROR_LDAP_INSUFFICIENT_ACCESS" – required AD delegated permissions (KB 322859)](https://knowledge.broadcom.com/external/article/322859/joining-vcenter-server-appliance-or-esxi.html)
 - [Configuring a vCenter Single Sign-On Identity Source using LDAP with SSL (LDAPS)](https://knowledge.broadcom.com/external/article/316596/configuring-a-vcenter-single-signon-iden.html)
 - [Active Directory over LDAP and OpenLDAP Server Identity Source Settings](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/active-directory-ldap-server-identity-source-settings.html)
