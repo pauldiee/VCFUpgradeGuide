@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.8.10 – 2026-09-18
+## v0.9.0 – 2026-09-18
 - **`docs/06-iwa-ldaps-migration.md`: fix the CLI Leave AD fallback to
   actually reach Active Directory.** The documented command
   (`domainjoin-cli leave <DomainName.com>`, no credentials) only disjoins
