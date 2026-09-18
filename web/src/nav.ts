@@ -152,14 +152,9 @@ export const NAV: NavItem[] = [
     blurb: 'Dell VxRail-specific extra steps layered on top of the general upgrade flow.',
     tracks: ['vcf'],
   },
-  {
-    slug: '12-vsphere-standard-upgrade',
-    step: 'Overview · vSphere standard',
-    label: 'Standalone vSphere upgrade',
-    icon: 'compass',
-    blurb: 'No VCF or VVF entitlement, just vCenter and ESXi. Reuses the standalone-VVF procedure (Broadcom documents the same steps for both) rather than a separate spine.',
-    tracks: ['vsphere'],
-  },
+  // 12-vsphere-standard-upgrade is intentionally left out of NAV for now –
+  // see the exclusion comment in web/src/content.config.ts. Re-add it here
+  // (with tracks: ['vsphere']) when the track gets content of its own.
 ];
 
 export function navBySlug(slug: string): NavItem | undefined {

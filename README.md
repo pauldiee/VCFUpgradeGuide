@@ -11,7 +11,9 @@ tracks depending on what's actually driving the fleet:
 - **Standalone vSphere** – no VCF or VVF entitlement at all. Broadcom
   documents the same procedure as standalone VVF for this case, so
   [`docs/12-vsphere-standard-upgrade.md`](docs/12-vsphere-standard-upgrade.md)
-  points into that rather than inventing a separate one.
+  points into that rather than inventing a separate one. Not yet on the
+  live site (no landing page or nav entry) since there's nothing distinct
+  to show for it yet.
 
 Each track covers pre-upgrade checks, the upgrade sequence, and
 post-upgrade validation – applicable regardless of underlying hardware.
@@ -21,8 +23,8 @@ flow.
 
 Live at **[docs.hollebollevsan.nl](https://docs.hollebollevsan.nl)** – the
 first section of a general VMware docs site; future guides need not be
-upgrade-specific or VCF-specific. The site's `/vcf/`, `/vvf/`, and
-`/vsphere/` landing pages route to the docs relevant to each track.
+upgrade-specific or VCF-specific. The site's `/vcf/` and `/vvf/` landing
+pages route to the docs relevant to each track (`/vsphere/` pending).
 
 ## Related repo
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.9.4 – 2026-09-18
+- **Hold the standalone-vSphere track back off the live site.** It has no
+  content of its own yet – `docs/12-vsphere-standard-upgrade.md` is just a
+  pointer into the standalone-VVF procedure – so shipping a `/vsphere/`
+  landing page felt like an empty track. Excluded
+  `12-vsphere-standard-upgrade.md` from the `web` content collection
+  (`web/src/content.config.ts`), dropped its `nav.ts` entry and its picker
+  card on `index.astro`, and removed the now-dead `web/src/pages/vsphere.astro`
+  route and the dangling `/vsphere/` cross-links on the `vcf.astro` /
+  `vvf.astro` landing pages. The doc file itself stays in the repo
+  (still readable on GitHub/GitLab); each excluded spot has a comment
+  pointing at the others so the track is easy to bring back once it has
+  real content.
+
 ## v0.9.3 – 2026-09-18
 - **Split the guide into three tracks: full VCF, standalone VVF, and a new
   standalone-vSphere track.** The site's flat card grid tried to serve
