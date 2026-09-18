@@ -47,6 +47,7 @@ phase:
 | ----------------- | ------------------------------------------------------- | ---------- |
 | `docs/02-disaster-recovery.md` | SRM / vSphere Replication to VCF Protection and Recovery, before core Phase 3 | VCF, VVF, or pre-9 vSphere |
 | `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, before Phase 6, with a permissions/roles backup | VCF or VVF |
+| `docs/08-vss-to-vds-migration.md` | VSS to VDS migration, before extending a standalone VVF fleet to full VCF | **VVF only** (extending to full VCF) |
 
 **Phase guides** – detail for a specific core-sequence phase:
 
@@ -54,6 +55,9 @@ phase:
 | ----------------- | ------------------------------------------------------- | ---------- |
 | `docs/05-operations-modernization.md` | Aria Operations to VCF Operations (Phase 1): in-place vs. fresh install, re-IP, HA setup, vCenter integrations | VCF or VVF |
 | `docs/07-vcenter-manual-upgrade.md` | Manual GUI upgrade of a standalone vCenter (Phase 6 alternate path, no Fleet Management), plus the vCenter-specific back-in-time compatibility check | **VVF only** (no VCF Management Services) |
+| `docs/09-avi-license-hub-upgrade.md` | Avi Load Balancer + License Hub upgrade, before SDDC Manager | VCF or VVF, if Avi is in use |
+| `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade and NSX finalize (replaces the plain Phase 8), after the host phase | VCF or VVF, if NSX is in use |
+| `docs/11-log-management-migration.md` | VCF Operations for Logs migration to Log Management 9.1, after NSX finalize | VCF or VVF |
 
 **Post-upgrade:**
 

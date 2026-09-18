@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.9.2 – 2026-09-18
+- **Promote three conditional-phase sections out of `01-overview.md` into
+  their own docs.** Per the promotion rule, each had grown past a table
+  row plus a short subsection: `docs/09-avi-license-hub-upgrade.md` (Avi
+  Load Balancer + License Hub, before SDDC Manager),
+  `docs/10-nsx-edge-finalize.md` (NSX Edge cluster upgrade + finalize,
+  after the host phase), and `docs/11-log-management-migration.md` (VCF
+  Operations for Logs to Log Management 9.1, after NSX finalize).
+  `01-overview.md`'s conditional-phase table, TOC, and companion-docs list
+  now link out instead of carrying the full detail; `web/src/nav.ts` and
+  `README.md` updated to match.
+
 ## v0.9.1 – 2026-09-18
 - **`docs/01-overview.md`: document the VSS→VDS prerequisite for
   standalone VVF extending to full VCF.** New note in the "VVF: confirm
