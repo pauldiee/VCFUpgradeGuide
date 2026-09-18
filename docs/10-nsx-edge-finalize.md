@@ -1,9 +1,9 @@
 # NSX Edge & NSX Finalize
 
-A companion to the [Overview](01-overview.md), expanding on
-[Phase 8 – NSX finalize](01-overview.md#phase-8--nsx-finalize) and the
-[Conditional phases table's NSX Edge & NSX Finalize
-row](01-overview.md#conditional-phases-optional-components).
+A companion to the [Full VCF upgrade sequence](13-vcf-upgrade-sequence.md),
+expanding on [Phase 8 – NSX finalize](13-vcf-upgrade-sequence.md#phase-8--nsx-finalize)
+and the [Conditional phases table's NSX Edge & NSX Finalize
+row](13-vcf-upgrade-sequence.md#conditional-phases-optional-components).
 
 **Position: the last core step**, replacing the plain Phase 8. It runs
 **after the ESX / host-cluster phase** and does two things in one

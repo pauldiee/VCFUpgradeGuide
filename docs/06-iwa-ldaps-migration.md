@@ -1,7 +1,7 @@
 # IWA to AD-over-LDAPS migration, with permissions backup
 
 A companion to the [Overview](01-overview.md), expanding on the
-[Phase 6 – vCenter upgrade](01-overview.md#phase-6--vcenter-upgrade) gotcha:
+[Phase 6 – vCenter upgrade](13-vcf-upgrade-sequence.md#phase-6--vcenter-upgrade) gotcha:
 **Integrated Windows Authentication (IWA) is removed in vCenter 9.** Every
 vCenter still joined to Active Directory via IWA needs to move to an
 AD-over-LDAP(S) identity source (or another external IdP) and gracefully

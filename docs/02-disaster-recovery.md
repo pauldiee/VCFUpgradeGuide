@@ -103,8 +103,8 @@ appliance directly – it rides the same mechanism as the rest of VCF 9.1
 licensing. Register VCF Operations and a **License Server** with the VCF
 Business Services Console, then add the ACC (or standalone SRM) subscription
 capacity to that License Server and assign it from there. This is the same
-License Server deployed in the Overview's
-[Phase 3](01-overview.md#phase-3--deploy-vcf-management-services--license-server) –
+License Server deployed in the full-VCF sequence's
+[Phase 3](13-vcf-upgrade-sequence.md#phase-3--deploy-vcf-management-services--license-server) –
 DR licensing is not a separate appliance.
 
 **Legacy license conversion is automatic.** An existing perpetual / legacy
@@ -119,8 +119,8 @@ if they want the newer cyber-recovery capabilities before then.
 ## Post-core check
 
 After the core upgrade, re-test a recovery plan against the converged
-Protection and Recovery appliance (see [Overview](01-overview.md) → Post-upgrade
-validation).
+Protection and Recovery appliance (see [Full VCF upgrade sequence →
+Post-upgrade validation](13-vcf-upgrade-sequence.md#post-upgrade-validation)).
 
 ---
 

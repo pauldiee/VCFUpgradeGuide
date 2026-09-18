@@ -1,8 +1,8 @@
 # Aria Operations → VCF Operations: in-place upgrade vs. fresh install
 
 A companion to the [Overview](01-overview.md), expanding on
-[Phase 1 – VCF Operations upgrade](01-overview.md#phase-1--vcf-operations-upgrade)
-and the [standalone VVF manual upgrade path](01-overview.md#standalone-vvf-manual-upgrade--exact-steps).
+[Phase 1 – VCF Operations upgrade](13-vcf-upgrade-sequence.md#phase-1--vcf-operations-upgrade)
+and the [standalone VVF manual upgrade path](14-standalone-vvf-upgrade.md#standalone-vvf-manual-upgrade--exact-steps).
 Applies whenever there is an existing Aria Operations instance to carry
 forward into VCF 9 – decide this **before** committing to a phase count, since
 it changes whether a re-IP procedure, a content migration, or neither is on
@@ -119,7 +119,7 @@ require also deploying VCF Management Services – manual OVA deployment of
 VCF Operations, standalone, without Management Services, is explicitly
 supported for VVF 9.0/9.1 ("operating a standalone VVF infrastructure
 without deploying VCF Management Services"). This is the same standalone
-model the [manual upgrade path](01-overview.md#standalone-vvf-manual-upgrade--exact-steps)
+model the [manual upgrade path](14-standalone-vvf-upgrade.md#standalone-vvf-manual-upgrade--exact-steps)
 already documents – it applies equally to a fresh VCF Operations deployment,
 not just an in-place one.
 
@@ -177,7 +177,8 @@ starting the next.
 **4. Deploy License Server**
 
 License Server is a required component for VCF 9.x licensing regardless of
-path or Tier – see [Overview: Prerequisites – Licensing](01-overview.md#prerequisites).
+path or Tier – see [Full VCF upgrade sequence: Prerequisites –
+Licensing](13-vcf-upgrade-sequence.md#prerequisites-and-architectural-guardrails).
 
 1. In VCF Operations: **Manage → Licensing → Licenses & Registration →
    Manage → License Servers → Add License Server**, and copy the time-bound

@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.9.5 – 2026-09-18
+- **Split `01-overview.md`'s phase-by-phase content into two track-specific
+  docs.** Both the `/vcf/` and `/vvf/` landing pages led with the same
+  giant `01-overview.md` "Overview" card, so filtering the rest of the
+  grid by track didn't actually stop either reader from hitting the same
+  wall of text. New `docs/13-vcf-upgrade-sequence.md` (the full 9-phase
+  spine, prerequisites, conditional phases, post-upgrade validation,
+  cleanup) and `docs/14-standalone-vvf-upgrade.md` (the 6-step manual
+  procedure) now hold that content; `01-overview.md` is a lean shared
+  router (confirm a path, pin a build, pick a track). Both new docs are
+  placed right after `01-overview` in `web/src/nav.ts`'s `NAV` array with
+  `tracks: ['vcf']` / `['vvf']` respectively, so each track's landing page
+  now leads with its own dedicated procedure doc instead of the shared
+  one. Every cross-reference into the old anchors (`#phase-N-...`,
+  `#vvf-confirm-whether-...`, `#conditional-phases-...`, etc.) across
+  `docs/02` through `12`, `vxrail-addendum.md`, and `README.md` updated to
+  point at the new docs.
+
 ## v0.9.4 – 2026-09-18
 - **Hold the standalone-vSphere track back off the live site.** It has no
   content of its own yet – `docs/12-vsphere-standard-upgrade.md` is just a

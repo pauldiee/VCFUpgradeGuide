@@ -1,8 +1,8 @@
 # Log Management migration (Post-Infrastructure Products)
 
-A companion to the [Overview](01-overview.md), expanding on the
-[Conditional phases table's Log Management
-row](01-overview.md#conditional-phases-optional-components).
+A companion to the [Full VCF upgrade sequence](13-vcf-upgrade-sequence.md),
+expanding on its [Conditional phases table's Log Management
+row](13-vcf-upgrade-sequence.md#conditional-phases-optional-components).
 
 **Position: after NSX finalize**, inside the post-infrastructure /
 operations products run – **after Operations for Networks, before the
@@ -10,7 +10,7 @@ Identity Broker migration**. Applies whenever **VCF Operations for Logs**
 (Aria Operations for Logs / vRLI) is in use.
 
 Log Management is now a component of **VCF Management Services**
-([Phase 3](01-overview.md#phase-3--deploy-vcf-management-services--license-server))
+([Phase 3](13-vcf-upgrade-sequence.md#phase-3--deploy-vcf-management-services--license-server))
 and is deployed from **VCF Operations**, not upgraded in place.
 
 ---
@@ -59,7 +59,7 @@ deployment guide.
 off the old appliance goes through a **Universal Cloud Proxy in
 split-proxy mode** – without it the Control Panel transfer fails with
 "Transfer failed due to an error" (see
-[Phase 1](01-overview.md#phase-1--vcf-operations-upgrade) and
+[Phase 1](13-vcf-upgrade-sequence.md#phase-1--vcf-operations-upgrade) and
 [Field notes](04-field-notes.md#observability--cloud-proxy-logs-networks)).
 
 **Newly added vCenters are not auto-collected** – activate their log

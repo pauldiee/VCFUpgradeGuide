@@ -1,6 +1,7 @@
 # Identity: VIDM / Workspace ONE Access → VCF Identity Broker
 
-A companion to the [Overview](01-overview.md). VCF 9 replaces **VMware
+A companion to the [Full VCF upgrade sequence](13-vcf-upgrade-sequence.md).
+VCF 9 replaces **VMware
 Identity Manager (VIDM)** / Workspace ONE Access with **VCF Identity Broker
 (VIDB)** as the fleet identity layer. This is a distinct workstream, not a
 step in the core upgrade sequence – run it **after** the core upgrade, in
@@ -16,7 +17,7 @@ Aria / operations stack authenticates through it).
 A **different, unrelated prerequisite** for fleets already on VCF 9.0.x
 (where Identity Broker already exists, rather than being freshly deployed
 from VIDM): if that existing **Identity Broker 9.0.x sits on an NSX
-overlay** network, the VCF Operations upgrade ([Phase 1](01-overview.md#phase-1--vcf-operations-upgrade))
+overlay** network, the VCF Operations upgrade ([Phase 1](13-vcf-upgrade-sequence.md#phase-1--vcf-operations-upgrade))
 **fails outright** unless it is first moved to the VCF management network.
 
 - **Condition.** Only applies if Identity Broker is on an NSX overlay. If it
@@ -38,7 +39,8 @@ overlay** network, the VCF Operations upgrade ([Phase 1](01-overview.md#phase-1-
 ## The short version
 
 - **No in-place upgrade for VIDM.** Identity Broker 9.1 is deployed fresh as
-  part of **VCF Management Services** ([Overview](01-overview.md) Phase 3).
+  part of **VCF Management Services** ([Full VCF upgrade sequence,
+  Phase 3](13-vcf-upgrade-sequence.md#phase-3--deploy-vcf-management-services--license-server)).
   VIDM is not consumed by VCF 9.
 - **Parallel run.** Identity Broker is an *additional* authentication source
   alongside VIDM and each component's native auth. Keep VIDM running until

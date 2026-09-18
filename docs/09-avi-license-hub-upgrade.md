@@ -1,8 +1,8 @@
 # Avi Load Balancer + License Hub upgrade
 
-A companion to the [Overview](01-overview.md), expanding on the [Conditional
-phases table's Avi + License Hub
-row](01-overview.md#conditional-phases-optional-components): two separate
+A companion to the [Full VCF upgrade sequence](13-vcf-upgrade-sequence.md),
+expanding on its [Conditional phases table's Avi + License Hub
+row](13-vcf-upgrade-sequence.md#conditional-phases-optional-components): two separate
 components that travel together because License Hub licenses Avi.
 
 Applies whenever **Avi Load Balancer (NSX Advanced Load Balancer)** is in
@@ -33,7 +33,7 @@ alone.
 
 > **License Hub is not the License Server.** The **License Server** is
 > deployed automatically at bring-up /
-> [Phase 3](01-overview.md#phase-3--deploy-vcf-management-services--license-server)
+> [Phase 3](13-vcf-upgrade-sequence.md#phase-3--deploy-vcf-management-services--license-server)
 > and licenses the VCF *fleet*. **License Hub** is a separate Day-N
 > appliance for vDefend / Avi. Both exist in a fleet that runs Avi.
 

@@ -1,11 +1,11 @@
 # vCenter manual GUI upgrade (no Fleet Management)
 
-The vCenter upgrade step in the core sequence ([Phase 6](01-overview.md#phase-6--vcenter-upgrade))
+The vCenter upgrade step in the core sequence ([Phase 6](13-vcf-upgrade-sequence.md#phase-6--vcenter-upgrade))
 assumes the fleet-managed path: vCenter is upgraded from **VCF Operations →
 Fleet Management**, and the installer-UI path is deprecated for that case.
 
 This doc covers the other case: a **standalone / not-fleet-managed** vCenter
-(see [VVF: confirm whether VCF Management Services is even in scope](01-overview.md#vvf-confirm-whether-vcf-management-services-is-even-in-scope))
+(see [Fleet-managed VVF vs. standalone VVF](14-standalone-vvf-upgrade.md#fleet-managed-vvf-vs-standalone-vvf))
 where there is no SDDC Manager or Fleet Management layer driving the
 upgrade. There, vCenter is upgraded the traditional way, from its own
 installer, VAMI, or the CLI. Same underlying two-stage migration mechanism
@@ -273,9 +273,9 @@ Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techd
   group**, reconnect the new appliance to it manually – that setting is not
   carried over automatically when deploying straight to an ESX host (not a
   limitation when deploying through a vCenter instance instead).
-- Continue with the rest of the [Standalone VVF manual upgrade](01-overview.md#vvf-confirm-whether-vcf-management-services-is-even-in-scope)
+- Continue with the rest of the [Standalone VVF manual upgrade](14-standalone-vvf-upgrade.md#standalone-vvf-manual-upgrade--exact-steps)
   steps (ESX hosts, vSAN on-disk format, vSAN File Service) as applicable,
-  and the general [Post-upgrade validation](01-overview.md#post-upgrade-validation)
+  and its [Post-upgrade validation](14-standalone-vvf-upgrade.md#post-upgrade-validation)
   checklist.
 - This is a single vCenter, not Enhanced Linked Mode – the multi-node
   backup/restart sequencing called out for ELM environments in the

@@ -1,8 +1,9 @@
 # Field notes: known issues and gotchas
 
 Symptom → cause → fix, collected from real VCF upgrades. A companion to the
-[Overview](01-overview.md) – the overview gives the sequence; this doc is the
-list of things that went wrong and how they were cleared.
+[Full VCF upgrade sequence](13-vcf-upgrade-sequence.md) – that doc gives the
+sequence; this doc is the list of things that went wrong and how they were
+cleared.
 
 > **Scope.** These were observed on a **VCF 5.2.2 → 9.0.2** multi-domain
 > upgrade (management domain, several workload clusters, a new VKS workload
@@ -147,7 +148,7 @@ Expect every cluster to behave differently.
 - **NSX cannot feature-finalize to v9 until the Supervisors are on a
   compatible version.** A bridging Supervisor upgrade is required first
   (pattern: `1.30.10-vsc0.1.12` → `1.30.10-vsc9.0.2`), then NSX finalize
-  completes. See also [vSphere Supervisor in detail](01-overview.md#vsphere-supervisor-in-detail).
+  completes. See also [vSphere Supervisor in detail](13-vcf-upgrade-sequence.md#vsphere-supervisor-in-detail).
 - A `vmware-system-csi` pod start-up failure on the Supervisor was a
   code-level defect; the Broadcom workaround involved volume-snapshot
   deletion (production-snapshot-touching, so schedule it deliberately).
@@ -279,7 +280,7 @@ components are firewalled independently and it is an easy step to miss.
   Broadcom TC deck as a general claim (reviewed 2026-09-11) but no
   authoritative source found yet, and it is not clear which components /
   certificate types it covers. Do not rely on it to skip the pre-upgrade
-  certificate-validity check in the [prerequisites table](01-overview.md#prerequisites-and-architectural-guardrails) –
+  certificate-validity check in the [prerequisites table](13-vcf-upgrade-sequence.md#prerequisites-and-architectural-guardrails) –
   confirm scope against TechDocs or in-product behaviour before treating it
   as fact.
 - **"VCFverify (VoV only)"** – a TC checklist item (reviewed 2026-09-11)
@@ -296,7 +297,7 @@ components are firewalled independently and it is an easy step to miss.
   2026-09-11) describes an "optimized" combined approach – prep vCenter,
   upgrade NSX, then switchover – as an alternative to the plain sequential
   order (NSX Local Manager finishing before vCenter starts, which is what
-  [Phase 5 → Phase 6](01-overview.md#phase-5--nsx-local-manager-upgrade)
+  [Phase 5 → Phase 6](13-vcf-upgrade-sequence.md#phase-5--nsx-local-manager-upgrade)
   documents). The exact mechanics of "prep vCenter" relative to the RDU
   switchover, and how far it can overlap the NSX Local Manager upgrade,
   were not confirmed. **Treat the sequential Phase 5 → Phase 6 order as the

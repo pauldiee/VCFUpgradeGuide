@@ -7,9 +7,9 @@
 // "Overview" / "Pre-upgrade prep" / "Phase guide" / "Post-upgrade" / etc;
 // hardware-specific addenda use "Addendum". A guide scoped to only one
 // licensing model gets a " · VCF only" / " · VVF only" suffix (see
-// docs/01-overview.md's "VVF: confirm whether VCF Management Services is
-// even in scope" for what that split means) — guides applicable to both stay
-// unsuffixed, with the applicability stated in the blurb instead.
+// docs/01-overview.md's "Confirm which track applies" for what that split
+// means) — guides applicable to both stay unsuffixed, with the
+// applicability stated in the blurb instead.
 //
 // `band` is the coarser grouping used by the mega-menu's "Guides" panel (see
 // REFERENCE_BANDS). The overview doc has no band – it's the entry point/spine,
@@ -17,11 +17,13 @@
 //
 // `tracks` is which of the three landing pages (/vcf/, /vvf/, /vsphere/)
 // this item's card shows up on. It's a separate, required field rather than
-// parsed out of `step`/`blurb` so every item forces an explicit call –
-// see docs/01-overview.md's "VVF: confirm whether VCF Management Services
-// is even in scope" for what the vcf/vvf split means, and
-// docs/12-vsphere-standard-upgrade.md for why plain vSphere reuses the VVF
-// procedure rather than getting its own.
+// parsed out of `step`/`blurb` so every item forces an explicit call – see
+// docs/01-overview.md's "Confirm which track applies" for what the vcf/vvf
+// split means, and docs/12-vsphere-standard-upgrade.md for why plain
+// vSphere reuses the VVF procedure rather than getting its own. The
+// full-VCF and standalone-VVF spines (docs/13, docs/14) sit right after
+// 01-overview in this array on purpose, so each track's landing page leads
+// with its own dedicated procedure doc, not just the shared Overview.
 export type Track = 'vcf' | 'vvf' | 'vsphere';
 
 export interface NavItem {
@@ -50,8 +52,26 @@ export const NAV: NavItem[] = [
     step: 'Overview',
     label: 'Overview',
     icon: 'clipboard-check',
-    blurb: 'General VCF upgrade guidance, independent of underlying hardware.',
+    blurb: 'Shared prerequisites and target-build guidance, plus a pointer to the full-VCF and standalone-VVF sequences below.',
     tracks: ['vcf', 'vvf', 'vsphere'],
+  },
+  {
+    slug: '13-vcf-upgrade-sequence',
+    step: 'Overview · VCF',
+    band: 'Phase guides',
+    label: 'Full VCF upgrade sequence',
+    icon: 'diagram-project',
+    blurb: 'The 9-phase spine, prerequisites, conditional phases, post-upgrade validation, and cleanup for a fleet driven through VCF Management Services.',
+    tracks: ['vcf'],
+  },
+  {
+    slug: '14-standalone-vvf-upgrade',
+    step: 'Overview · VVF',
+    band: 'Phase guides',
+    label: 'Standalone VVF upgrade',
+    icon: 'layer-group',
+    blurb: 'The 6-step manual procedure for VMware vSphere Foundation with no VCF Management Services layer.',
+    tracks: ['vvf'],
   },
   {
     slug: '02-disaster-recovery',

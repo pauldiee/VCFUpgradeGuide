@@ -1,8 +1,8 @@
 # VSS to VDS migration, before extending VVF to VCF
 
-A companion to the [Overview](01-overview.md), expanding on the
-[VVF section's VSS→VDS
-note](01-overview.md#vvf-confirm-whether-vcf-management-services-is-even-in-scope):
+A companion to the [Standalone VVF upgrade](14-standalone-vvf-upgrade.md),
+expanding on its [VSS→VDS
+note](14-standalone-vvf-upgrade.md#extending-to-full-vcf-needs-a-vds-migration-first):
 standalone VMware vSphere Foundation (VVF) has no distributed-switch
 requirement and can run on the Virtual Standard Switch (VSS) indefinitely,
 but **full VCF does** – NSX only prepares ESXi hosts as transport nodes on
@@ -37,7 +37,7 @@ standalone VVF.
   – pick the highest version the *current* vCenter supports, not
   necessarily the eventual VCF target, since the switch can be upgraded
   later (see [Phase 7's vDS version-upgrade
-  note](01-overview.md#phase-7--esx--host-cluster-upgrade) for that
+  note](13-vcf-upgrade-sequence.md#phase-7--esx--host-cluster-upgrade) for that
   follow-on step once vCenter itself is on the VCF target build).
 - **Do this per cluster, not fleet-wide in one pass.** Nothing about the
   procedure below is fleet-wide; treat each cluster as its own

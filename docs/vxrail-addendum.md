@@ -1,11 +1,13 @@
 # VxRail Addendum
 
 Extra steps for a **Dell VxRail** environment, layered **on top of** the
-general upgrade guidance in [Overview](01-overview.md) – not a replacement for
-it. Read the general flow first; this doc only covers what is different or
-additional because the hardware is VxRail. The non-hardware workstreams
-(Aria → VCF fleet, Identity, Disaster Recovery, integrations) are general –
-see [Overview](01-overview.md), do not duplicate them here.
+[Full VCF upgrade sequence](13-vcf-upgrade-sequence.md) – not a replacement
+for it (VxRail assumes SDDC Manager driving the fleet, so this addendum is
+full-VCF only). Read that flow first; this doc only covers what is
+different or additional because the hardware is VxRail. The non-hardware
+workstreams (Aria → VCF fleet, Identity, Disaster Recovery, integrations)
+are general – see the [Full VCF upgrade sequence](13-vcf-upgrade-sequence.md),
+do not duplicate them here.
 
 > **Status: draft.** Structure and the Dell process below are from a live
 > VxRail 5.2.2 → VCF 9.1 planning cycle (planned against 9.1.0; **VCF 9.1.1
@@ -118,7 +120,7 @@ account.
 
 ## Where this plugs into the general flow
 
-| General ([Overview](01-overview.md)) | On VxRail |
+| General ([Full VCF upgrade sequence](13-vcf-upgrade-sequence.md)) | On VxRail |
 | --- | --- |
 | Phase 7 – ESX / host-cluster upgrade | **Replaced** by the VxRail plugin bundle (ESXi + Dell Add-on drivers + Dell firmware + VXM → VOM). Do not use the generic per-host path or the online VxRail Manager UI. |
 | Phase 5 / 6 – NSX Local Manager, vCenter | Driven from the SDDC Manager 9.1 UI / VCF Operations Fleet Management by Dell RPS, not the generic path. |
@@ -126,8 +128,8 @@ account.
 | Conditional – NSX Global Manager | Applies whenever the Dell checklist shows NSX Federation = Yes. |
 
 The Aria → VCF fleet migration, the VIDM → Identity Broker transition, and the
-Disaster Recovery convergence are **not** VxRail-specific – follow
-[Overview](01-overview.md).
+Disaster Recovery convergence are **not** VxRail-specific – follow the
+[Full VCF upgrade sequence](13-vcf-upgrade-sequence.md).
 
 ---
 

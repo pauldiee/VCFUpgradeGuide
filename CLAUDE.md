@@ -39,7 +39,16 @@ The site (`web/`) surfaces this as landing pages – currently `/vcf/` and
 docs tagged for that track via `web/src/nav.ts`'s `tracks` field. Every
 doc's track applicability should stay accurate there; when adding a doc,
 decide up front which track(s) it applies to rather than defaulting to
-"all".
+"all". **Each track leads with its own dedicated phase-by-phase doc**
+(`docs/13-vcf-upgrade-sequence.md` for VCF, `docs/14-standalone-vvf-upgrade.md`
+for VVF) rather than a shared one – `01-overview.md` only holds what's
+genuinely common (confirming a path, pinning a build) plus a pointer to
+the two. This was a deliberate split (2026-09-18): a single combined
+"Overview" doc meant both track landing pages funneled into the same wall
+of text regardless of which track the reader picked, defeating the point
+of the split. If a future addition would apply to only one track, put it
+in that track's own doc (or a new `docs/NN-*.md` promoted from it), not
+back into the shared `01-overview.md`.
 
 **Public.** This repo is public and is the first section of a planned
 general **VMware Docs** site (docs.hollebollevsan.nl) – future guides need
@@ -65,7 +74,7 @@ here – see the Related repo section in `README.md`.
 | `CHANGELOG.md`        | Per-release notes; **newest entry at TOP**                    |
 | `CLAUDE.md`           | This file                                                     |
 | `.gitignore`          | Excludes customer artifacts                                   |
-| `docs/01-overview.md` | General VCF upgrade guidance (any hardware) – the spine     |
+| `docs/01-overview.md` | Shared router – confirm a supported path, pin a target build, pick a track (any hardware) |
 | `docs/02-disaster-recovery.md` | SRM / vSphere Replication → Protection and Recovery convergence (pre-upgrade prep; VCF, VVF, or pre-9 vSphere) |
 | `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access → VCF Identity Broker (post-upgrade; **VCF only**, needs VCF Management Services) |
 | `docs/04-field-notes.md` | Known issues and gotchas from real upgrades (reference) |
@@ -76,7 +85,9 @@ here – see the Related repo section in `README.md`.
 | `docs/09-avi-license-hub-upgrade.md` | Avi Load Balancer + License Hub upgrade, before SDDC Manager (phase guide; VCF or VVF, if Avi is in use) |
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade + NSX finalize, replacing plain Phase 8 (phase guide; VCF or VVF) |
 | `docs/11-log-management-migration.md` | VCF Operations for Logs → Log Management 9.1, after NSX finalize (phase guide; VCF or VVF) |
-| `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at the standalone-VVF procedure rather than duplicating it (**vSphere-standard only**; excluded from the live site for now, see Project overview above) |
+| `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at `docs/14`'s procedure rather than duplicating it (**vSphere-standard only**; excluded from the live site for now, see Project overview above) |
+| `docs/13-vcf-upgrade-sequence.md` | The full-VCF 9-phase spine, prerequisites, conditional phases, post-upgrade validation, cleanup (**VCF only**) – what `01-overview.md` used to contain directly |
+| `docs/14-standalone-vvf-upgrade.md` | The standalone-VVF 6-step manual procedure, no VCF Management Services (**VVF only**) – ditto |
 | `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps, on top of the general flow (hardware addendum; **VCF only**) |
 | `reference/`          | Pinned reference material (Dell/VMware docs, KBs, etc.)        |
 | `tools/`              | Helper scripts, if any get added                               |

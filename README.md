@@ -44,10 +44,18 @@ duplicating it here:
 
 ### The spine
 
+`01-overview.md` is a shared, short router – confirming a supported path
+and target build applies to both tracks, so it stays common ground. The
+actual phase-by-phase procedure is track-specific and lives in its own
+doc, so that landing on either track's page leads straight into real
+content instead of a one-size-fits-all wall of text:
+
 | Path              | Purpose                                                | Applies to |
 | ----------------- | ------------------------------------------------------- | ---------- |
-| `docs/01-overview.md` | General VCF/VVF upgrade guidance (work in progress) | VCF, VVF, or standalone vSphere |
-| `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at the standalone-VVF procedure rather than duplicating it | **Standalone vSphere only** |
+| `docs/01-overview.md` | Shared prerequisites, target-build guidance, and a pointer to the two sequences below (work in progress) | VCF, VVF, or standalone vSphere |
+| `docs/13-vcf-upgrade-sequence.md` | The 9-phase spine, prerequisites, conditional phases, post-upgrade validation, cleanup | **VCF only** |
+| `docs/14-standalone-vvf-upgrade.md` | The 6-step manual procedure, no VCF Management Services | **VVF only** |
+| `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at `docs/14`'s procedure rather than duplicating it | **Standalone vSphere only** |
 
 ### Guides, grouped by where they slot into the flow
 
