@@ -6,13 +6,34 @@
 
 ## Project overview
 
-ITQ guidance for planning a **VCF upgrade** – pre-upgrade checks, the
-upgrade sequence, and post-upgrade validation, applicable **regardless of
-underlying hardware**. Hardware/HCI-specific extra steps are layered on
-**top** of the general flow as their own addendum, not baked into it –
-currently **Dell VxRail** (started from a specific customer engagement:
-VxRail 5.2 → VCF 9.1.1, but the general guidance should stay reusable
-beyond that one engagement).
+ITQ guidance for planning a VMware upgrade, split into **three tracks**
+depending on what licensing layer is actually driving the fleet:
+
+- **Full VCF** – SDDC Manager / VCF Management Services / Fleet Management
+  drives the upgrade end to end.
+- **Standalone VVF** (VMware vSphere Foundation, no VCF Management
+  Services) – vCenter/ESXi are patched with standard vSphere lifecycle
+  mechanisms instead of SDDC-Manager-driven phases.
+- **Standalone vSphere** – no VCF or VVF entitlement at all. Broadcom
+  documents the *same* upgrade procedure for this as for standalone VVF
+  (License Server included), so this track reuses that content rather than
+  getting an invented, undocumented one – see
+  `docs/12-vsphere-standard-upgrade.md`.
+
+Each track covers pre-upgrade checks, the upgrade sequence, and
+post-upgrade validation, applicable **regardless of underlying hardware**.
+Hardware/HCI-specific extra steps are layered on **top** of any track as
+their own addendum, not baked into it – currently **Dell VxRail** (started
+from a specific customer engagement: VxRail 5.2 → VCF 9.1.1, but the
+general guidance should stay reusable beyond that one engagement;
+VxRail's addendum currently assumes full VCF, since it depends on SDDC
+Manager talking to VxRail Manager).
+
+The site (`web/`) surfaces this as three landing pages – `/vcf/`, `/vvf/`,
+`/vsphere/` – each showing only the docs tagged for that track via
+`web/src/nav.ts`'s `tracks` field. Every doc's track applicability should
+stay accurate there; when adding a doc, decide up front which track(s) it
+applies to rather than defaulting to "all".
 
 **Public.** This repo is public and is the first section of a planned
 general **VMware Docs** site (docs.hollebollevsan.nl) – future guides need
@@ -43,12 +64,17 @@ here – see the Related repo section in `README.md`.
 | `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access → VCF Identity Broker (post-upgrade; **VCF only**, needs VCF Management Services) |
 | `docs/04-field-notes.md` | Known issues and gotchas from real upgrades (reference) |
 | `docs/05-operations-modernization.md` | Aria Operations → VCF Operations, Phase 1 (phase guide; VCF or VVF) |
-| `docs/06-iwa-ldaps-migration.md` | IWA → AD-over-LDAPS migration before Phase 6, with a permissions/roles backup (pre-upgrade prep; VCF or VVF) |
-| `docs/07-vcenter-manual-upgrade.md` | Manual GUI vCenter upgrade, Phase 6 alternate path (phase guide; **VVF only**, no Fleet Management) |
-| `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps, on top of the general flow (hardware addendum) |
+| `docs/06-iwa-ldaps-migration.md` | IWA → AD-over-LDAPS migration before Phase 6, with a permissions/roles backup (pre-upgrade prep; VCF, VVF, or standalone vSphere) |
+| `docs/07-vcenter-manual-upgrade.md` | Manual GUI vCenter upgrade, Phase 6 alternate path (phase guide; VVF or standalone vSphere, no Fleet Management) |
+| `docs/08-vss-to-vds-migration.md` | VSS → VDS migration before extending standalone VVF to full VCF (pre-upgrade prep; **VVF only**) |
+| `docs/09-avi-license-hub-upgrade.md` | Avi Load Balancer + License Hub upgrade, before SDDC Manager (phase guide; VCF or VVF, if Avi is in use) |
+| `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade + NSX finalize, replacing plain Phase 8 (phase guide; VCF or VVF) |
+| `docs/11-log-management-migration.md` | VCF Operations for Logs → Log Management 9.1, after NSX finalize (phase guide; VCF or VVF) |
+| `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at the standalone-VVF procedure rather than duplicating it (**vSphere-standard only**) |
+| `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps, on top of the general flow (hardware addendum; **VCF only**) |
 | `reference/`          | Pinned reference material (Dell/VMware docs, KBs, etc.)        |
 | `tools/`              | Helper scripts, if any get added                               |
-| `web/`                | ITQ-branded Astro site rendering `docs/` in place, dual-deployed (public + internal) |
+| `web/`                | ITQ-branded Astro site rendering `docs/` in place, dual-deployed (public + internal); `src/pages/{vcf,vvf,vsphere}.astro` are the three track landing pages |
 | `.gitlab-ci.yml`      | Internal GitLab Pages deploy                                   |
 | `.github/workflows/pages.yml` | Public GitHub Pages deploy – docs.hollebollevsan.nl      |
 

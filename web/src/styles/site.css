@@ -759,6 +759,20 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
   align-items: center;
 }
 
+.card-grid--tracks {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  max-width: 900px;
+}
+.planning-card--track .planning-card__icon { font-size: 2rem; }
+.planning-card--track .planning-card__title { margin-top: var(--space-3); }
+
+.workflow--secondary { padding-top: 0; }
+.workflow--secondary summary {
+  cursor: pointer;
+  margin-bottom: var(--space-5);
+}
+.workflow--secondary .card-grid { margin-top: var(--space-5); }
+
 /* ---------- Related ---------- */
 .related { background: var(--surface-subtle); }
 .related__grid {

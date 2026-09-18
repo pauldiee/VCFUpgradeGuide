@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.9.3 – 2026-09-18
+- **Split the guide into three tracks: full VCF, standalone VVF, and a new
+  standalone-vSphere track.** The site's flat card grid tried to serve
+  every reader at once; now `/vcf/`, `/vvf/`, and `/vsphere/` landing
+  pages each show only the docs relevant to that situation, via a new
+  required `tracks` field on `web/src/nav.ts`'s `NavItem`. `index.astro`
+  becomes a track picker, with the previous full grid demoted to a
+  collapsed "Browse all docs" fallback. New shared `NavCard.astro`
+  component avoids duplicating card markup three times over.
+  New: `docs/12-vsphere-standard-upgrade.md` – a thin landing doc for the
+  standalone-vSphere track. Broadcom documents the *same* upgrade
+  procedure for plain vSphere as for standalone VVF (License Server
+  included, per Broadcom's "Upgrading vSphere 8 and Optionally vSAN and
+  Aria Operations 8 to 9.1"), so this doc routes into the existing
+  standalone-VVF section of `01-overview.md` rather than inventing a
+  separate, undocumented spine. `CLAUDE.md` and `README.md` updated to
+  frame the repo around three tracks instead of a VCF/VVF split, and the
+  file-layout tables brought up to date with `docs/08-11` (merged
+  previously but not yet listed there).
+
 ## v0.9.2 – 2026-09-18
 - **Promote three conditional-phase sections out of `01-overview.md` into
   their own docs.** Per the promotion rule, each had grown past a table

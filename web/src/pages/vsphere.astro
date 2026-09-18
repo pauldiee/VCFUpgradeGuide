@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NavCard from '../components/NavCard.astro';
+import { navByTrack } from '../nav';
+import { withBase } from '../lib/path';
+
+const items = navByTrack('vsphere');
+---
+
+<BaseLayout
+  title="Standalone vSphere upgrade track"
+  description="Upgrade guidance for plain vSphere with no VCF or VVF entitlement."
+  fullWidth
+>
+  <section class="hero hero--compact">
+    <div class="hero__inner">
+      <p class="itq-eyebrow hero__eyebrow">Track &middot; Standalone vSphere</p>
+      <h1 class="hero__title">No VCF or VVF entitlement, just vCenter and ESXi.</h1>
+      <p class="hero__intro">
+        For a fleet with no VCF or VVF layer at all. Broadcom documents the
+        same upgrade procedure for this case as for standalone VVF, License
+        Server included – there's no separate "plain vSphere" spine here,
+        just a pointer into that shared procedure. If VVF or VCF entitlement
+        <em>is</em> in play, use the <a href={withBase('vvf/')}>standalone VVF</a> or
+        <a href={withBase('vcf/')}>full VCF</a> tracks instead.
+      </p>
+    </div>
+  </section>
+
+  <section class="workflow">
+    <div class="workflow__inner">
+      <p class="itq-eyebrow">The flow</p>
+      <h2 class="workflow__heading">Upgrade planning docs</h2>
+      <div class="card-grid">
+        {items.map((item) => <NavCard item={item} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

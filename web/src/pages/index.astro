@@ -1,7 +1,29 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import NavCard from '../components/NavCard.astro';
 import { NAV } from '../nav';
-import { docHref as href } from '../lib/path';
+import { withBase } from '../lib/path';
+
+const TRACKS = [
+  {
+    href: withBase('vcf/'),
+    icon: 'diagram-project',
+    label: 'Full VCF',
+    hint: 'SDDC Manager / Fleet Management drives the fleet.',
+  },
+  {
+    href: withBase('vvf/'),
+    icon: 'layer-group',
+    label: 'Standalone VVF',
+    hint: 'VMware vSphere Foundation, no VCF Management Services.',
+  },
+  {
+    href: withBase('vsphere/'),
+    icon: 'compass',
+    label: 'Standalone vSphere',
+    hint: 'No VCF or VVF entitlement, just vCenter and ESXi.',
+  },
+];
 ---
 
 <BaseLayout
@@ -18,18 +40,17 @@ import { docHref as href } from '../lib/path';
 
   <section class="workflow">
     <div class="workflow__inner">
-      <p class="itq-eyebrow">The flow</p>
-      <h2 class="workflow__heading">Upgrade planning docs</h2>
-      <div class="card-grid">
+      <p class="itq-eyebrow">Start here</p>
+      <h2 class="workflow__heading">Which track are you on?</h2>
+      <div class="card-grid card-grid--tracks">
         {
-          NAV.map((item) => (
-            <a class="planning-card" href={href(item.slug)}>
+          TRACKS.map((track) => (
+            <a class="planning-card planning-card--track" href={track.href}>
               <div class="planning-card__top">
-                <i class={`fa-solid fa-${item.icon} planning-card__icon`} aria-hidden="true" />
+                <i class={`fa-solid fa-${track.icon} planning-card__icon`} aria-hidden="true" />
               </div>
-              <span class="planning-card__step itq-eyebrow">{item.step}</span>
-              <h3 class="planning-card__title">{item.label}</h3>
-              <p class="planning-card__blurb">{item.blurb}</p>
+              <h3 class="planning-card__title">{track.label}</h3>
+              <p class="planning-card__blurb">{track.hint}</p>
               <span class="planning-card__cta">
                 Open <i class="fa-solid fa-arrow-right" aria-hidden="true" />
               </span>
@@ -37,6 +58,17 @@ import { docHref as href } from '../lib/path';
           ))
         }
       </div>
+    </div>
+  </section>
+
+  <section class="workflow workflow--secondary">
+    <div class="workflow__inner">
+      <details>
+        <summary class="itq-eyebrow">Browse all docs</summary>
+        <div class="card-grid">
+          {NAV.map((item) => <NavCard item={item} />)}
+        </div>
+      </details>
     </div>
   </section>
 </BaseLayout>

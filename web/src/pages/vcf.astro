@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NavCard from '../components/NavCard.astro';
+import { navByTrack } from '../nav';
+import { withBase } from '../lib/path';
+
+const items = navByTrack('vcf');
+---
+
+<BaseLayout
+  title="Full VCF upgrade track"
+  description="Upgrade guidance for a fleet driven through VCF Management Services / Fleet Management (SDDC Manager)."
+  fullWidth
+>
+  <section class="hero hero--compact">
+    <div class="hero__inner">
+      <p class="itq-eyebrow hero__eyebrow">Track &middot; Full VCF</p>
+      <h1 class="hero__title">Fleet-managed VCF, driven through SDDC Manager.</h1>
+      <p class="hero__intro">
+        For an engagement where VCF Management Services / Fleet Management is
+        deployed and driving the upgrade end to end. If SDDC Manager isn't in
+        the picture, check the
+        <a href={withBase('vvf/')}>standalone VVF</a> or <a href={withBase('vsphere/')}>standalone
+        vSphere</a> tracks instead.
+      </p>
+    </div>
+  </section>
+
+  <section class="workflow">
+    <div class="workflow__inner">
+      <p class="itq-eyebrow">The flow</p>
+      <h2 class="workflow__heading">Upgrade planning docs</h2>
+      <div class="card-grid">
+        {items.map((item) => <NavCard item={item} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

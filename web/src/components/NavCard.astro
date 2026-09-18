@@ -1,0 +1,22 @@
+---
+import { docHref as href } from '../lib/path';
+import type { NavItem } from '../nav';
+
+interface Props {
+  item: NavItem;
+}
+
+const { item } = Astro.props;
+---
+
+<a class="planning-card" href={href(item.slug)}>
+  <div class="planning-card__top">
+    <i class={`fa-solid fa-${item.icon} planning-card__icon`} aria-hidden="true" />
+  </div>
+  <span class="planning-card__step itq-eyebrow">{item.step}</span>
+  <h3 class="planning-card__title">{item.label}</h3>
+  <p class="planning-card__blurb">{item.blurb}</p>
+  <span class="planning-card__cta">
+    Open <i class="fa-solid fa-arrow-right" aria-hidden="true" />
+  </span>
+</a>

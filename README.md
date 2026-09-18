@@ -1,14 +1,28 @@
 # VCFUpgradeGuide
 
-**ITQ.** General guidance for planning a **VCF upgrade** – pre-upgrade
-checks, the upgrade sequence, and post-upgrade validation – applicable
-regardless of underlying hardware. Hardware/HCI-specific extra steps
-(currently: **Dell VxRail**) are layered on top as their own addendum, not
-baked into the general flow.
+**ITQ.** General guidance for planning a VMware upgrade, split into three
+tracks depending on what's actually driving the fleet:
+
+- **Full VCF** – SDDC Manager / VCF Management Services / Fleet Management
+  drives the upgrade.
+- **Standalone VVF** (VMware vSphere Foundation, no VCF Management
+  Services) – vCenter/ESXi patched via standard vSphere lifecycle
+  mechanisms.
+- **Standalone vSphere** – no VCF or VVF entitlement at all. Broadcom
+  documents the same procedure as standalone VVF for this case, so
+  [`docs/12-vsphere-standard-upgrade.md`](docs/12-vsphere-standard-upgrade.md)
+  points into that rather than inventing a separate one.
+
+Each track covers pre-upgrade checks, the upgrade sequence, and
+post-upgrade validation – applicable regardless of underlying hardware.
+Hardware/HCI-specific extra steps (currently: **Dell VxRail**, full VCF
+only) are layered on top as their own addendum, not baked into the general
+flow.
 
 Live at **[docs.hollebollevsan.nl](https://docs.hollebollevsan.nl)** – the
 first section of a general VMware docs site; future guides need not be
-upgrade-specific or VCF-specific.
+upgrade-specific or VCF-specific. The site's `/vcf/`, `/vvf/`, and
+`/vsphere/` landing pages route to the docs relevant to each track.
 
 ## Related repo
 
@@ -28,25 +42,26 @@ duplicating it here:
 
 ### The spine
 
-| Path              | Purpose                                                |
-| ----------------- | ------------------------------------------------------- |
-| `docs/01-overview.md` | General VCF upgrade guidance (work in progress)      |
+| Path              | Purpose                                                | Applies to |
+| ----------------- | ------------------------------------------------------- | ---------- |
+| `docs/01-overview.md` | General VCF/VVF upgrade guidance (work in progress) | VCF, VVF, or standalone vSphere |
+| `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at the standalone-VVF procedure rather than duplicating it | **Standalone vSphere only** |
 
 ### Guides, grouped by where they slot into the flow
 
 The `docs/NN-` file numbers are stable identifiers (linked from across the
-repo), not a reading order. The site sidebar mirrors these bands. **Applies
-to** follows the VCF/VVF split from `01-overview.md`'s
-["VVF: confirm whether VCF Management Services is even in scope"](docs/01-overview.md#vvf-confirm-whether-vcf-management-services-is-even-in-scope) –
-most guides work for either licensing model, some are scoped to one.
+repo), not a reading order. The site sidebar mirrors these bands; the
+site's `/vcf/`, `/vvf/`, `/vsphere/` landing pages filter by track instead.
+**Applies to** follows the three-track split described above – most
+guides work for more than one track, some are scoped to one.
 
 **Pre-upgrade prep** – done before the core sequence, or before a specific
 phase:
 
 | Path              | Purpose                                                | Applies to |
 | ----------------- | ------------------------------------------------------- | ---------- |
-| `docs/02-disaster-recovery.md` | SRM / vSphere Replication to VCF Protection and Recovery, before core Phase 3 | VCF, VVF, or pre-9 vSphere |
-| `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, before Phase 6, with a permissions/roles backup | VCF or VVF |
+| `docs/02-disaster-recovery.md` | SRM / vSphere Replication to VCF Protection and Recovery, before core Phase 3 | VCF, VVF, or standalone vSphere |
+| `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, before Phase 6, with a permissions/roles backup | VCF, VVF, or standalone vSphere |
 | `docs/08-vss-to-vds-migration.md` | VSS to VDS migration, before extending a standalone VVF fleet to full VCF | **VVF only** (extending to full VCF) |
 
 **Phase guides** – detail for a specific core-sequence phase:
@@ -54,7 +69,7 @@ phase:
 | Path              | Purpose                                                | Applies to |
 | ----------------- | ------------------------------------------------------- | ---------- |
 | `docs/05-operations-modernization.md` | Aria Operations to VCF Operations (Phase 1): in-place vs. fresh install, re-IP, HA setup, vCenter integrations | VCF or VVF |
-| `docs/07-vcenter-manual-upgrade.md` | Manual GUI upgrade of a standalone vCenter (Phase 6 alternate path, no Fleet Management), plus the vCenter-specific back-in-time compatibility check | **VVF only** (no VCF Management Services) |
+| `docs/07-vcenter-manual-upgrade.md` | Manual GUI upgrade of a standalone vCenter (Phase 6 alternate path, no Fleet Management), plus the vCenter-specific back-in-time compatibility check | VVF or standalone vSphere (no VCF Management Services) |
 | `docs/09-avi-license-hub-upgrade.md` | Avi Load Balancer + License Hub upgrade, before SDDC Manager | VCF or VVF, if Avi is in use |
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade and NSX finalize (replaces the plain Phase 8), after the host phase | VCF or VVF, if NSX is in use |
 | `docs/11-log-management-migration.md` | VCF Operations for Logs migration to Log Management 9.1, after NSX finalize | VCF or VVF |
@@ -73,9 +88,9 @@ phase:
 
 **Hardware addenda:**
 
-| Path              | Purpose                                                |
-| ----------------- | ------------------------------------------------------- |
-| `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps (work in progress) |
+| Path              | Purpose                                                | Applies to |
+| ----------------- | ------------------------------------------------------- | ---------- |
+| `docs/vxrail-addendum.md` | Dell VxRail-specific extra steps (work in progress) | **VCF only** (SDDC Manager ↔ VxRail Manager) |
 
 ### Other
 
