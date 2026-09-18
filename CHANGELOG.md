@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.8.8 – 2026-09-18
+- **`docs/06-iwa-ldaps-migration.md`: fix step ordering for same-AD-domain
+  migrations, document AD-leave rights.** Field-reported: adding the
+  AD-over-LDAPS identity source while the IWA source for the same domain
+  still exists fails with "connection already exists" (per Broadcom
+  KB 316596, vCenter SSO doesn't allow two identity sources against one AD
+  domain at once). Reordered steps 2-4: confirm a
+  `administrator@vsphere.local` fallback login works, remove IWA, then add
+  and verify LDAPS immediately after, instead of add-then-remove. Also adds
+  a "Required rights" note to the Leave AD step – field-reported "Unable to
+  leave: insufficient rights" traces to the AD-side delegated
+  create/delete-computer-object permission on the target OU (KB 322859),
+  separate from the vCenter-side SystemConfiguration.Administrators
+  requirement.
+
 ## v0.8.7 – 2026-09-18
 - **`docs/04-field-notes.md`: add per-APIC-train version support for the
   ACI/vSphere 8/9 entry.** Follow-up to v0.8.6 – the earlier entry flagged
