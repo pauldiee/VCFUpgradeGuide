@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8.7 – 2026-09-18
+- **`docs/04-field-notes.md`: add per-APIC-train version support for the
+  ACI/vSphere 8/9 entry.** Follow-up to v0.8.6 – the earlier entry flagged
+  the per-cell certification grid as not extractable from the rendered page
+  text; pulled it from the underlying `v-yes`/`v-no` cell data instead.
+  vSphere 8.0 is supported on APIC 5.2(8), 5.3(1)-5.3(2), not 6.0(1)-6.0(2)
+  (a gap in Cisco's own matrix), then 6.0(3) onward. VCF (vSphere) 9.0 is
+  supported starting only at APIC 6.2(2)-6.2(3) - no earlier train, even
+  ones that already support vSphere 8.0.
+
 ## v0.8.6 – 2026-09-18
 - **`docs/04-field-notes.md`: document Cisco ACI (APIC/VMM) vSphere 8/9
   interop constraints.** New entry in "Open items to confirm" – VDS-based

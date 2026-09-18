@@ -329,11 +329,24 @@ components are firewalled independently and it is an easy step to miss.
     still on AVE must migrate to VDS-based VMM integration (and drop the
     vCenter Plug-in) before the vSphere 8 or 9 upgrade can proceed.
 
-  **Not yet captured**: the exact per-APIC-train cell (which specific APIC
-  release first certifies vSphere 8.0 / VCF 9.0) renders as a tooltip in the
-  interactive grid, not as extractable static text – confirm it for the
-  customer's actual APIC version by hovering the matching cell in the tool
-  directly, or ask Cisco/TAC. APIC and vCenter do not need to upgrade in
-  lockstep, but the VMM domain must always point at a vCenter/ESXi
-  combination certified for the *currently running* APIC version – check the
-  matrix at each hop, not just at the start and end of the upgrade.
+  **Per-APIC-train support** (read from the matrix's underlying cell data,
+  not just the rendered tooltip text – see below):
+  - **vSphere 8.0** is supported on APIC **5.2(8)**, **5.3(1)–5.3(2)**, then
+    **not** 6.0(1)–6.0(2) (an explicit gap in Cisco's own matrix, not a
+    transcription error here), then supported again on **6.0(3)–6.0(9)**,
+    **6.1(x)–6.2(1)**, and **6.2(2)–6.2(3)**. Not supported on any APIC
+    release before 5.2(8).
+  - **VCF (vSphere) 9.0** is supported starting **only at APIC
+    6.2(2)–6.2(3)**. Every earlier train – including 6.0(3)–6.1(x)/6.2(1),
+    which already supports vSphere 8.0 – is marked not supported for VCF 9.0.
+    A customer on an APIC train older than 6.2(2) cannot integrate VMM with
+    a VCF 9.0 vCenter yet, full stop, regardless of vSphere-side readiness.
+
+  These come from the page's `v-yes`/`v-no` cell classes (extracted via the
+  live DOM, since the rendered tooltip popups aren't present as plain
+  extractable text) – re-verify against the live tool before relying on them
+  for a specific engagement, as Cisco updates this matrix over time. APIC
+  and vCenter do not need to upgrade in lockstep, but the VMM domain must
+  always point at a vCenter/ESXi combination certified for the *currently
+  running* APIC version – check the matrix at each hop, not just at the
+  start and end of the upgrade.
