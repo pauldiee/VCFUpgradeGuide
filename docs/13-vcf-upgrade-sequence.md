@@ -575,10 +575,10 @@ closure.
 - **Fleet health** – SDDC Manager and VCF Operations report a healthy fleet;
   run a fresh precheck.
 
-**Spot-check builds, VMware Tools, and vSAN on-disk format with PowerCLI**
-(a fleet-wide sweep across the checklist's build/Tools/vSAN rows – it does
-not replace VCFcheck's post-check mode or Skyline Health, both of which look
-deeper than these surface-level properties):
+**Spot-check builds, VMware Tools, vSAN on-disk format, and vDS version with
+PowerCLI** (a fleet-wide sweep across the checklist's build/Tools/vSAN/vDS
+rows – it does not replace VCFcheck's post-check mode or Skyline Health,
+both of which look deeper than these surface-level properties):
 
 > **Lab-verified 2026-09-19** (my holodeck lab, PowerCLI 13.3.0, vCenter/ESXi
 > 9.1.1) – run as shown below, with one fix from what first shipped here:
@@ -593,6 +593,13 @@ deeper than these surface-level properties):
 > doesn't mean they're behind; the filter below still lists them, so expect
 > noise from appliances on every run, not just from genuinely outdated Tools
 > on workload VMs.
+>
+> **The `Get-VDSwitch` line is Untested** – added after the initial lab pass
+> and not yet run against a live vCenter. `Version` is expected to be a
+> plain string like `"8.0.0"`, not automatically flagged against a target –
+> compare it by eye against the target vDS version from
+> [Pick a VDS version](08-vss-to-vds-migration.md#before-touching-anything)
+> until this line gets its own lab pass.
 
 ```powershell
 # Component builds - compare against the Phase 9 effective-versions table
@@ -607,6 +614,9 @@ Get-VM | Get-View | Select-Object Name,
   @{N="ToolsStatus";E={$_.Guest.ToolsVersionStatus}},
   @{N="ToolsRunningStatus";E={$_.Guest.ToolsRunningStatus}} |
   Where-Object { $_.ToolsStatus -ne "guestToolsCurrent" }
+
+# vDS versions - compare against the target vCenter's max-supported version
+Get-VDSwitch | Select-Object Name, Version, NumUplinkPorts, NumPorts
 
 # vSAN on-disk format version - per host, per disk group (Get-VsanClusterConfiguration has no
 # DiskFormatVersion property to read this from)

@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.2 – 2026-09-19
+- **Add a vDS version check to the post-upgrade PowerCLI spot-check.** The
+  checklist already listed "vSphere Distributed Switch – upgrade vDS
+  versions" as an item, but the script didn't check it. Added a
+  `Get-VDSwitch` line, marked **Untested** – not yet run against a live
+  vCenter, unlike the rest of that script's lines.
+
 ## v1.0.1 – 2026-09-19
 - **Fix "this lab" → "my lab" in the two lab-verified PowerCLI callouts.**
   The docs are authored in Paul's voice; referring to his own holodeck lab
