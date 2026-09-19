@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.0.8 – 2026-09-20
+- **Fix a real inaccuracy: VAMI does not drive vCenter version upgrades,
+  major or RDU.** `docs/07-vcenter-manual-upgrade.md` used to say vCenter
+  "is upgraded the traditional way, from its own installer, VAMI, or the
+  CLI" – wrong, and traced back to a real mix-up (a colleague asked whether
+  major upgrades are now possible from VAMI; researched it and they
+  aren't). Added a "Not VAMI – a common mix-up" section: major upgrades
+  are GUI-installer or CLI-installer only (per Broadcom TechDocs' listing),
+  RDU is driven from the **vSphere Client's Update Planner** (not VAMI –
+  Broadcom KB 313288 explicitly warns against running RDU and VAMI at the
+  same time, which only makes sense if they're separate mechanisms), and
+  9.1's new "vCenter quick patch" (VAMI-driven) is scoped to security
+  patches, not version upgrades. Fixed the same loose "VAMI / installer"
+  phrasing in `docs/14-standalone-vvf-upgrade.md`'s vCenter step.
+
 ## v1.0.7 – 2026-09-19
 - **Lab-verify `docs/15`'s PowerShell script section, fix a bug in
   Broadcom's own README.** Downloaded the real

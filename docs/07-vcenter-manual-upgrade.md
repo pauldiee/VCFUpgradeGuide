@@ -8,8 +8,49 @@ This doc covers the other case: a **standalone / not-fleet-managed** vCenter
 (see [Fleet-managed VVF vs. standalone VVF](14-standalone-vvf-upgrade.md#fleet-managed-vvf-vs-standalone-vvf))
 where there is no SDDC Manager or Fleet Management layer driving the
 upgrade. There, vCenter is upgraded the traditional way, from its own
-installer, VAMI, or the CLI. Same underlying two-stage migration mechanism
-as the fleet-driven path, just triggered manually.
+**two-stage GUI installer** or the **CLI installer** – see
+[Not VAMI](#not-vami-a-common-mix-up) below for why the appliance's own
+VAMI isn't a third option here, despite looking like it should be. Same
+underlying two-stage migration mechanism as the fleet-driven path, just
+triggered manually.
+
+---
+
+## Not VAMI – a common mix-up
+
+**VAMI (`https://<vcenter>:5480`, root login) does not drive a version
+upgrade of any kind – major or RDU.** It's easy to assume otherwise, since
+VAMI is *also* where routine **patching** happens and vSphere 9.1 added
+"vCenter quick patch" there too, but neither of those is a version upgrade:
+
+- **A major upgrade** (crossing a major version boundary, e.g. 8.x → 9.x)
+  only has two supported paths per Broadcom TechDocs' [Upgrading the
+  vCenter Appliance](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-0/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance.html)
+  landing page: *"The vCenter installer contains executable files for both
+  GUI and CLI upgrades which you can use alternatively."* VAMI isn't listed
+  as a third option anywhere on that page or its sub-pages.
+- **RDU** (see [Stage 1/2 below](#stage-2--migrate-data-and-cut-over)) is
+  driven from the **vSphere Client**'s **Update Planner** – vCenter →
+  **Updates** → **vCenter Server** → **Update Planner** – logged in with
+  SSO credentials, not VAMI's root login. Broadcom KB 313288 treats RDU and
+  VAMI as two genuinely separate lifecycle mechanisms, warning explicitly
+  against touching both at once: *"Users should not use Reduced downtime
+  upgrade and VAMI at the same time... This may interfere with already
+  running lifecycle events and may lead to a corrupt vCenter Server"* and
+  *"If the ISO is mounted from the Reduced downtime upgrade workflow, VAMI
+  ... should not be used to upgrade the vCenter Server."* That warning only
+  makes sense because they're different interfaces driving different
+  processes – if VAMI itself performed RDU, there'd be nothing to warn
+  against running "at the same time."
+- **vCenter quick patch** (new in 9.1, run from VAMI) is scoped to
+  *security patches*, not version upgrades – Broadcom's own "what's new"
+  material for it is explicit that it *"targets rapid deployment of
+  important security fixes,"* not major or minor version jumps.
+
+VAMI's legitimate role in an upgrade is limited to **naming and first-boot
+config of the new appliance** ([Stage 1 below](#stage-1--deploy-the-new-911-appliance))
+and to routine within-major-version patching – not to starting or driving
+the upgrade itself.
 
 ---
 

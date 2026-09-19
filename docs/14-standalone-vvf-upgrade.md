@@ -70,12 +70,16 @@ phases, no SDDC Manager involved at any point:
    license server components are required to license all 9.1.x
    environments."* This is the one piece of the VCF Management Services layer
    you cannot skip, even on the fully standalone path.
-3. **vCenter.** Upgrade the vCenter instance – choose **in-place** or
-   **reduced-downtime upgrade (RDU)** the same as on the fleet-managed path
+3. **vCenter.** Upgrade the vCenter instance – choose **in-place** (the
+   two-stage GUI/CLI installer) or **reduced-downtime upgrade (RDU)** (the
+   vSphere Client's Update Planner) the same as on the fleet-managed path
    (see [RDU detail](13-vcf-upgrade-sequence.md#phase-6--vcenter-upgrade));
-   driven from vCenter's own VAMI / installer, not Fleet Management. Full
-   manual GUI walkthrough, including the vCenter-specific back-in-time
-   compatibility check: [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md).
+   driven from vCenter's own installer or Update Planner, not Fleet
+   Management, and **not VAMI** – see
+   [Not VAMI](07-vcenter-manual-upgrade.md#not-vami--a-common-mix-up) for
+   why. Full manual GUI walkthrough, including the vCenter-specific
+   back-in-time compatibility check:
+   [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md).
 4. **ESX hosts.** Upgrade the ESX hosts (vLCM images) – same host-by-host
    rolling approach as the full-VCF sequence's
    [Phase 7](13-vcf-upgrade-sequence.md#phase-7--esx--host-cluster-upgrade),
