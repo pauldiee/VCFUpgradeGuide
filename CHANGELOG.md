@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.9.9 – 2026-09-19
+- **Lab-verify the two PowerCLI scripts added in v0.9.7, fix what broke.**
+  Ran both against the holodeck lab (PowerCLI 13.3.0, vCenter/ESXi 9.1.1),
+  including building throwaway VSS port groups to actually exercise
+  `08-vss-to-vds-migration.md`'s inventory logic (the lab's real cluster is
+  VDS-only). Found and fixed two real bugs, not lab quirks:
+  - `Get-VMHostNetworkAdapter -VMKernel` throws outright on ESXi 9.1.1
+    (`Requested value 'vnetworking' was not found.`) – a new-in-9.1
+    VMkernel service type this PowerCLI version's enum doesn't recognize,
+    breaking the cmdlet for every adapter on the host. Replaced with a
+    direct `HostSystem.Config` read in `08-vss-to-vds-migration.md`.
+  - `Get-VsanClusterConfiguration` has no `DiskFormatVersion` property in
+    this PowerCLI version at all. Replaced with `Get-VsanDiskGroup` (which
+    does carry it, per host/disk group) in
+    `13-vcf-upgrade-sequence.md`'s post-upgrade validation spot-check.
+  Both scripts' callouts updated from "Untested" to "Lab-verified
+  2026-09-19", with call-outs on what still isn't covered (VSS-backed
+  VMkernel `PortGroup` resolution, and populated NIC-teaming uplinks –
+  the lab's throwaway switch had no physical uplink to test against).
+
 ## v0.9.8 – 2026-09-19
 - **Flag untested PowerCLI snippets.** Added an "Untested" callout above the
   scripts in `08-vss-to-vds-migration.md` and `13-vcf-upgrade-sequence.md`

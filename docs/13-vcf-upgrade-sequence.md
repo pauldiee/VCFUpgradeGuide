@@ -580,8 +580,19 @@ closure.
 not replace VCFcheck's post-check mode or Skyline Health, both of which look
 deeper than these surface-level properties):
 
-> **Untested** – not yet run against a live vCenter (lab or field). Confirm
-> the cmdlet output on a test cluster before relying on it in a runbook.
+> **Lab-verified 2026-09-19** (holodeck lab, PowerCLI 13.3.0, vCenter/ESXi
+> 9.1.1) – run as shown below, with one fix from what first shipped here:
+> `Get-VsanClusterConfiguration` does **not** expose a `DiskFormatVersion`
+> property on this PowerCLI version at all (confirmed by dumping every
+> property on the returned object – it isn't there), so the vSAN check below
+> uses `Get-VsanDiskGroup` instead, which does carry it, per host and disk
+> group. The build and VMware Tools checks ran clean as originally written.
+> One thing to expect, not a bug: VCF appliance VMs (SDDC Manager, VCF
+> Operations, NSX Manager, etc.) report `guestToolsUnmanaged` rather than
+> `guestToolsCurrent` – that's normal for their bundled open-vm-tools and
+> doesn't mean they're behind; the filter below still lists them, so expect
+> noise from appliances on every run, not just from genuinely outdated Tools
+> on workload VMs.
 
 ```powershell
 # Component builds - compare against the Phase 9 effective-versions table
@@ -590,17 +601,17 @@ Get-VMHost | Select-Object Name, Version, Build | Sort-Object Name
   Select-Object FullName, Version, Build
 
 # VMware Tools - flag anything not on the target version (13.1 at time of writing)
+# Appliance VMs normally show guestToolsUnmanaged (bundled open-vm-tools) - expected, not a gap.
 Get-VM | Get-View | Select-Object Name,
   @{N="ToolsVersion";E={$_.Config.Tools.ToolsVersion}},
   @{N="ToolsStatus";E={$_.Guest.ToolsVersionStatus}},
   @{N="ToolsRunningStatus";E={$_.Guest.ToolsRunningStatus}} |
   Where-Object { $_.ToolsStatus -ne "guestToolsCurrent" }
 
-# vSAN on-disk format version per cluster
-Get-Cluster | ForEach-Object {
-  Get-VsanClusterConfiguration -Cluster $_ |
-    Select-Object @{N="Cluster";E={$_.Cluster.Name}}, DiskFormatVersion
-}
+# vSAN on-disk format version - per host, per disk group (Get-VsanClusterConfiguration has no
+# DiskFormatVersion property to read this from)
+Get-Cluster | Get-VsanDiskGroup |
+  Select-Object VMHost, Name, DiskGroupType, DiskFormatVersion, IsMounted
 ```
 
 Anything reported here as behind target still needs the corresponding

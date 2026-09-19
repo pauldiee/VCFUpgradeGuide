@@ -45,8 +45,15 @@ standalone VVF.
 
 ### Inventory script (PowerCLI)
 
-> **Untested** – not yet run against a live vCenter (lab or field). Confirm
-> the cmdlet output on a test cluster before relying on it in a runbook.
+> **Lab-verified 2026-09-19** (holodeck lab, PowerCLI 13.3.0, ESXi 9.1.1) –
+> the port-group/security/teaming block below was run against a throwaway
+> standard switch and port groups created specifically to test it, and every
+> property came back matching what was configured. One thing this lab
+> **couldn't** test: a real uplink assignment (`ActiveNic`/`StandbyNic`/
+> `UnusedNic`) – the test switch had no physical NIC attached, so those
+> columns came back empty by construction, not confirmed against a populated
+> teaming policy. Confirm that part on a switch with real uplinks before
+> relying on it.
 
 There is no vCenter backup/export API for standard switches (unlike
 `Export-VDPortGroup` on a VDS) – pull the config with PowerCLI instead, per
@@ -83,13 +90,53 @@ $rows = foreach ($vmhost in ($cluster | Get-VMHost)) {
   }
 }
 $rows | Export-Csv -Path ".\VSS-Inventory-$date.csv" -NoTypeInformation -UseCulture
-
-# VMkernel adapters separately - portgroup, IP, and which TCP/IP stack/service they carry
-$cluster | Get-VMHost | Get-VMHostNetworkAdapter -VMKernel |
-  Select-Object VMHost, Name, PortGroupName, IP, SubnetMask, Mtu,
-    VMotionEnabled, ManagementTrafficEnabled, VsanTrafficEnabled |
-  Export-Csv -Path ".\VSS-VMKernel-Inventory-$date.csv" -NoTypeInformation -UseCulture
 ```
+
+> **VMkernel adapters – `Get-VMHostNetworkAdapter -VMKernel` failed outright
+> against this lab's ESXi 9.1.1 hosts** on PowerCLI 13.3.0
+> (`Requested value 'vnetworking' was not found.`) – confirmed the cause:
+> 9.1.1 tags one VMkernel adapter with a `vnetworking` service type that this
+> PowerCLI version's enum doesn't recognize, and the cmdlet throws for
+> *every* adapter on the host, not just that one. Worked around it by
+> reading `HostSystem.Config` directly instead – **lab-verified 2026-09-19**
+> against all 4 hosts in the holodeck management cluster:
+
+```powershell
+# VMkernel adapters - portgroup, IP, and which service (management/vMotion/vSAN/...) each carries.
+# Reads the host config view directly rather than Get-VMHostNetworkAdapter -VMKernel, which
+# throws on ESXi 9.1.x hosts carrying a VMkernel service type PowerCLI 13.3.0 doesn't recognize.
+$vmkRows = foreach ($vmhost in ($cluster | Get-VMHost)) {
+  $view = $vmhost | Get-View
+  $netCfg = $view.Config.VirtualNicManagerInfo.NetConfig
+  foreach ($vnic in $view.Config.Network.Vnic) {
+    $key = $vnic.Key
+    $services = foreach ($svc in $netCfg) {
+      if ($svc.SelectedVnic -contains "$($svc.NicType).$key") { $svc.NicType }
+    }
+    [PSCustomObject]@{
+      VMHost                   = $vmhost.Name
+      Device                   = $vnic.Device
+      PortGroup                = $vnic.Portgroup
+      IP                       = $vnic.Spec.Ip.IpAddress
+      SubnetMask               = $vnic.Spec.Ip.SubnetMask
+      MTU                      = $vnic.Spec.Mtu
+      VMotionEnabled           = ($services -contains "vmotion")
+      ManagementTrafficEnabled = ($services -contains "management")
+      VsanTrafficEnabled       = ($services -contains "vsan")
+    }
+  }
+}
+$vmkRows | Export-Csv -Path ".\VSS-VMKernel-Inventory-$date.csv" -NoTypeInformation -UseCulture
+```
+
+`PortGroup` came back blank for every adapter in the lab because these
+VMkernel adapters are VDS-backed there (`$vnic.Portgroup` is only populated
+for standard-switch port groups; a VDS-backed adapter needs
+`$vnic.Spec.DistributedVirtualPort.PortgroupKey` resolved against the VDS
+instead) – on the actual pre-migration VSS hosts this script targets, every
+adapter should be VSS-backed and `Portgroup` should populate correctly, but
+that specific path (VSS-backed VMkernel adapter, not VDS) wasn't available
+to test in this lab and hasn't been confirmed.
 
 Traffic shaping isn't covered by `Get-VirtualPortGroup`/`Get-SecurityPolicy` –
 check it per port group with
