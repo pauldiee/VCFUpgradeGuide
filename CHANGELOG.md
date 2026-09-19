@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.0.3 – 2026-09-19
+- **Call out the manual OVA download for vSAN File Service upgrades.** The
+  "vSAN File Service in detail" section described the Automatic/Manual
+  choice in the upgrade wizard but didn't flag that Manual mode is just a
+  file picker – it doesn't fetch or point at the OVA, so it has to be
+  downloaded from the Broadcom Support Portal ahead of time, and Automatic
+  needs depot/internet reachability that a restricted environment may not
+  have. A real, if not complicated, trip-up.
+
 ## v1.0.2 – 2026-09-19
 - **Add a vDS version check to the post-upgrade PowerCLI spot-check.** The
   checklist already listed "vSphere Distributed Switch – upgrade vDS

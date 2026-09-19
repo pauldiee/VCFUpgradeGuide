@@ -512,6 +512,15 @@ tail of the host-domain work, alongside the other post-host vSAN tasks in
   vSphere Client: cluster → **Configure → vSAN → Services → File Service →
   Edit → Check upgrade**, choose **Automatic** (pull the OVF) or **Manual**
   (supply the OVF), then **Upgrade**.
+- **Manual mode needs the OVA downloaded ahead of time – this is a
+  do-it-yourself step, not something the wizard fetches or prompts you
+  through.** **Automatic** needs the vCenter's depot/internet reachability
+  to pull it directly; where that's not available (restricted / air-gapped
+  environments, or the automatic pull otherwise fails), **Manual** is the
+  only option, and it just presents a file picker – it doesn't tell you
+  where to get the file. Download the matching vSAN File Service OVA from
+  the Broadcom Support Portal **before** starting the wizard, not after
+  hitting the file picker and realizing it's needed.
 - **Rolling.** "The upgrade is performed on a rolling basis" – agents are
   replaced host by host. File server containers **fail over to other agent
   VMs** as each is refreshed.
