@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.5 – 2026-09-19
+- **Make GitHub Issues the primary issue tracker, to match `origin`.**
+  GitLab now only serves as a secondary push target and the internal Pages
+  mirror – it's no longer where issues get filed. Updated CLAUDE.md's
+  GitHub issues discipline and Git remotes sections accordingly.
+
 ## v1.0.4 – 2026-09-19
 - **Pin the exact Broadcom Support Portal path for the vSAN File Service
   download, and flag it's six files, not one OVA.** Search **Cloud
