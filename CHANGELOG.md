@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.0.6 – 2026-09-19
+- **New guide: `docs/15-vum-to-vlcm-migration.md`.** vLCM baselines aren't
+  supported on VCF 9.0+, and this prerequisite was previously just a bare
+  line in `docs/13`'s prerequisites table and the VxRail addendum's vLCM
+  row, with no procedure of its own – promoted per the "promote a topic to
+  its own `docs/NN-*.md`" rule (GitHub issue #1). Covers both mechanisms:
+  the `VcfBaselineClusterTransition.ps1` PowerShell script (VCF, SDDC
+  Manager-driven, sourced from the script's GitHub repo README) and the
+  native vSphere Client wizard (standalone VVF, no SDDC Manager), plus two
+  real gotchas – a documented extraction failure on hosts with ISO-upgrade
+  history (Broadcom KB 407728) and NSX-enabled-cluster-specific caveats
+  (credited to ITQ's own published write-up). Cross-linked from
+  `docs/13`, `docs/14`, and `vxrail-addendum.md`; added to
+  `web/src/nav.ts`, `README.md`, and this file's file-layout table.
+  Verified the Astro build stays clean with the new nav entry before
+  pushing.
+
 ## v1.0.5 – 2026-09-19
 - **Make GitHub Issues the primary issue tracker, to match `origin`.**
   GitLab now only serves as a secondary push target and the internal Pages

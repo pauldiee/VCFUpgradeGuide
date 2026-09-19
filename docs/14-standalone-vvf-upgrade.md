@@ -79,7 +79,10 @@ phases, no SDDC Manager involved at any point:
 4. **ESX hosts.** Upgrade the ESX hosts (vLCM images) – same host-by-host
    rolling approach as the full-VCF sequence's
    [Phase 7](13-vcf-upgrade-sequence.md#phase-7--esx--host-cluster-upgrade),
-   just triggered from vCenter directly.
+   just triggered from vCenter directly. Any cluster still on vLCM
+   baselines needs converting first – there's no SDDC Manager here, so use
+   the vSphere Client path in
+   [VUM to vLCM images migration](15-vum-to-vlcm-migration.md#vvf--plain-vsphere-track-vsphere-client).
 5. **vSAN on-disk format.** Upgrade the vSAN on-disk format version, if vSAN
    is in use.
 6. **vSAN File Service.** Upgrade File Service agents, if enabled – same

@@ -24,6 +24,7 @@ which applies.
 
 - [What changes in VCF 9.x](#what-changes-in-vcf-9x)
 - [Prerequisites and architectural guardrails](#prerequisites-and-architectural-guardrails)
+  · companion doc: [VUM to vLCM images migration](15-vum-to-vlcm-migration.md)
 - [Run the pre-upgrade precheck](#run-the-pre-upgrade-precheck)
 - [The upgrade sequence](#the-upgrade-sequence) – Phases 1–9: VCF Operations →
   SDDC Manager → Management Services + License Server → VCF Automation → NSX
@@ -109,7 +110,7 @@ your target build.
 | **Bundle staging** | All upgrade bundles downloaded, staged, and integrity-checked before the window; confirm **free disk space on SDDC Manager** – a common, avoidable staging failure |
 | **CPU & TPM** | No deprecated CPU families for the target build; TPM 2.0 firmware current, or TPM disabled |
 | **Backups** | vCenter file-based backup configured; SDDC Manager + VCF Operations image-based backups to an external SFTP target |
-| **vSphere Lifecycle Manager** | All clusters managed by **vLCM images** – transition any remaining baseline-managed clusters first |
+| **vSphere Lifecycle Manager** | All clusters managed by **vLCM images** – transition any remaining baseline-managed clusters first. Full walkthrough: [VUM to vLCM images migration](15-vum-to-vlcm-migration.md) |
 | **DNS** | Strictly **lowercase** forward *and* reverse records for every existing and new name |
 | **NTP** | Time sync healthy and consistent across all fleet components before the upgrade window |
 | **vCenter root password** | **15–20 characters** (new 9.1 standard) |

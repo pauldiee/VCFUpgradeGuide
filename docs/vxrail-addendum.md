@@ -124,7 +124,7 @@ account.
 | --- | --- |
 | Phase 7 – ESX / host-cluster upgrade | **Replaced** by the VxRail plugin bundle (ESXi + Dell Add-on drivers + Dell firmware + VXM → VOM). Do not use the generic per-host path or the online VxRail Manager UI. |
 | Phase 5 / 6 – NSX Local Manager, vCenter | Driven from the SDDC Manager 9.1 UI / VCF Operations Fleet Management by Dell RPS, not the generic path. |
-| Prerequisites – vLCM images | Hard requirement on VxRail: all baseline-managed clusters converted to vLCM images first. |
+| Prerequisites – vLCM images | Hard requirement on VxRail: all baseline-managed clusters converted to vLCM images first. Full walkthrough: [VUM to vLCM images migration](15-vum-to-vlcm-migration.md#vcf-track-powershell-script-vcfbaselineclustertransitionps1) |
 | Conditional – NSX Global Manager | Applies whenever the Dell checklist shows NSX Federation = Yes. |
 
 The Aria → VCF fleet migration, the VIDM → Identity Broker transition, and the

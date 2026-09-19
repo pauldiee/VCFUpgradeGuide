@@ -101,6 +101,15 @@ export const NAV: NavItem[] = [
     tracks: ['vvf'],
   },
   {
+    slug: '15-vum-to-vlcm-migration',
+    step: 'Pre-upgrade prep',
+    band: 'Pre-upgrade prep',
+    label: 'VUM to vLCM images migration',
+    icon: 'layer-group',
+    blurb: 'Transition any remaining vLCM-baseline-managed clusters and standalone hosts to vLCM images before the ESX host phase – the PowerShell script for VCF, the vSphere Client for standalone VVF. Applies to VCF and VVF.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: '05-operations-modernization',
     step: 'Phase guide',
     band: 'Phase guides',

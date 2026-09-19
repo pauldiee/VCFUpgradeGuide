@@ -73,6 +73,7 @@ phase:
 | `docs/02-disaster-recovery.md` | SRM / vSphere Replication to VCF Protection and Recovery, before core Phase 3 | VCF, VVF, or standalone vSphere |
 | `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, before Phase 6, with a permissions/roles backup | VCF, VVF, or standalone vSphere |
 | `docs/08-vss-to-vds-migration.md` | VSS to VDS migration, before extending a standalone VVF fleet to full VCF | **VVF only** (extending to full VCF) |
+| `docs/15-vum-to-vlcm-migration.md` | VUM to vLCM images migration, before the ESX host phase | VCF or VVF |
 
 **Phase guides** – detail for a specific core-sequence phase:
 

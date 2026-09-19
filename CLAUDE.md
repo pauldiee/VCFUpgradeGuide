@@ -82,6 +82,7 @@ here – see the Related repo section in `README.md`.
 | `docs/06-iwa-ldaps-migration.md` | IWA → AD-over-LDAPS migration before Phase 6, with a permissions/roles backup (pre-upgrade prep; VCF, VVF, or standalone vSphere) |
 | `docs/07-vcenter-manual-upgrade.md` | Manual GUI vCenter upgrade, Phase 6 alternate path (phase guide; VVF or standalone vSphere, no Fleet Management) |
 | `docs/08-vss-to-vds-migration.md` | VSS → VDS migration before extending standalone VVF to full VCF (pre-upgrade prep; **VVF only**) |
+| `docs/15-vum-to-vlcm-migration.md` | VUM (baselines) → vLCM images migration before the ESX host phase (pre-upgrade prep; VCF or VVF) |
 | `docs/09-avi-license-hub-upgrade.md` | Avi Load Balancer + License Hub upgrade, before SDDC Manager (phase guide; VCF or VVF, if Avi is in use) |
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade + NSX finalize, replacing plain Phase 8 (phase guide; VCF or VVF) |
 | `docs/11-log-management-migration.md` | VCF Operations for Logs → Log Management 9.1, after NSX finalize (phase guide; VCF or VVF) |
