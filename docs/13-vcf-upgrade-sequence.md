@@ -580,7 +580,7 @@ closure.
 not replace VCFcheck's post-check mode or Skyline Health, both of which look
 deeper than these surface-level properties):
 
-> **Lab-verified 2026-09-19** (holodeck lab, PowerCLI 13.3.0, vCenter/ESXi
+> **Lab-verified 2026-09-19** (my holodeck lab, PowerCLI 13.3.0, vCenter/ESXi
 > 9.1.1) – run as shown below, with one fix from what first shipped here:
 > `Get-VsanClusterConfiguration` does **not** expose a `DiskFormatVersion`
 > property on this PowerCLI version at all (confirmed by dumping every

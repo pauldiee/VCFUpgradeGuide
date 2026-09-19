@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.10.1 – 2026-09-19
+- **Fix "this lab" → "my lab" in the two lab-verified PowerCLI callouts.**
+  The docs are authored in Paul's voice; referring to his own holodeck lab
+  as "this lab" read as if someone else were narrating it.
+
 ## v0.10.0 – 2026-09-19
 - **Make `origin` point to GitHub instead of GitLab.** Plain `git push`/
   `git pull` now default to the public GitHub repo. Renamed remotes

@@ -45,10 +45,10 @@ standalone VVF.
 
 ### Inventory script (PowerCLI)
 
-> **Lab-verified 2026-09-19** (holodeck lab, PowerCLI 13.3.0, ESXi 9.1.1) –
+> **Lab-verified 2026-09-19** (my holodeck lab, PowerCLI 13.3.0, ESXi 9.1.1) –
 > the port-group/security/teaming block below was run against a throwaway
 > standard switch and port groups created specifically to test it, and every
-> property came back matching what was configured. One thing this lab
+> property came back matching what was configured. One thing my lab
 > **couldn't** test: a real uplink assignment (`ActiveNic`/`StandbyNic`/
 > `UnusedNic`) – the test switch had no physical NIC attached, so those
 > columns came back empty by construction, not confirmed against a populated
@@ -93,13 +93,13 @@ $rows | Export-Csv -Path ".\VSS-Inventory-$date.csv" -NoTypeInformation -UseCult
 ```
 
 > **VMkernel adapters – `Get-VMHostNetworkAdapter -VMKernel` failed outright
-> against this lab's ESXi 9.1.1 hosts** on PowerCLI 13.3.0
+> against my lab's ESXi 9.1.1 hosts** on PowerCLI 13.3.0
 > (`Requested value 'vnetworking' was not found.`) – confirmed the cause:
 > 9.1.1 tags one VMkernel adapter with a `vnetworking` service type that this
 > PowerCLI version's enum doesn't recognize, and the cmdlet throws for
 > *every* adapter on the host, not just that one. Worked around it by
 > reading `HostSystem.Config` directly instead – **lab-verified 2026-09-19**
-> against all 4 hosts in the holodeck management cluster:
+> against all 4 hosts in my holodeck management cluster:
 
 ```powershell
 # VMkernel adapters - portgroup, IP, and which service (management/vMotion/vSAN/...) each carries.
@@ -129,14 +129,14 @@ $vmkRows = foreach ($vmhost in ($cluster | Get-VMHost)) {
 $vmkRows | Export-Csv -Path ".\VSS-VMKernel-Inventory-$date.csv" -NoTypeInformation -UseCulture
 ```
 
-`PortGroup` came back blank for every adapter in the lab because these
+`PortGroup` came back blank for every adapter in my lab because these
 VMkernel adapters are VDS-backed there (`$vnic.Portgroup` is only populated
 for standard-switch port groups; a VDS-backed adapter needs
 `$vnic.Spec.DistributedVirtualPort.PortgroupKey` resolved against the VDS
 instead) – on the actual pre-migration VSS hosts this script targets, every
 adapter should be VSS-backed and `Portgroup` should populate correctly, but
 that specific path (VSS-backed VMkernel adapter, not VDS) wasn't available
-to test in this lab and hasn't been confirmed.
+to test in my lab and hasn't been confirmed.
 
 Traffic shaping isn't covered by `Get-VirtualPortGroup`/`Get-SecurityPolicy` –
 check it per port group with
