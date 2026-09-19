@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.0.4 – 2026-09-19
+- **Pin the exact Broadcom Support Portal path for the vSAN File Service
+  download, and flag it's six files, not one OVA.** Search **Cloud
+  Foundation** → select the release → **VMware vSAN** product page →
+  **Drivers & Tools** tab → **VMware vSAN File Services Appliance** section
+  – confirmed via screenshot against a real download for 9.1.1.0. The
+  section lists the `.ovf` plus `.mf`/`.cert` signature files and three
+  separate `.vmdk` disks (cloud-components, log, system); all six need to
+  land in the same folder before pointing the wizard's file picker at the
+  `.ovf`, or deployment fails partway through.
+
 ## v1.0.3 – 2026-09-19
 - **Call out the manual OVA download for vSAN File Service upgrades.** The
   "vSAN File Service in detail" section described the Automatic/Manual
