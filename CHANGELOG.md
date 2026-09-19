@@ -1,5 +1,29 @@
 # Changelog
 
+## v1.0.7 – 2026-09-19
+- **Lab-verify `docs/15`'s PowerShell script section, fix a bug in
+  Broadcom's own README.** Downloaded the real
+  `VcfBaselineClusterTransition.ps1` release and ran it against the
+  holodeck lab's SDDC Manager. `-Connect`, `-ShowBaselineResources`, and
+  `-ShowImagesInVcenter` all worked and returned correct results. Found
+  and fixed:
+  - The upstream README's own compliance-check example uses
+    `-WorkloadDomain`, a parameter the script doesn't actually define –
+    only `-WorkloadDomainName` exists (confirmed by reading the script's
+    `Param()` block). Fixed the copied example.
+  - `Install-Module -Name VCF.PowerCLI` fails with an Authenticode
+    publisher mismatch against an existing `VMware.PowerCLI` install (the
+    VMware→Broadcom code-signing rebrand) – documented the
+    `-SkipPublisherCheck` fix.
+  - `VCF.PowerCLI` actively conflicts with a co-installed
+    `VMware.PowerCLI` (the module this repo's other snippets use) – noted
+    as a real gotcha if both are ever needed in the same session.
+  - `-CreateHostRemediationOptionsFile` is fully interactive with no
+    unattended path at all, despite being an ordinary-looking CLI flag –
+    confirmed it hangs on stdin and explicitly refuses `-Silence`.
+  Added a non-interactive `-Connect -JsonInput` example (confirmed
+  working) as an alternative to the interactive prompt.
+
 ## v1.0.6 – 2026-09-19
 - **New guide: `docs/15-vum-to-vlcm-migration.md`.** vLCM baselines aren't
   supported on VCF 9.0+, and this prerequisite was previously just a bare

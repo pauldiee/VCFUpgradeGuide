@@ -38,6 +38,41 @@ won't do anything useful against a vCenter with no SDDC Manager behind it.
 
 ## VCF track: PowerShell script (`VcfBaselineClusterTransition.ps1`)
 
+> **Lab-verified 2026-09-19** (my holodeck lab, PowerShell 7.6.6, SDDC
+> Manager/vCenter 9.1.1) – `-Connect`, `-ShowBaselineResources`, and
+> `-ShowImagesInVcenter` all ran clean against the real SDDC Manager and
+> returned correct results (this lab's cluster is already image-managed,
+> so `-ShowBaselineResources` correctly reported nothing to transition –
+> the compliance-check/transition flow itself couldn't be exercised for
+> lack of a baseline-managed resource to point it at). Three things fixed
+> or confirmed along the way:
+> - **The README's own inline compliance-check example uses the wrong
+>   parameter name** (`-WorkloadDomain`) – the script only defines
+>   `-WorkloadDomainName` (confirmed by reading its `Param()` block
+>   directly). Fixed below.
+> - **`Install-Module -Name VCF.PowerCLI` failed outright** in this
+>   environment with an Authenticode publisher mismatch, because an older
+>   VMware-signed `VMware.VimAutomation.StorageUtility` module was already
+>   installed and the new one ships signed by Broadcom instead (the
+>   VMware→Broadcom rebrand) – needed `-SkipPublisherCheck`. Likely to bite
+>   anyone who already has `VMware.PowerCLI` installed, which is the
+>   common case (it's what this repo's other PowerCLI snippets use).
+> - **`VCF.PowerCLI` actively conflicts with a co-installed
+>   `VMware.PowerCLI`** – the script itself warns about this every run:
+>   *"VMware.PowerCLI 13.3 ships 13.3-era submodule versions ... that
+>   conflict with VCF.PowerCLI 9's required 13.4-era submodules"* and
+>   recommends `Uninstall-Module -Name VMware.PowerCLI -AllVersions`. If
+>   this repo's other scripts (docs/08, docs/13) and this one are ever run
+>   from the same PowerShell profile, expect that conflict – consider a
+>   separate profile/session for this script rather than uninstalling
+>   `VMware.PowerCLI` outright.
+> - **`-CreateHostRemediationOptionsFile` is fully interactive with no
+>   unattended path** – it hangs waiting on console input even with
+>   `-JsonOutput` supplied, and explicitly refuses to run with `-Silence`
+>   (*"cannot be used with this option as the feature is interactive"*).
+>   Can't be scripted into an unattended run despite looking like an
+>   ordinary CLI flag.
+
 ### Prerequisites
 
 Per the [script's GitHub repo](https://github.com/vmware/powershell-script-for-vmware-cloud-foundation-vum-to-vlcm):
@@ -51,6 +86,12 @@ Install-Module -Name VCF.PowerCLI -MinimumVersion 9.1
 Set-PowerCLIConfiguration -InvalidCertificateAction Ignore
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
+
+If a `VMware.PowerCLI` install is already present, add
+`-SkipPublisherCheck` to the `Install-Module` line above – Broadcom's
+VCF.PowerCLI submodules are now signed under the Broadcom certificate
+rather than the older VMware one, which trips PowerShell's Authenticode
+publisher check against an existing VMware-signed install.
 
 Download the script itself from the repo's
 [Releases page](https://github.com/vmware/powershell-script-for-vmware-cloud-foundation-vum-to-vlcm/releases) –
@@ -80,6 +121,23 @@ file is found):
 ./VcfBaselineClusterTransition.ps1 -Connect
 ```
 
+For a non-interactive connect (automation, or just to skip retyping
+credentials every run), pass a JSON file instead – `SddcManagerPassword`
+isn't shown in the repo's own sample file but the script does read it
+(confirmed working against a real SDDC Manager):
+
+```json
+{
+  "SddcManagerFqdn": "sddcmgr.example.com",
+  "SddcManagerUserName": "administrator@vsphere.local",
+  "SddcManagerPassword": "<password>"
+}
+```
+
+```powershell
+./VcfBaselineClusterTransition.ps1 -Connect -JsonInput .\SddcManagerCredentials.json
+```
+
 **See what's still on baselines**, optionally saving the list to JSON for
 the later steps:
 
@@ -92,7 +150,7 @@ in parallel:
 
 ```powershell
 # Single resource, image seeding (auto-generates a vLCM image from the host's own state)
-./VcfBaselineClusterTransition.ps1 -ComplianceCheck -ResourceType "Standalone Host" -WorkloadDomain m01 -ResourceName esx-2.example.com
+./VcfBaselineClusterTransition.ps1 -ComplianceCheck -ResourceType "Standalone Host" -WorkloadDomainName m01 -ResourceName esx-2.example.com
 
 # Batch, from a JSON file, in parallel
 ./VcfBaselineClusterTransition.ps1 -ComplianceCheck -JsonInput .\BaselineResources.json -Parallel
