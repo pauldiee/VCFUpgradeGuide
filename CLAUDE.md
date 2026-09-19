@@ -181,32 +181,35 @@ working on this repo – not in chat text, not in a screenshot.
 ## GitHub issues discipline
 
 Same convention as `VCF9-DeploymentPlanning`: every bug, fix, idea, or doc
-edit gets an issue on the primary tracker (**GitLab**, since GitLab is
-primary here – see Git remotes below) – even if fixed in the same session.
-Open the issue **before** starting the work. Always ask "who requested
-this?" before filing – apply the matching label rather than guessing.
+edit gets an issue on the primary **issue tracker**, which is **GitLab**
+even though `origin` (the primary *push* target) is GitHub – see
+[Git remotes](#git-remotes) below for that distinction – even if fixed in
+the same session. Open the issue **before** starting the work. Always ask
+"who requested this?" before filing – apply the matching label rather than
+guessing.
 
 ---
 
 ## Git remotes
 
-GitLab remains primary for commit history and ITQ-internal issue tracking;
-GitHub is now also a real hosting target, not just a backup mirror – it
-serves the **public** site.
+**`origin` is GitHub** (since 2026-09-19) – plain `git push`/`git pull`
+default there. GitLab stays primary for **ITQ-internal issue tracking**
+only – see [GitHub issues discipline](#github-issues-discipline) above,
+which despite its heading still means GitLab's tracker (rename pending).
 
-| Remote   | URL                                                               | Status                                              |
-| -------- | ------------------------------------------------------------------ | ---------------------------------------------------- |
-| `origin` | `https://gitlab.msp.itq.eu/ugt_con_sddc_nl/vcfupgradeguide.git`   | **Primary** – internal ITQ GitLab, issue tracking     |
-| `github` | `https://github.com/pauldiee/VCFUpgradeGuide.git`                 | **Public** – hosts docs.hollebollevsan.nl via GitHub Pages |
+| Remote   | URL                                                               | Status                                                      |
+| -------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
+| `origin` | `https://github.com/pauldiee/VCFUpgradeGuide.git`                 | **Primary** – plain push/pull target; hosts docs.hollebollevsan.nl via GitHub Pages |
+| `gitlab` | `https://gitlab.msp.itq.eu/ugt_con_sddc_nl/vcfupgradeguide.git`   | Internal ITQ GitLab – issue tracking, internal Pages mirror    |
 
-`main` tracks `origin/main` (GitLab). To push commits to both remotes use the
+`main` tracks `origin/main` (GitHub). To push commits to both remotes use the
 `pushall` alias (configured locally on this repo):
 
 ```bash
-git pushall   # equivalent to: git push origin && git push github
+git pushall   # equivalent to: git push origin && git push gitlab
 ```
 
-Regular `git push` only goes to `origin` (GitLab).
+Regular `git push` only goes to `origin` (GitHub).
 
 ## CI / Pages deploys
 

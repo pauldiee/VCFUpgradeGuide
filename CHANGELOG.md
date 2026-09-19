@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.10.0 – 2026-09-19
+- **Make `origin` point to GitHub instead of GitLab.** Plain `git push`/
+  `git pull` now default to the public GitHub repo. Renamed remotes
+  (`origin` → `gitlab`, `github` → `origin`), re-pointed `main`'s upstream
+  to `origin/main`, and updated the `pushall` alias to `git push origin &&
+  git push gitlab`. GitLab stays primary for ITQ-internal **issue
+  tracking** only – that didn't change, just the push target. Updated
+  CLAUDE.md's Git remotes table and the GitHub issues discipline section's
+  cross-reference to match.
+
 ## v0.9.9 – 2026-09-19
 - **Lab-verify the two PowerCLI scripts added in v0.9.7, fix what broke.**
   Ran both against the holodeck lab (PowerCLI 13.3.0, vCenter/ESXi 9.1.1),
