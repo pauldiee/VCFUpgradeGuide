@@ -580,6 +580,9 @@ closure.
 not replace VCFcheck's post-check mode or Skyline Health, both of which look
 deeper than these surface-level properties):
 
+> **Untested** – not yet run against a live vCenter (lab or field). Confirm
+> the cmdlet output on a test cluster before relying on it in a runbook.
+
 ```powershell
 # Component builds - compare against the Phase 9 effective-versions table
 Get-VMHost | Select-Object Name, Version, Build | Sort-Object Name

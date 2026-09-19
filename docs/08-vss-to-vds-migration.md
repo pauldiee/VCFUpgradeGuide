@@ -45,6 +45,9 @@ standalone VVF.
 
 ### Inventory script (PowerCLI)
 
+> **Untested** – not yet run against a live vCenter (lab or field). Confirm
+> the cmdlet output on a test cluster before relying on it in a runbook.
+
 There is no vCenter backup/export API for standard switches (unlike
 `Export-VDPortGroup` on a VDS) – pull the config with PowerCLI instead, per
 cluster:

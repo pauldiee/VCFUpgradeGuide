@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.8 – 2026-09-19
+- **Flag untested PowerCLI snippets.** Added an "Untested" callout above the
+  scripts in `08-vss-to-vds-migration.md` and `13-vcf-upgrade-sequence.md`
+  (v0.9.7) – neither has run against a live vCenter yet. Standing policy
+  going forward: any posted code not yet field-verified gets this callout
+  until it's confirmed working (field or lab), per author direction.
+
 ## v0.9.7 – 2026-09-19
 - **Add PowerCLI snippets to the steps that had none.** `08-vss-to-vds-migration.md`'s
   VSS inventory step had no scriptable path at all (there is no vCenter
