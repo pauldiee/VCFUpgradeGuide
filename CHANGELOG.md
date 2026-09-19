@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.9.7 – 2026-09-19
+- **Add PowerCLI snippets to the steps that had none.** `08-vss-to-vds-migration.md`'s
+  VSS inventory step had no scriptable path at all (there is no vCenter
+  export API for standard switches, unlike `Export-VDPortGroup` on a VDS) –
+  added a PowerCLI script covering port groups, VLAN, security policy,
+  teaming, MTU, and VMkernel adapters, as its own `### Inventory script
+  (PowerCLI)` subsection rather than buried under a bullet. Also added a
+  build/VMware-Tools/vSAN-on-disk-format PowerCLI spot-check to the
+  post-upgrade validation checklists in `13-vcf-upgrade-sequence.md` and
+  `14-standalone-vvf-upgrade.md`. Left the rest of `docs/` as-is – most
+  remaining steps are genuinely GUI- or vendor-tool-driven (SDDC Manager,
+  Avi Controller, Dell RPS) with no Broadcom-documented CLI/API equivalent
+  to verify against.
+
 ## v0.9.6 – 2026-09-18
 - **Fix every internal doc-to-doc link on the live site.** `astro.config.mjs`'s
   link rewriter built hrefs as `${BASE}/docs/<slug>/`, and both deploy

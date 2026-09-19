@@ -575,6 +575,35 @@ closure.
 - **Fleet health** – SDDC Manager and VCF Operations report a healthy fleet;
   run a fresh precheck.
 
+**Spot-check builds, VMware Tools, and vSAN on-disk format with PowerCLI**
+(a fleet-wide sweep across the checklist's build/Tools/vSAN rows – it does
+not replace VCFcheck's post-check mode or Skyline Health, both of which look
+deeper than these surface-level properties):
+
+```powershell
+# Component builds - compare against the Phase 9 effective-versions table
+Get-VMHost | Select-Object Name, Version, Build | Sort-Object Name
+(Get-View ServiceInstance).Content.About |
+  Select-Object FullName, Version, Build
+
+# VMware Tools - flag anything not on the target version (13.1 at time of writing)
+Get-VM | Get-View | Select-Object Name,
+  @{N="ToolsVersion";E={$_.Config.Tools.ToolsVersion}},
+  @{N="ToolsStatus";E={$_.Guest.ToolsVersionStatus}},
+  @{N="ToolsRunningStatus";E={$_.Guest.ToolsRunningStatus}} |
+  Where-Object { $_.ToolsStatus -ne "guestToolsCurrent" }
+
+# vSAN on-disk format version per cluster
+Get-Cluster | ForEach-Object {
+  Get-VsanClusterConfiguration -Cluster $_ |
+    Select-Object @{N="Cluster";E={$_.Cluster.Name}}, DiskFormatVersion
+}
+```
+
+Anything reported here as behind target still needs the corresponding
+upgrade action (host remediation, guest Tools upgrade, vSAN disk-format
+upgrade) – this script only surfaces the gap, it doesn't fix it.
+
 ---
 
 ## Cleanup / decommission

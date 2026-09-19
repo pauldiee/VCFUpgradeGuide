@@ -43,6 +43,56 @@ standalone VVF.
   procedure below is fleet-wide; treat each cluster as its own
   maintenance-window activity.
 
+### Inventory script (PowerCLI)
+
+There is no vCenter backup/export API for standard switches (unlike
+`Export-VDPortGroup` on a VDS) – pull the config with PowerCLI instead, per
+cluster:
+
+```powershell
+$cluster = Get-Cluster -Name "<cluster-name>"
+$date = Get-Date -Format "yyyyMMdd-HHmm"
+
+$rows = foreach ($vmhost in ($cluster | Get-VMHost)) {
+  foreach ($vss in ($vmhost | Get-VirtualSwitch -Standard)) {
+    foreach ($pg in ($vss | Get-VirtualPortGroup)) {
+      $sec = $pg | Get-SecurityPolicy
+      $teaming = $pg | Get-NicTeamingPolicy
+      [PSCustomObject]@{
+        VMHost              = $vmhost.Name
+        Switch              = $vss.Name
+        NumPorts            = $vss.NumPorts
+        MTU                 = $vss.Mtu
+        PortGroup           = $pg.Name
+        VLanId              = $pg.VLanId
+        AllowPromiscuous    = $sec.AllowPromiscuous
+        ForgedTransmits     = $sec.ForgedTransmits
+        MacChanges          = $sec.MacChanges
+        LoadBalancingPolicy = $teaming.LoadBalancingPolicy
+        NetworkFailover     = $teaming.NetworkFailoverDetectionPolicy
+        NotifySwitches      = $teaming.NotifySwitches
+        FailbackEnabled     = $teaming.FailbackEnabled
+        ActiveNic           = ($teaming.ActiveNic -join ";")
+        StandbyNic          = ($teaming.StandbyNic -join ";")
+        UnusedNic           = ($teaming.UnusedNic -join ";")
+      }
+    }
+  }
+}
+$rows | Export-Csv -Path ".\VSS-Inventory-$date.csv" -NoTypeInformation -UseCulture
+
+# VMkernel adapters separately - portgroup, IP, and which TCP/IP stack/service they carry
+$cluster | Get-VMHost | Get-VMHostNetworkAdapter -VMKernel |
+  Select-Object VMHost, Name, PortGroupName, IP, SubnetMask, Mtu,
+    VMotionEnabled, ManagementTrafficEnabled, VsanTrafficEnabled |
+  Export-Csv -Path ".\VSS-VMKernel-Inventory-$date.csv" -NoTypeInformation -UseCulture
+```
+
+Traffic shaping isn't covered by `Get-VirtualPortGroup`/`Get-SecurityPolicy` –
+check it per port group with
+`(Get-VirtualPortGroup -Name "<pg-name>").ExtensionData.Spec.Policy.ShapingPolicy`
+if any port groups use it (uncommon on a VSS, but confirm rather than assume).
+
 ---
 
 ## 1. Create the distributed switch

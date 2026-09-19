@@ -150,6 +150,10 @@ VCF Automation) that don't exist on this path:
   no connectivity errors between vCenter and the License Server.
 - **Aria/VCF Operations** – reachable and healthy, metrics still flowing.
 
+Same PowerCLI spot-check as the full-VCF checklist covers builds, VMware
+Tools, and vSAN on-disk format in one pass – see
+[Full VCF upgrade sequence → Post-upgrade validation](13-vcf-upgrade-sequence.md#post-upgrade-validation).
+
 ---
 
 ## Cleanup
