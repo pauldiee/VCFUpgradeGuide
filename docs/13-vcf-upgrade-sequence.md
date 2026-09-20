@@ -177,6 +177,25 @@ company policy), some requiring hardware-vendor investigation, and a small
 remainder needing vendor support escalation. Agree ownership per finding;
 don't assume one team can clear everything.
 
+**VDT is a complementary, self-service option ahead of the PSO-run
+VCFcheck.** The **VCF Diagnostic Tool for vSphere (VDT)** – unlike
+VCFcheck, distributed as a normal KB attachment, no PSO account needed –
+runs directly on a vCenter appliance and checks DNS, NTP, disk space,
+certificates, AD/Lookup Service integration, vCenter services, and VCHA.
+Run it per vCenter before the window opens, to catch vCenter-level issues
+early rather than waiting on whichever gate VCFcheck runs at:
+
+```
+cd /root/ && unzip vdt-<version_number>.zip && cd vdt-<version_number>
+python vdt.py
+```
+
+See [vCenter manual GUI upgrade → Validate with VDT before you
+start](07-vcenter-manual-upgrade.md#validate-with-vdt-before-you-start)
+for the full walkthrough (written for the standalone path, but the tool
+and its checks are identical here). Source:
+[Broadcom KB 344917](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html).
+
 ---
 
 ## The upgrade sequence

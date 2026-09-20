@@ -186,6 +186,18 @@ Expect every cluster to behave differently.
   broken to allow the VCF SSO reconfiguration. Afterwards, check the SDDC
   Manager API for drift status and re-run drift remediation – a missed step
   leaves one or more vCenters (often the management vCenter) unremediated.
+- **`lsdoctor` is the general-purpose tool for this whole category** –
+  Lookup Service / SSO / vmdir inconsistencies (SSL trust mismatches,
+  broken service registrations, stale solution users) don't always
+  present as the specific symptoms above; when something in this section
+  looks close but doesn't quite match, run `lsdoctor.py -l` (read-only
+  check) first before assuming it's something new. Per
+  [KB 320837](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html),
+  its repair modes (`-t` trust fix, `-r` rebuild, `-u` solution users) are
+  more invasive and need a same-instant snapshot across every VC/PSC in
+  the SSO domain first – see
+  [IWA to AD-over-LDAPS migration](06-iwa-ldaps-migration.md#validate-ssolookup-service-health-with-lsdoctor)
+  for a worked example of the read-only check in context.
 
 ---
 

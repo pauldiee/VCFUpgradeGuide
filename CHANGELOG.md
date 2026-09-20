@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.1.1 – 2026-09-20
+- **Add validation-tool steps: VDT and lsdoctor.** Both are Broadcom-
+  maintained, KB-distributed diagnostic scripts, added where they fit the
+  existing flow rather than as a bolted-on reference list:
+  - **VDT (VCF Diagnostic Tool for vSphere)** – new "Validate with VDT
+    before you start" section in `docs/07` (no SDDC Manager fleet precheck
+    exists on that path, so this is the closest equivalent: DNS, NTP, disk
+    space, certs, AD/Lookup Service, VCHA), and a pointer alongside
+    VCFcheck in `docs/13`'s pre-upgrade precheck section (self-service, no
+    PSO account needed, unlike VCFcheck).
+  - **lsdoctor** – new "Validate SSO/Lookup Service health with lsdoctor"
+    step in `docs/06`, right after adding the AD-over-LDAPS identity
+    source and before the permissions re-verification, using its
+    read-only `-l` check. Its more invasive repair modes need the same
+    same-instant-across-the-SSO-domain snapshot the doc's own backup
+    section already covers. Also added a general pointer under
+    `docs/04`'s "Identity Broker / VCF SSO" field notes.
+
 ## v1.1.0 – 2026-09-20
 - **Give `docs/07` a proper "Backup, before touching anything" section**
   instead of a single thin bullet. Checked against Broadcom's own

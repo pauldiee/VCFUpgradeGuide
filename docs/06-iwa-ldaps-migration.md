@@ -192,6 +192,44 @@ Sources**):
    before proceeding – confirm it authenticates and that its expected group
    memberships are visible in vCenter.
 
+### Validate SSO/Lookup Service health with lsdoctor
+
+Removing one identity source and adding another is exactly the kind of
+change that can leave the **Lookup Service / vmdir** layer subtly
+inconsistent even when the login test above passes – catch that now, not
+after step 6 makes it harder to roll back. Per
+[Broadcom KB 320837, "Using the 'lsdoctor' Tool"](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html):
+
+1. Download the `lsdoctor.zip` attachment from the KB, copy it to the
+   vCenter via WinSCP (or equivalent), and unzip it:
+   ```
+   unzip lsdoctor.zip
+   ```
+2. Run the **read-only** check (`-l` / `--lscheck`) – this only reports,
+   it doesn't change anything, so it's safe to run without a fresh
+   snapshot beyond the one already taken in
+   [step 1](#1-backup-before-touching-anything):
+   ```
+   python lsdoctor.py -l
+   ```
+3. Resolve anything it flags before moving on to step 5's permissions
+   check – an unresolved Lookup Service inconsistency here will surface as
+   confusing, hard-to-place permission/authentication failures later
+   rather than a clean error now.
+
+**If it does find something to fix**, lsdoctor's own repair options
+(`-t`/`--trustfix` for SSL trust mismatches, `-r`/`--rebuild` for service
+registrations, `-u`/`--solutionusers` for solution users) are more
+invasive – KB 320837 is explicit about the precaution first: *"Before
+using lsdoctor to make any changes, ensure you have taken proper
+snapshots of your SSO domain. This means that you must shut down all VCs
+or PSCs that are in the SSO domain at the same time, then snapshot them,
+and power them on again."* Don't run a repair option against a snapshot
+taken while the appliance was still running – see the same
+same-instant-across-the-whole-SSO-domain requirement that
+[step 1](#1-backup-before-touching-anything)'s Enhanced Linked Mode
+sequencing already follows for the pre-change backup.
+
 ---
 
 ## 5. Re-verify permissions against the new identity source
@@ -325,4 +363,5 @@ vCenter-side snapshot restore doesn't undo.
 - [Configuring a vCenter Single Sign-On Identity Source using LDAP with SSL (LDAPS)](https://knowledge.broadcom.com/external/article/316596/configuring-a-vcenter-single-signon-iden.html)
 - [Active Directory over LDAP and OpenLDAP Server Identity Source Settings](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/active-directory-ldap-server-identity-source-settings.html)
 - [Enabling secure backup and restore in the vCenter Server Appliance](https://knowledge.broadcom.com/external/article/310399/enabling-secure-backup-and-restore-in-th.html)
+- ["Using the 'lsdoctor' Tool" (KB 320837)](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html) – SSO / Lookup Service / vmdir validation and repair, used in step 4
 - [domainjoin-cli(8) man page](https://man.cx/domainjoin-cli(8)) – upstream Likewise/PBIS tool docs (not Broadcom-specific), source for the credentials-required-to-touch-AD behavior in step 6's CLI fallback
