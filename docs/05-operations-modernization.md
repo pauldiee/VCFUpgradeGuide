@@ -54,8 +54,19 @@ Node Networking Requirements](https://techdocs.broadcom.com/us/en/vmware-cis/ari
 stretched Layer 2 or routed Layer 3 network is not supported."* Also:
 *"Packet Round Trip Time between the analytics cluster nodes must be 5 ms
 or lower"* and *"Network bandwidth between the analytics cluster nodes
-must be one gbps or higher."* This applies identically to VCF Operations –
-it isn't an 8.18-specific limit that goes away at 9.x.
+must be one gbps or higher."* **There's no separate VCF 9-branded copy of
+this specific page** – VCF Operations is Aria Operations rebranded at the
+code level, and this is one of the places Broadcom's VCF 9 docs still
+point back at the source product's own docs tree rather than forking a
+copy. The 9.0-specific [VCF Operations 9.0 Sizing
+Guidelines](https://knowledge.broadcom.com/external/article/397782/vcf-operations-90-sizing-guidelines.html)
+(already in this doc's Sources) corroborates the latency figure directly –
+*"< 5 ms"* general node-to-node latency – and adds a separate *"< 10 ms,
+with possible occasional peaks up to 15 ms"* figure for datastore latency,
+plus a per-cluster-size bandwidth table (15 Mbps Small up to 200 Mbps
+Extra Large) rather than a single flat floor. Either way, this applies to
+VCF Operations same as it did to Aria Operations – it isn't an
+8.18-specific limit that goes away at 9.x.
 
 If the **existing** cluster is already out of compliance with this –
 nodes spread across different subnets, routed rather than switched between

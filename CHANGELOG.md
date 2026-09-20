@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.3 – 2026-09-21
+- **Strengthen `docs/05`'s cluster-network-topology citation with a
+  genuinely VCF 9-branded source.** Checked whether a VCF 9 copy of the
+  Aria Operations cluster-networking-requirements page exists –
+  it doesn't; VCF Operations is Aria Operations rebranded at the code
+  level and this is one of the places VCF 9's docs still point back at
+  the source product's own tree. Added KB 397782 ("VCF Operations 9.0
+  Sizing Guidelines," already in this doc's Sources) as a corroborating
+  VCF-9-specific source: matches the < 5ms latency figure and adds a
+  separate < 10ms (peaks to 15ms) datastore-latency figure plus a
+  per-cluster-size bandwidth table instead of a flat floor.
+
 ## v1.1.2 – 2026-09-21
 - **Add a network-topology check to `docs/05`'s fresh-vs-in-place
   decision.** Analytics cluster nodes are only supported on a single
