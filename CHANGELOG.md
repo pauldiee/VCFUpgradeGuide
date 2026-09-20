@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.0 – 2026-09-20
+- **Give `docs/07` a proper "Backup, before touching anything" section**
+  instead of a single thin bullet. Checked against Broadcom's own
+  prerequisites page first: this upgrade type only requires a snapshot,
+  not the file-based/VAMI backup `docs/06` treats as mandatory – a real
+  structural difference (this upgrade deploys a brand-new appliance and
+  leaves the old one intact, so the old appliance itself is the primary
+  fallback; `docs/06`'s in-place SSO change has nothing else to fall back
+  to). Added TechDocs' own failure-recovery statement ("delete the newly
+  deployed vCenter appliance, and restore the vCenter appliance from
+  backup") and cross-linked it to the "After cutover" rollback section.
+
 ## v1.0.9 – 2026-09-20
 - **Document powering the old appliance back on as a rollback path in
   `docs/07`, with the destructive gotcha attached.** It only exists

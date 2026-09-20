@@ -114,13 +114,43 @@ condensed:
   SSH connection to export data) and port **443** open on the source ESX
   host.
 - Sufficient free disk space on the source appliance to stage the export.
-- **Take an image-based backup (snapshot) of the source vCenter first** –
-  TechDocs calls this out explicitly as the rollback path if the upgrade
-  fails. In an Enhanced Linked Mode environment, power off every vCenter
-  node, back up each one, then restart them all before proceeding.
 - Static-IP path: forward and reverse DNS records ready for the temporary
   IP. DHCP path: the target ESX host must be on the same subnet as the
   source, on a port group that accepts MAC address changes.
+
+---
+
+## Backup, before touching anything
+
+**VM-level snapshot only – this is what Broadcom's own prerequisites call
+for here, not the file-based/VAMI backup that other docs in this repo
+treat as mandatory.** The two situations are structurally different: an
+in-place change on the *only* appliance (like
+[IWA to AD-over-LDAPS](06-iwa-ldaps-migration.md#1-backup-before-touching-anything))
+has nothing to fall back to except a file-based restore if it goes wrong.
+This upgrade deploys a **brand-new appliance and leaves the old one fully
+intact**, just powered off – the old appliance itself is the primary
+fallback, snapshot or not (see [After
+cutover](#after-cutover)). The snapshot is Broadcom's stated belt-and-braces
+precaution on top of that, in case something damages the *source* appliance
+mid-migration, before cutover: *"Create an image-based backup (snapshot) of
+the vCenter appliance you are upgrading as a precaution in case there is a
+failure during the upgrade process."*
+
+- Offline/no-memory snapshot of the source appliance, per standard
+  pre-change practice.
+- **Enhanced Linked Mode:** *"To take a pre-upgrade image-based backup in
+  an Enhanced Linked Mode environment, power off all the vCenter
+  appliances in your environment, and back up each node"* – then restart
+  them all before proceeding. (This doc otherwise covers a single vCenter,
+  not ELM – see [After cutover](#after-cutover) – but take the snapshot
+  correctly regardless if the source happens to be ELM-joined.)
+- **What "restore from backup" actually means here, per TechDocs:** *"If
+  the upgrade fails, delete the newly deployed vCenter appliance, and
+  restore the vCenter appliance from backup"* – i.e. delete the new
+  appliance, revert the old one from this snapshot (or just power it back
+  on if it was never touched – see the network-adapter caveat under [After
+  cutover](#after-cutover) either way).
 
 ---
 
