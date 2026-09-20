@@ -309,7 +309,24 @@ Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techd
 
 - The new 9.1.1 appliance now holds the old appliance's IP and FQDN; the
   old appliance is powered off but not deleted – keep it as the rollback
-  position until the upgrade is verified.
+  position until the upgrade is verified. **This rollback path only exists
+  because this upgrade method deploys a brand-new appliance** – it's not
+  available for an in-place, single-appliance mechanism with no separate
+  "old" VM left behind to power back on.
+- **Don't power the old appliance back on without disconnecting its network
+  adapter first.** For the fleet-managed **RDU** path specifically,
+  Broadcom KB 313288 documents this as destructive, not just risky: *"if
+  powered on, deletes the target VM"* – i.e. powering the old appliance
+  back on while still network-connected deletes the **new** one, the
+  opposite of what a rollback is for. **This doc's plain GUI/CLI two-stage
+  upgrade isn't explicitly covered by that KB** (it only discusses RDU),
+  but since this doc's own intro describes it as *"the same underlying
+  two-stage migration mechanism"* – treat the same precaution as the safe
+  default here too, rather than assuming it doesn't apply: disconnect the
+  old appliance's network adapter before powering it back on for any
+  reason, roll back or otherwise. If a rollback is actually being
+  executed (not just testing), power off the new appliance first as well,
+  so both aren't live on the network with the same IP/FQDN at once.
 - If the old appliance used a **non-ephemeral distributed virtual port
   group**, reconnect the new appliance to it manually – that setting is not
   carried over automatically when deploying straight to an ESX host (not a
@@ -323,4 +340,6 @@ Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techd
   prerequisites does not apply here.
 
 Broadcom reference: [About the Upgrade Process of the vCenter appliance](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/upgrading-and-updating-the-vcenter-server-appliance/about-the-vcenter-server-appliance-upgrade-process.html);
-KB 448135; the Broadcom Product Interoperability Matrix, Upgrade Path tool.
+KB 448135; [KB 313288](https://knowledge.broadcom.com/external/article/313288/vcenter-server-upgrades-with-the-reduced.html)
+(old-appliance network-disconnect warning, documented for RDU); the
+Broadcom Product Interoperability Matrix, Upgrade Path tool.

@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.9 – 2026-09-20
+- **Document powering the old appliance back on as a rollback path in
+  `docs/07`, with the destructive gotcha attached.** It only exists
+  because the two-stage installer deploys a brand-new appliance and
+  leaves the old one powered off but not deleted – not available for an
+  in-place, single-appliance mechanism. Broadcom KB 313288 documents that
+  powering the old appliance back on while still network-connected
+  **deletes the new one** (the opposite of a rollback), but that KB only
+  explicitly covers RDU, not this doc's plain GUI/CLI path – flagged as
+  plausible-but-unconfirmed for the plain path rather than asserted,
+  since this doc's own intro already calls it "the same underlying
+  two-stage migration mechanism."
+
 ## v1.0.8 – 2026-09-20
 - **Fix a real inaccuracy: VAMI does not drive vCenter version upgrades,
   major or RDU.** `docs/07-vcenter-manual-upgrade.md` used to say vCenter
