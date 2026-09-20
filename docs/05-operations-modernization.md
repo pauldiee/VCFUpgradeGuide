@@ -37,12 +37,40 @@ relying on it for anything not explicitly listed here.
 | Legacy cluster cruft | Carried forward | Left behind |
 | Re-IP, if the network changes | Required as a separate manual procedure | Not needed – deploy directly at the target address |
 | Topology | Must convert on the existing nodes | Can build the target topology (HA, node count) directly |
+| Network subnet compliance (see below) | Inherited as-is – an already-non-compliant layout stays non-compliant | Built compliant from the start, on a single subnet |
 | Effort | Lower – one cluster, one upgrade | Higher – two clusters running in parallel during cutover, every adapter/integration re-registered |
 
 Decide primarily on **whether historical metric/trend data needs to survive
 the upgrade**. If yes, in-place is close to mandatory. If a clean start is
 acceptable, fresh install removes the re-IP problem and lets the target
 topology be built directly instead of converted into.
+
+### Check the existing cluster's network topology before deciding
+
+**Analytics cluster nodes are only supported on a single Layer 2 network
+and IP subnet.** Per Broadcom TechDocs' [VMware Aria Operations Cluster
+Node Networking Requirements](https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/getting-started-with-vmware-aria-operations-8-18/preparing-for-installation/requirements/cluster-requirements/cluster-nodes-general-requirements/cluster-nodes-network-requirements.html):
+*"Place analytics cluster nodes on same Layer 2 network and IP subnet. A
+stretched Layer 2 or routed Layer 3 network is not supported."* Also:
+*"Packet Round Trip Time between the analytics cluster nodes must be 5 ms
+or lower"* and *"Network bandwidth between the analytics cluster nodes
+must be one gbps or higher."* This applies identically to VCF Operations –
+it isn't an 8.18-specific limit that goes away at 9.x.
+
+If the **existing** cluster is already out of compliance with this –
+nodes spread across different subnets, routed rather than switched between
+them, or otherwise not meeting the latency/bandwidth figures above – that's
+a strong signal toward **fresh install** rather than in-place: an in-place
+upgrade carries the existing topology forward as-is, so an already
+unsupported network layout stays unsupported (and a likely source of
+cluster instability) straight through the upgrade. Fresh install sidesteps
+this the same way it sidesteps re-IP – the new cluster's nodes are placed
+correctly from the start, on a single compliant subnet, rather than
+inheriting whatever the old cluster's network layout happened to be.
+Check this **before** the historical-data-retention question above settles
+the decision on its own – a cluster that needs fixing structurally may
+still need to go fresh even if retaining trend data would otherwise argue
+for in-place.
 
 ---
 
@@ -422,3 +450,4 @@ notes for a non-HA removal:
 - [Register VCF Operations in Connected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/register-vcf-operations/register-vcf-operation-in.html)
 - [Register VCF Operations in Disconnected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations/register-vcf-operations-in-disconnected-mode.html)
 - [Switch from Disconnected to Connected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/switch-from-disconnected-to-connected-mode.html)
+- [VMware Aria Operations Cluster Node Networking Requirements](https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/getting-started-with-vmware-aria-operations-8-18/preparing-for-installation/requirements/cluster-requirements/cluster-nodes-general-requirements/cluster-nodes-network-requirements.html) – same-subnet requirement behind the fresh-vs-in-place topology check

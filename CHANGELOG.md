@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.1.2 – 2026-09-21
+- **Add a network-topology check to `docs/05`'s fresh-vs-in-place
+  decision.** Analytics cluster nodes are only supported on a single
+  Layer 2 network/subnet (Broadcom TechDocs: *"A stretched Layer 2 or
+  routed Layer 3 network is not supported"*, plus a 5ms RTT / 1gbps
+  bandwidth floor between nodes) – applies identically to VCF Operations,
+  not just 8.18. An already-non-compliant existing cluster is a strong
+  signal toward fresh install, since in-place carries the layout forward
+  as-is. Added as its own subsection plus a new comparison-table row.
+
 ## v1.1.1 – 2026-09-20
 - **Add validation-tool steps: VDT and lsdoctor.** Both are Broadcom-
   maintained, KB-distributed diagnostic scripts, added where they fit the
