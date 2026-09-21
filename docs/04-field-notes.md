@@ -306,28 +306,28 @@ components are firewalled independently and it is an easy step to miss.
 
 ## Open items to confirm
 
-- **"Internal certificates renew automatically on upgrade."** Seen in a
-  Broadcom TC deck as a general claim (reviewed 2026-09-11) but no
-  authoritative source found yet, and it is not clear which components /
-  certificate types it covers. Do not rely on it to skip the pre-upgrade
+- **"Internal certificates renew automatically on upgrade."** An
+  unconfirmed general claim (as of 2026-09-11) with no authoritative
+  source found yet, and it is not clear which components / certificate
+  types it covers. Do not rely on it to skip the pre-upgrade
   certificate-validity check in the [prerequisites table](13-vcf-upgrade-sequence.md#prerequisites-and-architectural-guardrails) –
   confirm scope against TechDocs or in-product behaviour before treating it
   as fact.
-- **"VCFverify (VoV only)"** – a TC checklist item (reviewed 2026-09-11)
-  listed as a Dell VxRail pre-check tool (see [VxRail
-  Addendum](vxrail-addendum.md)), but neither what "VoV" stands for
-  nor what VCFverify actually checks has been confirmed yet. Do not describe
-  its purpose in the docs until that's confirmed.
-- **"NSX Intel"** – appears as a bare TC checklist item (reviewed
-  2026-09-11) in an "Environmental Checks" list alongside NSX/SDDC
-  Federation, Aria Suite, Stretched Cluster, and Tanzu. Likely refers to
-  **NSX Intelligence**, but not confirmed – if so, its upgrade
-  interaction/sequencing isn't documented anywhere in this repo yet.
-- **Combined vCenter + NSX Manager upgrade window.** A TC deck (reviewed
-  2026-09-11) describes an "optimized" combined approach – prep vCenter,
-  upgrade NSX, then switchover – as an alternative to the plain sequential
-  order (NSX Local Manager finishing before vCenter starts, which is what
-  [Phase 5 → Phase 6](13-vcf-upgrade-sequence.md#phase-5--nsx-local-manager-upgrade)
+- **"VCFverify (VoV only)"** – an unconfirmed (as of 2026-09-11) Dell
+  VxRail pre-check tool name (see [VxRail Addendum](vxrail-addendum.md)),
+  but neither what "VoV" stands for nor what VCFverify actually checks
+  has been confirmed yet. Do not describe its purpose in the docs until
+  that's confirmed.
+- **"NSX Intel"** – an unconfirmed (as of 2026-09-11) term, likely
+  referring to **NSX Intelligence**, but not confirmed – if so, its
+  upgrade interaction/sequencing isn't documented anywhere in this repo
+  yet.
+- **Combined vCenter + NSX Manager upgrade window.** An "optimized"
+  combined approach has been described (as of 2026-09-11, not yet
+  confirmed against Broadcom TechDocs) – prep vCenter, upgrade NSX, then
+  switchover – as an alternative to the plain sequential order (NSX Local
+  Manager finishing before vCenter starts, which is what [Phase 5 → Phase
+  6](13-vcf-upgrade-sequence.md#phase-5--nsx-local-manager-upgrade)
   documents). The exact mechanics of "prep vCenter" relative to the RDU
   switchover, and how far it can overlap the NSX Local Manager upgrade,
   were not confirmed. **Treat the sequential Phase 5 → Phase 6 order as the

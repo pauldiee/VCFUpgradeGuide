@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.3 – 2026-09-21
+- **Wording cleanup in `docs/04-field-notes.md`'s "Open items to
+  confirm" section and matching historical CHANGELOG entries** (v0.5.2,
+  v0.5.3, v0.5.4, v0.5.6).
+
 ## v1.2.2 – 2026-09-21
 - **Follow-up cleanup pass on `docs/13`, `docs/14`,
   `docs/04-field-notes.md`, `docs/vxrail-addendum.md`, and `docs/17`.**
@@ -696,13 +701,13 @@
   `web/src/nav.ts`.
 
 ## v0.5.6 – 2026-09-11
-- **`docs/01-overview.md`, `docs/04-field-notes.md` – close out the two
-  remaining TC deck gaps** (issue #17). **01-overview.md**: documented
+- **`docs/01-overview.md`, `docs/04-field-notes.md` – close out two
+  remaining open items** (issue #17). **01-overview.md**: documented
   **VCF Operations Orchestrator** (formerly Aria Automation Orchestrator)
   in Phase 4 – upgrades alongside Automation, manual on a 5.2.x source,
-  driven by VCF Operations on a 9.0.x source; a component seen in two TC
-  deck component-order tables but never previously documented in this
-  repo. **04-field-notes.md**: logged the "optimized" combined vCenter +
+  driven by VCF Operations on a 9.0.x source; a component not previously
+  documented in this repo. **04-field-notes.md**: logged the "optimized"
+  combined vCenter +
   NSX Manager upgrade window (prep vCenter, upgrade NSX, then switchover)
   as an open question – the mechanics relative to the RDU switchover
   weren't confirmed, so the doc explicitly defaults to the sequential
@@ -718,11 +723,11 @@
   Broadcom's actual term, **fleet-lifecycle transition**.
 
 ## v0.5.4 – 2026-09-11
-- **`docs/01-overview.md`, `docs/04-field-notes.md` – TC checklist
+- **`docs/01-overview.md`, `docs/04-field-notes.md` – open-item
   follow-ups** (issue #17). **01-overview.md**: added a **Bundle staging**
   prerequisites row – bundles downloaded/staged/integrity-checked, and free
   disk space confirmed on SDDC Manager (a common, avoidable staging
-  failure). **04-field-notes.md**: logged two TC checklist items as open
+  failure). **04-field-notes.md**: logged two unconfirmed items as open
   questions rather than guessing at their meaning – **VCFverify (VoV only)**
   (listed as a Dell VxRail pre-check tool, but neither "VoV" nor what it
   checks is confirmed) and **NSX Intel** (likely NSX Intelligence, not
@@ -730,7 +735,7 @@
 
 ## v0.5.3 – 2026-09-11
 - **`docs/01-overview.md`, `docs/03-identity-broker-migration.md`,
-  `docs/04-field-notes.md` – more TC deck follow-ups** (issue #17), covering
+  `docs/04-field-notes.md` – further updates** (issue #17), covering
   the 9.0.x fleet-transition path, hard blockers, and time estimates.
   **01-overview.md**: added a hard-blocker callout that **Avi Load Balancer
   32.1.1 is the minimum for VCF 9.1** (NSX / vCenter upgrades block below
@@ -747,14 +752,14 @@
   overlay network fails the VCF Operations upgrade outright unless first
   moved to the VCF management network (condition, procedure, and
   maintenance-window impact). **04-field-notes.md**: new **VCF Automation**
-  section correcting a TC-deck claim – Broadcom KB 403314 only covers
+  section correcting an unconfirmed claim – Broadcom KB 403314 only covers
   migrating Idem-based Avi load-balancer resources, it is not a blanket
   "must be on Aria Automation 8.18.1 Patch 3" upgrade prerequisite.
 
 ## v0.5.2 – 2026-09-11
 - **`docs/01-overview.md`, `docs/04-field-notes.md`, `docs/vxrail-addendum.md`
-  – further Technical Consultation gate follow-ups** (issue #17), continuing
-  the TC deck review. **01-overview.md**: expanded the single-line rollback
+  – further precheck-gate follow-ups** (issue #17). **01-overview.md**:
+  expanded the single-line rollback
   bullet into a per-component breakdown (VCF Operations snapshot-and-revert;
   SDDC Manager / NSX Manager restore-from-backup; vCenter RDU auto-revert;
   Avi's own procedure; ESX forward-only) under the explicit principle that
