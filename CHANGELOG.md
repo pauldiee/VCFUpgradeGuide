@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.2.6 – 2026-09-21
+- **Document a Machine ID mismatch symptom in `docs/17`.** Field-observed:
+  lsdoctor's read-only check can report a `MachineGuid` desync between the
+  VMAFD service and the Likewise registry (and separately, `vpxd.cfg`).
+  Per Broadcom KB 312479 this is not just diagnostic noise – it can block
+  a 7.0.x → 8.0.x vCenter upgrade outright (`Exception occurred in
+  postInstallHook` at Stage 2), and it's the same check VDT's own Machine
+  ID Check validates. Added the full fix (offline snapshot first,
+  `vmafd-cli get-machine-id`, `lwregshell` add/set, service restart) with
+  exact commands quoted from the KB.
+
 ## v1.2.5 – 2026-09-21
 - **Document decommissioned SRM/VLSR cleanup in `docs/17`.** A common,
   confirmable source of lsdoctor's generic "3rd party/Orphaned service

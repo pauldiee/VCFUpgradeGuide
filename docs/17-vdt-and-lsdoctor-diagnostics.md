@@ -186,6 +186,60 @@ removes registrations directly from the SSO domain's database, with no
 undo beyond whatever snapshot/backup discipline the surrounding
 procedure already requires.
 
+**Field-observed symptom: Machine ID mismatch (VMAFD vs. Likewise
+registry).** The read-only check's **VC Machine ID Check** category can
+report two related failures:
+
+```
+VC Machine ID Check
+    [PASS]    Machine ID Check
+    [FAIL]    Compare Machine ID (VMAFD vs. registry)
+                Machine ID doesn't match between the VMAFD service and the likewise registry!  Follow the KB to correct.
+                Documentation: https://knowledge.broadcom.com/external/article/312479
+    [FAIL]    Compare Machine ID (vpxd.cfg vs. registry)
+                Machine ID doesn't match between vpxd.cfg and the likewise registry!  Follow the KB to correct.
+                Documentation: https://knowledge.broadcom.com/external/article/312479
+    [PASS]    vpxd.cfg SSO Domain Check
+```
+
+This is not just an lsdoctor curiosity – per Broadcom KB
+[312479](https://knowledge.broadcom.com/external/article/312479), the
+same underlying desync **can block a 7.0.x → 8.0.x vCenter upgrade
+outright**, failing Stage 2 pre-checks with `Exception occurred in
+postInstallHook`, and it's exactly what **VDT's own Machine ID Check**
+validates (see [VDT](#vcf-diagnostic-tool-for-vsphere-vdt) above) – so
+this can surface from either tool. Root cause, quoted verbatim: *"The
+`MachineGuid` value stored within the local Likewise registry (`vmdir`
+service) is missing or desynchronized from the authoritative Machine ID
+managed by VMAFD and referenced in `vpxd.cfg`."*
+
+**Take an offline (powered-off) snapshot first** – of every replication
+partner if the vCenter is part of Enhanced Linked Mode, not just the one
+node being fixed. Then, per KB 312479:
+
+1. **Get the authoritative Machine ID from VMAFD:**
+   ```
+   /usr/lib/vmware-vmafd/bin/vmafd-cli get-machine-id --server-name localhost
+   ```
+2. **Check whether `MachineGuid` exists in the registry:**
+   ```
+   /opt/likewise/bin/lwregshell ls "[HKEY_THIS_MACHINE\Services\vmdir]"
+   ```
+3. **If missing, add it with a temporary placeholder value:**
+   ```
+   /opt/likewise/bin/lwregshell add_value '[HKEY_THIS_MACHINE\Services\vmdir]' MachineGuid REG_SZ 1
+   ```
+4. **Set it to the real value from step 1:**
+   ```
+   /opt/likewise/bin/lwregshell set_value '[HKEY_THIS_MACHINE\Services\vmdir]' "MachineGuid" <Correct_UUID>
+   ```
+5. **Restart services:**
+   ```
+   service-control --stop --all && service-control --start --all
+   ```
+6. **Re-run the read-only lsdoctor check or VDT** to confirm both FAILs
+   clear before proceeding.
+
 ### Repair modes – all more invasive than the read-only check
 
 None of these reboot the appliance VM, but **every one of them requires a
@@ -243,3 +297,4 @@ guessed at.
 - [Using the VCF Diagnostic Tool for vSphere (VDT) (KB 344917)](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html)
 - [Using the "lsdoctor" Tool (KB 320837)](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html)
 - [Cleaning up decommissioned SRM registrations (KB 337576)](https://knowledge.broadcom.com/external/article/337576/cleaning-up-decommissioned-srm-registrations.html)
+- [Machine ID mismatch between VMAFD and the Likewise registry (KB 312479)](https://knowledge.broadcom.com/external/article/312479)
