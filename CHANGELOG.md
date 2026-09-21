@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.3.1 – 2026-09-21
+- **Add the missing "how do I actually populate the repository" step to
+  `docs/18-vmware-tools-productlocker.md`.** The doc covered pointing
+  `/productLocker` at a shared path but not how to get VMware Tools
+  content into that path in the first place. New "Populating and
+  updating the shared repository" section: create-folder-and-chmod steps,
+  the exact `vmtools/`/`floppies/` file list and `cp -r` commands from KB
+  313876, and the update procedure (empty the folder, re-run the same
+  steps, no re-pointing needed). Flagged as sourced from documentation
+  rather than lab-verified, unlike the pointer-setting methods above it.
+
 ## v1.3.0 – 2026-09-21
 - **Show the bare `domainjoin-cli leave` form directly in `docs/06`'s
   code block**, labeled alongside the credentialed form, instead of only

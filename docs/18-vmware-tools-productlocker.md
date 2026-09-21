@@ -106,6 +106,59 @@ not corrections to that post itself).
 
 ---
 
+## Populating and updating the shared repository
+
+Pointing `/productLocker` at a shared path (above) does nothing on its
+own if that path is empty – the repository's actual **contents** need to
+be placed there first, and refreshed whenever a newer VMware Tools
+version ships. Per the Broadcom VCF blog and KB 313876 (both cited
+below):
+
+**First-time setup:**
+
+1. Create the target folder on the shared datastore and lock it down:
+   ```
+   cd /vmfs/volumes/<datastore-name-or-volume-id>
+   mkdir <repo-folder>
+   chmod 700 <repo-folder>
+   ```
+2. Download the VMware Tools package from [Broadcom
+   Support](https://support.broadcom.com/) and extract it. The package
+   contains (at minimum) a `vmtools/` subfolder – `isoimages_manifest.txt`
+   (+ `.sig`), `windows.iso` (+ `.sha` / `.sig`), `windows_avr_manifest.txt`
+   (+ `.sig`), and Linux equivalents – plus a `floppies/` subfolder
+   (driver floppies, e.g. `pvscsi-Windows8.flp`).
+3. Copy both subfolders into the repository:
+   ```
+   cp -r /path-to-extracted-package/vmtools /vmfs/volumes/<datastore-name-or-volume-id>/<repo-folder>/
+   cp -r /path-to-extracted-package/floppies /vmfs/volumes/<datastore-name-or-volume-id>/<repo-folder>/
+   ```
+4. Re-lock permissions on everything just copied in:
+   ```
+   chmod -R 700 /vmfs/volumes/<datastore-name-or-volume-id>/<repo-folder>/*
+   ```
+5. Point every host's `/productLocker` at this folder – see [Setting it –
+   two methods](#setting-it--two-methods) above.
+
+**Updating to a newer VMware Tools version later:** empty the existing
+folder, then repeat steps 2–4 against the same path:
+
+```
+rm -rf /vmfs/volumes/<datastore-name-or-volume-id>/<repo-folder>/*
+```
+
+No re-pointing needed on the hosts – they're already reading from this
+path, so refreshing its contents updates what every host offers to guest
+VMs without touching `/productLocker` again.
+
+**Not yet lab-verified** – sourced from documentation, not run end-to-end
+against the holodeck lab in this pass (unlike the pointer-setting methods
+above, which were). If run against a real environment, confirm the exact
+package contents/structure still match what's described here before
+relying on it, and flag any discrepancy.
+
+---
+
 ## Why it resets – and why this needs to be a repeatable step, not a one-off
 
 **A confirmed, now-fixed bug:** on ESXi 7.x, applying a patch via VUM and
@@ -150,6 +203,6 @@ explicitly re-applies it.
 ## Sources
 
 - [Set ProductLocker location with PowerCLI](https://www.hollebollevsan.nl/set-productlocker-location-with-powercli/) – the no-reboot MOB API method
-- [Options for Updating VMware Tools at Scale (Broadcom VCF blog)](https://blogs.vmware.com/professional-services/2023/03/options-for-updating-vmware-tools-at-scale.html) – what ProductLocker is, the Advanced Settings method, the reboot requirement
-- [Installing and upgrading the latest version of VMware Tools (KB 313876)](https://knowledge.broadcom.com/external/article/313876/installing-and-upgrading-the-latest-vers.html) – `esxcli` method, default local path
+- [Options for Updating VMware Tools at Scale (Broadcom VCF blog)](https://blogs.vmware.com/professional-services/2023/03/options-for-updating-vmware-tools-at-scale.html) – what ProductLocker is, the Advanced Settings method, the reboot requirement, and the first-time-population/update steps
+- [Installing and upgrading the latest version of VMware Tools (KB 313876)](https://knowledge.broadcom.com/external/article/313876/installing-and-upgrading-the-latest-vers.html) – `esxcli` method, default local path, exact `vmtools/`/`floppies/` file list and copy command
 - [productLocker location getting changed when applying any patches via VUM?](https://community.broadcom.com/vmware-cloud-foundation/discussion/productlocker-location-getting-changed-when-applying-any-patches-via-vum) – the path-truncation bug and its fix in ESXi 7.0 Update 3f (PR 2964856)
