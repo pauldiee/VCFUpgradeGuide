@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.0 – 2026-09-21
+- **Show the bare `domainjoin-cli leave` form directly in `docs/06`'s
+  code block**, labeled alongside the credentialed form, instead of only
+  describing it in the prose below.
+
 ## v1.2.9 – 2026-09-21
 - **Mark `docs/06`'s bare-`leave` behavior as field-verified.** The
   claim that `domainjoin-cli leave` with zero arguments disjoins locally

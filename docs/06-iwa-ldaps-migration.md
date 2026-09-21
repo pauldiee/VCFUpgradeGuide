@@ -299,7 +299,13 @@ root):
 
 ```
 /opt/likewise/bin/domainjoin-cli query
+
+# Credentialed - reaches AD, disables the computer object there (recommended)
 /opt/likewise/bin/domainjoin-cli leave <username> <password>
+
+# Bare - local disjoin only, does NOT contact AD, leaves the computer
+# object live and enabled (see warning below - avoid unless that's intended)
+/opt/likewise/bin/domainjoin-cli leave
 ```
 
 **`leave` takes no domain-name argument** – unlike `join`, it only
