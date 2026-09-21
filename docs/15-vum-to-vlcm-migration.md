@@ -342,6 +342,10 @@ domain) has its own gotchas on top of the general procedure above, per
   above.
 - For NSX-enabled clusters: NSX's own UI shows the cluster as vLCM-managed,
   and the transport zone / overlay is unaffected.
+- Re-check the **ProductLocker** shared VMware Tools repository location
+  after the transition, if one was configured before it – not confirmed
+  whether a baseline-to-image switch preserves it, see [VMware Tools
+  ProductLocker](18-vmware-tools-productlocker.md).
 - Continue into the ESX host phase –
   [Phase 7](13-vcf-upgrade-sequence.md#phase-7--esx--host-cluster-upgrade)
   (VCF) or [step 4](14-standalone-vvf-upgrade.md#standalone-vvf-manual-upgrade--exact-steps)

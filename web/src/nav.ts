@@ -191,6 +191,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf', 'vsphere'],
   },
   {
+    slug: '18-vmware-tools-productlocker',
+    step: 'Reference',
+    band: 'Reference',
+    label: 'VMware Tools ProductLocker',
+    icon: 'folder-tree',
+    blurb: 'Shared VMware Tools repository setup, both PowerCLI methods, and why the location needs re-verifying after every ESXi upgrade. Applies to VCF, VVF, or standalone vSphere.',
+    tracks: ['vcf', 'vvf', 'vsphere'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',

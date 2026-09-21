@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.2.4 – 2026-09-21
+- **New guide: `docs/18-vmware-tools-productlocker.md`.** ProductLocker
+  is the per-host symlink controlling where ESXi looks for the VMware
+  Tools repository – left on its local default at scale, versions drift
+  host-to-host. Covers both PowerCLI methods (Advanced Settings, needs a
+  reboot; the MOB API via `ExtensionData`, doesn't) and why it needs
+  re-verifying after every ESXi upgrade rather than treated as a one-time
+  setup step (a confirmed-and-fixed ESXi 7.0 path-truncation bug, plus the
+  general fact that a per-host advanced setting has no guaranteed survival
+  across a reimage/reprovision). Lab-verified against the holodeck lab:
+  confirmed no reboot is needed for the MOB API method, but found and
+  documented two corrections to what secondary sources claim about it –
+  the target folder must already exist first (a nonexistent path fails
+  the task outright, it does not silently succeed), and a vSAN datastore
+  target comes back as an internal canonicalized path rather than the
+  friendly path that was set. Cross-linked from `docs/13` and `docs/14`'s
+  post-upgrade validation (VMware Tools row) and `docs/15`'s vLCM
+  migration "Before moving on" checklist. Added to `README.md`,
+  `web/src/nav.ts`, and `CLAUDE.md`.
+
 ## v1.2.3 – 2026-09-21
 - **Wording cleanup in `docs/04-field-notes.md`'s "Open items to
   confirm" section and matching historical CHANGELOG entries** (v0.5.2,

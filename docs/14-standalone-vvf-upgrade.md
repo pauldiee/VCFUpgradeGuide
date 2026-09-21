@@ -146,7 +146,9 @@ VCF Automation) that don't exist on this path:
 
 - **Component builds** – vCenter, ESX, and Aria/VCF Operations on their
   expected builds.
-- **VMware Tools** – upgrade guests to **13.1**.
+- **VMware Tools** – upgrade guests to **13.1**. Also re-verify the
+  **ProductLocker** shared-repository location on every host, see [VMware
+  Tools ProductLocker](18-vmware-tools-productlocker.md).
 - **vSAN on-disk format** – upgrade the on-disk format version, if vSAN is
   in use.
 - **vSAN File Service** – upgrade if in use, after the on-disk format

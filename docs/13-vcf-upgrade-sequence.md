@@ -562,7 +562,10 @@ evidence for handover, the same way the pre-upgrade findings were tracked
 to closure.
 
 - **Component builds** – every component on its expected build (Phase 9 table).
-- **VMware Tools** – upgrade guests to **13.1**.
+- **VMware Tools** – upgrade guests to **13.1**. Also re-verify the
+  **ProductLocker** shared-repository location on every host – it's a
+  per-host setting with no guarantee it survives an ESXi upgrade, see
+  [VMware Tools ProductLocker](18-vmware-tools-productlocker.md).
 - **VM hardware compatibility** – bump VM compatibility where appropriate.
 - **vSAN on-disk format** – upgrade the on-disk format version.
 - **vSAN File Service** – upgrade if in use; runs *after* the on-disk format
