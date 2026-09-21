@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.3.6 – 2026-09-21
+- **Re-target `docs/20` at VCF 9.1 specifically, dropping the 9.0.x
+  material.** The worked-example order, timing table, and gotchas were
+  sourced from a 9.0.1 → 9.0.2 practitioner run – replaced with a
+  9.1.0.x → 9.1.1-specific 14-step order, timing, and gotchas (KB
+  388305, 448993, 451147, 400822 – the last two swapped in after the
+  originally-cited KB numbers for two gotchas couldn't be independently
+  verified, while these were). Added a new "Two kinds of patch in 9.1"
+  section explaining **Express Patches** (`9.1.0.01XX`, any order except
+  a Fleet-Lifecycle-containing EP goes first, cumulative) as distinct
+  from maintenance releases, since that mechanism didn't exist in 9.0.
+  Updated the title, `README.md`, `web/src/nav.ts`, and `CLAUDE.md` to
+  say 9.1 rather than 9.x.
+
 ## v1.3.5 – 2026-09-21
 - **Renamed and expanded `docs/20` into the full "how to patch a
   current VCF 9.x fleet" guide** (`docs/20-patching-an-existing-vcf9-fleet.md`,

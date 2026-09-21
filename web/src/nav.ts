@@ -212,9 +212,9 @@ export const NAV: NavItem[] = [
     slug: '20-patching-an-existing-vcf9-fleet',
     step: 'Reference',
     band: 'Reference',
-    label: 'Patching an existing VCF 9.x fleet',
+    label: 'Patching an existing VCF 9.1 fleet',
     icon: 'download',
-    blurb: 'Applying a maintenance/patch release to a fleet already on VCF 9.x – depot prep, the mandatory component patching order, UI walkthrough, and known gotchas. Applies to VCF or VVF.',
+    blurb: 'Applying a maintenance/patch release to a fleet already on VCF 9.1 (e.g. 9.1.0.x to 9.1.1) – Express Patches vs. maintenance releases, depot prep, the mandatory component patching order, UI walkthrough, and known gotchas. Applies to VCF or VVF.',
     tracks: ['vcf', 'vvf'],
   },
   {
