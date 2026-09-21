@@ -1,5 +1,28 @@
 # Changelog
 
+## v1.3.9 – 2026-09-21
+- **Replace the vague "don't use Upgrade All" gotcha in `docs/20` with
+  a real, detailed failure account**, and add several new 9.1.1-specific
+  gotchas from two more sources:
+  - **Upgrade All / parallel patching**: per a real lab account, Upgrade
+    All started VCF Automation and the Migration Service Engine
+    together, letting the Migration Service Engine jump ahead and
+    attempt a PostgreSQL v14→v17 upgrade an old admission webhook
+    rejected – triggering a silent Flux/Helm reconciliation loop (the
+    `vcd-migrator` release cycled through **19,905 revisions** over 13
+    days) while the UI reported everything **Healthy** the whole time.
+    Fix required deleting the offending Helm Bundle and resetting the
+    target version.
+  - **9.1.1 isn't "just" a maintenance release**: added gotchas for the
+    Secure Boot certificate migration (VMware Tools 13.1.5+, July 2026
+    Windows Cumulative Update, VM reboots), ESX 9.1.1.0 not being
+    live-patchable, distributed firewall configs causing post-install
+    remediation, and Host Profiles with vSAN failing batch remediation.
+  - **Express Patches section now cites the official VMware Cloud
+    Foundation blog** instead of only a community write-up – confirms
+    a monthly cadence and the official UI steps, with the community
+    post kept as supplementary.
+
 ## v1.3.8 – 2026-09-21
 - **Expand `docs/20`'s Step 1 with the field-verified depot procedure
   from the companion repo.** `VCF9-DeploymentPlanning/docs/09-binary-depot.md`

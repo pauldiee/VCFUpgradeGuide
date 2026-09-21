@@ -23,19 +23,50 @@ alongside full maintenance releases, and they follow different rules:
   covers. Strict component dependency order, covered below.
 - **Express Patch** – targeted security/product fixes shipped as soon as
   they're ready rather than bundled into a scheduled release, named
-  `9.1.0.01XX` (e.g. `9.1.0.0100`, `9.1.0.0200`, `9.1.0.0300`).
-  **Express Patches can be applied in any order** – each is independent
-  and cumulative, so there's no need to apply earlier EPs first before a
-  later one. The one exception: *"if an EP contains Fleet Lifecycle
-  fixes, you should consider applying that first since that is what
-  drives the actual patch and upgrade for the VCF Fleet components."*
-  Apply via **Build → Lifecycle → VCF Management → Upgrade** → **Sync**
-  to refresh available patches → **Change Target Version → Customize**
-  to pick a specific EP. Per [Understanding VCF Express
-  Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html).
+  `9.1.0.01XX` (e.g. `9.1.0.0100`, `9.1.0.0200`, `9.1.0.0300`). Per
+  Broadcom's own [Installing Express Patches with VMware Cloud
+  Foundation 9.1](https://blogs.vmware.com/cloud-foundation/2026/06/29/installing-express-patches-with-vmware-cloud-foundation-9-1/),
+  these ship at roughly a **monthly cadence** going forward, driven by
+  how fast security fixes for frontier-AI-era threats need to reach the
+  field. **Express Patches can be applied in any order** – each is
+  independent and cumulative, so there's no need to apply earlier EPs
+  first. The one ordering rule that still applies: **Fleet Lifecycle
+  patches first within VCF Management Components**, same as a
+  maintenance release, before moving on to core components (SDDC
+  Manager, vSphere, NSX). Official steps: **Build → Lifecycle → VCF
+  Management → Upgrade**, set the target version, **Run Prechecks**,
+  **Upgrade** – then for core components, **Build → Lifecycle
+  Management → VCF Instance → Upgrades → Plan Component Upgrade**.
 
 The rest of this doc is about the maintenance-release case, which does
 have a strict order.
+
+### This "maintenance release" label undersells 9.1.1 specifically
+
+Worth reading before treating 9.1.0 → 9.1.1 as routine: per [VCF 9.1.1 –
+Not a Maintenance Release](https://mysticmarvin.com/blog/vcf-9-1-1-not-a-maintenance-release/),
+9.1.1 bundles changes with real operational weight behind the routine
+version number:
+
+- **Public cloud management (AWS/Azure/GCP) in VCF Automation is
+  disabled by default** – existing public cloud resources get marked
+  **Stale** with operations blocked, and new blueprints referencing them
+  show **Invalid**, immediately on upgrade (see also [KB
+  448993](#known-gotchas-for-a-910x--911-patch) below for
+  re-enabling it).
+- **A Secure Boot certificate migration** that's framed as a feature but
+  is, in practice, guest-OS remediation work: it needs **VMware Tools
+  13.1.5+** and the **July 2026 Windows Cumulative Update**, and
+  Windows VMs need a reboot to pick it up. Start inventorying the
+  Windows estate's Tools versions before the upgrade window, not during
+  it.
+- **ESX 9.1.1.0 is not live-patchable**, despite messaging elsewhere
+  about zero-downtime operations – plan host remediation with a normal
+  maintenance-mode cycle, not an in-place live patch.
+- **Distributed firewall configurations can cause upgrade failures
+  needing post-installation remediation**, and **Host Profiles with
+  vSAN configuration can fail batch remediation** – check both before
+  relying on unattended remediation across a cluster.
 
 ---
 
@@ -236,12 +267,39 @@ closest thing to a full worked example currently available**:
 13. **Real-Time Metrics**
 14. **Telemetry** – last
 
-**Do not use an "Upgrade (ALL)" button if one is offered.** Broadcom
-documents a 9.1 lifecycle issue where running components concurrently
-can interfere with plan records – a component can finish successfully
-but stay stuck showing "Ready for upgrade" even though both sides
-already match on build. Patch sequentially and wait for each task to
-show **Completed** before starting the next.
+**Do not use an "Upgrade All" button if one is offered – it starts
+components in parallel, ignoring the dependency order above.** Broadcom
+separately documents a lesser version of this (a component finishing
+but staying stuck on "Ready for upgrade" even though builds already
+match), but the real-world failure mode is worse than a cosmetic status
+glitch. Per [Upgrade All: how one button left a VCF 9.1.1 lab
+deadlocked for two weeks](https://mb-labs.de/2026/09/18/upgrade-all-how-one-button-left-my-vcf-9-1-1-lab-deadlocked-for-two-weeks/):
+
+- **Upgrade All** kicked off **VCF Automation and the Migration Service
+  Engine at the same time**, letting the Migration Service Engine start
+  *before* VCF Automation – directly violating the "VCF Automation
+  before Migration Service Engine" rule above. The Migration Service
+  Engine then tried upgrading its PostgreSQL from v14 to v17, which an
+  admission webhook on the still-old platform rejected (it only
+  permitted v13–v15), and that kicked off an endless Flux reconciliation
+  loop.
+- **The UI reported everything as "Healthy" the whole time.** The
+  environment looked fine and stayed in apparent daily use for **13
+  days** while two independent deadlocks ran silently underneath: three
+  `ConfigurationHandlers` competing for a slot the platform only allows
+  one of, and the `vcd-migrator` Helm release **cycling through 19,905
+  revisions** (~1,200/day) in an endless upgrade → fail → rollback →
+  retry loop. The failure only surfaced when deploying ArgoCD produced a
+  signature-verification error trying to reach the internal image depot.
+- **The fix required deleting the offending 9.1.1 Helm Bundle** (keeping
+  the working 9.1.0.0200 one) and resetting the target version back to
+  it – within two minutes of that, the reconciliation loop stopped and
+  the version locked. Full recovery took several more days after the
+  13-day silent deadlock was even discovered.
+
+**Patch one component at a time and wait for each task to show
+Completed before starting the next** – "the UI says Healthy" is not
+sufficient confirmation that a patch actually finished cleanly.
 
 ---
 
@@ -330,5 +388,8 @@ ordering and rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
 - [Download Binaries to Software Depot in Disconnected Mode by Using the VCF Download Tool](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/offline-download-of-vmware-cloud-foundation-5-2-upgrade-bundles.html)
 - [VCF 9.1 - VCF Download Tool (VCFDT) Cheatsheet](https://williamlam.com/2026/05/vcf-9-1-vcf-download-tool-vcfdt-cheatsheet.html) – concrete VCFDT command examples
 - [VCF 9.1 - New HTTP Offline Depot Support for VCF Installer & Fleet Depot Service](https://williamlam.com/2026/05/vcf-9-1-new-http-offline-depot-support-for-vcf-installer-fleet-depot-service.html)
-- [VCF 9.1 - Understanding VCF Express Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html) – the Express Patch mechanism, naming, and application rules
+- [Installing Express Patches with VMware Cloud Foundation 9.1 (official VMware Cloud Foundation blog)](https://blogs.vmware.com/cloud-foundation/2026/06/29/installing-express-patches-with-vmware-cloud-foundation-9-1/) – the official Express Patch procedure, cadence, and ordering rule
+- [VCF 9.1 - Understanding VCF Express Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html) – supplementary community write-up of the same mechanism
 - [Upgrading VCF Management Components to 9.1.1 All in One (Cosmin.us)](https://cosmin.us/upgrading-vcf-management-components-to-9-1-1-all-in-one/) – the full 14-step worked order, UI walkthrough, gotchas (KB 388305, 448993, 451147, 400822), and timing table – a practitioner account, not a Broadcom TechDocs page
+- [Upgrade All: how one button left a VCF 9.1.1 lab deadlocked for two weeks](https://mb-labs.de/2026/09/18/upgrade-all-how-one-button-left-my-vcf-9-1-1-lab-deadlocked-for-two-weeks/) – the real-world Upgrade All / parallel-patching failure mode
+- [VCF 9.1.1 – Not a Maintenance Release](https://mysticmarvin.com/blog/vcf-9-1-1-not-a-maintenance-release/) – the Secure Boot cert migration, ESX live-patching, distributed firewall, and Host Profile/vSAN gotchas
