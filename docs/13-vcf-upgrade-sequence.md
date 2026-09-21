@@ -627,12 +627,12 @@ both of which look deeper than these surface-level properties):
 > noise from appliances on every run, not just from genuinely outdated Tools
 > on workload VMs.
 >
-> **The `Get-VDSwitch` line is Untested** – added after the initial lab pass
-> and not yet run against a live vCenter. `Version` is expected to be a
-> plain string like `"8.0.0"`, not automatically flagged against a target –
-> compare it by eye against the target vDS version from
-> [Pick a VDS version](08-vss-to-vds-migration.md#before-touching-anything)
-> until this line gets its own lab pass.
+> **The `Get-VDSwitch` line – Lab-verified 2026-09-21** (same holodeck lab,
+> PowerCLI 13.5.1, vCenter 9.1.1): ran clean, returning `Name`, `Version`
+> (a plain string, e.g. `"9.1.0"` – not automatically flagged against a
+> target), `NumUplinkPorts`, and `NumPorts` per switch. Compare `Version`
+> by eye against the target vDS version from [Pick a VDS
+> version](08-vss-to-vds-migration.md#before-touching-anything).
 
 ```powershell
 # Component builds - compare against the Phase 9 effective-versions table

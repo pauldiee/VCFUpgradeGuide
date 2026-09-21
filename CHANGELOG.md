@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.8 – 2026-09-21
+- **Lab-verify the `Get-VDSwitch` spot-check line in `docs/13`.** Ran
+  against the holodeck lab (PowerCLI 13.5.1, vCenter 9.1.1) – returned
+  clean `Name`/`Version`/`NumUplinkPorts`/`NumPorts` output per switch,
+  `Version` confirmed as a plain string. Upgraded the callout from
+  Untested to Lab-verified.
+
 ## v1.1.7 – 2026-09-21
 - **Drop a leftover Dell-internal codename from `docs/vxrail-addendum.md`.**
   The hardware-lifecycle table row still named the replacement for VxRail
