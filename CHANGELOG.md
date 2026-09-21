@@ -1,5 +1,29 @@
 # Changelog
 
+## v1.4.0 – 2026-09-21
+- **Add a "Backup before patching, and what rollback actually means"
+  section to `docs/20`, and refine the patching order with a second
+  independent source.**
+  - New backup/rollback section: Identity Broker, Log Management, and
+    Software Depot get an **automatic** pre-patch backup to a
+    fleet-level SFTP target (Build → Lifecycle → VCF Management →
+    Backup & Restore) – with two documented failure modes checked ahead
+    of time (an uppercase FQDN fails the SSH known-hosts check, KB
+    453300; a full backup server times out with the generic
+    `VCFMS-BACKUP-COMPONENT-006` error, KB 441165). VCF Automation's
+    file-based backup is separate and must be time-aligned with
+    Identity Broker's, or a restore locks everyone out. Components with
+    no documented automatic backup (SDDC Lifecycle, Salt, Real-Time
+    Metrics, Telemetry) rely on a pre-patch snapshot instead. No clean
+    one-click rollback exists for a failed component patch either way.
+  - Per a second independent account, only **Fleet Lifecycle** and
+    **VCF Services Runtime** are strictly fixed-first – the rest of the
+    14-step order is *a* valid sequence, not *the only* one, with Fleet
+    Lifecycle managing remaining dependencies automatically beyond
+    known pairwise constraints. Added the concrete failure symptom for
+    patching Migration Service Engine out of order: a 6-hour run that
+    fails on `vmsp_upgrade`.
+
 ## v1.3.9 – 2026-09-21
 - **Replace the vague "don't use Upgrade All" gotcha in `docs/20` with
   a real, detailed failure account**, and add several new 9.1.1-specific

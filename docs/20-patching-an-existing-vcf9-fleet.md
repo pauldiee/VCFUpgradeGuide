@@ -212,6 +212,62 @@ in Step 2 – running out partway through stalls the whole sequence.
 
 ---
 
+## Backup before patching, and what rollback actually means
+
+**Some components back themselves up automatically as part of the
+patch; others don't, and confusing the two is the mistake to avoid.**
+
+- **Identity Broker, Log Management, and Software Depot get an
+  automatic pre-patch backup**, written to a **fleet-level SFTP
+  target** configured at **Build → Lifecycle → VCF Management → Backup
+  & Restore**. This isn't optional or skippable – it's a precheck gate
+  the patch runs through, and it has two documented failure modes worth
+  checking *before* a patch window, not during one:
+  - **The backup server's FQDN must be all-lowercase.** Per Broadcom KB
+    453300, an FQDN configured with any uppercase characters fails the
+    SSH known-hosts check with `ssh: handshake failed: knownhosts: key
+    is unknown` – reconfigure the backup location with an all-lowercase
+    FQDN and retry.
+  - **The SFTP target needs free space before the patch, not found out
+    during it.** Per Broadcom KB 441165, a `vidb` component backup can
+    time out with the generic error `VCFMS-BACKUP-COMPONENT-006` when
+    the backup server is out of space – the error itself gives no hint
+    that disk space is the cause. Clear space on the backup/SFTP server
+    ahead of time.
+- **VCF Automation is backed up file-based to the same kind of
+  fleet-level SFTP target**, in a predictable
+  `vcf/backups/<cluster-name>/<version>/<component-name>/<timestamp>/`
+  layout – but this is a separate, standing backup configuration to
+  verify is current, not something the patch process necessarily
+  triggers fresh for you the way it does for the three components
+  above. **Back up VCF Automation and Identity Broker together, on the
+  same schedule** – VCF Automation's data (orgs, catalog) is
+  meaningless without Identity Broker's authentication data, so a
+  time-misaligned pair of backups can restore an instance that holds
+  everything and lets no one log in.
+- **Take a snapshot of the appliance before patching it regardless** –
+  the platform's own automatic component backups don't cover every
+  component in the order (SDDC Lifecycle, Salt RaaS/Master, Real-Time
+  Metrics, Telemetry have no documented automatic pre-patch backup), so
+  a snapshot is the actual safety net for those. Delete it once the
+  patch is confirmed successful – a lingering snapshot degrades
+  performance, and a snapshot is a short-lived safety net for the patch
+  window, not a substitute for the real backup story above.
+
+**There is no clean, one-click rollback for a failed VCF Management
+Services component patch.** Recovery is either reverting the pre-patch
+snapshot or restoring from the file-based backup – not an automatic
+"undo," and not always straightforward: the [Upgrade All failure
+account](#step-2-respect-the-mandatory-dependency-order) above is a real
+example where "rolling back" a stuck component meant manually deleting
+a Helm Bundle and resetting the target version by hand, not clicking a
+button. The same "no single undo, recovery is per-component" reality
+that [Full VCF upgrade sequence: Windows, ordering and
+rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
+documents for the initial major upgrade applies here too.
+
+---
+
 ## Step 2: Respect the mandatory dependency order
 
 Quoted verbatim from Broadcom's [Lifecycle Management of VCF
@@ -266,6 +322,29 @@ closest thing to a full worked example currently available**:
 12. **Real-Time Metrics Store**
 13. **Real-Time Metrics**
 14. **Telemetry** – last
+
+**Only the first two steps are a truly fixed requirement – the rest is
+one valid sequence, not the only one.** Per a second independent
+account, [Patching Order: VCF Management Components
+9.1.1.0](https://arunnukula.com/blog/patching-order-vcf-management-components-9-1-1-0):
+*"Fleet Lifecycle"* must go first because it *"orchestrates the
+patching of the rest of the components, so nothing else moves until
+this one is on 9.1.1.0,"* and *"VCF Services Runtime"* goes second
+because it *"hosts the rest of the management components, so it has to
+be patched before them."* Past those two, Fleet Lifecycle manages the
+remaining dependencies automatically, and the account describes the
+rest as having **no fixed order** beyond the specific pairwise
+constraints already listed above (Identity Broker/Salt RaaS after their
+runtime, VCF Automation before Migration Service Engine, VCF Operations
+never in parallel). The 14-step list above is a safe sequence that
+satisfies every constraint, not evidence that steps 3–14 must run in
+that exact order.
+
+**The VCF Automation → Migration Service Engine rule has a concrete
+failure mode, not just a documentation warning.** Per the same account:
+patch Migration Service Engine before VCF Automation, and it *"runs for
+six hours and then fails on `vmsp_upgrade`"* – a slow, expensive way to
+relearn the ordering rule rather than a quick, obvious error.
 
 **Do not use an "Upgrade All" button if one is offered – it starts
 components in parallel, ignoring the dependency order above.** Broadcom
@@ -393,3 +472,7 @@ ordering and rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
 - [Upgrading VCF Management Components to 9.1.1 All in One (Cosmin.us)](https://cosmin.us/upgrading-vcf-management-components-to-9-1-1-all-in-one/) – the full 14-step worked order, UI walkthrough, gotchas (KB 388305, 448993, 451147, 400822), and timing table – a practitioner account, not a Broadcom TechDocs page
 - [Upgrade All: how one button left a VCF 9.1.1 lab deadlocked for two weeks](https://mb-labs.de/2026/09/18/upgrade-all-how-one-button-left-my-vcf-9-1-1-lab-deadlocked-for-two-weeks/) – the real-world Upgrade All / parallel-patching failure mode
 - [VCF 9.1.1 – Not a Maintenance Release](https://mysticmarvin.com/blog/vcf-9-1-1-not-a-maintenance-release/) – the Secure Boot cert migration, ESX live-patching, distributed firewall, and Host Profile/vSAN gotchas
+- [Patching Order: VCF Management Components 9.1.1.0](https://arunnukula.com/blog/patching-order-vcf-management-components-9-1-1-0) – a second independent account confirming only Fleet Lifecycle and VCF Services Runtime are strictly fixed-first, plus the concrete 6-hour `vmsp_upgrade` failure symptom
+- [VCF management component upgrade fails due to backup precheck failure (Broadcom KB 453300)](https://knowledge.broadcom.com/external/article/453300/vcf-management-component-upgrade-fails-d.html) – the automatic pre-patch backup mechanism and the lowercase-FQDN requirement
+- [VCF 9.1 upgrade fails with Error - Backup for component vidb timed out (Broadcom KB 441165)](https://knowledge.broadcom.com/external/article/441165/vcf-91-upgrade-fails-with-error-backup.html) – the disk-space-on-backup-server failure mode behind `VCFMS-BACKUP-COMPONENT-006`
+- [Backup, DR and Upgrade of the VCF Automation Instance (VCF Automation 9 Series, Part 29)](https://drpranayjha.com/vcf-automation-backup-dr-upgrade/) – VCF Automation's file-based backup, the Identity Broker time-alignment dependency, and why a snapshot isn't a backup
