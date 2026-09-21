@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.3.7 – 2026-09-21
+- **Inline the sources throughout `docs/20`** instead of leaving them
+  only in the bottom Sources list – each claim (Express Patch rules,
+  depot mechanics, the mandatory dependency quotes, the worked-order
+  attribution, each gotcha's KB) now links directly to its source at
+  the point it's used. Also fixed a stale KB-number mismatch in the
+  Sources list entry (had leftover incorrect numbers from before the
+  v1.3.6 KB-verification pass). Two gotcha KBs (448993, 451147) are
+  cited by number only, flagged as no direct URL confirmed, rather than
+  guessing a link that might not resolve.
+
 ## v1.3.6 – 2026-09-21
 - **Re-target `docs/20` at VCF 9.1 specifically, dropping the 9.0.x
   material.** The worked-example order, timing table, and gotchas were

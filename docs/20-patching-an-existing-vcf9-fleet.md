@@ -31,7 +31,8 @@ alongside full maintenance releases, and they follow different rules:
   drives the actual patch and upgrade for the VCF Fleet components."*
   Apply via **Build → Lifecycle → VCF Management → Upgrade** → **Sync**
   to refresh available patches → **Change Target Version → Customize**
-  to pick a specific EP.
+  to pick a specific EP. Per [Understanding VCF Express
+  Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html).
 
 The rest of this doc is about the maintenance-release case, which does
 have a strict order.
@@ -43,7 +44,11 @@ have a strict order.
 Nothing below can start until the target version's binaries are staged
 in the software depot – **online** (Fleet Management connects straight
 to Broadcom) or **offline** (an internal web server, populated ahead of
-time). Only one depot connection can be ACTIVE at a time.
+time, per [Set Up an Offline
+Depot](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/set-up-an-offline-depot-web-server-for-vmware-cloud-foundation.html)
+and [Configure a Software Depot Connection
+Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/connect-sddc-manager-to-a-software-depot-for-downloading-bundles.html)).
+Only one depot connection can be ACTIVE at a time.
 
 - **Download token** works for general VVF/VCF binaries; **activation
   code is mandatory for ESX binaries specifically** and is the
@@ -52,15 +57,21 @@ time). Only one depot connection can be ACTIVE at a time.
   offline depot – separate commands for install binaries (`--type
   INSTALL`), upgrade/patch binaries (`--type UPGRADE
   --patches-only --component-version=<target>`), and ESX binaries
-  (`esx download`, activation code only).
+  (`esx download`, activation code only). Command examples: [VCFDT
+  Cheatsheet](https://williamlam.com/2026/05/vcf-9-1-vcf-download-tool-vcfdt-cheatsheet.html),
+  full reference: [Download Binaries to an Offline Depot Using the VCF
+  Download
+  Tool](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/download-bundles-to-an-offline-depot.html).
 - A disconnected depot doesn't auto-fetch **Day-N** binaries either –
   optional components (Log Management, Real-time Metrics, VCF
   Operations for Networks) or a new VCF Instance/domain need their own
-  manual upload.
+  manual upload, per [Download Binaries to Software Depot in
+  Disconnected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/offline-download-of-vmware-cloud-foundation-5-2-upgrade-bundles.html).
 - **A depot patch blocks every other component patch while it's in
-  progress** – per Broadcom, *"patching other components is blocked
-  because the patch binaries are unavailable."* Don't schedule a depot
-  update alongside anything else.
+  progress** – per Broadcom's [Lifecycle Management of VCF
+  Components](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components.html),
+  *"patching other components is blocked because the patch binaries are
+  unavailable."* Don't schedule a depot update alongside anything else.
 
 **Download every component's binaries before starting**, not
 incrementally as you reach each one – running out partway through the
@@ -70,7 +81,8 @@ order below stalls the whole sequence.
 
 ## Step 2: Respect the mandatory dependency order
 
-Quoted verbatim from Broadcom's Lifecycle Management of VCF Components
+Quoted verbatim from Broadcom's [Lifecycle Management of VCF
+Components](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components.html)
 TechDocs – these are hard constraints for a 9.1.0.x → 9.1.1 patch, not
 suggestions:
 
@@ -98,10 +110,11 @@ suggestions:
 ### The full 9.1.1 order in practice
 
 A practitioner's documented, component-by-component 9.1.0.x → 9.1.1
-patching run, consistent with the constraints above and specific to
-9.1.1 (not the 9.0.x line) – **not independently field-verified in this
-repo, but the closest thing to a full worked example currently
-available**:
+patching run – [Upgrading VCF Management Components to 9.1.1 All in One
+(Cosmin.us)](https://cosmin.us/upgrading-vcf-management-components-to-9-1-1-all-in-one/)
+– consistent with the constraints above and specific to 9.1.1 (not the
+9.0.x line) – **not independently field-verified in this repo, but the
+closest thing to a full worked example currently available**:
 
 1. **Fleet Lifecycle** – required first, no exceptions
 2. **VCF Operations** – as its own standalone appliance update
@@ -157,22 +170,28 @@ the same precheck → remediate → upgrade cycle per domain.
 ## Known gotchas for a 9.1.0.x → 9.1.1 patch
 
 - **Log Management and Operations for Networks running in parallel can
-  cause issues** – per Broadcom KB 388305, "Parallel Deployment of VCF
+  cause issues** – per Broadcom [KB 388305, "Parallel Deployment of VCF
   Operations Networks and VCF Operations Logs from Fleet Management
-  fails while Pushing Capabilities." This is exactly why the order above
-  puts Log Management strictly before Operations for Networks, not just
-  conveniently near it.
+  fails while Pushing
+  Capabilities"](https://knowledge.broadcom.com/external/article/388305/parallel-deployment-of-vcf-operations-ne.html).
+  This is exactly why the order above puts Log Management strictly
+  before Operations for Networks, not just conveniently near it.
 - **VCF Automation 9.1.1 deprecates AWS/Azure/GCP support by default**
-  (KB 448993) – confirm this doesn't affect an in-use integration before
-  patching.
+  (Broadcom KB 448993 – no direct URL confirmed, search the Broadcom
+  Support Portal for the number) – confirm this doesn't affect an
+  in-use integration before patching.
 - **Custom VCF Automation profiles carried over from 9.0.x/9.1.0.x must
-  be cleaned up before the upgrade** (KB 451147), or the patch can fail
-  against them.
+  be cleaned up before the upgrade** (Broadcom KB 451147 – no direct
+  URL confirmed, search the Broadcom Support Portal for the number), or
+  the patch can fail against them.
 - **Operations for Networks XL deployments may need an additional 1TB
-  disk** added before patching – per Broadcom KB 400822, an X-Large
-  deployment needs a manually-added extra 1TB disk to meet the XL brick
-  size's 2TB requirement. Check sizing ahead of time, not after the
-  patch stalls on disk space.
+  disk** added before patching – per Broadcom [KB 400822, "VCF
+  Operations for Networks reports Appliance disk not configured
+  according to disk
+  guidance"](https://knowledge.broadcom.com/external/article/400822/aria-operations-for-networks-reports-app.html),
+  an X-Large deployment needs a manually-added extra 1TB disk to meet
+  the XL brick size's 2TB requirement. Check sizing ahead of time, not
+  after the patch stalls on disk space.
 - **If planning to scale VCF Services Runtime from Small to Small (High
   Availability)**, patch SDDC Lifecycle to 9.1.1 first – doing it the
   other way round is unsupported per the order above.
@@ -209,4 +228,4 @@ ordering and rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
 - [VCF 9.1 - VCF Download Tool (VCFDT) Cheatsheet](https://williamlam.com/2026/05/vcf-9-1-vcf-download-tool-vcfdt-cheatsheet.html) – concrete VCFDT command examples
 - [VCF 9.1 - New HTTP Offline Depot Support for VCF Installer & Fleet Depot Service](https://williamlam.com/2026/05/vcf-9-1-new-http-offline-depot-support-for-vcf-installer-fleet-depot-service.html)
 - [VCF 9.1 - Understanding VCF Express Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html) – the Express Patch mechanism, naming, and application rules
-- [Upgrading VCF Management Components to 9.1.1 All in One (Cosmin.us)](https://cosmin.us/upgrading-vcf-management-components-to-9-1-1-all-in-one/) – the full 14-step worked order, UI walkthrough, gotchas (KB 452169, 448993, 451147, 454602), and timing table – a practitioner account, not a Broadcom TechDocs page
+- [Upgrading VCF Management Components to 9.1.1 All in One (Cosmin.us)](https://cosmin.us/upgrading-vcf-management-components-to-9-1-1-all-in-one/) – the full 14-step worked order, UI walkthrough, gotchas (KB 388305, 448993, 451147, 400822), and timing table – a practitioner account, not a Broadcom TechDocs page
