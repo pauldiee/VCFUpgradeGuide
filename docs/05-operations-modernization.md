@@ -96,9 +96,30 @@ Operations 9.1.x.
    target 9.1.x build (check the current VCF/vSphere Interoperability
    Matrix – some 8.18.x point releases skip straight to 9.1.1, others must
    land on an intermediate 8.18.x patch first).
-2. Optionally run the Pre-Upgrade Readiness Assessment Tool: Admin UI →
-   **Software Update → Install a Software Update**, upload the APUAT PAK,
-   then review the generated report under **Support → Support Bundles**.
+2. Optionally run the Pre-Upgrade Readiness Assessment Tool (APUAT) –
+   uploaded and installed the same way as any other PAK, against the
+   **normal, online cluster**. Nothing about this step needs the cluster
+   taken offline or brought online first, same as the real upgrade PAK
+   below.
+   - Download the **source-version-matched** Assessment Tool PAK from the
+     Broadcom Support Portal – search "APUAT" or "VMware Aria Operations -
+     Upgrade Assessment Tool". It's versioned to the build you're upgrading
+     *from*, not the target.
+   - Admin UI → **Software Update → Install a Software Update**, browse to
+     the PAK, check "Install the PAK file even if it is already installed",
+     leave "Reset Default Content" unchecked, **UPLOAD** (several minutes),
+     accept the EULA, **NEXT**, then **INSTALL**.
+   - The tool runs a one-time scan and self-deletes when finished – it
+     doesn't alter anything in the system, so re-running it is harmless.
+   - Retrieve the report: **Support → Support Bundles**, locate the
+     most-recently-created bundle, download the ZIP, extract it, and open
+     the HTML file inside.
+   - Check two tabs before deciding whether to proceed: **System Validation
+     Checks** (whether the system is upgrade-eligible at all – failures
+     here are blocking) and **Removed/Disconnected Metrics** (dashboards,
+     reports, management packs, alerts, and heat maps that reference
+     metrics being deprecated in the target version, each with a link to a
+     suggested replacement metric).
 3. Take an **offline VM-level snapshot of every cluster node** (Primary,
    Replica, Data, Cloud Proxies) – deselect "Snapshot the virtual machine's
    memory".
@@ -453,6 +474,8 @@ notes for a non-HA removal:
 - [VCF Operations 9.0 Sizing Guidelines](https://knowledge.broadcom.com/external/article/397782/vcf-operations-90-sizing-guidelines.html)
 - [Configuring a vCenter Account in VCF Operations](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/infrastructure-operations/connect-to-data-sources/vsphere/configuring-a-vcenter-server-cloud-account-in-vrealize-operations.html)
 - [Manual Upgrade Procedure for VMware Aria Operations via Admin UI](https://knowledge.broadcom.com/external/article/428747/manual-upgrade-procedure-for-vmware-aria.html)
+- [Running the VMware Aria Operations 8.18 Pre-Upgrade Readiness Assessment Tool](https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/getting-started-with-vmware-aria-operations-8-18/upgrade-backup-and-restore/before-upgrading-to-vrealize-operations-manager/running-the-vrops-8-x-pre-upgrade-readiness-assessment-tool.html)
+- [Using the Pre-Upgrade Readiness Assessment Tool for VMware Aria Operations 8.18.x](https://knowledge.broadcom.com/external/article/369264/using-the-preupgrade-readiness-assessmen.html)
 - [Install a Software Update on Aria Operations 8.18](https://knowledge.broadcom.com/external/article/434664/install-a-software-update-on-aria-operat.html)
 - [Deploy VCF Operations Nodes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/deployment/upgrading-cloud-foundation/preparing-your-vcf-9-management-components/preparing-to-upgrade-to-vmware-cloud-foundation/deploy-vcf-operations.html)
 - [Aria Operations Content Management](https://www.brockpeterson.com/post/aria-operations-content-management)
