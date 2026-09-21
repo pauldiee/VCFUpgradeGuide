@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.8 – 2026-09-21
+- **Fix `docs/06`'s `domainjoin-cli leave` CLI example.** The shown
+  command included a domain-name argument that doesn't belong to
+  `leave`'s syntax (that's a `join`-only parameter) – per the actual man
+  page, `leave` only optionally takes `[username [password]]`, no domain
+  argument at all. Corrected the command and added an explicit note that
+  running `leave` completely bare (no arguments) disjoins the appliance
+  locally **without contacting AD at all**, distinct from the
+  already-documented "credentials omitted" behavior.
+
 ## v1.2.7 – 2026-09-21
 - **Convert `docs/17`'s three "Field-observed symptom" lead-ins to real
   `####` headers**, nested under "Always run the read-only check first"

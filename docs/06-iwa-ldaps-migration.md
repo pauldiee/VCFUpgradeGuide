@@ -299,17 +299,24 @@ root):
 
 ```
 /opt/likewise/bin/domainjoin-cli query
-/opt/likewise/bin/domainjoin-cli leave <DomainName.com> <username> <password>
+/opt/likewise/bin/domainjoin-cli leave <username> <password>
 ```
 
-**The credentials are not optional if the AD-side object matters.** Per the
+**`leave` takes no domain-name argument** – unlike `join`, it only
+optionally takes `[username [password]]` (confirm the domain it will
+leave with the `query` command above first, not by passing one to
+`leave`).
+
+**The credentials are not optional if the AD-side object matters.**
+Running `domainjoin-cli leave` completely bare, with **no arguments at
+all**, disjoins the appliance locally **without contacting AD**. Per the
 `domainjoin-cli` man page: *"If no credentials are specified, the machine
 will no longer behave as a member of domain but its machine account will
-remain enabled in AD."* Running `leave` bare (no `username`/`password`)
-only disjoins locally – it silently leaves a live, enabled computer object
-behind in AD, which is worse than a merely stale one. Supply UPN-format
-credentials (same requirement as the UI method above) so the CLI actually
-reaches AD. Even then, the man page only promises the account gets
+remain enabled in AD."* That silently leaves a live, enabled computer
+object behind in AD, which is worse than a merely stale one. Supply
+UPN-format credentials (same requirement as the UI method above) as the
+two trailing arguments so the CLI actually reaches AD instead of
+disjoining blind. Even then, the man page only promises the account gets
 **disabled**, not deleted – step 7 below is still required regardless of
 which method was used.
 
