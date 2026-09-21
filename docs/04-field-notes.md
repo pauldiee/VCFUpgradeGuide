@@ -50,6 +50,13 @@ cleared.
 - **Operations for Logs has no upgrade path** – a fresh 9.x deployment, then
   migrate the configuration and (optionally) the log data; the old appliance
   can run in parallel for retention. Point log agents at the new server.
+- **APUAT against an offline cluster silently under-reports.** Running the
+  Pre-Upgrade Readiness Assessment Tool while the cluster was offline
+  produced an empty **Removed/Disconnected Metrics** tab in the report –
+  it looked like a clean "nothing affected" result rather than a failure.
+  Re-running the same PAK with the cluster online populated the tab with
+  the actual metric impacts. Always run APUAT against the online cluster –
+  see [APUAT procedure](05-operations-modernization.md#pre-upgrade-readiness-assessment-tool-apuat).
 
 ---
 

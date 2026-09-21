@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.4 – 2026-09-21
+- **Expand the APUAT procedure in `docs/05` and add the field-verified
+  offline-cluster gotcha.** The Pre-Upgrade Readiness Assessment Tool step
+  was a single line; broken out into its own "Pre-Upgrade Readiness
+  Assessment Tool (APUAT)" subsection with the full PAK download/install
+  steps, report retrieval, and what the System Validation Checks and
+  Removed/Disconnected Metrics tabs mean. Field-verified: running APUAT
+  against an **offline** cluster silently produces an empty
+  Removed/Disconnected Metrics tab (reads as "nothing affected" rather
+  than an error) – it must be run against the online cluster. Added as a
+  callout in `docs/05` and a new entry in `docs/04-field-notes.md`.
+
 ## v1.1.3 – 2026-09-21
 - **Strengthen `docs/05`'s cluster-network-topology citation with a
   genuinely VCF 9-branded source.** Checked whether a VCF 9 copy of the

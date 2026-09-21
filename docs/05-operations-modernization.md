@@ -96,33 +96,46 @@ Operations 9.1.x.
    target 9.1.x build (check the current VCF/vSphere Interoperability
    Matrix – some 8.18.x point releases skip straight to 9.1.1, others must
    land on an intermediate 8.18.x patch first).
-2. Optionally run the Pre-Upgrade Readiness Assessment Tool (APUAT) –
-   uploaded and installed the same way as any other PAK, against the
-   **normal, online cluster**. Nothing about this step needs the cluster
-   taken offline or brought online first, same as the real upgrade PAK
-   below.
-   - Download the **source-version-matched** Assessment Tool PAK from the
-     Broadcom Support Portal – search "APUAT" or "VMware Aria Operations -
-     Upgrade Assessment Tool". It's versioned to the build you're upgrading
-     *from*, not the target.
-   - Admin UI → **Software Update → Install a Software Update**, browse to
-     the PAK, check "Install the PAK file even if it is already installed",
-     leave "Reset Default Content" unchecked, **UPLOAD** (several minutes),
-     accept the EULA, **NEXT**, then **INSTALL**.
-   - The tool runs a one-time scan and self-deletes when finished – it
-     doesn't alter anything in the system, so re-running it is harmless.
-   - Retrieve the report: **Support → Support Bundles**, locate the
-     most-recently-created bundle, download the ZIP, extract it, and open
-     the HTML file inside.
-   - Check two tabs before deciding whether to proceed: **System Validation
-     Checks** (whether the system is upgrade-eligible at all – failures
-     here are blocking) and **Removed/Disconnected Metrics** (dashboards,
-     reports, management packs, alerts, and heat maps that reference
-     metrics being deprecated in the target version, each with a link to a
-     suggested replacement metric).
+2. Optionally run the Pre-Upgrade Readiness Assessment Tool (APUAT) – see
+   [below](#pre-upgrade-readiness-assessment-tool-apuat) for the full
+   procedure.
 3. Take an **offline VM-level snapshot of every cluster node** (Primary,
    Replica, Data, Cloud Proxies) – deselect "Snapshot the virtual machine's
    memory".
+
+### Pre-Upgrade Readiness Assessment Tool (APUAT)
+
+Uploaded and installed the same way as any other PAK, against the
+**normal, online cluster**. Nothing about this step needs the cluster
+taken offline or brought online first, same as the real upgrade PAK below.
+
+**Run it with the cluster online, not offline.** Field-verified: running
+APUAT against an offline cluster produced an empty **Removed/Disconnected
+Metrics** tab in the report – no impacted content was listed, which reads
+as a false "nothing affected" result rather than an error. Re-running the
+same PAK against the online cluster correctly populated the tab with the
+actual metric impacts. See also the [field notes](04-field-notes.md#vcf-operations-upgrade-and-the-back-in-time-trap)
+entry.
+
+- Download the **source-version-matched** Assessment Tool PAK from the
+  Broadcom Support Portal – search "APUAT" or "VMware Aria Operations -
+  Upgrade Assessment Tool". It's versioned to the build you're upgrading
+  *from*, not the target.
+- Admin UI → **Software Update → Install a Software Update**, browse to
+  the PAK, check "Install the PAK file even if it is already installed",
+  leave "Reset Default Content" unchecked, **UPLOAD** (several minutes),
+  accept the EULA, **NEXT**, then **INSTALL**.
+- The tool runs a one-time scan and self-deletes when finished – it
+  doesn't alter anything in the system, so re-running it is harmless.
+- Retrieve the report: **Support → Support Bundles**, locate the
+  most-recently-created bundle, download the ZIP, extract it, and open
+  the HTML file inside.
+- Check two tabs before deciding whether to proceed: **System Validation
+  Checks** (whether the system is upgrade-eligible at all – failures here
+  are blocking) and **Removed/Disconnected Metrics** (dashboards, reports,
+  management packs, alerts, and heat maps that reference metrics being
+  deprecated in the target version, each with a link to a suggested
+  replacement metric).
 
 **2. Apply the upgrade**
 
