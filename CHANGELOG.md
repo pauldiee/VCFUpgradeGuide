@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.9 – 2026-09-21
+- **Mark `docs/06`'s bare-`leave` behavior as field-verified.** The
+  claim that `domainjoin-cli leave` with zero arguments disjoins locally
+  without contacting AD was sourced only from the man page; now noted as
+  observed happening exactly this way on a live vCenter.
+
 ## v1.2.8 – 2026-09-21
 - **Fix `docs/06`'s `domainjoin-cli leave` CLI example.** The shown
   command included a domain-name argument that doesn't belong to

@@ -309,16 +309,17 @@ leave with the `query` command above first, not by passing one to
 
 **The credentials are not optional if the AD-side object matters.**
 Running `domainjoin-cli leave` completely bare, with **no arguments at
-all**, disjoins the appliance locally **without contacting AD**. Per the
-`domainjoin-cli` man page: *"If no credentials are specified, the machine
-will no longer behave as a member of domain but its machine account will
-remain enabled in AD."* That silently leaves a live, enabled computer
-object behind in AD, which is worse than a merely stale one. Supply
-UPN-format credentials (same requirement as the UI method above) as the
-two trailing arguments so the CLI actually reaches AD instead of
-disjoining blind. Even then, the man page only promises the account gets
-**disabled**, not deleted – step 7 below is still required regardless of
-which method was used.
+all**, disjoins the appliance locally **without contacting AD** –
+**field-verified**, observed happening exactly this way on a live
+vCenter. Per the `domainjoin-cli` man page: *"If no credentials are
+specified, the machine will no longer behave as a member of domain but
+its machine account will remain enabled in AD."* That silently leaves a
+live, enabled computer object behind in AD, which is worse than a merely
+stale one. Supply UPN-format credentials (same requirement as the UI
+method above) as the two trailing arguments so the CLI actually reaches
+AD instead of disjoining blind. Even then, the man page only promises the
+account gets **disabled**, not deleted – step 7 below is still required
+regardless of which method was used.
 
 Restart vCenter Server afterward either way.
 
