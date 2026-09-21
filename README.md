@@ -100,6 +100,7 @@ phase:
 | `docs/17-vdt-and-lsdoctor-diagnostics.md` | Self-service diagnostic tools – VDT for a general appliance health sweep, `lsdoctor` for VC Lookup Service / SSO / vmdir issues |
 | `docs/18-vmware-tools-productlocker.md` | Shared VMware Tools repository (ProductLocker) – setting it, and why it needs re-verifying after upgrades |
 | `docs/19-vvf-vs-vcf-feature-comparison.md` | What's VCF-only, VVF-only, or requires an add-on regardless of tier, summarized from Broadcom's official comparison whitepaper |
+| `docs/20-depot-and-binary-management.md` | VCF software depot – online/offline modes, download tokens vs. activation codes, the VCF Download Tool, Day-N binary uploads |
 
 **Hardware addenda:**
 

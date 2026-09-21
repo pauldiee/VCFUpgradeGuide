@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.3.4 – 2026-09-21
+- **Document the day-2 patching order for VCF Management Services
+  components, and add `docs/20-depot-and-binary-management.md`.** Two
+  related additions, both about a fleet already running VCF 9.x (not the
+  initial 5.2/8.x → 9.x upgrade):
+  - `docs/04-field-notes.md`'s "VCF Management Services Runtime" section
+    gets a new entry with the full dependency chain for a maintenance
+    patch (e.g. 9.1.0.x → 9.1.1), quoted verbatim from Broadcom's
+    Lifecycle Management of VCF Components TechDocs: Fleet Lifecycle
+    patches before anything else; VCF Operations never patches in
+    parallel with other components; ESX hosts need VCF Operations and
+    its License Servers patched first (Cloud Proxy/License Server patch
+    automatically alongside VCF Operations); each VCF Management
+    Services Runtime patches before the Identity Broker or Salt RaaS
+    instance it hosts; VCF Automation patches before its migration
+    service engine; a depot patch blocks every other component patch
+    while in progress.
+  - New guide `docs/20-depot-and-binary-management.md`: online vs.
+    offline depot modes (only one connection ACTIVE at a time), download
+    tokens vs. activation codes (activation code is mandatory for ESX
+    binaries specifically), VCF Download Tool (VCFDT) command examples
+    for install/upgrade/ESX binary downloads, and the Day-N manual
+    binary upload requirement for a disconnected depot (Log Management,
+    Real-time Metrics, VCF Operations for Networks, new domains). Added
+    to `README.md`, `web/src/nav.ts`, and `CLAUDE.md`.
+
 ## v1.3.3 – 2026-09-21
 - **Document licensing an air-gapped/isolated vCenter in `docs/05`.**
   New subsection under "Deploy License Server": vCenter 9.x can't fall

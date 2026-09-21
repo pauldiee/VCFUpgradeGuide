@@ -261,6 +261,42 @@ Expect every cluster to behave differently.
   domain is still Day-0-only at 9.1.1+; once Log Management or Real-time
   Metrics is added, worker sizing is no longer Day-0-optimized and this
   script does not apply.
+- **Day-2 patching order (e.g. 9.1.0.x → 9.1.1) is a strict dependency
+  chain, not a free-for-all.** This is about patching a fleet already
+  running VCF 9.x to a later maintenance release – separate from the
+  initial 5.2/8.x → 9.x upgrade sequence in [Full VCF upgrade
+  sequence](13-vcf-upgrade-sequence.md). Per Broadcom's Lifecycle
+  Management of VCF Components TechDocs, quoted verbatim:
+  - *"You begin applying the 9.1.1 maintenance release in your 9.1.0.x
+    environment by patching the VCF management services fleet lifecycle
+    component to 9.1.1 before any other VCF component."* Fleet Lifecycle
+    goes first, always.
+  - *"VCF Operations must not be patched in parallel with other
+    components."* – serialize it, don't batch it alongside anything else.
+  - *"Before you patch ESX hosts from 9.1.0.x to 9.1.1.0, you must first
+    patch the VCF Operations instance and the license servers connected
+    to it."* – Cloud Proxy and License Server patch automatically as
+    part of the VCF Operations patch itself, no separate step for either.
+  - *"Before you patch an identity broker instance from 9.1.0.x to
+    9.1.1, you must first patch the respective VCF management services
+    runtime that hosts the identity broker instance."*
+  - *"Before you patch Salt RaaS from 9.1.0.x to 9.1.1, you must first
+    patch the respective VCF management services runtime that hosts the
+    Salt RaaS instance."* – same rule as Identity Broker: the runtime
+    hosting a service patches before that service.
+  - *"Before you patch the migration service engine component from
+    9.1.0.x to 9.1.1, you must first patch VCF Automation."*
+  - *"When you patch a software depot instance, patching other
+    components is blocked because the patch binaries are unavailable."*
+    – don't try to run other component patches concurrently with a depot
+    patch; they'll have nothing to patch against.
+
+  **Net order:** Fleet Lifecycle → VCF Operations (+ its License
+  Server/Cloud Proxy, bundled automatically) → the VCF Management
+  Services Runtime hosting each Identity Broker/Salt RaaS instance →
+  those services themselves → ESX hosts. VCF Automation ahead of its own
+  migration service engine. Nothing in parallel with VCF Operations or a
+  depot patch in progress.
 
 ---
 

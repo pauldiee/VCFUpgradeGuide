@@ -209,6 +209,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '20-depot-and-binary-management',
+    step: 'Reference',
+    band: 'Reference',
+    label: 'Depot and binary management',
+    icon: 'download',
+    blurb: 'VCF software depot – online/offline modes, download tokens vs. activation codes, the VCF Download Tool, and Day-N binary uploads. Applies to VCF or VVF.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',
