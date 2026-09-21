@@ -44,38 +44,140 @@ have a strict order.
 Nothing below can start until the target version's binaries are staged
 in the software depot – **online** (Fleet Management connects straight
 to Broadcom) or **offline** (an internal web server, populated ahead of
-time, per [Set Up an Offline
-Depot](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/set-up-an-offline-depot-web-server-for-vmware-cloud-foundation.html)
-and [Configure a Software Depot Connection
-Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/connect-sddc-manager-to-a-software-depot-for-downloading-bundles.html)).
-Only one depot connection can be ACTIVE at a time.
+time). Only one depot connection can be ACTIVE at a time.
 
-- **Download token** works for general VVF/VCF binaries; **activation
-  code is mandatory for ESX binaries specifically** and is the
-  direction Broadcom is standardizing on for everything else too.
-- The **VCF Download Tool (VCFDT)** does the actual downloading for an
-  offline depot – separate commands for install binaries (`--type
-  INSTALL`), upgrade/patch binaries (`--type UPGRADE
-  --patches-only --component-version=<target>`), and ESX binaries
-  (`esx download`, activation code only). Command examples: [VCFDT
-  Cheatsheet](https://williamlam.com/2026/05/vcf-9-1-vcf-download-tool-vcfdt-cheatsheet.html),
-  full reference: [Download Binaries to an Offline Depot Using the VCF
-  Download
-  Tool](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/download-bundles-to-an-offline-depot.html).
-- A disconnected depot doesn't auto-fetch **Day-N** binaries either –
-  optional components (Log Management, Real-time Metrics, VCF
-  Operations for Networks) or a new VCF Instance/domain need their own
-  manual upload, per [Download Binaries to Software Depot in
-  Disconnected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/offline-download-of-vmware-cloud-foundation-5-2-upgrade-bundles.html).
-- **A depot patch blocks every other component patch while it's in
-  progress** – per Broadcom's [Lifecycle Management of VCF
-  Components](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components.html),
-  *"patching other components is blocked because the patch binaries are
-  unavailable."* Don't schedule a depot update alongside anything else.
+**Building the offline depot web server itself is a one-time,
+foundational task** – standing up the box, the TLS cert (SAN, not just
+CN), the auth split (`PROD/COMP` and `PROD/metadata` behind basic auth,
+`PROD/vsan/hcl` and `umds-patch-store` open), and the initial activation
+code registration. That's covered in full, field-verified detail in the
+companion repo's [Binary Depot – Offline Depot & the VCF Download
+Tool](https://vcf-planning.hollebollevsan.nl/docs/09-binary-depot/) –
+build it there if it doesn't already exist, then come back here for the
+patching-specific part below.
 
-**Download every component's binaries before starting**, not
-incrementally as you reach each one – running out partway through the
-order below stalls the whole sequence.
+**What's specific to patching an already-deployed fleet** (as opposed to
+the initial install) is different enough to call out on its own:
+
+### Filling the depot for a fleet upgrade – the loop
+
+The install-time depot fill and a Day-N patch fill draw on **different
+binary sets**, and VCF Operations' UI doesn't spell out how to get the
+patch set – it hands you a spec file and a one-line hint. The loop:
+
+1. **Sync the lifecycle metadata first.** The Upgrade page shows *Last
+   lifecycle metadata sync time* with a **Sync** link – if it reads
+   `N/A`, sync it and confirm a real timestamp before going further;
+   binary availability is evaluated against that metadata.
+2. **CHECK BINARY AVAILABILITY** – tells you what the fleet needs and
+   what the depot is missing. This is the authoritative answer, not
+   anything the CLI reports on its own.
+3. **EXPORT DOWNLOAD SPECIFICATION** if you want the exact subset for
+   this hop – produces a `manage-binaries.json` file and the
+   instruction "use it with the VCF Download Tool to obtain these
+   binaries." **It never names the flag** – it's
+   `--download-spec-file`.
+4. **Download** (below), into the depot store the fleet is actually
+   registered against – it's easy to accidentally fill a staging
+   directory nobody reads.
+5. **Re-run CHECK BINARY AVAILABILITY.** Still reporting gaps after a
+   successful download? Suspect the metadata sync or the depot path,
+   not the binaries themselves.
+
+**Three ways to actually pull the binaries**, in order of precision:
+
+**A – the spec file** (least guesswork):
+
+```bash
+./vcf-download-tool binaries download \
+  --download-spec-file /root/manage-binaries.json \
+  --depot-download-activation-code-file /root/reg.txt \
+  --depot-store /depotdata \
+  --proxy-server <fqdn:port>
+```
+
+**B – a filtered catalog pull**, no spec file, but **the size trade is
+not small**: a bare release line returns *every* patch line at once –
+`9.1.0.0`, `.0100`, `.0200`, `.0300`, `.0400` – so a single point
+upgrade can drag in four vCenter builds at ~28.7 GiB each, comfortably
+over 100 GiB for one hop if left unfiltered:
+
+```bash
+./vcf-download-tool binaries download --sku VCF --vcf-version 9.1.0 \
+  --type UPGRADE --depot-store /depotdata \
+  --depot-download-activation-code-file /root/reg.txt \
+  --proxy-server <fqdn:port>
+```
+
+**C – by binary ID** (the middle ground – no spec file, no superfluous
+lines either): list first with `binaries list`, take the IDs for the
+release wanted, feed them back with `--id=<id1>,<id2>,<id3>`.
+
+Key filters (`--vcf-version` accepts ranges like `9.1.0..9.1.1`;
+`--component` takes `VCENTER`, `SDDC_MANAGER_VCF`, `NSX_T_MANAGER`,
+`ESX_HOST`, `VROPS`, `VRLI`, `VRNI`, `VSP`, and others; `--type` is
+`INSTALL` or `UPGRADE` only – there's no `PATCH` type, though `UPGRADE`
+rows display as `PATCH`). Run long pulls detached (`screen`/`nohup`) and
+watch `<toolroot>/log/vdt.log` – the tool has its own free-space
+precheck and refuses rather than filling the disk.
+
+### The gotcha that looks nothing like a depot problem
+
+**A fresh download lands root-owned; nginx (or whichever web server)
+can't read it, and answers 403 – but the fleet never surfaces a 403.**
+Instead, a VCF Operations upgrade precheck fails at subtask **Stage
+Precheck Binaries** with a generic `ops.task.stage.failed` – that
+task's only job is fetching bits, so a failure there is a
+binary-delivery problem, not an environment-readiness one, even though
+nothing about the error says "permissions." Re-apply ownership after
+**every** download, not just the initial build:
+
+```bash
+chown -R nginx:nginx /var/www/offline_depot
+chmod -R a+rX /var/www/offline_depot
+```
+
+(Capital `X` sets execute on directories only, so directories stay
+traversable and files stay non-executable.) The durable fix – a systemd
+path unit that re-applies this automatically on every write to the
+store, so it stops depending on someone remembering – is in the
+companion repo's [depot doc, §6](https://vcf-planning.hollebollevsan.nl/docs/09-binary-depot/#gotcha-a-fresh-download-lands-root-owned--nginx-403s-and-the-precheck-fails).
+
+### A disconnected depot doesn't auto-fetch Day-N binaries either
+
+Optional components added after initial bring-up (Log Management,
+Real-time Metrics, VCF Operations for Networks) or a new VCF
+Instance/domain need their own manual binary upload – not covered by
+whatever was staged for the original install or a routine patch cycle.
+
+### Reclaiming space
+
+`binaries cleanup` takes the same filter groups as `download`
+(`--vcf-version`, `--id`, or `--download-spec-file`, mutually
+exclusive). **Always use the exact four-part version** when pruning one
+line – a short version string matches broadly on `cleanup` too, and
+there's no `--dry-run`; preview with `binaries list` using the same
+filters first:
+
+```bash
+./vcf-download-tool binaries cleanup --depot-store=/depotdata \
+  --vcf-version=9.1.0.0100 --type=UPGRADE
+```
+
+Safest to remove, in order of confidence: superseded patch lines you
+won't roll back to, then `INSTALL` bundles for components already
+deployed – but keep the ESX install bundle if a future host
+commissioning or cluster add is still possible.
+
+---
+
+**A depot patch blocks every other component patch while it's in
+progress** – per Broadcom's [Lifecycle Management of VCF
+Components](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components.html),
+*"patching other components is blocked because the patch binaries are
+unavailable."* Don't schedule a depot update alongside anything else,
+and **download every component's binaries before starting** the order
+in Step 2 – running out partway through stalls the whole sequence.
 
 ---
 
@@ -220,6 +322,7 @@ ordering and rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
 
 ## Sources
 
+- [Binary Depot – Offline Depot & the VCF Download Tool (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/09-binary-depot/) – the companion repo's full, field-verified offline-depot build-out and the Day-N "filling the depot for a fleet upgrade" procedure Step 1 draws on above
 - [Lifecycle Management of VCF Components](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components.html) – the mandatory dependency-order quotes in Step 2
 - [Configure a Software Depot Connection Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/connect-sddc-manager-to-a-software-depot-for-downloading-bundles.html)
 - [Set Up an Offline Depot](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/set-up-an-offline-depot-web-server-for-vmware-cloud-foundation.html)

@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.3.8 – 2026-09-21
+- **Expand `docs/20`'s Step 1 with the field-verified depot procedure
+  from the companion repo.** `VCF9-DeploymentPlanning/docs/09-binary-depot.md`
+  already has a much deeper, field-verified treatment of this than the
+  web-research-sourced version here – cross-referenced per this repo's
+  "cross-reference, don't duplicate" convention rather than re-deriving
+  it. Points to that doc for the one-time offline-depot build-out
+  (web server, TLS cert SANs, the auth split), and pulls the **Day-N
+  "filling the depot for a fleet upgrade" procedure in full** since
+  that's exactly this doc's scope: the sync → check → export → download
+  → re-check loop, the undocumented `--download-spec-file` flag, three
+  ways to pull binaries (spec file / filtered catalog / by ID) with the
+  100+ GiB size-trade warning for an unfiltered pull, the root-owned
+  file → 403 → misleading "Stage Precheck Binaries" failure gotcha, and
+  `binaries cleanup` for reclaiming space. Both cross-repo links
+  verified live (page + anchor) before shipping.
+
 ## v1.3.7 – 2026-09-21
 - **Inline the sources throughout `docs/20`** instead of leaving them
   only in the bottom Sources list – each claim (Express Patch rules,
