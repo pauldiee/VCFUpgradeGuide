@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.3.3 – 2026-09-21
+- **Document licensing an air-gapped/isolated vCenter in `docs/05`.**
+  New subsection under "Deploy License Server": vCenter 9.x can't fall
+  back to a standalone license key when it has no path to any VCF
+  Operations instance (symptom: "No licenses found," no manual key
+  field, stuck in Evaluation mode). Per Broadcom KB 404155, centralized
+  license management across disconnected sites isn't supported – each
+  isolated segment needs its own VCF Operations instance *and* its own
+  License Server (confirmed against Broadcom's License Server Overview:
+  no single-vCenter exception exists), each carrying entitlement across
+  the air gap via the same Business Services Console file exchange as
+  the disconnected-mode steps above. Also clarifies that this doesn't
+  mean standing up a new fleet – a standalone, unattached VCF Operations
+  instance is a normal pattern, not an SDDC-Manager-orchestrated fleet.
+
 ## v1.3.2 – 2026-09-21
 - **New guide: `docs/19-vvf-vs-vcf-feature-comparison.md`.** Summarized
   from Broadcom's official Sep 2026 "VCF 9.1.1 and VVF 9.1.1 Feature

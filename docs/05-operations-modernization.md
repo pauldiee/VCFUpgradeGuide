@@ -314,6 +314,65 @@ Confirm which mode fits the target environment's firewall policy before
 committing – switching from disconnected to connected mode later is
 possible but is its own documented procedure, not a toggle.
 
+#### Isolated vCenter with no path to a shared VCF Operations/License Server
+
+**A vCenter that's genuinely air-gapped from every VCF Operations
+instance in the fleet can't fall back to a standalone license key.** Per
+Broadcom KB 404155, *"vCenter 9.0 no longer functions as a standalone
+licensing authority. Entitlements must be validated via VCF
+Operations."* Without a reachable VCF Operations to validate against, the
+symptom is unambiguous: the Version 9.x Licenses section shows **"No
+licenses found,"** there's **no field to manually input a license key**
+at all, and the vCenter sits stuck in **Evaluation mode** indefinitely,
+even post-upgrade. **There is no lighter fallback** – 9.x retired manual
+25-character key entry entirely, and there's no way to entitle a vCenter
+without a VCF Operations instance somewhere it can reach.
+
+**The fix is not "put this vCenter in disconnected mode against the
+fleet's existing VCF Operations"** – per the same KB, *"centralized
+license management across disconnected sites is not supported; each
+environment requires its own management instance."* Each genuinely
+isolated network segment needs its **own VCF Operations appliance – and
+its own License Server**, deployed the same way as the connected/
+disconnected steps above. VCF Operations orchestrates registration, but
+per Broadcom's own License Server Overview, it cannot hold or serve
+licenses by itself: *"You must add at least one license server to each
+VCF Operations instance that you use for license management,"* with no
+exception carved out for a single-vCenter or standalone scenario:
+
+1. Deploy a VCF Operations appliance **inside the isolated network** –
+   OVA from the Broadcom Support Portal, same as any other VCF
+   Operations deployment (see [Walkthrough
+   B](#walkthrough-b-fresh-install) above).
+2. Integrate it with the local, isolated vCenter instance.
+3. Deploy a **License Server appliance** inside the same isolated
+   network and register it to this local VCF Operations instance – same
+   OVA/registration-code procedure as [step 4
+   above](#4-deploy-license-server), just against the local instance
+   instead of a shared one.
+4. Generate a registration request from the local VCF Operations UI.
+5. From a **separate machine that does have internet access**, upload
+   the request to the VCF Business Services Console to obtain a license
+   entitlement file – the same disconnected-mode file-exchange pattern
+   as above, just carried across the air gap by hand rather than network
+   connectivity.
+6. Import the entitlement file back into the isolated VCF Operations
+   instance.
+7. Add the licenses to the local License Server, then assign them to the
+   vCenter and ESX hosts from VCF Operations' licensing interface.
+
+**This does not mean standing up a new fleet.** A "fleet" specifically
+means SDDC Manager / Fleet Management orchestrating a VCF instance –
+nothing above touches either. This VCF Operations appliance can stay a
+bare, unattached instance whose only job is entitling this one vCenter,
+the same documented pattern already used in [Walkthrough
+B](#walkthrough-b-fresh-install): *"Building VCF Operations standalone
+first and attaching SDDC Manager once the fleet exists is a normal,
+documented pattern, not a workaround."* An upgrade project touching
+multiple isolated network segments still needs to budget for **one VCF
+Operations appliance per segment** – but each one is just that: a
+standalone appliance, not a fleet.
+
 ### 5. Migrate content from the old cluster
 
 On the **old** cluster:
@@ -496,4 +555,5 @@ notes for a non-HA removal:
 - [Register VCF Operations in Connected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/register-vcf-operations/register-vcf-operation-in.html)
 - [Register VCF Operations in Disconnected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations/register-vcf-operations-in-disconnected-mode.html)
 - [Switch from Disconnected to Connected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/switch-from-disconnected-to-connected-mode.html)
+- [Licensing vCenter 9.x and ESXi 9.x in Air-gapped Environments (Broadcom KB 404155)](https://knowledge.broadcom.com/external/article/404155/unable-to-license-vcenter-after-upgradin.html) – the air-gapped/isolated licensing procedure, one VCF Operations instance per isolated segment
 - [VMware Aria Operations Cluster Node Networking Requirements](https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/getting-started-with-vmware-aria-operations-8-18/preparing-for-installation/requirements/cluster-requirements/cluster-nodes-general-requirements/cluster-nodes-network-requirements.html) – same-subnet requirement behind the fresh-vs-in-place topology check
