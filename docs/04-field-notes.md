@@ -117,6 +117,14 @@ with a `DELETE …/casa/auth/users` call.
   SDDC Manager / VCF Operations Fleet Management.
 - After the vCenter 9 upgrade, re-check the vCenter LCM **depot token** (see
   above).
+- **vCenter's outbound proxy config file changed and is not backward
+  compatible.** 8.0.x uses `/etc/sysconfig/proxy`; 9.x uses
+  `/var/lib/vmware-envoy-system-proxy/config.json` instead, and Broadcom
+  explicitly warns not to touch the old file on 9.x. The 9.x VAMI UI's
+  proxy validation is also broken (fails validating through the proxy
+  itself) and rejects CIDR exclusions outright – the JSON file is the only
+  reliable path on 9.x. Full procedure for both versions: [vCenter proxy
+  configuration](16-vcenter-proxy-configuration.md).
 - **GUI installer "invalid SSO credentials" despite a correct password.**
   Seen on a manual, non-fleet-managed vCenter upgrade. Confirmed cause: a
   **customized SSO domain suffix** typed incorrectly – reachability, the

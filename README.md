@@ -96,6 +96,7 @@ phase:
 | Path              | Purpose                                                |
 | ----------------- | ------------------------------------------------------- |
 | `docs/04-field-notes.md` | Known issues and gotchas from real upgrades |
+| `docs/16-vcenter-proxy-configuration.md` | vCenter appliance outbound proxy config, both the 7.0.x/8.0.x and 9.x methods |
 
 **Hardware addenda:**
 

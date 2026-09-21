@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.1.9 – 2026-09-21
+- **New guide: `docs/16-vcenter-proxy-configuration.md`.** Configuring the
+  vCenter appliance's own outbound proxy turned out to have two
+  incompatible methods depending on major version – 7.0.x/8.0.x uses
+  `/etc/sysconfig/proxy` (VAMI GUI or manual file edit, KB 370265); 9.x
+  uses a different JSON file, `/var/lib/vmware-envoy-system-proxy/config.json`,
+  and explicitly warns against touching the old file (KB 402684). The 9.x
+  VAMI UI's proxy validation is also broken and rejects CIDR exclusions,
+  making the JSON file the only reliable path there. Added to
+  `README.md`, `web/src/nav.ts` (Reference band, all three tracks), and
+  `CLAUDE.md`'s file layout table; cross-linked from a new gotcha bullet
+  in `docs/04-field-notes.md`'s "NSX and vCenter" section.
+
 ## v1.1.8 – 2026-09-21
 - **Lab-verify the `Get-VDSwitch` spot-check line in `docs/13`.** Ran
   against the holodeck lab (PowerCLI 13.5.1, vCenter 9.1.1) – returned

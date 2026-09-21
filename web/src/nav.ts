@@ -173,6 +173,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf', 'vsphere'],
   },
   {
+    slug: '16-vcenter-proxy-configuration',
+    step: 'Reference',
+    band: 'Reference',
+    label: 'vCenter proxy configuration',
+    icon: 'network-wired',
+    blurb: 'Configuring the vCenter appliance\'s own outbound proxy – the 7.0.x/8.0.x file method and the different, JSON-based 9.x method. Applies to VCF, VVF, or standalone vSphere.',
+    tracks: ['vcf', 'vvf', 'vsphere'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',
