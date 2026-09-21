@@ -137,6 +137,55 @@ is informational, not necessarily something to fix – confirm the service
 is genuinely orphaned (the integration was removed) before touching it,
 rather than treating every warning as an action item.
 
+**Field-observed symptom: decommissioned Site Recovery Manager / VMware
+Live Site Recovery left behind.** A common, confirmable source of that
+same orphaned-registration warning: an old SRM/VLSR appliance that was
+decommissioned improperly, or that became unreachable before it could
+unregister itself cleanly (e.g. deleted or powered off before running
+its own uninstall/unregister flow). Per Broadcom KB
+[337576, "Cleaning up decommissioned SRM registrations"](https://knowledge.broadcom.com/external/article/337576/cleaning-up-decommissioned-srm-registrations.html),
+symptoms besides the lsdoctor warning include SSL errors unregistering
+via the appliance's own VAMI, a `"Failed to connect to Site Recovery
+Manager Server at https://<IP>:9086/vcdr/vmomi/sdk"` connection-refused
+error in the vSphere Client, and stale entries under **vCenter →
+Administration → Client Plug-Ins**. Applies to SRM 8.x, VLSR 9.0.2.4, and
+vCenter 7.x/8.x. Relevant if disaster recovery is in scope for the
+upgrade – see [Disaster Recovery](02-disaster-recovery.md) for the
+SRM/VLSR convergence workstream this can surface during.
+
+Root cause, quoted verbatim: *"Stale registrations and solution users
+remain orphaned in the vCenter VMDIR database when an appliance is
+decommissioned improperly or is no longer reachable."* Three-step
+cleanup, in order:
+
+1. **Unregister the extension via the vCenter MOB.** Navigate to
+   `https://<vCenter_FQDN>/mob` → **Content** → **ExtensionManager** →
+   **More** (to see the full list) → find the extension prefixed
+   `com.vmware.vcDr`, open it, and check the **Server** field's IP
+   address to confirm it's the stale instance before touching anything.
+   Back in ExtensionManager, click **UnregisterExtension**, paste that
+   extension's ID, **Invoke Method**.
+2. **Remove the service registration via CLI.** SSH to the vCenter, then:
+   ```
+   cd /usr/lib/vmware-lookupsvc/tools/
+   ./lstool.py list --url http://localhost:7090/lookupservice/sdk --no-check-cert --ep-type com.vmware.dr.vcDr
+   ```
+   Identify the Service ID matching the stale IP, then:
+   ```
+   ./lstool.py unregister --url http://localhost:7090/lookupservice/sdk --id <Service_ID> --user 'administrator@vsphere.local' --password '<password>' --no-check-cert
+   ```
+3. **Remove the solution user via VMDIR/LDAP**, if step 2 didn't fully
+   clear it. Connect an LDAP browser (e.g. JXplorer) to the vCenter –
+   Host `<vCenter_IP>`, Port `389`, Base DN `dc=vsphere,dc=local` –
+   navigate to **vsphere → Configuration → Sites → [Site_Name] →
+   LookupService → ServiceRegistrations**, and delete the identified
+   Service IDs.
+
+Verify the IP/Service ID at every step before deleting anything – this
+removes registrations directly from the SSO domain's database, with no
+undo beyond whatever snapshot/backup discipline the surrounding
+procedure already requires.
+
 ### Repair modes – all more invasive than the read-only check
 
 None of these reboot the appliance VM, but **every one of them requires a
@@ -193,3 +242,4 @@ guessed at.
 
 - [Using the VCF Diagnostic Tool for vSphere (VDT) (KB 344917)](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html)
 - [Using the "lsdoctor" Tool (KB 320837)](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html)
+- [Cleaning up decommissioned SRM registrations (KB 337576)](https://knowledge.broadcom.com/external/article/337576/cleaning-up-decommissioned-srm-registrations.html)

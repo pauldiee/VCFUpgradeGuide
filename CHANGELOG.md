@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.2.5 – 2026-09-21
+- **Document decommissioned SRM/VLSR cleanup in `docs/17`.** A common,
+  confirmable source of lsdoctor's generic "3rd party/Orphaned service
+  registrations" warning: an old SRM/VLSR appliance that was
+  decommissioned improperly or went unreachable before it could
+  unregister itself. Added the field-observed symptom, other ways it
+  shows up (VAMI SSL error, a specific vSphere Client connection-refused
+  error, stale Client Plug-Ins entries), and the full three-step cleanup
+  (vCenter MOB extension unregister, `lstool.py` CLI service-registration
+  removal, VMDIR/LDAP solution-user removal as a last resort) per
+  Broadcom KB 337576. Cross-linked from `docs/02-disaster-recovery.md`'s
+  Convergence section, since this is exactly the kind of leftover an
+  SRM/VLSR convergence workstream can surface.
+
 ## v1.2.4 – 2026-09-21
 - **New guide: `docs/18-vmware-tools-productlocker.md`.** ProductLocker
   is the per-host symlink controlling where ESXi looks for the VMware

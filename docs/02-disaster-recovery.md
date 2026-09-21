@@ -26,6 +26,14 @@ combined appliance. The Converge workflow requires the source to be at
 needs an interim patch first. Versions 9.0.3 and later use a normal in-place
 update instead.
 
+**If an old SRM/VLSR appliance was decommissioned improperly (or went
+unreachable) instead of cleanly unregistering itself**, its registration
+can be left orphaned in the vCenter SSO domain – surfaces as an lsdoctor
+warning, an SSL error unregistering via VAMI, or stale entries under
+vCenter's Client Plug-Ins. Cleanup procedure: [VDT and lsdoctor:
+self-service diagnostic tools → decommissioned SRM
+symptom](17-vdt-and-lsdoctor-diagnostics.md#always-run-the-read-only-check-first).
+
 ## Bridge version – why DR goes first
 
 Protection and Recovery 9.1.0.02xx is supported on vCenter and ESX at **8.0
