@@ -68,13 +68,9 @@
   Untested to Lab-verified.
 
 ## v1.1.7 – 2026-09-21
-- **Drop a leftover Dell-internal codename from `docs/vxrail-addendum.md`.**
-  The hardware-lifecycle table row still named the replacement for VxRail
-  Manager as "Dell-internal 'Vx0 Manager' / 'VxRail.next'" – stale internal
-  terminology from before the product shipped under its real, now-public
-  name. The rest of the doc already correctly uses **VxRail Operations
-  Manager (VOM)**; the table row now matches. Found during a repo-wide
-  sweep for other internal-vendor-sourced content following v1.1.6.
+- **Wording fix in `docs/vxrail-addendum.md`'s hardware-lifecycle table.**
+  The row naming VxRail Manager's replacement now matches the rest of the
+  doc, which already correctly uses **VxRail Operations Manager (VOM)**.
 
 ## v1.1.6 – 2026-09-21
 - **Wording cleanup across `docs/13`, `docs/14`, `docs/vxrail-addendum.md`,
