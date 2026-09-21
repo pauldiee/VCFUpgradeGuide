@@ -39,7 +39,7 @@ conversion, not a patch**.
 | Area | 5.x model | 9.x model |
 | --- | --- | --- |
 | Software lifecycle | SDDC Manager interacts directly with VxRail Manager | SDDC Manager no longer interacts with VxRail Manager; standard VCF lifecycle management |
-| Hardware lifecycle | VxRail Manager handles software **and** hardware/firmware | A new component (Dell-internal "Vx0 Manager" / "VxRail.next") handles hardware lifecycle and firmware – primary in the management domain, secondary alongside each workload-domain cluster |
+| Hardware lifecycle | VxRail Manager handles software **and** hardware/firmware | **VxRail Operations Manager (VOM)** (see conversion note below) handles hardware lifecycle and firmware – primary in the management domain, secondary alongside each workload-domain cluster |
 | Hypervisor patching | vSphere Update Manager (VUM) baselines | **vSphere Lifecycle Manager (vLCM) images – mandatory.** Convert every baseline-managed cluster before the upgrade |
 | Bundle stream | VxRail-specific VCF builds | Single VCF codebase across vendors; VxRail nodes treated like vSAN Ready Nodes |
 | Dell engagement | Optional for routine upgrades | **Dell Professional Services (RPS) engagement expected** for the brownfield conversion |

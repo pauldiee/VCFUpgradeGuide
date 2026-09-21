@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.1.7 – 2026-09-21
+- **Drop a leftover Dell-internal codename from `docs/vxrail-addendum.md`.**
+  The hardware-lifecycle table row still named the replacement for VxRail
+  Manager as "Dell-internal 'Vx0 Manager' / 'VxRail.next'" – stale internal
+  terminology from before the product shipped under its real, now-public
+  name. The rest of the doc already correctly uses **VxRail Operations
+  Manager (VOM)**; the table row now matches. Found during a repo-wide
+  sweep for other internal-vendor-sourced content following v1.1.6.
+
 ## v1.1.6 – 2026-09-21
 - **Stop naming Broadcom's internal TC-run health-check tool in the public
   docs.** Across `docs/13`, `docs/14`, `docs/vxrail-addendum.md`, and
