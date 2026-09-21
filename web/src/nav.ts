@@ -209,12 +209,12 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
-    slug: '20-depot-and-binary-management',
+    slug: '20-patching-an-existing-vcf9-fleet',
     step: 'Reference',
     band: 'Reference',
-    label: 'Depot and binary management',
+    label: 'Patching an existing VCF 9.x fleet',
     icon: 'download',
-    blurb: 'VCF software depot – online/offline modes, download tokens vs. activation codes, the VCF Download Tool, and Day-N binary uploads. Applies to VCF or VVF.',
+    blurb: 'Applying a maintenance/patch release to a fleet already on VCF 9.x – depot prep, the mandatory component patching order, UI walkthrough, and known gotchas. Applies to VCF or VVF.',
     tracks: ['vcf', 'vvf'],
   },
   {

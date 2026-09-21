@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.3.5 – 2026-09-21
+- **Renamed and expanded `docs/20` into the full "how to patch a
+  current VCF 9.x fleet" guide** (`docs/20-patching-an-existing-vcf9-fleet.md`,
+  was `docs/20-depot-and-binary-management.md`). The depot/binary content
+  from the previous version is folded in as Step 1 rather than being the
+  whole doc. Added: the mandatory dependency chain from `docs/04`
+  (trimmed there to a short pointer, same cross-reference pattern as
+  `docs/17`); a full worked-example patching order for a real 9.0.1 →
+  9.0.2 run (Fleet Management → Operations for Logs → Operations →
+  Operations for Networks → Automation → SDDC Manager → NSX → vCenter →
+  host firmware → ESX → vSAN File Services), explicitly flagged as a
+  practitioner account rather than Broadcom TechDocs; the actual UI
+  click-path (Binary Management → Download → Trigger Inventory Sync →
+  Run Prechecks → remediate → Upgrade → monitor via Tasks); four known
+  gotchas (90-day password expiry, VCF Operations for Networks disk
+  space, expired NSX Edge credentials, vCenter RDU backup/spare-IP
+  prerequisites); and a rough per-component timing table. Updated
+  `README.md`, `web/src/nav.ts`, and `CLAUDE.md` to the new filename.
+
 ## v1.3.4 – 2026-09-21
 - **Document the day-2 patching order for VCF Management Services
   components, and add `docs/20-depot-and-binary-management.md`.** Two
