@@ -206,13 +206,16 @@ Expect every cluster to behave differently.
   broken service registrations, stale solution users) don't always
   present as the specific symptoms above; when something in this section
   looks close but doesn't quite match, run `lsdoctor.py -l` (read-only
-  check) first before assuming it's something new. Per
-  [KB 320837](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html),
-  its repair modes (`-t` trust fix, `-r` rebuild, `-u` solution users) are
-  more invasive and need a same-instant snapshot across every VC/PSC in
-  the SSO domain first – see
-  [IWA to AD-over-LDAPS migration](06-iwa-ldaps-migration.md#validate-ssolookup-service-health-with-lsdoctor)
-  for a worked example of the read-only check in context.
+  check) first before assuming it's something new. Full reference,
+  download/setup, all repair-mode flags, and the mandatory
+  same-instant-across-the-whole-SSO-domain snapshot precaution: [VDT and
+  lsdoctor: self-service diagnostic
+  tools](17-vdt-and-lsdoctor-diagnostics.md) (also covers **VDT**, the
+  broader appliance health-check tool worth running first). One
+  field-observed failure worth knowing by name: **"Node In Multiple
+  Sites"** – the read-only check's own output names the exact fix
+  (`lsdoctor.py -r`, option 2) for the affected node, see that doc for the
+  full example.
 
 ---
 

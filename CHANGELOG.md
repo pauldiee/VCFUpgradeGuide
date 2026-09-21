@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.2.1 – 2026-09-21
+- **New guide: `docs/17-vdt-and-lsdoctor-diagnostics.md`.** Both are
+  Broadcom's self-service, no-PSO-account-needed diagnostic tools –
+  consolidated rather than split, since VDT (general appliance health
+  sweep: DNS/NTP/disk/certs/AD-LookupService/services/VCHA) and lsdoctor
+  (deeper Lookup Service/SSO/vmdir repair) are meant to be used in
+  sequence. Pulled the existing VDT walkthroughs out of `docs/07` and
+  `docs/13` into this one reference (both now link to it instead of
+  duplicating the steps). Added the full lsdoctor flag table plus, per a
+  fresh Broadcom KB pull: **every lsdoctor repair mode requires a
+  `service-control` restart afterward** (not an appliance reboot, but a
+  vCenter/PSC management-plane outage), with the exact restart scope
+  quoted per flag (`-t` and `-p` are site-/LB-wide, not single-node) –
+  something to plan a maintenance window around, not assume is
+  consequence-free. Also documented a field-observed "Node In Multiple
+  Sites" failure and its tool-provided fix. Cross-linked from
+  `docs/04-field-notes.md` and `docs/06-iwa-ldaps-migration.md`; added to
+  `README.md`, `web/src/nav.ts`, and `CLAUDE.md`.
+
 ## v1.2.0 – 2026-09-21
 - **Expand `docs/16-vcenter-proxy-configuration.md`.** It shipped thin;
   added: the `wget`-vs-`curl` distinction behind why proxy handling used

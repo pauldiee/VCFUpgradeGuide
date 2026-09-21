@@ -182,11 +182,10 @@ cd /root/ && unzip vdt-<version_number>.zip && cd vdt-<version_number>
 python vdt.py
 ```
 
-See [vCenter manual GUI upgrade → Validate with VDT before you
-start](07-vcenter-manual-upgrade.md#validate-with-vdt-before-you-start)
-for the full walkthrough (written for the standalone path, but the tool
-and its checks are identical here). Source:
-[Broadcom KB 344917](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html).
+See [VDT and lsdoctor: self-service diagnostic
+tools](17-vdt-and-lsdoctor-diagnostics.md) for the full reference,
+including what to do next if the Lookup Service / AD check turns up
+something (lsdoctor).
 
 ---
 

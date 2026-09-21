@@ -124,30 +124,10 @@ condensed:
 
 With no SDDC Manager here, there's no fleet precheck to catch a bad source
 appliance before committing to the upgrade window – run the **VCF
-Diagnostic Tool for vSphere (VDT)**, Broadcom's own health-check script,
-against the source appliance first. Per
-[Broadcom KB 344917, "Using the VCF Diagnostic Tool for vSphere (VDT)"](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html):
-
-1. Download the VDT version matching the source vCenter build from the KB
-   attachments, copy it to the appliance (WinSCP or equivalent) into
-   `/root`, then extract it:
-   ```
-   cd /root/
-   unzip vdt-<version_number>.zip
-   cd vdt-<version_number>
-   ```
-2. Run it:
-   ```
-   python vdt.py
-   ```
-   Prompts for the `administrator@<sso-domain>` password – *"Many checks
-   will still run even if credentials are not supplied,"* but supply it
-   for full coverage.
-3. Review the PASS/FAIL/WARN results before proceeding. Checks relevant to
-   *this* upgrade specifically: **DNS**, **NTP**, **disk space**,
-   **certificates**, and **Lookup Service / AD integration** – all things
-   the prerequisites above already assume are healthy; VDT is how to
-   actually confirm that instead of assuming it.
+Diagnostic Tool for vSphere (VDT)** against the source appliance first.
+Full reference, download/setup, and what to do next if the Lookup
+Service / AD check flags something: [VDT and lsdoctor: self-service
+diagnostic tools](17-vdt-and-lsdoctor-diagnostics.md).
 
 A FAIL here is cheaper to fix now than mid-migration – Stage 2's own
 pre-upgrade check (below) re-verifies some of the same ground, but only

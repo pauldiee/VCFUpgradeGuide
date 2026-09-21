@@ -1,0 +1,199 @@
+# VDT and lsdoctor: self-service diagnostic tools
+
+Two Broadcom-provided, **self-service** diagnostic tools for a vCenter
+appliance – both are plain KB attachments, no Broadcom PSO account or
+access gating needed (unlike Broadcom's TC-run health-check tool, see
+[Full VCF upgrade sequence: Run the pre-upgrade
+precheck](13-vcf-upgrade-sequence.md#run-the-pre-upgrade-precheck)).
+Between the two, they're where most real answers come from once
+something is actually broken – reach for **VDT** first for a broad health
+sweep, then **lsdoctor** if VDT's Lookup Service/AD check (or any other
+SSO symptom) points deeper into the Lookup Service / vmdir layer. Neither
+is tied to any one migration or upgrade step – both apply whenever a
+vCenter/PSC exists, regardless of track (VCF, VVF, or standalone
+vSphere).
+
+---
+
+## VCF Diagnostic Tool for vSphere (VDT)
+
+A general vCenter appliance health-check script – the closest self-service
+equivalent to an SDDC Manager fleet precheck when there's no SDDC Manager
+to run one from (e.g. the standalone VVF / manual GUI upgrade path). Per
+[Broadcom KB 344917, "Using the VCF Diagnostic Tool for vSphere (VDT)"](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html):
+
+1. Download the VDT version matching the source vCenter build from the KB
+   attachments, copy it to the appliance (WinSCP or equivalent) into
+   `/root`, then extract it:
+   ```
+   cd /root/
+   unzip vdt-<version_number>.zip
+   cd vdt-<version_number>
+   ```
+2. Run it:
+   ```
+   python vdt.py
+   ```
+   Prompts for the `administrator@<sso-domain>` password – *"Many checks
+   will still run even if credentials are not supplied,"* but supply it
+   for full coverage.
+3. Review the PASS/FAIL/WARN results. Checks that matter most for an
+   upgrade specifically: **DNS**, **NTP**, **disk space**,
+   **certificates**, **Lookup Service / AD integration**, **vCenter
+   services**, and **VCHA** – all things a prerequisites checklist
+   assumes are healthy; VDT is how to actually confirm that instead of
+   assuming it.
+
+A FAIL here is cheaper to fix now than mid-migration – run it per
+vCenter before the window opens, not after something's already gone
+wrong. If the FAIL is in the Lookup Service / AD integration check
+specifically, that's the signal to move on to lsdoctor below rather than
+treating it as a standalone DNS/AD problem.
+
+---
+
+## lsdoctor: Lookup Service / SSO / vmdir troubleshooting
+
+**Lookup Service Doctor (`lsdoctor`)** is Broadcom's general-purpose tool
+for **data stored in the PSC database, plus data local to a vCenter** –
+SSL trust mismatches between services, broken/stale service
+registrations, and inconsistent solution users. Reach for it whenever
+something in the SSO/Lookup Service/vmdir layer looks wrong and doesn't
+cleanly match a more specific, already-diagnosed symptom – see
+[Field notes: Identity Broker / VCF SSO](04-field-notes.md#identity-broker--vcf-sso)
+for symptoms this tool has already resolved (Identity Broker encryption
+key desync, NTP-adjacent SSO token failures, ELM drift after breaking
+Enhanced Linked Mode).
+
+For a worked example of the read-only check run at a specific point in a
+migration's flow, see [IWA to AD-over-LDAPS migration → Validate
+SSO/Lookup Service health with
+lsdoctor](06-iwa-ldaps-migration.md#validate-ssolookup-service-health-with-lsdoctor).
+This doc is the general reference; that one shows it in context.
+
+### Supported versions and where to run it
+
+- **vCenter Server 6.7 (Windows-based or VCSA) and later** – covers 7.x,
+  8.x, and 9.x. Per Broadcom KB 320837 (source below), support for the
+  very latest vCenter build can lag slightly behind release, so confirm
+  compatibility with the target build before relying on it right after a
+  new release.
+- Needs **shell/SSH access** to the target node.
+- Works across **embedded PSC, external PSC, and mixed Enhanced Linked
+  Mode deployments spanning multiple SSO sites** – most operations can
+  run from any node within the same SSO site, not necessarily the
+  Primary.
+
+### Download and setup
+
+1. Download the tool attachment from
+   [Broadcom KB 320837, "Using the 'lsdoctor' Tool"](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html).
+2. Copy it to the target vCenter (WinSCP or equivalent), SSH in, and
+   unzip it.
+3. Run it from inside the extracted `lsdoctor-main` directory – it must
+   be run from there, not a copy of individual files elsewhere.
+
+### Always run the read-only check first
+
+```
+python lsdoctor.py -l
+```
+
+(`-l` / `--lscheck`) only reports – it makes no changes, so it's safe to
+run without a fresh snapshot beyond whatever backup discipline the
+surrounding procedure already requires. Resolve anything it flags before
+assuming a separate, unrelated cause for whatever symptom brought you
+here – an unresolved Lookup Service inconsistency tends to surface later
+as a confusing, hard-to-place permission or authentication failure rather
+than a clean error at the point it was actually introduced.
+
+**Field-observed symptom: "Node In Multiple Sites."** The read-only check
+can report the same vCenter node registered under more than one SSO
+site, e.g.:
+
+```
+SSO CHECKS
+    VC Lookup Service Check
+        • SSO Site: default-first-site
+            • [FAIL]    vcenter.example.com (VC Server or CGW)
+                [FAIL]    Node In Multiple Sites
+                            Please run python lsdoctor.py -r option 2 on this node
+                            Affected Nodes: {'default-first-site': 'vcenter.example.com', 'domain': 'vcenter.example.com'}
+                            Documentation: https://knowledge.broadcom.com/external/article?legacyId=80469
+        • SSO Site: site-b
+            • [FAIL]    vcenter.example.com (UNKNOWN)
+                [FAIL]    Node In Multiple Sites
+                            Please run python lsdoctor.py -r option 2 on this node
+                            Affected Nodes: {'site-b': 'vcenter.example.com', 'default-first-site': 'vcenter.example.com'}
+```
+
+The tool's own output names the fix directly: run `python lsdoctor.py -r`
+and choose **option 2** from the rebuild menu for the affected node – per
+[KB legacyId=80469](https://knowledge.broadcom.com/external/article?legacyId=80469)
+that the tool's output itself links to. Take the same-instant, whole-SSO-domain
+snapshot from the warning below **before** running any `-r` option, same
+as any other repair mode.
+
+A `[WARNING]`-level *"3rd party/Orphaned service registrations"* line for
+a service the tool can't associate by hostID/nodeID/serviceID (third-party
+integrations like a storage vendor's vSphere plugin are a common source)
+is informational, not necessarily something to fix – confirm the service
+is genuinely orphaned (the integration was removed) before touching it,
+rather than treating every warning as an action item.
+
+### Repair modes – all more invasive than the read-only check
+
+None of these reboot the appliance VM, but **every one of them requires a
+`service-control` restart afterward** – a vCenter management-plane outage
+for however long that restart takes (running VMs on ESXi are unaffected;
+this is vCenter/PSC service downtime, not workload downtime), and the
+restart scope differs by flag – some are single-node, some are
+domain-wide:
+
+| Flag | Does | Restart scope required afterward (verbatim from KB 320837) |
+| --- | --- | --- |
+| `-l`, `--lscheck` | Read-only diagnostic – always run this first | None – makes no changes |
+| `-t`, `--trustfix` | Corrects SSL trust mismatches in Lookup Service registrations | *"restart all services on all nodes in the SSO site"* – every node in the site, not just the one it ran on |
+| `-r`, `--rebuild` | Rebuilds service registrations – the most significant change; presents an interactive menu with four recovery sub-options | *"restart all services"* |
+| `-u`, `--solutionusers` | Recreates missing or inconsistent solution users | *"restart all services on this node"* – single-node only |
+| `-s`, `--stalefix` | Cleans up stale configuration left over from a 5.x-era upgrade | *"restart all services"* |
+| `-p`, `--pscHaUnconfigure` | Removes PSC HA load-balancer configuration | *"Once lsdoctor has run on all nodes behind the LB, restart services on all of the PSCs"* – run the tool on every node behind the LB first, then restart every one of them |
+
+The restart itself is the standard appliance-wide cycle:
+
+```
+service-control --stop --all && service-control --start --all
+```
+
+**Plan for this like any other vCenter/PSC service restart** – schedule
+it in a maintenance window, expect the vSphere Client and API to be
+unreachable for the restart's duration, and don't run a repair mode
+against a production SSO domain expecting zero interruption. `-t` and
+`-p` are the ones most likely to surprise – they demand a
+site-wide/LB-wide restart, not just the node you ran the command on.
+
+**Before using any repair mode, snapshot the whole SSO domain at the same
+instant.** Quoted verbatim from KB 320837: *"Before using lsdoctor to
+make any changes, ensure you have taken proper snapshots of your SSO
+domain. This means that you must shut down all VCs or PSCs that are in
+the SSO domain at the same time, then snapshot them, and power them on
+again. If you need to revert to one of these snapshots, shut all the
+nodes down, and revert all nodes to the snapshot. Failure to perform
+these steps will lead to replication problems across the PSC
+databases."*
+
+That's a **same-instant, whole-domain** snapshot – not one node at a
+time, and not a live/running-state snapshot. Reverting works the same
+way: shut every node down first, revert every node, then power back on.
+
+Output includes JSON report files (exact paths are printed by the tool
+at run time); the `-r`/`--rebuild` interactive menu's four sub-options
+should be chosen based on what the read-only check surfaced, not
+guessed at.
+
+---
+
+## Sources
+
+- [Using the VCF Diagnostic Tool for vSphere (VDT) (KB 344917)](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html)
+- [Using the "lsdoctor" Tool (KB 320837)](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html)

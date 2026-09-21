@@ -182,6 +182,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf', 'vsphere'],
   },
   {
+    slug: '17-vdt-and-lsdoctor-diagnostics',
+    step: 'Reference',
+    band: 'Reference',
+    label: 'VDT and lsdoctor diagnostics',
+    icon: 'user-lock',
+    blurb: 'Self-service diagnostic tools, no PSO account needed – VDT for a general appliance health sweep, lsdoctor for deeper VC Lookup Service / SSO / vmdir issues. Applies to VCF, VVF, or standalone vSphere.',
+    tracks: ['vcf', 'vvf', 'vsphere'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',

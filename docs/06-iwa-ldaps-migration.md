@@ -217,18 +217,14 @@ after step 6 makes it harder to roll back. Per
    confusing, hard-to-place permission/authentication failures later
    rather than a clean error now.
 
-**If it does find something to fix**, lsdoctor's own repair options
-(`-t`/`--trustfix` for SSL trust mismatches, `-r`/`--rebuild` for service
-registrations, `-u`/`--solutionusers` for solution users) are more
-invasive – KB 320837 is explicit about the precaution first: *"Before
-using lsdoctor to make any changes, ensure you have taken proper
-snapshots of your SSO domain. This means that you must shut down all VCs
-or PSCs that are in the SSO domain at the same time, then snapshot them,
-and power them on again."* Don't run a repair option against a snapshot
-taken while the appliance was still running – see the same
-same-instant-across-the-whole-SSO-domain requirement that
-[step 1](#1-backup-before-touching-anything)'s Enhanced Linked Mode
-sequencing already follows for the pre-change backup.
+**If it does find something to fix**, lsdoctor's repair modes are more
+invasive and need the same-instant-across-the-whole-SSO-domain snapshot
+precaution [step 1](#1-backup-before-touching-anything)'s Enhanced Linked
+Mode sequencing already follows for the pre-change backup – see [VDT and
+lsdoctor: self-service diagnostic
+tools](17-vdt-and-lsdoctor-diagnostics.md) for the full flag reference,
+the exact snapshot and service-restart impact, and a field-observed
+failure example.
 
 ---
 
