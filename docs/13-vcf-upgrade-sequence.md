@@ -139,24 +139,6 @@ starting. Component-specific prechecks (VCF Automation especially) run again
 inside each phase – a green fleet precheck is the entry gate, not the whole
 story.
 
-Broadcom additionally runs an **internal health-check tool** during the
-Technical Consultation gate, access-gated to Broadcom PSO/SRE staff (not a
-public download) rather than something available to run yourself – it
-sweeps every domain, checks VCF components plus ESXi hosts, and produces
-structured, color-coded evidence feeding the go / no-go decision. Confirm
-with your Broadcom TC contact whether it will be run against your site,
-and if so, get the result bundles from them before closing the gate (they
-are not retained indefinitely). (On the [standalone VVF
-path](14-standalone-vvf-upgrade.md), no SDDC Manager exists to run this
-against – Broadcom's equivalent path runs the same checks directly against
-vCenter instead.)
-
-Treat this as a Broadcom-run, Broadcom-owned step: the mechanics of how
-their team runs it and what the tool is called are theirs to document, not
-this repo's – what matters here is that it exists, gates the window, and
-its findings need the same tracking-to-closure treatment as any other
-precheck finding.
-
 No finding should go into the upgrade window unowned: track each one to
 resolution (or an explicit accepted-risk decision) and re-run the precheck
 to confirm it clears before proceeding. This is the **go / no-go gate** –
@@ -169,13 +151,11 @@ company policy), some requiring hardware-vendor investigation, and a small
 remainder needing vendor support escalation. Agree ownership per finding;
 don't assume one team can clear everything.
 
-**VDT is a complementary, self-service option you can run yourself ahead
-of the TC-run precheck above.** The **VCF Diagnostic Tool for vSphere
-(VDT)** – distributed as a normal, publicly available KB attachment, no
-Broadcom account gating needed – runs directly on a vCenter appliance and
-checks DNS, NTP, disk space, certificates, AD/Lookup Service integration,
-vCenter services, and VCHA. Run it per vCenter before the window opens, to
-catch vCenter-level issues early rather than waiting on the TC gate:
+**Also run VDT per vCenter before the window opens**, to catch
+vCenter-level issues early. The **VCF Diagnostic Tool for vSphere
+(VDT)** – distributed as a normal, publicly available KB attachment –
+runs directly on a vCenter appliance and checks DNS, NTP, disk space,
+certificates, AD/Lookup Service integration, vCenter services, and VCHA:
 
 ```
 cd /root/ && unzip vdt-<version_number>.zip && cd vdt-<version_number>
@@ -398,7 +378,7 @@ Confirm each component landed on its expected build.
   | WLD 1+ | vCenter Server | ~1.0 hr | Per WLD |
   | WLD 1+ | ESXi (per host) | ~8-13 hrs | WLDs can run in parallel |
   | All | Aria Suite LCM | ~1.0 hr | If in scope |
-  | All | Post-upgrade checks (TC-run) | TBD | Final step, full environment |
+  | All | Post-upgrade checks | TBD | Final step, full environment |
 - **Safe stopping points.** Every phase boundary is a safe stop – run the
   "before moving on" checks, then either continue or pause. Do not stop
   mid-phase.
@@ -575,12 +555,11 @@ Full procedure, prerequisites, and what does / does not carry:
 
 ## Post-upgrade validation
 
-Broadcom's post-upgrade health assessment mirrors the pre-upgrade gate:
-ask your TC contact to re-run their health-check tool's post-check mode
-and compare the results against the pre-upgrade baseline, re-check **vSAN
-Skyline Health**, and confirm every check returns GREEN. Document any
-residual items or exceptions and package the evidence for handover, the
-same way the pre-upgrade findings were tracked to closure.
+Re-run the fleet precheck and compare the results against the pre-upgrade
+baseline, re-check **vSAN Skyline Health**, and confirm every check
+returns GREEN. Document any residual items or exceptions and package the
+evidence for handover, the same way the pre-upgrade findings were tracked
+to closure.
 
 - **Component builds** – every component on its expected build (Phase 9 table).
 - **VMware Tools** – upgrade guests to **13.1**.
@@ -609,8 +588,8 @@ same way the pre-upgrade findings were tracked to closure.
 
 **Spot-check builds, VMware Tools, vSAN on-disk format, and vDS version with
 PowerCLI** (a fleet-wide sweep across the checklist's build/Tools/vSAN/vDS
-rows – it does not replace your TC's post-check tool or Skyline Health,
-both of which look deeper than these surface-level properties):
+rows – it does not replace the fleet precheck or Skyline Health, both of
+which look deeper than these surface-level properties):
 
 > **Lab-verified 2026-09-19** (my holodeck lab, PowerCLI 13.3.0, vCenter/ESXi
 > 9.1.1) – run as shown below, with one fix from what first shipped here:

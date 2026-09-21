@@ -70,8 +70,7 @@ Not supported for the 9.1 upgrade path – wait for a later release:
 Dell runs a **Technical Consultation** per SDDC before the upgrade. It
 produces:
 
-- Pre-check results (Dell's SOS and VCFverify tools, plus Broadcom's own
-  TC-run health check) and a go / no-go.
+- Pre-check results (Dell's SOS and VCFverify tools) and a go / no-go.
 - The **agreed code path** (source VCF + VxRail versions → target VCF + VxRail
   versions) and method (Sequential).
 - A per-domain **upgrade plan** with current and target build numbers for

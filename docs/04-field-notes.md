@@ -314,8 +314,7 @@ components are firewalled independently and it is an easy step to miss.
   confirm scope against TechDocs or in-product behaviour before treating it
   as fact.
 - **"VCFverify (VoV only)"** – a TC checklist item (reviewed 2026-09-11)
-  listed alongside Dell's SOS tool and Broadcom's own TC-run health check
-  as a Dell VxRail pre-check tool (see [VxRail
+  listed as a Dell VxRail pre-check tool (see [VxRail
   Addendum](vxrail-addendum.md)), but neither what "VoV" stands for
   nor what VCFverify actually checks has been confirmed yet. Do not describe
   its purpose in the docs until that's confirmed.

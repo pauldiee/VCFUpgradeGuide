@@ -1,17 +1,13 @@
 # VDT and lsdoctor: self-service diagnostic tools
 
-Two Broadcom-provided, **self-service** diagnostic tools for a vCenter
-appliance – both are plain KB attachments, no Broadcom PSO account or
-access gating needed (unlike Broadcom's TC-run health-check tool, see
-[Full VCF upgrade sequence: Run the pre-upgrade
-precheck](13-vcf-upgrade-sequence.md#run-the-pre-upgrade-precheck)).
-Between the two, they're where most real answers come from once
-something is actually broken – reach for **VDT** first for a broad health
-sweep, then **lsdoctor** if VDT's Lookup Service/AD check (or any other
-SSO symptom) points deeper into the Lookup Service / vmdir layer. Neither
-is tied to any one migration or upgrade step – both apply whenever a
-vCenter/PSC exists, regardless of track (VCF, VVF, or standalone
-vSphere).
+Two **self-service** diagnostic tools for a vCenter appliance, both plain
+Broadcom KB attachments. Between the two, they're where most real answers
+come from once something is actually broken – reach for **VDT** first for
+a broad health sweep, then **lsdoctor** if VDT's Lookup Service/AD check
+(or any other SSO symptom) points deeper into the Lookup Service / vmdir
+layer. Neither is tied to any one migration or upgrade step – both apply
+whenever a vCenter/PSC exists, regardless of track (VCF, VVF, or
+standalone vSphere).
 
 ---
 

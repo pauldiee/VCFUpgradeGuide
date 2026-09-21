@@ -1,9 +1,20 @@
 # Changelog
 
+## v1.2.2 – 2026-09-21
+- **Follow-up cleanup pass on `docs/13`, `docs/14`,
+  `docs/04-field-notes.md`, `docs/vxrail-addendum.md`, and `docs/17`.**
+  `docs/13`'s pre-upgrade precheck section now describes only the SDDC
+  Manager precheck and VDT; `docs/14`'s equivalent section points at VDT;
+  `docs/04-field-notes.md` and `docs/vxrail-addendum.md` list only Dell's
+  own pre-check tools; `docs/17`'s intro no longer contrasts VDT/lsdoctor
+  against anything else. Matching wording cleaned up in the historical
+  CHANGELOG entries too (v0.5.1, v0.5.4, v0.5.5, v1.1.1, v1.1.6, and
+  today's own v1.2.1 entry).
+
 ## v1.2.1 – 2026-09-21
 - **New guide: `docs/17-vdt-and-lsdoctor-diagnostics.md`.** Both are
-  Broadcom's self-service, no-PSO-account-needed diagnostic tools –
-  consolidated rather than split, since VDT (general appliance health
+  self-service diagnostic tools – consolidated rather than split, since
+  VDT (general appliance health
   sweep: DNS/NTP/disk/certs/AD-LookupService/services/VCHA) and lsdoctor
   (deeper Lookup Service/SSO/vmdir repair) are meant to be used in
   sequence. Pulled the existing VDT walkthroughs out of `docs/07` and
@@ -61,20 +72,14 @@
   sweep for other internal-vendor-sourced content following v1.1.6.
 
 ## v1.1.6 – 2026-09-21
-- **Stop naming Broadcom's internal TC-run health-check tool in the public
-  docs.** Across `docs/13`, `docs/14`, `docs/vxrail-addendum.md`, and
-  `docs/04-field-notes.md`, replaced the tool's name, exact CLI syntax,
-  and internal operator mechanics (WinSCP/PuTTY steps, `--product` flags)
-  with generic language ("Broadcom's TC-run health-check tool," "ask your
-  TC contact") – the useful guidance (a Broadcom-run gate exists, ask what
-  to expect, track findings the same way) survives without exposing an
-  access-gated internal tool's identity or usage details in a public repo.
-  The `docs/13` timing table is likewise re-attributed from "Broadcom's own
-  upgrade-plan template" to general field experience and planning
-  guidance. Public sources are unaffected – **VDT**, distributed via a
-  normal public Broadcom KB (KB 344917), keeps its full name, commands,
-  and citation. Matching historical CHANGELOG entries (v0.5.1, v0.5.4,
-  v0.5.5, v1.1.1) scrubbed for consistency.
+- **Wording cleanup across `docs/13`, `docs/14`, `docs/vxrail-addendum.md`,
+  and `docs/04-field-notes.md`.** `docs/13`'s pre-upgrade precheck section
+  now covers the SDDC Manager precheck and VDT only. The `docs/13` timing
+  table is attributed to general field experience and planning guidance
+  rather than any single source. **VDT** keeps its full name, commands,
+  and citation (KB 344917) throughout, unaffected by this pass. Matching
+  historical CHANGELOG entries (v0.5.1, v0.5.4, v0.5.5, v1.1.1) updated
+  for consistency.
 
 ## v1.1.5 – 2026-09-21
 - **Convert `docs/05`'s upgrade-step lead-ins to real markdown headers.**
@@ -127,8 +132,8 @@
     before you start" section in `docs/07` (no SDDC Manager fleet precheck
     exists on that path, so this is the closest equivalent: DNS, NTP, disk
     space, certs, AD/Lookup Service, VCHA), and a pointer alongside
-    Broadcom's TC-run health-check tool in `docs/13`'s pre-upgrade precheck
-    section (self-service, no PSO account needed, unlike the TC-run tool).
+    the precheck section in `docs/13` (self-service, run it yourself
+    ahead of time).
   - **lsdoctor** – new "Validate SSO/Lookup Service health with lsdoctor"
     step in `docs/06`, right after adding the AD-over-LDAPS identity
     source and before the permissions re-verification, using its
@@ -704,13 +709,12 @@
   Phase 5 → Phase 6 order until clarified.
 
 ## v0.5.5 – 2026-09-11
-- **`docs/01-overview.md` – TC-run health-check operational detail, small
-  wording fix** (issue #17). Expanded the pre-upgrade precheck section with
-  a "How it's run" block covering Broadcom's TC-run health-check tool's
-  per-domain and per-component check modes (run separately so ESXi checks
-  can proceed in parallel on a large environment), its operator mechanics,
-  and its per-cluster interactive credential-prompt behaviour for the VVF
-  path. Corrected the 9.0.x source path label from "fleet transition" to
+- **`docs/01-overview.md` – pre-upgrade precheck detail, small wording
+  fix** (issue #17). Expanded the pre-upgrade precheck section with
+  detail on per-domain and per-component check behavior (run separately
+  so ESXi checks can proceed in parallel on a large environment) and
+  per-cluster interactive credential-prompt behaviour for the VVF path.
+  Corrected the 9.0.x source path label from "fleet transition" to
   Broadcom's actual term, **fleet-lifecycle transition**.
 
 ## v0.5.4 – 2026-09-11
@@ -720,10 +724,9 @@
   disk space confirmed on SDDC Manager (a common, avoidable staging
   failure). **04-field-notes.md**: logged two TC checklist items as open
   questions rather than guessing at their meaning – **VCFverify (VoV only)**
-  (listed alongside Dell's SOS tool and Broadcom's own TC-run health check
-  as a Dell VxRail pre-check tool, but neither "VoV" nor what it checks is
-  confirmed) and **NSX Intel** (likely NSX Intelligence, not confirmed, no
-  documented upgrade interaction yet).
+  (listed as a Dell VxRail pre-check tool, but neither "VoV" nor what it
+  checks is confirmed) and **NSX Intel** (likely NSX Intelligence, not
+  confirmed, no documented upgrade interaction yet).
 
 ## v0.5.3 – 2026-09-11
 - **`docs/01-overview.md`, `docs/03-identity-broker-migration.md`,
@@ -736,9 +739,9 @@
   added a per-component **time-estimate table** (SDDC Manager, NSX-T,
   vCenter, ESXi, Aria Suite LCM, post-upgrade checks) gathered from field
   experience and general Broadcom planning guidance; added a lead-in to
-  **Post-upgrade validation** covering the TC-run health check's post-check
-  mode, a vSAN Skyline Health re-check, and evidence packaging for
-  handover, mirroring the pre-upgrade gate.
+  **Post-upgrade validation** covering a re-run of the fleet precheck, a
+  vSAN Skyline Health re-check, and evidence packaging for handover,
+  mirroring the pre-upgrade gate.
   **03-identity-broker-migration.md**: new section for the **9.0.x
   fleet-transition path** – an existing Identity Broker 9.0.x on an NSX
   overlay network fails the VCF Operations upgrade outright unless first
@@ -772,11 +775,8 @@
 ## v0.5.1 – 2026-09-11
 - **`docs/01-overview.md` – fold in Broadcom Technical Consultation gate
   content** (issue #17). Sourced from a customer TC process review.
-  **Run the pre-upgrade precheck**: added Broadcom's supplementary
-  TC-run health-check tool alongside the SDDC Manager precheck – what it
-  produces (color-coded per-domain result files feeding the go/no-go
-  decision), the access-gated (Broadcom-staff-only) nature of the tool, and
-  a cross-link to its VVF manual-upgrade-path mode (no SDDC Manager).
+  **Run the pre-upgrade precheck**: documented Broadcom's supplementary
+  precheck gate alongside the SDDC Manager precheck.
   **Prerequisites table**: added **CPU & TPM 2.0** and **NTP** rows;
   extended **vSAN HCL** to cover Broadcom plugin support; added a **vSAN
   health** row for the Skyline Health workflow. **Windows, ordering and
