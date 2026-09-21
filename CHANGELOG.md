@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.3.2 – 2026-09-21
+- **New guide: `docs/19-vvf-vs-vcf-feature-comparison.md`.** Summarized
+  from Broadcom's official Sep 2026 "VCF 9.1.1 and VVF 9.1.1 Feature
+  Comparison & Upgrade Paths" whitepaper (a ~200-row table) rather than
+  scattered facts across other docs: what's entirely VCF-only (NSX, VCF
+  Automation, VCF Operations for Networks, Private AI Services, Fleet
+  Management/Lifecycle via VCF Operations, several VCF Operations
+  sub-features), what's present in both with a caveat (Host Profiles/Auto
+  Deploy not Fleet-Management-integrated in VCF, VVF's Storage/Network
+  Service limited to VM Service/VKS), and what's a paid add-on regardless
+  of tier (Avi, vDefend, SRM, Live Recovery Cloud, ACC). Flags an
+  actionable deadline: Broadcom's legacy built-in VCF load balancer is
+  usable only until **May 30, 2027** before requiring Avi licenses (KB
+  439411). Added to `README.md`, `web/src/nav.ts`, and `CLAUDE.md`.
+
 ## v1.3.1 – 2026-09-21
 - **Add the missing "how do I actually populate the repository" step to
   `docs/18-vmware-tools-productlocker.md`.** The doc covered pointing

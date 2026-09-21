@@ -200,6 +200,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf', 'vsphere'],
   },
   {
+    slug: '19-vvf-vs-vcf-feature-comparison',
+    step: 'Reference',
+    band: 'Reference',
+    label: 'VVF vs VCF feature comparison',
+    icon: 'scale-balanced',
+    blurb: 'What is VCF-only, VVF-only, or an add-on regardless of tier – summarized from Broadcom\'s official comparison whitepaper. Applies to the VCF/VVF licensing decision.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',
