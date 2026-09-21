@@ -15,6 +15,18 @@ fail cleanly – on 9.x it is explicitly called out as the *wrong* file to
 touch. Check the running vCenter's major version before following either
 section below.
 
+**Not every appliance component historically read the same setting the
+same way.** Per Broadcom's own proxy-troubleshooting KB
+[373713](https://knowledge.broadcom.com/external/article/373713/troubleshooting-vcenter-server-proxy-con.html)
+(applies to vCenter Server 7.0 and later), the VAMI (management interface)
+uses `wget` internally while VUM / Lifecycle Manager uses `curl` – two
+different HTTP clients that can, in principle, resolve proxy settings
+from different places (`wget` also reads `/etc/wgetrc` / `~/.wgetrc` on
+top of the system-wide setting). Not confirmed by Broadcom as the reason,
+but worth knowing: on 9.x, proxy handling moves to a single `config.json`
+file rather than the older per-tool arrangement, which removes this
+particular class of inconsistency either way.
+
 ---
 
 ## vCenter 7.0.x / 8.0.x
@@ -79,9 +91,70 @@ the exclusion list.
    the VAMI UI rejects it.
 5. **No service restart is needed** after saving.
 
+**Worked example** – HTTP and HTTPS traffic through the same proxy, FTP
+left unused, one internal domain and one CIDR block excluded:
+
+```json
+{
+  "http_proxy": {
+    "scheme": "http",
+    "host": "proxy.example.com",
+    "port": 8080,
+    "username": null,
+    "password": null
+  },
+  "https_proxy": {
+    "scheme": "http",
+    "host": "proxy.example.com",
+    "port": 8080,
+    "username": null,
+    "password": null
+  },
+  "ftp_proxy": {
+    "scheme": null,
+    "host": null,
+    "port": null,
+    "username": null,
+    "password": null
+  },
+  "no_proxy": ["localhost", "127.0.0.1", "example.com", "10.0.0.0/24"]
+}
+```
+
+Validate the file is syntactically correct JSON before trusting it took
+effect – a trailing comma or leftover comment left in from editing is
+enough to silently break parsing:
+
+```
+python3 -m json.tool /var/lib/vmware-envoy-system-proxy/config.json
+```
+
+---
+
+## Verifying the proxy is actually reachable
+
+Independent of which method configured it, confirm the appliance can
+reach the internet **through the proxy itself** before assuming an
+upgrade-blocking connectivity issue is something else. Per KB 373713,
+from an SSH session on the appliance:
+
+```
+HTTP_PROXY="http://<proxy-host>:<port>/" curl -I http://example.com
+HTTPS_PROXY="https://<proxy-host>:<port>/" curl -I https://example.com
+wget --spider http://example.com
+https_proxy="http://<proxy-host>:<port>/" wget --spider https://example.com
+```
+
+These test whether the *proxy server itself* is reachable and forwarding
+correctly – a clean result here doesn't by itself confirm vCenter's own
+app-level config (`config.json` on 9.x, `/etc/sysconfig/proxy` on
+7.0.x/8.0.x) is being read correctly, only that the proxy is a working
+path if the appliance is pointed at it.
+
 ---
 
 ## Sources
 
 - [How to configure proxy settings for vCenter Server](https://knowledge.broadcom.com/external/article/370265/how-to-configure-proxy-settings-for-vcen.html) – VAMI GUI and `/etc/sysconfig/proxy` methods, 7.0.x/8.0.x
 - ["HTTP Cannot connect to proxy server" when configuring a proxy in vCenter VAMI UI](https://knowledge.broadcom.com/external/article/402684/http-cannot-connect-to-proxy-server-when.html) – the 9.x `config.json` method and the VAMI UI's known validation failure
+- [Troubleshooting vCenter Server Proxy Configuration](https://knowledge.broadcom.com/external/article/373713/troubleshooting-vcenter-server-proxy-con.html) – the `wget` vs. `curl` distinction and the `curl`/`wget` reachability test commands, vCenter Server 7.0 and later

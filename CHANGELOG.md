@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.2.0 – 2026-09-21
+- **Expand `docs/16-vcenter-proxy-configuration.md`.** It shipped thin;
+  added: the `wget`-vs-`curl` distinction behind why proxy handling used
+  to be inconsistent (KB 373713), a complete worked `config.json` example
+  for the 9.x method (all three protocol objects plus a mixed
+  domain/CIDR `no_proxy` list), a `python3 -m json.tool` validation step
+  to catch a broken edit before assuming it took effect, and a
+  "Verifying the proxy is actually reachable" section with KB 373713's
+  `curl`/`wget` test commands – explicitly scoped as testing the proxy
+  server's own reachability, not confirmation that vCenter's app-level
+  config is being read.
+
 ## v1.1.9 – 2026-09-21
 - **New guide: `docs/16-vcenter-proxy-configuration.md`.** Configuring the
   vCenter appliance's own outbound proxy turned out to have two
