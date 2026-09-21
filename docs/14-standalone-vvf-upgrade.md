@@ -131,10 +131,10 @@ you. Full walkthrough: [VSS to VDS migration](08-vss-to-vds-migration.md).
 
 ## Pre-upgrade precheck
 
-Broadcom's `nonvcf-vsan` / `nonvcf-vcenter` / `nonvcf-esxi` / `nonvcf-nsxt`
-VCFcheck modes run the same checks the fleet-managed path runs from SDDC
-Manager (see [Run the pre-upgrade precheck](13-vcf-upgrade-sequence.md#run-the-pre-upgrade-precheck)),
-but directly against vCenter instead – they prompt **interactively** for
+Broadcom's TC-run health-check tool has a mode for this path that runs the
+same checks the fleet-managed path runs from SDDC Manager (see [Run the
+pre-upgrade precheck](13-vcf-upgrade-sequence.md#run-the-pre-upgrade-precheck)),
+but directly against vCenter instead – it prompts **interactively** for
 credentials, per cluster, asking whether all ESXi hosts in a cluster share
 the same root password before falling back to per-host prompts.
 
