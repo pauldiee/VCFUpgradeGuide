@@ -90,7 +90,7 @@ for in-place.
 Applies to Aria Operations 8.14+ (covers the 8.18.x line) going to VCF
 Operations 9.1.x.
 
-**1. Pre-upgrade**
+### 1. Pre-upgrade
 
 1. Confirm the source build is on a supported direct-upgrade path to the
    target 9.1.x build (check the current VCF/vSphere Interoperability
@@ -103,7 +103,7 @@ Operations 9.1.x.
    Replica, Data, Cloud Proxies) – deselect "Snapshot the virtual machine's
    memory".
 
-### Pre-Upgrade Readiness Assessment Tool (APUAT)
+#### Pre-Upgrade Readiness Assessment Tool (APUAT)
 
 Uploaded and installed the same way as any other PAK, against the
 **normal, online cluster**. Nothing about this step needs the cluster
@@ -137,7 +137,7 @@ entry.
   deprecated in the target version, each with a link to a suggested
   replacement metric).
 
-**2. Apply the upgrade**
+### 2. Apply the upgrade
 
 1. Admin UI → **Software Update → Install a Software Update**, upload the
    target-version Upgrade PAK.
@@ -154,7 +154,7 @@ entry.
 4. Confirm cluster health and that metrics are still flowing post-upgrade
    before moving on to the next fleet component.
 
-**3. Deploy and register License Server, if not already present**
+### 3. Deploy and register License Server, if not already present
 
 License Server is a required component for VCF 9.x licensing regardless of
 path or Tier, and typically doesn't exist yet on an 8.18.x-only source –
@@ -163,7 +163,7 @@ see step 4 ("Deploy License Server") under
 connected/disconnected registration steps, identical regardless of which
 walkthrough got VCF Operations to 9.1.x.
 
-**4. Re-IP, only if the network is changing as part of the same window**
+### 4. Re-IP, only if the network is changing as part of the same window
 
 Manual and offline, run after the version upgrade completes:
 
@@ -203,7 +203,7 @@ only inside its fully automated bring-up flow, which assumes standardized
 infrastructure (vDS, etc.) and does not support manual customization of
 networking, cluster settings, or storage during that process.
 
-**1. Deploy the Primary node**
+### 1. Deploy the Primary node
 
 1. In the vSphere Client, right-click the target inventory object →
    **Deploy OVF Template** → point it at the VCF Operations install OVA.
@@ -222,7 +222,7 @@ networking, cluster settings, or storage during that process.
      being used for the cluster.
 4. Finish the wizard and confirm the single-node cluster comes Online.
 
-**2. Add a Data node, then activate HA against it**
+### 2. Add a Data node, then activate HA against it
 
 HA is not a separate "deploy a Replica node" step – you deploy a **Data**
 node first, then promote it to Replica through the admin interface:
@@ -240,14 +240,13 @@ node first, then promote it to Replica through the admin interface:
 5. The cluster restarts to apply HA – wait for it to report **Online**
    again before doing anything else; this can take several minutes.
 
-**3. Add further Data node(s) for capacity, if the target topology needs
-more than Primary + Replica**
+### 3. Add further Data node(s) for capacity, if the target topology needs more than Primary + Replica
 
 Repeat the "Add new Nodes" step above with Current Cluster Role set to
 **Data**, one node at a time, letting each join fully complete before
 starting the next.
 
-**4. Deploy License Server**
+### 4. Deploy License Server
 
 License Server is a required component for VCF 9.x licensing regardless of
 path or Tier – see [Full VCF upgrade sequence: Prerequisites –
@@ -315,7 +314,7 @@ Confirm which mode fits the target environment's firewall policy before
 committing – switching from disconnected to connected mode later is
 possible but is its own documented procedure, not a toggle.
 
-**5. Migrate content from the old cluster**
+### 5. Migrate content from the old cluster
 
 On the **old** cluster:
 
@@ -337,14 +336,14 @@ On the **new** cluster:
    or Custom Group referenced by the dashboard wasn't included in the
    export and needs rebuilding manually.
 
-**6. Register data sources**
+### 6. Register data sources
 
 Register each vCenter as a data source – see
 [Registering vCenter as a data source](#registering-vcenter-as-a-data-source-separate-from-the-fleet-attach)
 below. This is independent of, and not a prerequisite for, attaching to the
 fleet.
 
-**7. Attach to the fleet, once it exists**
+### 7. Attach to the fleet, once it exists
 
 From VCF 9, one VCF Operations deployment manages one-or-more VCF
 instances/fleets – you register an existing VCF instance *into* VCF

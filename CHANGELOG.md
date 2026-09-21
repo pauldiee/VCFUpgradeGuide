@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.1.5 – 2026-09-21
+- **Convert `docs/05`'s upgrade-step lead-ins to real markdown headers.**
+  The numbered steps in Walkthrough A and Walkthrough B (Pre-upgrade,
+  Apply the upgrade, Deploy the Primary node, etc.) were bold text, not
+  headings, so they were invisible to the page's on-this-page navigation.
+  Converted them to `###` headers (APUAT stays nested as `####` under
+  "1. Pre-upgrade") so the on-page nav reflects what's actually in the
+  doc. No content changes.
+
 ## v1.1.4 – 2026-09-21
 - **Expand the APUAT procedure in `docs/05` and add the field-verified
   offline-cluster gotcha.** The Pre-Upgrade Readiness Assessment Tool step
