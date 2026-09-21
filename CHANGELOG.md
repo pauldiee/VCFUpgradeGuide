@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.7 – 2026-09-21
+- **Convert `docs/17`'s three "Field-observed symptom" lead-ins to real
+  `####` headers**, nested under "Always run the read-only check first"
+  so they show up in the on-page nav, matching the header-hierarchy fix
+  already applied to `docs/05`. `docs/16` and `docs/18` were checked and
+  already used real headers throughout. No content changes.
+
 ## v1.2.6 – 2026-09-21
 - **Document a Machine ID mismatch symptom in `docs/17`.** Field-observed:
   lsdoctor's read-only check can report a `MachineGuid` desync between the

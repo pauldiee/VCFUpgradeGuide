@@ -103,9 +103,10 @@ here – an unresolved Lookup Service inconsistency tends to surface later
 as a confusing, hard-to-place permission or authentication failure rather
 than a clean error at the point it was actually introduced.
 
-**Field-observed symptom: "Node In Multiple Sites."** The read-only check
-can report the same vCenter node registered under more than one SSO
-site, e.g.:
+#### Field-observed symptom: "Node In Multiple Sites"
+
+The read-only check can report the same vCenter node registered under
+more than one SSO site, e.g.:
 
 ```
 SSO CHECKS
@@ -130,6 +131,8 @@ that the tool's output itself links to. Take the same-instant, whole-SSO-domain
 snapshot from the warning below **before** running any `-r` option, same
 as any other repair mode.
 
+#### Field-observed symptom: orphaned service registrations
+
 A `[WARNING]`-level *"3rd party/Orphaned service registrations"* line for
 a service the tool can't associate by hostID/nodeID/serviceID (third-party
 integrations like a storage vendor's vSphere plugin are a common source)
@@ -137,10 +140,10 @@ is informational, not necessarily something to fix – confirm the service
 is genuinely orphaned (the integration was removed) before touching it,
 rather than treating every warning as an action item.
 
-**Field-observed symptom: decommissioned Site Recovery Manager / VMware
-Live Site Recovery left behind.** A common, confirmable source of that
-same orphaned-registration warning: an old SRM/VLSR appliance that was
-decommissioned improperly, or that became unreachable before it could
+**Decommissioned Site Recovery Manager / VMware Live Site Recovery** is a
+common, confirmable source of this same warning: an old SRM/VLSR
+appliance that was decommissioned improperly, or that became unreachable
+before it could
 unregister itself cleanly (e.g. deleted or powered off before running
 its own uninstall/unregister flow). Per Broadcom KB
 [337576, "Cleaning up decommissioned SRM registrations"](https://knowledge.broadcom.com/external/article/337576/cleaning-up-decommissioned-srm-registrations.html),
@@ -186,9 +189,10 @@ removes registrations directly from the SSO domain's database, with no
 undo beyond whatever snapshot/backup discipline the surrounding
 procedure already requires.
 
-**Field-observed symptom: Machine ID mismatch (VMAFD vs. Likewise
-registry).** The read-only check's **VC Machine ID Check** category can
-report two related failures:
+#### Field-observed symptom: Machine ID mismatch (VMAFD vs. Likewise registry)
+
+The read-only check's **VC Machine ID Check** category can report two
+related failures:
 
 ```
 VC Machine ID Check
