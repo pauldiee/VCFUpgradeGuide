@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.4.3 – 2026-09-22
+- **Move VCF Automation and Migration Service Engine to the end of
+  `docs/20`'s 14-step patching order.** Neither has a documented reason
+  to run early (only "Automation before Migration Service Engine" is a
+  hard constraint), and the pair carries the most known risk in the list
+  – cloud-integration deprecation, required profile cleanup, the 6-hour
+  `vmsp_upgrade` failure mode, and the Upgrade All 13-day deadlock – so
+  validate the lower-risk components first.
+
 ## v1.4.2 – 2026-09-22
 - **Add the VCF unified versioning model diagram to `docs/20`'s Express
   Patches section**, hotlinked from williamlam.com, showing how major,

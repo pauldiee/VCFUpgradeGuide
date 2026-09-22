@@ -312,8 +312,12 @@ patching run – [Upgrading VCF Management Components to 9.1.1 All in One
 – consistent with the constraints above and specific to 9.1.1 (not the
 9.0.x line) – **not independently field-verified in this repo, but the
 closest thing to a full worked example currently available**. Reordered
-here from that source to put VCF Services Runtime second (Cosmin.us had
-VCF Operations second) per the fixed-order confirmation below:
+here from that source: VCF Services Runtime moves to second (Cosmin.us
+had VCF Operations second) per the fixed-order confirmation below, and
+VCF Automation plus the Migration Service Engine move to last – neither
+has a documented reason to run early, and both carry the most known risk
+of anything in this list (see the gotchas and Upgrade All failure
+account below), so validate the lower-risk components first:
 
 1. **Fleet Lifecycle** – required first, no exceptions
 2. **VCF Services Runtime** – required second, before Identity Broker or
@@ -322,17 +326,17 @@ VCF Operations second) per the fixed-order confirmation below:
    ESX host patching and never in parallel with other components
 4. **SDDC Lifecycle** – before scaling Services Runtime from Small to
    Small (High Availability), if that's planned
-5. **VCF Automation** – before the Migration Service Engine
-6. **Migration Service Engine** (VCD_MIGRATOR)
-7. **Identity Broker** – only after its Runtime is already on 9.1.1
-8. **Salt RaaS** – only after its Runtime is already on 9.1.1
-9. **Salt Master** – after Runtime
-10. **Log Management** – before Operations for Networks
-11. **Operations for Networks** – sequentially after Log Management, not
-    in parallel with it (see gotchas below)
-12. **Real-Time Metrics Store**
-13. **Real-Time Metrics**
-14. **Telemetry** – last
+5. **Identity Broker** – only after its Runtime is already on 9.1.1
+6. **Salt RaaS** – only after its Runtime is already on 9.1.1
+7. **Salt Master** – after Runtime
+8. **Log Management** – before Operations for Networks
+9. **Operations for Networks** – sequentially after Log Management, not
+   in parallel with it (see gotchas below)
+10. **Real-Time Metrics Store**
+11. **Real-Time Metrics**
+12. **Telemetry**
+13. **VCF Automation** – before the Migration Service Engine
+14. **Migration Service Engine** (VCD_MIGRATOR) – last
 
 **Only the first two steps are a truly fixed requirement – the rest is
 one valid sequence, not the only one.** Per a second independent
