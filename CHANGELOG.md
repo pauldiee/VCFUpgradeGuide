@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.5.1 – 2026-09-22
+- **Expand `docs/21-vcf-inspector-fling.md` with field-observed (v1.300,
+  lab run) UI detail** for all three modes: the version-toggle field on
+  the readiness checker (source must be 5.2.x or 9.0.x, not 9.1), the
+  Bootstrap-VM auto-discovery on the deployment monitor, and the
+  SSH-to-runtime-control-plane-VM connection (with optional SSH key)
+  on the Management Services Inspector. Flagged a real discrepancy: the
+  landing page claims credentials are "never stored to disk," but the
+  Management Services Inspector's own footer says they're "stored in
+  browser local storage only" – contradicts the blanket claim, and
+  matters before pointing the tool at a production control plane.
+
 ## v1.5.0 – 2026-09-22
 - **Add `docs/21-vcf-inspector-fling.md`, a new reference doc for the VCF
   Inspector Fling.** A standalone, no-install VMware Fling covering
