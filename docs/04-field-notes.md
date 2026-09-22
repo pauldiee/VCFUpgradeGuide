@@ -158,7 +158,11 @@ with a `DELETE …/casa/auth/users` call.
   doesn't touch the incompatible component. Per that same KB, the clean
   fix is targeting **9.1.1.0 instead of 9.1.0.0400** – its BOM includes
   chronologically newer builds that resolve this exact restriction, no
-  workload-domain surgery required.
+  workload-domain surgery required. This NSX version was auto-selected
+  during the workload domain import in the first place – see [Converge
+  and Import: bringing existing infrastructure under
+  VCF](22-converge-and-import-existing-infrastructure.md#the-shared-trap-auto-selected-nsx-version-can-be-chronologically-incompatible)
+  for the root cause and how to avoid it on the next import.
 
 ---
 

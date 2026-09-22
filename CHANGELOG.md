@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.6.0 – 2026-09-22
+- **Add `docs/22-converge-and-import-existing-infrastructure.md`, a new
+  reference doc distinguishing Converge (VCF Installer, brownfield
+  vSphere into a new VCF/VVF instance) from Import (VCF Operations, an
+  existing vCenter into a new workload domain on an already-running VCF
+  fleet – VCF only).** Covers version bars and prerequisite checklists
+  for both, field-observed import blockers not in the official checklist
+  (DRS Fully Automated, VDS 8.0+/2 uplinks, ELM deactivated, static
+  VMkernel IPs), and the shared root cause behind the NSX auto-selection
+  back-in-time trap already documented in `docs/04`/`docs/13` (KB
+  429205, KB 430524, KB 430825), with the three ways to avoid or recover
+  from it. Trimmed the duplicated converge version-bar detail out of
+  `docs/05`, pointing at the new doc instead. Cross-linked in both
+  directions with `docs/04` and `docs/13`. Added to `nav.ts`,
+  `README.md`, `CLAUDE.md`. Closes #29.
+
 ## v1.5.6 – 2026-09-22
 - **Fix track misplacement: move the fleet-wide NSX back-in-time
   cross-link from `docs/07` to `docs/13`.** `docs/07` is VVF/standalone

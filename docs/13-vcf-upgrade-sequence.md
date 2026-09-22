@@ -239,7 +239,11 @@ touch the imported domain at all – SDDC Manager validates the target
 version against the whole fleet's component inventory before saving any
 domain's plan. If blocked, check whether a later target build (e.g.
 9.1.1.0 instead of 9.1.0.x) reopens the path before attempting any
-workload-domain-level workaround.
+workload-domain-level workaround. If the imported domain's NSX version
+was auto-selected during import rather than chosen deliberately, see
+[Converge and Import: bringing existing infrastructure under
+VCF](22-converge-and-import-existing-infrastructure.md#the-shared-trap-auto-selected-nsx-version-can-be-chronologically-incompatible)
+for the root cause and how to avoid it on the next import.
 
 ### Phase 3 – Deploy VCF Management Services + License Server
 

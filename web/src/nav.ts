@@ -227,6 +227,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf'],
   },
   {
+    slug: '22-converge-and-import-existing-infrastructure',
+    step: 'Reference',
+    band: 'Reference',
+    label: 'Converge and Import existing infrastructure',
+    icon: 'right-to-bracket',
+    blurb: 'Converge (VCF Installer, brownfield vSphere into a new VCF or VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the NSX auto-selection back-in-time trap both share. Import is VCF only.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',

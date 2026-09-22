@@ -425,15 +425,11 @@ manual walkthrough, when its prerequisites are already met:
 - **Greenfield (new fleet/instance)** – VCF Installer deploys a brand-new
   vCenter itself; no existing/upgraded vCenter is required.
 - **Converging an existing vCenter** – the vCenter must already meet a
-  version bar before VCF Installer's converge workflow will run against it:
-  vCenter 9.0+ to converge to VCF 9.0.0; vCenter 8.0 U3+ is acceptable for
-  converging to 9.0.1/9.0.2 **only if** it already has an existing NSX
-  registration at 4.2.1+ – otherwise it still needs upgrading first. ESX
-  hosts carry an equivalent gate (9.0+ for 9.0.0; 8.0 U1+ acceptable for
-  9.0.1/9.0.2 scenarios). VCF Installer does not upgrade vCenter for you as
-  part of convergence – the manual upgrade happens first, then Installer
-  orchestrates NSX / SDDC Manager / workload-domain creation once the
-  vCenter already qualifies.
+  version bar before VCF Installer's converge workflow will run against
+  it. Full version-bar table, prerequisites, and the NSX auto-selection
+  back-in-time trap this path shares with Import: [Converge and Import:
+  bringing existing infrastructure under
+  VCF](22-converge-and-import-existing-infrastructure.md).
 
 If neither applies yet (no NSX, vCenter not at a qualifying build) but a
 VCF Operations cluster is wanted ahead of the fleet build, Walkthrough B

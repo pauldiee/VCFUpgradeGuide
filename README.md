@@ -102,6 +102,7 @@ phase:
 | `docs/19-vvf-vs-vcf-feature-comparison.md` | What's VCF-only, VVF-only, or requires an add-on regardless of tier, summarized from Broadcom's official comparison whitepaper |
 | `docs/20-patching-an-existing-vcf9-fleet.md` | Patching a fleet already on VCF 9.1 to a later maintenance release (e.g. 9.1.0.x to 9.1.1) – Express Patches, depot prep, mandatory component order, UI walkthrough, gotchas |
 | `docs/21-vcf-inspector-fling.md` | VCF Inspector – a standalone VMware Fling for fleet-level pre-upgrade validation, deployment monitoring with stuck-task detection, and health diagnostics. **VCF only** (needs a VCF control-plane node) |
+| `docs/22-converge-and-import-existing-infrastructure.md` | Converge (VCF Installer, brownfield vSphere into a new VCF/VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the shared NSX auto-selection back-in-time trap. Import is **VCF only** |
 
 **Hardware addenda:**
 
