@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.4.4 – 2026-09-22
+- **Add product/UI specificity to `docs/20` Step 3's walkthrough.**
+  Named the product (VCF Operations, replacing the standalone SDDC
+  Manager UI for lifecycle ops in 9.x), clarified the **Build** pillar
+  sits alongside **Manage**, and distinguished the VCF Management
+  Components table (`Build → Lifecycle → VCF Management`) from the
+  domain-level components table (`Build → Lifecycle Management → VCF
+  Instance`) that the doc already referenced elsewhere for Express
+  Patches.
+
 ## v1.4.3 – 2026-09-22
 - **Move VCF Automation and Migration Service Engine to the end of
   `docs/20`'s 14-step patching order.** Neither has a documented reason

@@ -399,7 +399,22 @@ sufficient confirmation that a patch actually finished cleanly.
 
 ## Step 3: The UI walkthrough, per component
 
-1. **Build → Lifecycle → VCF Management → Upgrade.**
+**All of this happens in VCF Operations** – the unified fleet-management
+console that replaces the standalone SDDC Manager UI for lifecycle
+operations in 9.x. Log into the VCF Operations instance that manages the
+fleet (not a workload-domain vCenter, not the Fleet Management Appliance
+from a 9.0 source), then use the **Build** pillar in the left-hand
+navigation – a top-level section alongside **Manage** (used elsewhere for
+licensing, see [Operations modernization](05-operations-modernization.md)):
+
+1. **Build → Lifecycle → VCF Management → Upgrade.** This is the VCF
+   Management Components table – Fleet Lifecycle, VCF Services Runtime,
+   VCF Operations itself, SDDC Lifecycle, Identity Broker, Salt RaaS/Master,
+   Log Management, Operations for Networks, Real-Time Metrics
+   (Store), Telemetry, VCF Automation, and the Migration Service Engine
+   all live here as rows, not under **Build → Lifecycle Management → VCF
+   Instance** (that path is for domain-level components instead – see
+   below).
 2. Confirm the target version is set to the correct **9.1.1.\*** build.
 3. Filter to and select a **single component row** – not multiple at
    once, per the concurrency warning above.
@@ -410,14 +425,16 @@ sufficient confirmation that a patch actually finished cleanly.
 6. Click **Upgrade**, open **Upgrade details**, and wait for
    **Completed** – including the final inventory sync, don't consider it
    done the moment the progress bar stops moving.
-7. **Build → Lifecycle → VCF Management → Components** – verify the
-   component shows **Running** and the expected target build before
-   moving to the next component in the order above.
+7. **Build → Lifecycle → VCF Management → Components** – a separate tab
+   in the same VCF Management Components view – verify the component
+   shows **Running** and the expected target build before moving to the
+   next component in the order above.
 
-**Domain-level patching** (NSX, vCenter, ESX per workload domain) uses a
-slightly different flow: navigate to the VCF domain, **Plan Upgrade**,
-select the target version, confirm the change summary, then run through
-the same precheck → remediate → upgrade cycle per domain.
+**Domain-level patching** (NSX, vCenter, ESX per workload domain) is a
+different table in the same **Build** pillar: **Build → Lifecycle
+Management → VCF Instance**, select the workload domain, **Plan
+Upgrade**, select the target version, confirm the change summary, then
+run through the same precheck → remediate → upgrade cycle per domain.
 
 ---
 
