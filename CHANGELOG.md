@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.4.1 – 2026-09-22
+- **Fix `docs/20`'s 14-step patching order to match its own "first two
+  steps are fixed" claim.** The numbered list (sourced from Cosmin.us)
+  had VCF Operations second and VCF Services Runtime third, contradicting
+  the arunnukula.com-confirmed rule added in v1.4.0 that Fleet Lifecycle
+  and VCF Services Runtime are the two truly fixed-first components.
+  Swapped Services Runtime to position 2 and VCF Operations to position
+  3, and noted the reorder against the original source.
+
 ## v1.4.0 – 2026-09-21
 - **Add a "Backup before patching, and what rollback actually means"
   section to `docs/20`, and refine the patching order with a second

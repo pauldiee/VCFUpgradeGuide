@@ -303,12 +303,15 @@ patching run – [Upgrading VCF Management Components to 9.1.1 All in One
 (Cosmin.us)](https://cosmin.us/upgrading-vcf-management-components-to-9-1-1-all-in-one/)
 – consistent with the constraints above and specific to 9.1.1 (not the
 9.0.x line) – **not independently field-verified in this repo, but the
-closest thing to a full worked example currently available**:
+closest thing to a full worked example currently available**. Reordered
+here from that source to put VCF Services Runtime second (Cosmin.us had
+VCF Operations second) per the fixed-order confirmation below:
 
 1. **Fleet Lifecycle** – required first, no exceptions
-2. **VCF Operations** – as its own standalone appliance update
-3. **VCF Services Runtime** – before Identity Broker or Salt RaaS on
-   that same instance
+2. **VCF Services Runtime** – required second, before Identity Broker or
+   Salt RaaS on that same instance
+3. **VCF Operations** – as its own standalone appliance update, before
+   ESX host patching and never in parallel with other components
 4. **SDDC Lifecycle** – before scaling Services Runtime from Small to
    Small (High Availability), if that's planned
 5. **VCF Automation** – before the Migration Service Engine
