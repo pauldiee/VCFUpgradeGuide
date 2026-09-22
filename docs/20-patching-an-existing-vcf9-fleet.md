@@ -393,7 +393,10 @@ deadlocked for two weeks](https://mb-labs.de/2026/09/18/upgrade-all-how-one-butt
 
 **Patch one component at a time and wait for each task to show
 Completed before starting the next** – "the UI says Healthy" is not
-sufficient confirmation that a patch actually finished cleanly.
+sufficient confirmation that a patch actually finished cleanly. [VCF
+Inspector](21-vcf-inspector-fling.md), a standalone Fling with automatic
+stuck-task detection, is a second opinion worth running alongside the UI
+for exactly this reason.
 
 ---
 

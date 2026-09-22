@@ -218,6 +218,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '21-vcf-inspector-fling',
+    step: 'Reference · VCF only',
+    band: 'Reference',
+    label: 'VCF Inspector Fling',
+    icon: 'magnifying-glass',
+    blurb: 'A standalone VMware Fling for fleet-level pre-upgrade validation, deployment monitoring with stuck-task detection, and health diagnostics. Requires VCF Management Services, so VCF only.',
+    tracks: ['vcf'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',

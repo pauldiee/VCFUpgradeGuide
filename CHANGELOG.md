@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.5.0 – 2026-09-22
+- **Add `docs/21-vcf-inspector-fling.md`, a new reference doc for the VCF
+  Inspector Fling.** A standalone, no-install VMware Fling covering
+  fleet-level pre-upgrade validation, deployment monitoring with
+  automatic stuck-task detection, and health diagnostics – **VCF only**
+  (it targets a VCF control-plane node, which doesn't exist in VVF or
+  standalone vSphere). Cross-linked from `docs/20`'s Upgrade All failure
+  account, since stuck-task detection is exactly what that 13-day silent
+  deadlock needed. Added to `nav.ts`, `README.md`, and `CLAUDE.md`.
+
 ## v1.4.4 – 2026-09-22
 - **Add product/UI specificity to `docs/20` Step 3's walkthrough.**
   Named the product (VCF Operations, replacing the standalone SDDC
