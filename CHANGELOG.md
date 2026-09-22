@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.5.2 – 2026-09-22
+- **Add a full field-observed walkthrough of the Management Services
+  Inspector to `docs/21`** (lab environment, v1.300): the Services tab
+  (IP pool sizing/expansion path corroborating `docs/20`'s Build →
+  Lifecycle → VCF Management navigation, Virtual IPs/Node IP tables, the
+  8 deployed-service cards, and a **VCF Management Services Backup
+  check that directly gates patching** – cross-linked to `docs/20`'s
+  backup section), the Advanced Troubleshooting tab's per-service Log
+  Analyzer error/warning pattern counts, and the Actions tab's six
+  live remediation actions (DNS restart, credential renewal, database
+  compaction, etc.) gated behind an explicit authorization toggle.
+  Flagged a recurring multi-chip UI pattern (contradictory-looking
+  status badges shown together) and an NTP anomaly (nodes badged "Not
+  Synced" despite ~0.0ms offset). Embedded three screenshots (landing
+  page, Advanced Troubleshooting, Actions tab) under
+  `docs/images/vcf-inspector/` – the only three confirmed free of
+  IP/hostname data; the data-heavy Services tab panels stay as prose/
+  tables instead. Noted an open, untested question: whether the same
+  connect form also works against a VCF Automation control-plane node,
+  since Automation runs its own separate deployment and wasn't among
+  the 8 fleet-wide services this lab showed.
+
 ## v1.5.1 – 2026-09-22
 - **Expand `docs/21-vcf-inspector-fling.md` with field-observed (v1.300,
   lab run) UI detail** for all three modes: the version-toggle field on
