@@ -549,6 +549,19 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
 }
 .prose blockquote p:last-child { margin-bottom: 0; }
 
+/* Images: a bare ![]() renders as <p><img></p> in CommonMark, so without this
+   the 74ch text-measure cap above squeezes screenshots down to reading-column
+   width. Let an image-only paragraph use the full content column instead. */
+.prose p:has(> img:only-child) { max-width: none; }
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+}
+
 /* Tables: the docs are table-heavy, many are wide fill-in grids with empty
    cells. Scroll wrapper for narrow screens; column dividers + empty-cell
    placeholders so the grid stays legible. */

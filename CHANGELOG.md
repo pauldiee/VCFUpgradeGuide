@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.5.3 – 2026-09-22
+- **Fix screenshots rendering at cramped reading-column width across all
+  docs, not just `docs/21`.** CommonMark wraps a bare `![]()` in a `<p>`,
+  and the prose stylesheet's `74ch` text-measure cap (meant for
+  paragraphs) was inherited by that wrapper, squeezing every embedded
+  image down to ~660px regardless of its real size or the available
+  column width. Added `.prose p:has(> img:only-child) { max-width: none }`
+  plus a bordered/rounded `.prose img` treatment matching the existing
+  table/code-block styling, so screenshots now use the full content
+  column. Verified with a local preview build.
+
 ## v1.5.2 – 2026-09-22
 - **Add a full field-observed walkthrough of the Management Services
   Inspector to `docs/21`** (lab environment, v1.300): the Services tab
