@@ -150,12 +150,12 @@ NSX](https://williamlam.com/2026/08/vcf-9-1-understanding-vcf-converge-import-sc
 VCF automatically deploys *"the latest NSX version that is compatible
 with the source vCenter Server version"* – compatible with the vCenter,
 but **not cross-checked against the target VCF release's chronological
-BOM baseline**. The article's own example matches the exact combination
-covered in this repo's [field
-notes](04-field-notes.md#nsx-and-vcenter): **vCenter 8.0 Update 3c
-defaults to NSX 4.2.4.1** – compatible with that vCenter build, but
-unable to upgrade further to reach VCF 9.1.0's NSX baseline. Same
-mechanism as the [back-in-time
+BOM baseline**. **Confirmed as the actual root cause behind this repo's
+own [field notes](04-field-notes.md#nsx-and-vcenter) case**, not just a
+version-number coincidence: the article's example is the identical
+combination – **vCenter 8.0 Update 3c defaults to NSX 4.2.4.1** –
+compatible with that vCenter build, but unable to upgrade further to
+reach VCF 9.1.0's NSX baseline. Same mechanism as the [back-in-time
 restriction](07-vcenter-manual-upgrade.md#before-you-start-confirm-the-source-is-actually-on-a-supported-path)
 already documented for the vCenter side (KB 448135) – this is the NSX
 side of the same trap, triggered automatically during Converge/Import

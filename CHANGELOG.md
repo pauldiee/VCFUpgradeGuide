@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.6.1 – 2026-09-22
+- **Strengthen `docs/22`'s root-cause claim from "matches" to
+  "confirmed."** The williamlam.com article's vCenter 8.0 U3c → NSX
+  4.2.4.1 example wasn't just a version-number coincidence with this
+  repo's own field-notes case – confirmed as the actual mechanism behind
+  it.
+
 ## v1.6.0 – 2026-09-22
 - **Add `docs/22-converge-and-import-existing-infrastructure.md`, a new
   reference doc distinguishing Converge (VCF Installer, brownfield
