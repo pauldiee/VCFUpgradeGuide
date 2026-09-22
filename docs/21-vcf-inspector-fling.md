@@ -12,9 +12,12 @@ the fleet layer instead, which is exactly the layer where the patching
 failures documented in [Patching an existing VCF 9.1
 fleet](20-patching-an-existing-vcf9-fleet.md) happen (stuck lifecycle
 tasks, components silently deadlocked behind an apparent "Healthy"
-status). Launching the binary opens a **local web UI in the browser**
-(light/dark theme toggle in the header) rather than a terminal TUI – per
-its own landing screen: *"All communication is local to your machine.
+status). Launching the binary opens its **own standalone application
+window** with a web-style UI (light/dark theme toggle in the header)
+rather than a terminal TUI – **it does not open in the system browser**,
+despite the web-app look and its own "browser local storage" wording
+(below) suggesting an embedded webview under the hood. Per its own
+landing screen: *"All communication is local to your machine.
 Credentials are never stored to disk."*
 
 **Field-observed (v1.300, own lab environment) – the landing screen

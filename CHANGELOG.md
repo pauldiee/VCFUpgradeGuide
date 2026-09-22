@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.5.4 – 2026-09-22
+- **Correct `docs/21`: VCF Inspector does not open in the system
+  browser.** It launches as its own standalone application window with
+  a web-style UI (the light/dark toggle, the "browser local storage"
+  wording) rather than opening as a page in Chrome/Edge/Firefox –
+  corrected after the tool's actual behavior didn't match the earlier
+  description.
+
 ## v1.5.3 – 2026-09-22
 - **Fix screenshots rendering at cramped reading-column width across all
   docs, not just `docs/21`.** CommonMark wraps a bare `![]()` in a `<p>`,
