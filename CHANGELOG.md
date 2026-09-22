@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.5.5 – 2026-09-22
+- **Add a field note to `docs/04`: the NSX back-in-time restriction (KB
+  448135, NSX 4.2.4 and later vs. VCF 9.1.0.x) blocks upgrade plan
+  validation fleet-wide, not just for the domain running the
+  incompatible NSX version.** A workload domain imported into a VCF
+  9.1.0 fleet with NSX 4.2.4.1 already in place caused a
+  **management-domain-only** Plan Component Upgrade to fail validation
+  without touching the imported domain at all. Cross-linked from
+  `docs/07`'s back-in-time section (the vCenter-side version of the same
+  restriction). Closes #28.
+
 ## v1.5.4 – 2026-09-22
 - **Correct `docs/21`: VCF Inspector does not open in the system
   browser.** It launches as its own standalone application window with

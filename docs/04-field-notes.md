@@ -132,6 +132,33 @@ with a `DELETE …/casa/auth/users` call.
   correct, and there was no clock skew. Full troubleshooting sequence (six
   other failure modes with the identical error text) in
   [manual GUI upgrade – Troubleshooting](07-vcenter-manual-upgrade.md#troubleshooting-invalid-single-sign-on-credentials-at-step-3).
+- **The NSX back-in-time restriction blocks the whole fleet's upgrade
+  plan, not just the domain that owns the offending component.**
+  (Different engagement, VCF 9.1.0 – not the 5.2.2 → 9.0.2 upgrade this
+  doc otherwise covers.) A workload domain had been **imported** into the
+  fleet with **NSX 4.2.4.1** already in place on it. Starting a
+  **management-domain-only** upgrade – Plan Component Upgrade, target
+  SDDC Manager 9.1.0.0400 – failed at the Plan Overview validation step
+  without touching the imported workload domain at all:
+  > *"Saving domain target version failed. Validation failures occurred
+  > while trying to save target version... Target SDDC Manager version:
+  > 9.1.0.0400.25570100 is not compatible with the system. The following
+  > set of products on the system are not compatible: ...
+  > NSX_T_MANAGER 4.2.4.1.0-25554964."*
+
+  Same root cause as the vCenter-side restriction in [Confirm the source
+  is actually on a supported
+  path](07-vcenter-manual-upgrade.md#before-you-start-confirm-the-source-is-actually-on-a-supported-path)
+  (Broadcom KB 448135: "Back-in-Time Upgrade Restriction for vSphere 8.0
+  Update 3j and later, NSX 4.2.4 and later, VMware Cloud Foundation
+  9.1.0.x") – but this confirms the block is **fleet-wide validation**,
+  not scoped to the domain being upgraded: SDDC Manager checks the
+  target version against every component in the fleet's inventory
+  before it will save *any* domain's upgrade plan, including one that
+  doesn't touch the incompatible component. Per that same KB, the clean
+  fix is targeting **9.1.1.0 instead of 9.1.0.0400** – its BOM includes
+  chronologically newer builds that resolve this exact restriction, no
+  workload-domain surgery required.
 
 ---
 

@@ -87,6 +87,13 @@ can lose its path to that build entirely, and only a later point release
 source build before committing to a target** – do not extrapolate from a
 neighbouring patch level.
 
+The NSX side of this same restriction (NSX 4.2.4 and later) hits fleet-wide,
+not just the domain running it – see [Field notes: NSX and
+vCenter](04-field-notes.md#nsx-and-vcenter) for a case where it blocked a
+**management-domain-only** upgrade plan even though the incompatible NSX
+version was on a separately **imported** workload domain that upgrade
+wasn't touching.
+
 > **One open question this doc cannot resolve from documentation alone.**
 > The vSphere 9.1 TechDocs page for the GUI installer path is titled
 > *"Upgrade a vCenter Appliance 9.0 or later by Using the GUI"* and states
