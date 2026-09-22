@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.5.6 – 2026-09-22
+- **Fix track misplacement: move the fleet-wide NSX back-in-time
+  cross-link from `docs/07` to `docs/13`.** `docs/07` is VVF/standalone
+  vSphere only (no Fleet Management), but the finding it pointed to
+  (SDDC Manager's Plan Component Upgrade, management domain, workload
+  domain import) is full-VCF-only – none of that exists outside VCF
+  Management Services. Added instead to `docs/13` Phase 2 (SDDC Manager
+  upgrade), where Plan Component Upgrade is actually driven.
+
 ## v1.5.5 – 2026-09-22
 - **Add a field note to `docs/04`: the NSX back-in-time restriction (KB
   448135, NSX 4.2.4 and later vs. VCF 9.1.0.x) blocks upgrade plan

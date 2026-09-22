@@ -228,6 +228,19 @@ precheck afterwards.
 **Before moving on:** SDDC Manager UI healthy; inventory intact; prechecks
 still green.
 
+**The NSX back-in-time restriction (see [vCenter manual upgrade –
+Before you start](07-vcenter-manual-upgrade.md#before-you-start-confirm-the-source-is-actually-on-a-supported-path),
+KB 448135) can block this Plan Component Upgrade step fleet-wide, not just
+for a domain running the incompatible NSX build.** See [Field notes: NSX
+and vCenter](04-field-notes.md#nsx-and-vcenter) for a case where an
+**imported** workload domain's NSX version blocked a
+**management-domain-only** upgrade plan, even though that plan didn't
+touch the imported domain at all – SDDC Manager validates the target
+version against the whole fleet's component inventory before saving any
+domain's plan. If blocked, check whether a later target build (e.g.
+9.1.1.0 instead of 9.1.0.x) reopens the path before attempting any
+workload-domain-level workaround.
+
 ### Phase 3 – Deploy VCF Management Services + License Server
 
 Deploy the new **VCF Management Services** cluster and the headless
