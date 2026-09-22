@@ -38,6 +38,14 @@ alongside full maintenance releases, and they follow different rules:
   **Upgrade** – then for core components, **Build → Lifecycle
   Management → VCF Instance → Upgrades → Plan Component Upgrade**.
 
+The VCF unified versioning model places Express Patches alongside major,
+minor, and maintenance releases – showing which are synchronized across
+the VCF software stack versus delivered independently, and each type's
+installation method. Per [VCF 9.1 - Understanding VCF Express
+Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html):
+
+![VCF unified versioning model, showing release type synchronization across the stack and installation method](https://i0.wp.com/williamlam.com/wp-content/uploads/2026/07/understanding-vcf-express-patches-0.png?ssl=1)
+
 The rest of this doc is about the maintenance-release case, which does
 have a strict order.
 
@@ -471,7 +479,7 @@ ordering and rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
 - [VCF 9.1 - VCF Download Tool (VCFDT) Cheatsheet](https://williamlam.com/2026/05/vcf-9-1-vcf-download-tool-vcfdt-cheatsheet.html) – concrete VCFDT command examples
 - [VCF 9.1 - New HTTP Offline Depot Support for VCF Installer & Fleet Depot Service](https://williamlam.com/2026/05/vcf-9-1-new-http-offline-depot-support-for-vcf-installer-fleet-depot-service.html)
 - [Installing Express Patches with VMware Cloud Foundation 9.1 (official VMware Cloud Foundation blog)](https://blogs.vmware.com/cloud-foundation/2026/06/29/installing-express-patches-with-vmware-cloud-foundation-9-1/) – the official Express Patch procedure, cadence, and ordering rule
-- [VCF 9.1 - Understanding VCF Express Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html) – supplementary community write-up of the same mechanism
+- [VCF 9.1 - Understanding VCF Express Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html) – supplementary community write-up of the same mechanism, source of the unified versioning model diagram used above
 - [Upgrading VCF Management Components to 9.1.1 All in One (Cosmin.us)](https://cosmin.us/upgrading-vcf-management-components-to-9-1-1-all-in-one/) – the full 14-step worked order, UI walkthrough, gotchas (KB 388305, 448993, 451147, 400822), and timing table – a practitioner account, not a Broadcom TechDocs page
 - [Upgrade All: how one button left a VCF 9.1.1 lab deadlocked for two weeks](https://mb-labs.de/2026/09/18/upgrade-all-how-one-button-left-my-vcf-9-1-1-lab-deadlocked-for-two-weeks/) – the real-world Upgrade All / parallel-patching failure mode
 - [VCF 9.1.1 – Not a Maintenance Release](https://mysticmarvin.com/blog/vcf-9-1-1-not-a-maintenance-release/) – the Secure Boot cert migration, ESX live-patching, distributed firewall, and Host Profile/vSAN gotchas

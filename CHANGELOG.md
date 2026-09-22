@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.2 – 2026-09-22
+- **Add the VCF unified versioning model diagram to `docs/20`'s Express
+  Patches section**, hotlinked from williamlam.com, showing how major,
+  minor, maintenance, and Express Patch releases differ in stack
+  synchronization and installation method.
+
 ## v1.4.1 – 2026-09-22
 - **Fix `docs/20`'s 14-step patching order to match its own "first two
   steps are fixed" claim.** The numbered list (sourced from Cosmin.us)
