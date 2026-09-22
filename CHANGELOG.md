@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.6.2 – 2026-09-22
+- **Add a version interop quick-reference table to `docs/22`.** One
+  table across Converge and Import: target VCF build, min vCenter/ESX,
+  NSX requirement, and known gate – including the 9.1.0.x back-in-time
+  block vs. its 9.1.1.0+ resolution (KB 448135) and the NSX 9.1 /
+  vCenter 8.0 U3a+ incompatibility. Framed explicitly as a starting
+  point, not a replacement for re-running the Upgrade Path tool against
+  the exact source build.
+
 ## v1.6.1 – 2026-09-22
 - **Strengthen `docs/22`'s root-cause claim from "matches" to
   "confirmed."** The williamlam.com article's vCenter 8.0 U3c → NSX

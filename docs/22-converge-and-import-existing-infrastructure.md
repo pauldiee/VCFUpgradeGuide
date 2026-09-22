@@ -18,6 +18,36 @@ an existing vCenter to it as another workload domain, that's Import.
 
 ---
 
+## Version interop quick-reference
+
+**Treat this as a starting point, not the final answer** – re-run the
+Broadcom Product Interoperability Matrix (Upgrade Path tool) for the
+*exact* source build before committing, the same discipline [confirming
+a supported upgrade
+path](01-overview.md#confirm-a-supported-upgrade-path) already demands
+elsewhere in this repo. Patch-level KBs supersede generic minimums
+constantly – see the [back-in-time
+restriction](07-vcenter-manual-upgrade.md#before-you-start-confirm-the-source-is-actually-on-a-supported-path)
+row below for exactly why.
+
+| Target VCF build | Mechanism | Min vCenter | Min ESX | NSX | Known gate |
+| --- | --- | --- | --- | --- | --- |
+| 9.0.0 | Converge | 9.0+ | 9.0+ | n/a (fresh) | – |
+| 9.0.1 / 9.0.2 | Converge | 8.0 U3+ **only if** existing NSX registration at 4.2.1+; otherwise 9.0+ | 8.0 U1+ under the same condition; otherwise 9.0+ | 4.2.1+ if reusing an existing registration | – |
+| 9.0.x (any) | Import | 8.0 U3a+ | 8.0 U3+ | 4.2.1+ optional | – |
+| 9.1.0.x | Import or Converge | 8.0 U3a+ | 8.0 U3+ | 4.2.1+ optional | **Blocked** if vCenter is 8.0 U3j+ *and* NSX is 4.2.4+ – [back-in-time restriction](07-vcenter-manual-upgrade.md#before-you-start-confirm-the-source-is-actually-on-a-supported-path), KB 448135 |
+| 9.1.1.0+ | Import or Converge | 8.0 U3a+ | 8.0 U3+ | 4.2.1+ optional | Back-in-time restriction above **resolved** – KB 448135's updated BOM reopens the path |
+| Deploying/joining **NSX 9.1** specifically during import | Import | Must already be on **vCenter 9.1** | – | NSX 9.1 does not support vCenter 8.0 U3a+ | Upgrade vCenter to 9.1 first, before the import wizard's NSX step |
+
+**No existing NSX registration doesn't dodge the 9.1.0.x row above – it
+can walk straight into it.** When NSX isn't already present, VCF
+auto-selects and deploys the latest NSX build compatible with the
+*source vCenter*, without checking that selection against the *target
+VCF build's* chronological baseline – see [The shared trap](#the-shared-trap-auto-selected-nsx-version-can-be-chronologically-incompatible)
+below for the mechanism and how to avoid it.
+
+---
+
 ## Converge: existing vSphere becomes a new VCF or VVF platform
 
 Per Broadcom's [Converging Existing Virtual Infrastructure to a VCF or a
