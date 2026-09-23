@@ -279,6 +279,18 @@ Expect every cluster to behave differently.
   deferring it. Full symptom, output example, and step order: [VDT and
   lsdoctor: STS connection string pointing to the vCenter's own
   IP](17-vdt-and-lsdoctor-diagnostics.md#field-observed-symptom-sts-connection-string-pointing-to-the-vcenters-own-ip).
+- **`cs.identity Missing Node ID` after a 9.1.0.x upgrade.** A **known
+  9.1 upgrade defect** (Broadcom KB 448977), not a misconfiguration – a
+  vCenter/Identity Broker sync failure leaves the `cs.identity` Lookup
+  Service registration without a Node ID. Not service-impacting at the
+  moment it's flagged, but left unresolved it surfaces later as SSO login
+  failures (`"vCenter ID not found"`, `"AsyncTokenProvider has been
+  closed"`). Fix with the KB's own `regen_csidentity.sh` script (or
+  `lsdoctor.py -r` option 2) in the same pre-/post-upgrade window, not
+  deferred. Only applies if the upgrade path actually transits 9.1.0.x –
+  the tool's own output says so. Full symptom and remediation options:
+  [VDT and lsdoctor: cs.identity Missing Node
+  ID](17-vdt-and-lsdoctor-diagnostics.md#field-observed-symptom-csidentity-missing-node-id-post-910x-upgrade).
 
 ---
 

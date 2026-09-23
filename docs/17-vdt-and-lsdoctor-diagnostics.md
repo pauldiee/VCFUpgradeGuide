@@ -191,6 +191,52 @@ string, which is exactly what an upgrade does (`vpxd`, `vapi-endpoint`,
 3. `service-control --stop --all && service-control --start --all`.
 4. Re-run the read-only check to confirm the FAIL clears.
 
+#### Field-observed symptom: cs.identity Missing Node ID (post-9.1.0.x upgrade)
+
+The read-only check's **VC Lookup Service Check** category can report:
+
+```
+VC Lookup Service Check
+    • SSO Site: default-site
+        • [FAIL]                                            (VC Server or CGW)
+            [FAIL]    cs.identity Missing Node ID
+                        Regenerate on vCenter Server: <vcenter-fqdn> (VC Server or CGW) after upgrading to 9.1.0.x.
+                        If skipping 9.1.0.x, this can be ignored.
+                        Documentation:  https://knowledge.broadcom.com/external/article/448977
+```
+
+Per Broadcom KB 448977, this is a **known 9.1 upgrade defect, not an
+environment misconfiguration**: a synchronization failure between vCenter
+Server and the Identity Broker leaves the **`cs.identity` Lookup Service
+registration with a missing Node ID**, alongside stale OAuth2 trust
+registrations. Left unresolved, it surfaces later as SSO login failures –
+*"An error occurred during authentication"* in the browser, with
+`"vCenter ID not found"` and `"AsyncTokenProvider has been closed"` in the
+logs. Same pattern as the STS connection string symptom above: not
+service-impacting the moment it's flagged, but the failure mode is
+triggered by exactly what an upgrade does, so fix it in the pre-upgrade or
+immediate post-upgrade window rather than deferring it.
+
+**The note's own qualifier matters**: *"If skipping 9.1.0.x, this can be
+ignored"* – only relevant if the upgrade path actually transits 9.1.0.x;
+confirm the target path before treating this as mandatory.
+
+Three remediation options per KB 448977, in order of preference:
+
+1. **`regen_csidentity.sh`** (the KB's own script) – take an offline
+   snapshot first, run it, it regenerates the `cs.identity` service
+   registration and restarts all services itself.
+2. **`lsdoctor.py -r`, option 2** ("Replace all services with new
+   services") – the general-purpose rebuild option covered in [Repair
+   modes](#repair-modes--all-more-invasive-than-the-read-only-check)
+   below; same same-instant whole-SSO-domain snapshot precaution applies.
+3. **Manual steps** – confirm the missing Node ID, retrieve the stale
+   Service ID via `lstool.py`, unregister it, then re-register with
+   `sts-init-ls.sh`, then restart all services. Same
+   verify-before-deleting discipline as the [orphaned service
+   registrations](#field-observed-symptom-orphaned-service-registrations)
+   manual cleanup above.
+
 #### Field-observed symptom: orphaned service registrations
 
 A `[WARNING]`-level *"3rd party/Orphaned service registrations"* line for
@@ -365,3 +411,4 @@ guessed at.
 - [Cleaning up decommissioned SRM registrations (KB 337576)](https://knowledge.broadcom.com/external/article/337576/cleaning-up-decommissioned-srm-registrations.html)
 - [Machine ID mismatch between VMAFD and the Likewise registry (KB 312479)](https://knowledge.broadcom.com/external/article/312479)
 - [STS connection string is incorrect (KB 323195 / legacyId 91965)](https://knowledge.broadcom.com/external/article?legacyId=91965) – `vmwSTSConnectionStrings` drift and the `fix_sts_attrs.py` remediation
+- [cs.identity Missing Node ID (KB 448977)](https://knowledge.broadcom.com/external/article/448977) – the post-9.1.0.x upgrade Lookup Service registration defect, `regen_csidentity.sh`, and the SSO login failure it causes if left unresolved

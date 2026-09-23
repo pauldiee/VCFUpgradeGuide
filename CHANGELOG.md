@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.6.9 – 2026-09-23
+- **Add a field-observed lsdoctor symptom: `cs.identity Missing Node ID`.**
+  New `docs/17` field-observed subsection plus a `docs/04` pointer – a
+  known VCF/vCenter 9.1 upgrade defect (Broadcom KB 448977), not an
+  environment misconfiguration. Includes the three remediation options
+  from the KB and the "only applies if the path transits 9.1.0.x"
+  qualifier from the tool's own output.
+
 ## v1.6.8 – 2026-09-23
 - **Increase contrast of the `h2`/`h3`/`h4` divider rules.** The dividers
   added in v1.6.7 used the low-contrast `--border-default`/`--border-subtle`
