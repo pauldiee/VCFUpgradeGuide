@@ -150,11 +150,18 @@ flag below).
    to the line number from the traceback, and confirm it actually falls
    inside a `<vcls>...</vcls>` block before touching anything – don't
    assume this KB's specific cause matches without checking.
-3. If confirmed, remove the block:
+3. **Cross-check the cluster ID against the vSphere Client UI** – the
+   `<vcls>` block's cluster identifier should match a real cluster with
+   **vSphere Cluster Services (vCLS) enabled** (cluster → **Configure** →
+   **vSphere Cluster Services** → **General**). Confirming the ID
+   corresponds to an actual, currently vCLS-enabled cluster (not stale
+   or unrelated data) is a second, independent check beyond just "this is
+   inside a `<vcls>` tag."
+4. If both checks confirm, remove the block:
    `sed '/<vcls>/,/<\/vcls>/d' -i /etc/vmware-vpx/vpxd.cfg`.
-4. Restart vCenter services so `vpxd` picks up the corrected file:
+5. Restart vCenter services so `vpxd` picks up the corrected file:
    `service-control --stop --all && service-control --start --all`.
-5. Re-run `python vdt.py` to confirm the WARNING clears.
+6. Re-run `python vdt.py` to confirm the WARNING clears.
 
 > **Untested in this repo.** This `sed` command directly edits a live
 > `vpxd.cfg` and hasn't been field-verified here yet – take the snapshot

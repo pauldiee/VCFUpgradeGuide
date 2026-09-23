@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.7.5 – 2026-09-23
+- **Add a cluster-ID UI cross-check to the `vpxd.cfg` `<vcls>`-block
+  verification.** Confirmed the malformed block's cluster ID matches a
+  real, vCLS-enabled cluster visible in the vSphere Client UI (cluster →
+  Configure → vSphere Cluster Services). Added as a second, independent
+  check in `docs/17`'s remediation steps, alongside the existing XML
+  boundary check, before running the `sed` removal.
+
 ## v1.7.4 – 2026-09-23
 - **Add a field-confirmation note to the `vpxd.cfg` `<vcls>`-block
   diagnosis.** Confirmed on a live vCenter that the reported parse-
