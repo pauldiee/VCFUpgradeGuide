@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.6.6 – 2026-09-23
+- **Increase heading-to-content spacing in rendered docs pages.** `h2`/`h3`
+  headings' `margin-bottom` was being silently lost to normal CSS margin
+  collapsing (the following paragraph/list/code-block's own top margin was
+  larger and won), and `h4` had no prose styling at all despite docs using
+  `####` subsections. Gave each heading an explicit `margin-bottom` and
+  zeroed the immediately-following element's `margin-top` so the heading
+  actually controls the gap. Verified visually in a local preview.
+
 ## v1.6.5 – 2026-09-23
 - **Add a field-observed lsdoctor symptom: STS connection string pointing
   to the vCenter's own IP.** New `docs/17` field-observed subsection plus

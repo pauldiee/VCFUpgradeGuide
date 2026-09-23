@@ -440,6 +440,7 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
 }
 .prose h2 {
   margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
   padding-top: var(--space-5);
   border-top: var(--border-width) solid var(--border-default);
 }
@@ -471,7 +472,24 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
 .prose h2 .back-to-top:hover {
   color: var(--itq-orange);
 }
-.prose h3 { margin-top: var(--space-6); }
+.prose h3 { margin-top: var(--space-6); margin-bottom: var(--space-4); }
+.prose h4 {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+}
+/* Adjacent-sibling margins collapse by default, so a heading's own
+   margin-bottom only "wins" if it's larger than whatever follows it
+   (p/ul/ol/pre/blockquote all carry their own top margin). Zero the
+   follower's top margin so the heading's margin-bottom is what actually
+   renders, instead of silently losing to it. */
+.prose h1 + *,
+.prose h2 + *,
+.prose h3 + *,
+.prose h4 + * {
+  margin-top: 0;
+}
 .prose > p:first-of-type { font-size: var(--fs-intro); color: var(--text-body); }
 
 .prose a { font-weight: var(--fw-semibold); text-decoration: underline; text-underline-offset: 2px; }
