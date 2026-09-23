@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.7.2 – 2026-09-23
+- **Document VDT's `vpxd.cfg` XML parse failure (malformed `<vcls>`
+  block).** New `docs/17` field-observed subsection plus a `docs/04`
+  pointer – per Broadcom KB (legacyId 416489), unlike the NTP crash this
+  is a genuine `vpxd` stability issue (coredumps, 100% CPU on `vapi`,
+  hostname reverting to `localhost`), not a VDT bug. The `sed` fix is
+  flagged Untested in this repo pending field verification.
+
 ## v1.7.1 – 2026-09-23
 - **Document VDT's "General Info" crash (`IndexError` in
   `getNtpServers`).** New `docs/17` Known issue subsection plus a

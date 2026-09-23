@@ -99,6 +99,55 @@ Fix it before assuming VDT itself is broken or unsupported on this
 build – the traceback is VDT's own parsing bug tripping on this
 specific file's contents, not a signal about the vCenter.
 
+### Field-observed symptom: `vpxd.cfg` XML parse failure (malformed `<vcls>` block)
+
+The **vCenter Basic Info** check can report a WARNING with its own
+traceback:
+
+```
+[INFO]    vCenter Basic Info
+...
+WARNING!  FAILED TO PARSE VPXD.CFG. Trace: Traceback (most recent call last):
+  File ".../vc_info.py", line 85, in SDDCManaged
+    vpxd = xml.parse("/etc/vmware-vpx/vpxd.cfg")
+  ...
+xml.etree.ElementTree.ParseError: not well-formed (invalid token): line <N>, column 7
+```
+
+**Unlike the NTP crash above, this one is not a VDT bug** –
+`/etc/vmware-vpx/vpxd.cfg` genuinely is malformed XML. Per Broadcom KB
+(legacyId 416489, ["vCenter server hostname shows localhost. and the
+vpxd service is
+stopped"](https://knowledge.broadcom.com/external/article/416489/vcenter-server-hostname-shows-localhost.html)),
+the same corruption can destabilize `vpxd` itself well beyond this one
+VDT check – documented symptoms include the appliance hostname reverting
+to `localhost`, the vCenter Server service stopped, `vpxd` generating
+coredumps, and `vapi` pinned at 100% CPU in `vimtop`. Treat this WARNING
+as a reason to check `vpxd`'s actual health (service status, coredumps,
+`vimtop`), not dismiss it as cosmetic just because VDT itself kept
+running.
+
+That KB's example points at a malformed `<vcls>` block as the cause. The
+line number will differ per environment (KB's own example is line 45,
+not line 39/whatever the local traceback reports) – confirm before
+editing anything:
+
+1. Back up first: `cp /etc/vmware-vpx/vpxd.cfg /root/vpxd.cfg.bak`.
+2. Inspect the reported line: `less -N /etc/vmware-vpx/vpxd.cfg`, jump
+   to the line number from the traceback, and confirm it actually falls
+   inside a `<vcls>...</vcls>` block before touching anything – don't
+   assume this KB's specific cause matches without checking.
+3. If confirmed, remove the block:
+   `sed '/<vcls>/,/<\/vcls>/d' -i /etc/vmware-vpx/vpxd.cfg`.
+4. Restart vCenter services so `vpxd` picks up the corrected file:
+   `service-control --stop --all && service-control --start --all`.
+5. Re-run `python vdt.py` to confirm the WARNING clears.
+
+> **Untested in this repo.** This `sed` command directly edits a live
+> `vpxd.cfg` and hasn't been field-verified here yet – take the snapshot
+> in step 1 seriously, and treat step 2's confirmation as mandatory, not
+> optional, before running step 3 against a different environment.
+
 ---
 
 ## lsdoctor: Lookup Service / SSO / vmdir troubleshooting
@@ -453,6 +502,7 @@ guessed at.
 
 - [Using the VCF Diagnostic Tool for vSphere (VDT) (KB 344917)](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html)
 - [VDT run failed at "General Info" check with an Error while attempting to collect NTP server information (KB 426374)](https://knowledge.broadcom.com/external/article/426374/vdt-run-failed-at-general-info-check-wit.html) – the `getNtpServers()` crash and the `/etc/ntp.conf` cleanup fix
+- [vCenter server hostname shows localhost. and the vpxd service is stopped (KB legacyId 416489)](https://knowledge.broadcom.com/external/article/416489/vcenter-server-hostname-shows-localhost.html) – the malformed `<vcls>` block in `vpxd.cfg`, its wider vpxd-instability symptoms, and the `sed` fix
 - [Using the Appliance Shell to Configure vCenter Server (9.0)](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-0/vcenter-configuration/configuring-vcenter-server-using-the-appliance-shell.html) – confirms `appliancesh` is still the vCenter 9 default, behind the SCP-fails-until-bash-is-set note above
 - [Toggling the vCenter Server Appliance default shell (Broadcom KB 319670)](https://knowledge.broadcom.com/external/article/319670/toggling-the-vcenter-server-appliance-de.html)
 - [Using the "lsdoctor" Tool (KB 320837)](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html)
