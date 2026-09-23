@@ -139,7 +139,11 @@ worse to discover when `vpxd` won't come back up mid-upgrade.
 That KB's example points at a malformed `<vcls>` block as the cause. The
 line number will differ per environment (KB's own example is line 45,
 not line 39/whatever the local traceback reports) – confirm before
-editing anything:
+editing anything. **Field-confirmed**: on a vCenter with this exact
+symptom, the reported line did fall inside a `<vcls>...</vcls>` block,
+matching the KB's pattern – but only the diagnosis step (boundary check)
+has been confirmed so far, not the remediation itself (see the Untested
+flag below).
 
 1. Back up first: `cp /etc/vmware-vpx/vpxd.cfg /root/vpxd.cfg.bak`.
 2. Inspect the reported line: `less -N /etc/vmware-vpx/vpxd.cfg`, jump

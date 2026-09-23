@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.7.4 – 2026-09-23
+- **Add a field-confirmation note to the `vpxd.cfg` `<vcls>`-block
+  diagnosis.** Confirmed on a live vCenter that the reported parse-
+  failure line falls inside a `<vcls>...</vcls>` block, matching KB
+  (legacyId 416489)'s pattern. Only the diagnosis step is confirmed –
+  the `sed` remediation itself stays flagged Untested pending a run.
+
 ## v1.7.3 – 2026-09-23
 - **Correct `vpxd.cfg` parse failure: the KB's stopped-service scenario
   is the worst case, not a guarantee.** Field-observed a vCenter running

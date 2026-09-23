@@ -285,8 +285,10 @@ Expect every cluster to behave differently.
   matter of course – fix it pre-upgrade like the STS connection string
   symptom above, not because the vCenter is broken right now. Confirm
   the reported line falls inside a `<vcls>` block before editing
-  anything – full steps, snapshot caveat, and **untested-in-this-repo**
-  flag: [VDT and lsdoctor: vpxd.cfg XML parse
+  anything – **field-confirmed** the boundary check matches the KB's
+  pattern in one real case, though the `sed` remediation itself hasn't
+  been run/confirmed yet. Full steps, snapshot caveat, and
+  **untested-in-this-repo** flag: [VDT and lsdoctor: vpxd.cfg XML parse
   failure](17-vdt-and-lsdoctor-diagnostics.md#field-observed-symptom-vpxdcfg-xml-parse-failure-malformed-vcls-block).
 - **STS connection string drifted to the vCenter's own IP, correlated
   with a missing PTR record.** Observed on a **standalone (non-ELM)**
