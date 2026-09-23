@@ -22,6 +22,22 @@ standalone vSphere).
 > Reconnect, then SCP/WinSCP works. Revert with
 > `chsh -s /bin/appliancesh root` once done, per the appliance-hardening
 > norm of not leaving bash as the standing default.
+>
+> **CLI alternative to WinSCP, from a Windows machine** – Windows
+> 10/11 ships OpenSSH's `scp` client, usable straight from PowerShell or
+> cmd:
+> ```
+> scp C:\path\to\file.zip root@<vcenter-fqdn-or-ip>:/root/
+> ```
+> Add `-r` to copy a whole directory (e.g. an already-extracted tool
+> folder) instead of a single file:
+> ```
+> scp -r C:\path\to\folder root@<vcenter-fqdn-or-ip>:/root/
+> ```
+> First connection prompts to accept the host key fingerprint – expected,
+> not an error. If `scp` isn't found, the optional OpenSSH Client feature
+> isn't installed (**Settings → Apps → Optional Features → OpenSSH
+> Client**); PuTTY's `pscp.exe` is a fallback with the same basic syntax.
 
 ---
 

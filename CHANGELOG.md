@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.7.9 – 2026-09-23
+- **Add a Windows CLI `scp` command to `docs/17`'s default-shell
+  callout.** Previously only said "SCP/WinSCP" with no concrete
+  example. Added the OpenSSH `scp` syntax (ships with Windows 10/11),
+  its `-r` directory variant, and a `pscp.exe` fallback note.
+
 ## v1.7.8 – 2026-09-23
 - **Reorder `docs/17` field-observed symptoms to group by lsdoctor
   category.** "cs.identity Missing Node ID" and "Node In Multiple
