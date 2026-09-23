@@ -73,7 +73,10 @@ IndexError: list index out of range
 ```
 
 This is **a bug in VDT's own NTP-parsing code, not a finding about the
-vCenter's health** – per Broadcom KB 426374, `getNtpServers()` assumes
+vCenter's health** – per [Broadcom KB 426374, "VDT run failed at
+'General Info' check with an Error while attempting to collect NTP
+server information"](https://knowledge.broadcom.com/external/article/426374/vdt-run-failed-at-general-info-check-wit.html),
+`getNtpServers()` assumes
 every line in `/etc/ntp.conf` splits into at least two tokens, and chokes
 on a malformed line (stray whitespace, a blank line, or similar) instead
 of skipping it. Fix the input file, not VDT itself:
