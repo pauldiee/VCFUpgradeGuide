@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8.0 – 2026-09-23
+- **Add VDT's output log path to `docs/17`.** VDT writes its report to
+  `/var/log/vmware/vdt/` on the appliance, accumulating a file per run.
+  Broadcom KB 344917 itself doesn't state the path (only that output is
+  added to log bundles) – sourced from a community write-up instead.
+
 ## v1.7.9 – 2026-09-23
 - **Add a Windows CLI `scp` command to `docs/17`'s default-shell
   callout.** Previously only said "SCP/WinSCP" with no concrete

@@ -71,6 +71,10 @@ to run one from (e.g. the standalone VVF / manual GUI upgrade path). Per
    assumes are healthy; VDT is how to actually confirm that instead of
    assuming it.
 
+VDT writes its report to **`/var/log/vmware/vdt/`** on the appliance –
+each run adds its own file rather than overwriting the last one, so
+reports accumulate there across repeated runs.
+
 A FAIL here is cheaper to fix now than mid-migration – run it per
 vCenter before the window opens, not after something's already gone
 wrong. If the FAIL is in the Lookup Service / AD integration check
@@ -553,6 +557,7 @@ guessed at.
 ## Sources
 
 - [Using the VCF Diagnostic Tool for vSphere (VDT) (KB 344917)](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html)
+- [Using the vSphere Diagnostic Tool Fling (runtimeterror.dev)](https://runtimeterror.dev/using-vsphere-diagnostic-tool-fling/) – confirms the `/var/log/vmware/vdt/` report output location, not stated in KB 344917 itself
 - [VDT run failed at "General Info" check with an Error while attempting to collect NTP server information (KB 426374)](https://knowledge.broadcom.com/external/article/426374/vdt-run-failed-at-general-info-check-wit.html) – the `getNtpServers()` crash and the `/etc/ntp.conf` cleanup fix
 - [vCenter server hostname shows localhost. and the vpxd service is stopped (KB legacyId 416489)](https://knowledge.broadcom.com/external/article/416489/vcenter-server-hostname-shows-localhost.html) – the malformed `<vcls>` block in `vpxd.cfg`, its wider vpxd-instability symptoms, and the `sed` fix
 - [Using the Appliance Shell to Configure vCenter Server (9.0)](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-0/vcenter-configuration/configuring-vcenter-server-using-the-appliance-shell.html) – confirms `appliancesh` is still the vCenter 9 default, behind the SCP-fails-until-bash-is-set note above
