@@ -150,23 +150,37 @@ flag below).
    to the line number from the traceback, and confirm it actually falls
    inside a `<vcls>...</vcls>` block before touching anything – don't
    assume this KB's specific cause matches without checking.
-3. **Cross-check the cluster ID against the vSphere Client UI** – the
-   `<vcls>` block's cluster identifier should match a real cluster with
-   **vSphere Cluster Services (vCLS) enabled** (cluster → **Configure** →
-   **vSphere Cluster Services** → **General**). Confirming the ID
-   corresponds to an actual, currently vCLS-enabled cluster (not stale
-   or unrelated data) is a second, independent check beyond just "this is
-   inside a `<vcls>` tag."
-4. If both checks confirm, remove the block:
-   `sed '/<vcls>/,/<\/vcls>/d' -i /etc/vmware-vpx/vpxd.cfg`.
-5. Restart vCenter services so `vpxd` picks up the corrected file:
+3. **Cross-check the cluster ID against the vSphere Client UI** (cluster
+   → **Configure** → **vSphere Cluster Services** → **General**). This
+   is the decision point, not just a confirmation step:
+   - **If the ID matches a real cluster with vCLS currently enabled**
+     – **do not use the KB's blanket block deletion.** That command
+     deletes the *entire* `<vcls>` block regardless of how much of it is
+     actually valid, and here it isn't garbage – it's live config for a
+     real cluster. Wholesale deletion risks discarding legitimate vCLS
+     state, not just clearing a syntax error, and what (if anything)
+     regenerates it automatically isn't documented anywhere consulted
+     for this doc. Instead: pinpoint the exact malformed character at
+     the reported line/column (e.g. `xmllint --noout
+     /etc/vmware-vpx/vpxd.cfg` if available, or careful manual
+     inspection with `less -N`) and correct only that token, preserving
+     the rest of the block – or open a Broadcom support request before
+     editing further, since `vpxd.cfg`'s full schema isn't publicly
+     documented and support has visibility this doc doesn't.
+   - **If the ID is stale/orphaned** (references a cluster that no
+     longer exists, or vCLS isn't enabled on it) – the KB's scenario
+     fits more cleanly, and the blanket removal is reasonable:
+     `sed '/<vcls>/,/<\/vcls>/d' -i /etc/vmware-vpx/vpxd.cfg`.
+4. Restart vCenter services so `vpxd` picks up the corrected file:
    `service-control --stop --all && service-control --start --all`.
-6. Re-run `python vdt.py` to confirm the WARNING clears.
+5. Re-run `python vdt.py` to confirm the WARNING clears.
 
-> **Untested in this repo.** This `sed` command directly edits a live
-> `vpxd.cfg` and hasn't been field-verified here yet – take the snapshot
-> in step 1 seriously, and treat step 2's confirmation as mandatory, not
-> optional, before running step 3 against a different environment.
+> **Untested in this repo, and treat the blanket-deletion branch above
+> with real caution.** Neither path has been field-verified end to end
+> here – the XML-boundary and cluster-ID checks have been confirmed, but
+> not the fix itself. On a real, vCLS-enabled cluster specifically,
+> favor the targeted-correction or support-request path over the KB's
+> delete-the-whole-block command.
 
 ---
 

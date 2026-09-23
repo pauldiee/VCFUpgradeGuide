@@ -283,11 +283,14 @@ Expect every cluster to behave differently.
   present, because `vpxd` only re-parses the file on its own startup.
   The real risk is the **next** restart, which an upgrade triggers as a
   matter of course – fix it pre-upgrade like the STS connection string
-  symptom above, not because the vCenter is broken right now. Confirm
-  the reported line falls inside a `<vcls>` block before editing
-  anything – **field-confirmed** the boundary check matches the KB's
-  pattern in one real case, though the `sed` remediation itself hasn't
-  been run/confirmed yet. Full steps, snapshot caveat, and
+  symptom above, not because the vCenter is broken right now. **Don't
+  default to the KB's blanket `<vcls>` block deletion** if the cluster
+  ID in that block matches a real, currently vCLS-enabled cluster
+  (cross-check in the vSphere Client UI) – that command deletes the
+  whole block regardless of how much is valid, and here it's live
+  config, not garbage. Prefer a targeted fix of just the malformed
+  token, or a Broadcom support request, over wholesale deletion in that
+  case. Full steps, snapshot caveat, and
   **untested-in-this-repo** flag: [VDT and lsdoctor: vpxd.cfg XML parse
   failure](17-vdt-and-lsdoctor-diagnostics.md#field-observed-symptom-vpxdcfg-xml-parse-failure-malformed-vcls-block).
 - **STS connection string drifted to the vCenter's own IP, correlated

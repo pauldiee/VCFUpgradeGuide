@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.7.6 – 2026-09-23
+- **Walk back the blanket `<vcls>` block deletion for a real,
+  vCLS-enabled cluster.** KB (legacyId 416489)'s `sed`-delete-the-block
+  fix discards legitimate vCLS config, not just a syntax error, when the
+  block describes a real currently-enabled cluster rather than stale
+  data. `docs/17` and `docs/04` now branch on the UI cross-check: real
+  and enabled → targeted fix of just the malformed token, or a Broadcom
+  support request; stale/orphaned → the KB's blanket delete still fits.
+
 ## v1.7.5 – 2026-09-23
 - **Add a cluster-ID UI cross-check to the `vpxd.cfg` `<vcls>`-block
   verification.** Confirmed the malformed block's cluster ID matches a
