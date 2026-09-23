@@ -472,12 +472,19 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
 .prose h2 .back-to-top:hover {
   color: var(--itq-orange);
 }
-.prose h3 { margin-top: var(--space-6); margin-bottom: var(--space-4); }
+.prose h3 {
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--border-subtle);
+}
 .prose h4 {
   font-size: var(--fs-body);
   font-weight: var(--fw-bold);
-  margin-top: var(--space-5);
+  margin-top: var(--space-6);
   margin-bottom: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--border-subtle);
 }
 /* Adjacent-sibling margins collapse by default, so a heading's own
    margin-bottom only "wins" if it's larger than whatever follows it

@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.6.7 – 2026-09-23
+- **Add divider rules to `h3`/`h4` in rendered docs pages.** `h2` already
+  had a visible top border marking section boundaries; `h3` and `h4` had
+  only whitespace, so scrolling through docs with many field-observed-
+  symptom subsections read as a continuous wall of text with no visual
+  cue for where one section ended and the next began. Added a scaled-down
+  `border-top` divider to both, verified visually in a local preview.
+
 ## v1.6.6 – 2026-09-23
 - **Increase heading-to-content spacing in rendered docs pages.** `h2`/`h3`
   headings' `margin-bottom` was being silently lost to normal CSS margin
