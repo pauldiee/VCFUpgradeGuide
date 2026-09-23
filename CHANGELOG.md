@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.7.0 – 2026-09-23
+- **Correct `cs.identity Missing Node ID`: observed pre-upgrade on
+  vCenter 8.x, not just post-9.1.** KB 448977 frames this purely as a
+  post-9.1-upgrade symptom, but the same FAIL was field-observed in a
+  read-only lsdoctor sweep against an un-upgraded vCenter 8.x. Corrected
+  `docs/17` and `docs/04` to treat it as an expected pre-upgrade FAIL
+  (the Identity Broker component it belongs to doesn't exist yet on
+  8.x) rather than something to remediate immediately.
+
 ## v1.6.9 – 2026-09-23
 - **Add a field-observed lsdoctor symptom: `cs.identity Missing Node ID`.**
   New `docs/17` field-observed subsection plus a `docs/04` pointer – a

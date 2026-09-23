@@ -191,7 +191,7 @@ string, which is exactly what an upgrade does (`vpxd`, `vapi-endpoint`,
 3. `service-control --stop --all && service-control --start --all`.
 4. Re-run the read-only check to confirm the FAIL clears.
 
-#### Field-observed symptom: cs.identity Missing Node ID (post-9.1.0.x upgrade)
+#### Field-observed symptom: cs.identity Missing Node ID
 
 The read-only check's **VC Lookup Service Check** category can report:
 
@@ -205,23 +205,32 @@ VC Lookup Service Check
                         Documentation:  https://knowledge.broadcom.com/external/article/448977
 ```
 
-Per Broadcom KB 448977, this is a **known 9.1 upgrade defect, not an
-environment misconfiguration**: a synchronization failure between vCenter
-Server and the Identity Broker leaves the **`cs.identity` Lookup Service
-registration with a missing Node ID**, alongside stale OAuth2 trust
-registrations. Left unresolved, it surfaces later as SSO login failures –
-*"An error occurred during authentication"* in the browser, with
-`"vCenter ID not found"` and `"AsyncTokenProvider has been closed"` in the
-logs. Same pattern as the STS connection string symptom above: not
-service-impacting the moment it's flagged, but the failure mode is
-triggered by exactly what an upgrade does, so fix it in the pre-upgrade or
-immediate post-upgrade window rather than deferring it.
+Broadcom KB 448977 documents this purely as a **post-9.1 upgrade
+symptom**: a synchronization failure between vCenter Server and the
+Identity Broker leaves the **`cs.identity` Lookup Service registration
+with a missing Node ID**, alongside stale OAuth2 trust registrations.
+Left unresolved, it surfaces later as SSO login failures – *"An error
+occurred during authentication"* in the browser, with `"vCenter ID not
+found"` and `"AsyncTokenProvider has been closed"` in the logs. **The KB
+says nothing about pre-upgrade detection** – but field-observed: this
+exact FAIL can already show up in a **read-only lsdoctor sweep run
+against vCenter 8.x, before any 9.1 upgrade has happened**. The tool is
+flagging a condition it expects to matter later, not something already
+broken on 8.x.
 
-**The note's own qualifier matters**: *"If skipping 9.1.0.x, this can be
-ignored"* – only relevant if the upgrade path actually transits 9.1.0.x;
-confirm the target path before treating this as mandatory.
+**Do not run any of the KB's remediation options against the still-on-8.x
+vCenter.** The `cs.identity` registration this KB fixes belongs to the
+Identity Broker, a **9.1-only component that doesn't exist yet** on an
+un-upgraded vCenter – there's nothing there to regenerate. Read the
+tool's own note as the instruction it is: *"Regenerate on vCenter Server
+… after upgrading to 9.1.0.x. If skipping 9.1.0.x, this can be
+ignored."* Track it as an expected pre-upgrade FAIL, confirm the target
+path actually transits 9.1.0.x (skip it if not), and re-run the read-only
+check **after** the 9.1.0.x upgrade phase completes – only apply the
+remediation below if the FAIL is still present at that point.
 
-Three remediation options per KB 448977, in order of preference:
+Three remediation options per KB 448977, for after reaching 9.1.0.x, in
+order of preference:
 
 1. **`regen_csidentity.sh`** (the KB's own script) – take an offline
    snapshot first, run it, it regenerates the `cs.identity` service
@@ -411,4 +420,4 @@ guessed at.
 - [Cleaning up decommissioned SRM registrations (KB 337576)](https://knowledge.broadcom.com/external/article/337576/cleaning-up-decommissioned-srm-registrations.html)
 - [Machine ID mismatch between VMAFD and the Likewise registry (KB 312479)](https://knowledge.broadcom.com/external/article/312479)
 - [STS connection string is incorrect (KB 323195 / legacyId 91965)](https://knowledge.broadcom.com/external/article?legacyId=91965) – `vmwSTSConnectionStrings` drift and the `fix_sts_attrs.py` remediation
-- [cs.identity Missing Node ID (KB 448977)](https://knowledge.broadcom.com/external/article/448977) – the post-9.1.0.x upgrade Lookup Service registration defect, `regen_csidentity.sh`, and the SSO login failure it causes if left unresolved
+- [cs.identity Missing Node ID (KB 448977)](https://knowledge.broadcom.com/external/article/448977) – the post-9.1.0.x upgrade Lookup Service registration defect, `regen_csidentity.sh`, and the SSO login failure it causes if left unresolved (KB itself is silent on the pre-upgrade FAIL this doc also documents)
