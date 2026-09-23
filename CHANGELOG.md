@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.6.5 – 2026-09-23
+- **Add a field-observed lsdoctor symptom: STS connection string pointing
+  to the vCenter's own IP.** New `docs/17` field-observed subsection plus
+  a `docs/04` pointer – observed on a standalone (non-ELM) vCenter,
+  correlated with a missing PTR record rather than the KB's default
+  ELM-decommission framing. Not service-impacting at rest, but the
+  documented failure mode (services failing to restart) is exactly what
+  an upgrade triggers, so it's a pre-upgrade fix-it item, not a defer.
+
 ## v1.6.4 – 2026-09-23
 - **Document the vCenter appliance default-shell SCP failure.** The
   appliance's default login shell (`appliancesh`) fails SCP/WinSCP until

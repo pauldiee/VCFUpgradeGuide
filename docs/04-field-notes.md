@@ -266,6 +266,19 @@ Expect every cluster to behave differently.
   Sites"** – the read-only check's own output names the exact fix
   (`lsdoctor.py -r`, option 2) for the affected node, see that doc for the
   full example.
+- **STS connection string drifted to the vCenter's own IP, correlated
+  with a missing PTR record.** Observed on a **standalone (non-ELM)**
+  vCenter – `vmwSTSConnectionStrings` should read `ldap://localhost:389`
+  but read the vCenter's own IP instead. Broadcom's KB frames this FAIL
+  as ELM-decommission leftover, but that note is boilerplate; here the
+  more likely cause was reverse DNS not resolving cleanly. Fix the PTR
+  record first (already a standard upgrade prerequisite), then run KB
+  323195's `fix_sts_attrs.py` – not currently service-impacting, but the
+  documented failure mode is services failing to restart, which an
+  upgrade triggers, so treat it as pre-upgrade cleanup rather than
+  deferring it. Full symptom, output example, and step order: [VDT and
+  lsdoctor: STS connection string pointing to the vCenter's own
+  IP](17-vdt-and-lsdoctor-diagnostics.md#field-observed-symptom-sts-connection-string-pointing-to-the-vcenters-own-ip).
 
 ---
 

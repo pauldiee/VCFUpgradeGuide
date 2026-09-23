@@ -146,6 +146,51 @@ that the tool's output itself links to. Take the same-instant, whole-SSO-domain
 snapshot from the warning below **before** running any `-r` option, same
 as any other repair mode.
 
+#### Field-observed symptom: STS connection string pointing to the vCenter's own IP
+
+The read-only check's **Identity Source Checks** category can report:
+
+```
+IDENTITY SOURCE CHECKS
+
+    [PASS]    Local OS identity source exists
+
+    [FAIL]    STS connection string is incorrect (ldap://<ip-address>)
+                Note:           This could prevent services from starting after a recent decommission of another vCenter
+                Documentation:  https://knowledge.broadcom.com/external/article?legacyId=91965
+```
+
+Broadcom's KB (legacyId 91965 / KB 323195) frames this as leftover from
+decommissioning another vCenter in **Enhanced Linked Mode**, but the note
+is boilerplate for this specific FAIL – it shows regardless of whether
+ELM is actually in play. Observed on a **standalone (non-ELM) vCenter**
+where `vmwSTSConnectionStrings` had drifted to the vCenter's own **IP
+address** instead of `ldap://localhost:389`, correlated with the
+vCenter having **no PTR (reverse DNS) record**. Read that correlation as
+the more likely root cause here: a component falling back to
+registering by IP when reverse DNS doesn't resolve cleanly, not an ELM
+decommission this vCenter never had.
+
+The vCenter can run normally in this state – the FAIL only bites when
+services actually restart and need to re-resolve the STS connection
+string, which is exactly what an upgrade does (`vpxd`, `vapi-endpoint`,
+`vpxd-svcs` all restart). Treat it as a pre-upgrade fix, not a
+"currently broken, drop everything" issue:
+
+1. **Fix the PTR record first** – forward *and* reverse DNS is already
+   a standard upgrade prerequisite independent of this symptom, and
+   fixing the connection string before DNS risks the same drift
+   recurring on the next service restart/reconfig.
+2. **Then run `fix_sts_attrs.py`** (KB 323195) to correct
+   `vmwSTSConnectionStrings` back to `ldap://localhost:389`. The script's
+   own instructions say to upload it to "any vCenter in ELM," but the
+   mechanism is a per-node vmdir attribute fix – it applies the same way
+   on a standalone node; just scope the "snapshot every node in the SSO
+   domain first" step to whatever the domain actually contains (one node
+   here).
+3. `service-control --stop --all && service-control --start --all`.
+4. Re-run the read-only check to confirm the FAIL clears.
+
 #### Field-observed symptom: orphaned service registrations
 
 A `[WARNING]`-level *"3rd party/Orphaned service registrations"* line for
@@ -319,3 +364,4 @@ guessed at.
 - [Using the "lsdoctor" Tool (KB 320837)](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html)
 - [Cleaning up decommissioned SRM registrations (KB 337576)](https://knowledge.broadcom.com/external/article/337576/cleaning-up-decommissioned-srm-registrations.html)
 - [Machine ID mismatch between VMAFD and the Likewise registry (KB 312479)](https://knowledge.broadcom.com/external/article/312479)
+- [STS connection string is incorrect (KB 323195 / legacyId 91965)](https://knowledge.broadcom.com/external/article?legacyId=91965) – `vmwSTSConnectionStrings` drift and the `fix_sts_attrs.py` remediation
