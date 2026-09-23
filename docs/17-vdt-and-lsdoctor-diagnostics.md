@@ -85,7 +85,13 @@ of skipping it. Fix the input file, not VDT itself:
 2. Edit with `vi /etc/ntp.conf` and remove any blank lines or
    trailing/extraneous whitespace – valid entries should read cleanly as
    `server xx.xx.xx.xx` with nothing else on the line.
-3. Re-run `python vdt.py` – General Info should now complete and report
+3. Restart `ntpd` so it's running against the corrected file:
+   `systemctl restart ntpd`. VDT reads `/etc/ntp.conf` directly rather
+   than querying the running daemon, so this step hasn't been observed
+   as strictly necessary just to clear the crash – include it anyway,
+   since leaving `ntpd` running against the pre-edit config is its own
+   latent inconsistency.
+4. Re-run `python vdt.py` – General Info should now complete and report
    its actual PASS/FAIL/WARN results instead of crashing before it gets
    there.
 
