@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.7.8 – 2026-09-23
+- **Reorder `docs/17` field-observed symptoms to group by lsdoctor
+  category.** "cs.identity Missing Node ID" and "Node In Multiple
+  Sites" are both `VC Lookup Service Check` findings but got split apart
+  by the (different-category) STS connection string entry when it was
+  added in between. Regrouped, and fixed a stale "manual cleanup above"
+  cross-reference that should have read "below".
+
 ## v1.7.7 – 2026-09-23
 - **Make the hostname-not-reverted confirmation explicit in `docs/17`.**
   Field-confirmed the vCenter hostname specifically hasn't reverted to
