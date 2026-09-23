@@ -9,6 +9,20 @@ layer. Neither is tied to any one migration or upgrade step – both apply
 whenever a vCenter/PSC exists, regardless of track (VCF, VVF, or
 standalone vSphere).
 
+> **Before copying either tool over: SCP to the appliance fails until the
+> default shell is switched from `appliancesh` to `bash`.** Confirmed
+> current on vCenter 9.0 as well as 7.x/8.x – TechDocs still documents
+> `appliancesh` as the default login shell. From the appliance shell
+> (console or SSH):
+> ```
+> shell.set --enabled true
+> shell
+> chsh -s /bin/bash root
+> ```
+> Reconnect, then SCP/WinSCP works. Revert with
+> `chsh -s /bin/appliancesh root` once done, per the appliance-hardening
+> norm of not leaving bash as the standing default.
+
 ---
 
 ## VCF Diagnostic Tool for vSphere (VDT)
@@ -19,7 +33,8 @@ to run one from (e.g. the standalone VVF / manual GUI upgrade path). Per
 [Broadcom KB 344917, "Using the VCF Diagnostic Tool for vSphere (VDT)"](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html):
 
 1. Download the VDT version matching the source vCenter build from the KB
-   attachments, copy it to the appliance (WinSCP or equivalent) into
+   attachments, copy it to the appliance (WinSCP or equivalent – see the
+   default-shell note above) into
    `/root`, then extract it:
    ```
    cd /root/
@@ -84,8 +99,8 @@ This doc is the general reference; that one shows it in context.
 
 1. Download the tool attachment from
    [Broadcom KB 320837, "Using the 'lsdoctor' Tool"](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html).
-2. Copy it to the target vCenter (WinSCP or equivalent), SSH in, and
-   unzip it.
+2. Copy it to the target vCenter (WinSCP or equivalent – see the
+   default-shell note above), SSH in, and unzip it.
 3. Run it from inside the extracted `lsdoctor-main` directory – it must
    be run from there, not a copy of individual files elsewhere.
 
@@ -299,6 +314,8 @@ guessed at.
 ## Sources
 
 - [Using the VCF Diagnostic Tool for vSphere (VDT) (KB 344917)](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html)
+- [Using the Appliance Shell to Configure vCenter Server (9.0)](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-0/vcenter-configuration/configuring-vcenter-server-using-the-appliance-shell.html) – confirms `appliancesh` is still the vCenter 9 default, behind the SCP-fails-until-bash-is-set note above
+- [Toggling the vCenter Server Appliance default shell (Broadcom KB 319670)](https://knowledge.broadcom.com/external/article/319670/toggling-the-vcenter-server-appliance-de.html)
 - [Using the "lsdoctor" Tool (KB 320837)](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html)
 - [Cleaning up decommissioned SRM registrations (KB 337576)](https://knowledge.broadcom.com/external/article/337576/cleaning-up-decommissioned-srm-registrations.html)
 - [Machine ID mismatch between VMAFD and the Likewise registry (KB 312479)](https://knowledge.broadcom.com/external/article/312479)

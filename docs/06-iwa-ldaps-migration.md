@@ -201,7 +201,11 @@ after step 6 makes it harder to roll back. Per
 [Broadcom KB 320837, "Using the 'lsdoctor' Tool"](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html):
 
 1. Download the `lsdoctor.zip` attachment from the KB, copy it to the
-   vCenter via WinSCP (or equivalent), and unzip it:
+   vCenter via WinSCP (or equivalent – SCP fails against the appliance's
+   default shell until it's switched to bash, see [VDT and lsdoctor:
+   self-service diagnostic
+   tools](17-vdt-and-lsdoctor-diagnostics.md#vdt-and-lsdoctor-self-service-diagnostic-tools)),
+   and unzip it:
    ```
    unzip lsdoctor.zip
    ```

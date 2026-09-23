@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.6.4 – 2026-09-23
+- **Document the vCenter appliance default-shell SCP failure.** The
+  appliance's default login shell (`appliancesh`) fails SCP/WinSCP until
+  switched to `bash` – confirmed still true on vCenter 9.0, not just
+  7.x/8.x. Added as a shared note in `docs/17` (both the VDT and lsdoctor
+  copy steps), a pointer from `docs/06`'s lsdoctor copy step, and a new
+  gotcha in `docs/04`.
+
 ## v1.6.3 – 2026-09-23
 - **Add VCFDT's `--latest` one-liner shortcut to `docs/20`.** A fourth
   option (D) alongside the existing spec-file/filtered-catalog/binary-ID

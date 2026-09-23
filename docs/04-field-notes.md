@@ -105,6 +105,25 @@ with a `DELETE …/casa/auth/users` call.
 
 ---
 
+## vCenter Server Appliance shell
+
+- **SCP/WinSCP to the appliance fails with the default shell.** The
+  appliance's default login shell is `appliancesh`, not `bash` – SCP
+  clients need a real shell to negotiate the transfer, so any file copy
+  (VDT, lsdoctor, a VIB, a remediation script) silently fails until it's
+  switched. Confirmed current on **vCenter 9.0** as well as 7.x/8.x. Fix,
+  from the appliance shell (console or SSH):
+  ```
+  shell.set --enabled true
+  shell
+  chsh -s /bin/bash root
+  ```
+  Reconnect, then SCP works. Revert with `chsh -s /bin/appliancesh root`
+  once done. Full context: [VDT and lsdoctor: self-service diagnostic
+  tools](17-vdt-and-lsdoctor-diagnostics.md).
+
+---
+
 ## NSX and vCenter
 
 - **Promote Manager-mode objects to Policy mode first.** A mandatory NSX
