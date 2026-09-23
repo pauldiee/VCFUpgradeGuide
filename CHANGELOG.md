@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.6.8 – 2026-09-23
+- **Increase contrast of the `h2`/`h3`/`h4` divider rules.** The dividers
+  added in v1.6.7 used the low-contrast `--border-default`/`--border-subtle`
+  hairline tokens, which barely registered in dark mode. Switched all
+  three to `--border-strong`, and `h2` to `--border-width-strong` (2px),
+  so section boundaries read clearly while scrolling instead of blending
+  into the background. Verified visually in a local preview.
+
 ## v1.6.7 – 2026-09-23
 - **Add divider rules to `h3`/`h4` in rendered docs pages.** `h2` already
   had a visible top border marking section boundaries; `h3` and `h4` had
