@@ -119,13 +119,22 @@ xml.etree.ElementTree.ParseError: not well-formed (invalid token): line <N>, col
 (legacyId 416489, ["vCenter server hostname shows localhost. and the
 vpxd service is
 stopped"](https://knowledge.broadcom.com/external/article/416489/vcenter-server-hostname-shows-localhost.html)),
-the same corruption can destabilize `vpxd` itself well beyond this one
-VDT check – documented symptoms include the appliance hostname reverting
-to `localhost`, the vCenter Server service stopped, `vpxd` generating
-coredumps, and `vapi` pinned at 100% CPU in `vimtop`. Treat this WARNING
-as a reason to check `vpxd`'s actual health (service status, coredumps,
-`vimtop`), not dismiss it as cosmetic just because VDT itself kept
-running.
+the same corruption *can* destabilize `vpxd` itself – documented symptoms
+include the appliance hostname reverting to `localhost`, the vCenter
+Server service stopped, `vpxd` generating coredumps, and `vapi` pinned at
+100% CPU in `vimtop`. **That KB's scenario is the worst case, not a
+guarantee** – field-observed: a vCenter can have this exact parse
+failure while running completely normally, none of those symptoms
+present. `vpxd` only re-parses `vpxd.cfg` on its own startup, so a
+currently-running instance can be carrying a corrupted file without
+anything visibly wrong yet.
+
+Treat that as reason for urgency on a *different* axis: not "is vpxd
+broken right now" (check anyway, but it may well say no), but "will
+vpxd's next restart succeed" – and an upgrade restarts vpxd as a matter
+of course. Fix this pre-upgrade the same way as the STS connection
+string symptom above: cheap to fix on a healthy, running appliance, much
+worse to discover when `vpxd` won't come back up mid-upgrade.
 
 That KB's example points at a malformed `<vcls>` block as the cause. The
 line number will differ per environment (KB's own example is line 45,

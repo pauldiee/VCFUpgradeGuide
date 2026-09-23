@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.7.3 – 2026-09-23
+- **Correct `vpxd.cfg` parse failure: the KB's stopped-service scenario
+  is the worst case, not a guarantee.** Field-observed a vCenter running
+  completely normally despite the same malformed-`<vcls>`-block parse
+  failure. Corrected `docs/17` and `docs/04`: `vpxd` only re-parses
+  `vpxd.cfg` on its own startup, so the real risk is the *next* restart
+  (an upgrade triggers one), not necessarily current instability.
+
 ## v1.7.2 – 2026-09-23
 - **Document VDT's `vpxd.cfg` XML parse failure (malformed `<vcls>`
   block).** New `docs/17` field-observed subsection plus a `docs/04`

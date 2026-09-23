@@ -274,15 +274,19 @@ Expect every cluster to behave differently.
   [VDT and lsdoctor: "General Info" check
   crash](17-vdt-and-lsdoctor-diagnostics.md#known-issue-general-info-check-crashes-with-indexerror-list-index-out-of-range).
 - **`vpxd.cfg` malformed XML (`FAILED TO PARSE VPXD.CFG`) – a real
-  vpxd-stability issue, not a VDT bug.** Per Broadcom KB (legacyId
-  416489), a corrupted `<vcls>` block in `/etc/vmware-vpx/vpxd.cfg` can
-  destabilize `vpxd` well beyond this one VDT check: hostname reverting
-  to `localhost`, the vCenter Server service stopped, `vpxd` coredumps,
-  `vapi` pinned at 100% CPU. Treat the WARNING as a reason to check
-  `vpxd`'s actual health, not cosmetic. Confirm the reported line falls
-  inside a `<vcls>` block before editing anything – full steps, snapshot
-  caveat, and **untested-in-this-repo** flag: [VDT and lsdoctor:
-  vpxd.cfg XML parse
+  config defect, not a VDT bug, but not necessarily current instability
+  either.** Per Broadcom KB (legacyId 416489), a corrupted `<vcls>`
+  block in `/etc/vmware-vpx/vpxd.cfg` *can* destabilize `vpxd` (hostname
+  reverting to `localhost`, service stopped, coredumps, `vapi` at 100%
+  CPU) – but that's the worst case, not guaranteed: field-observed on a
+  vCenter running completely normally with this exact parse failure
+  present, because `vpxd` only re-parses the file on its own startup.
+  The real risk is the **next** restart, which an upgrade triggers as a
+  matter of course – fix it pre-upgrade like the STS connection string
+  symptom above, not because the vCenter is broken right now. Confirm
+  the reported line falls inside a `<vcls>` block before editing
+  anything – full steps, snapshot caveat, and **untested-in-this-repo**
+  flag: [VDT and lsdoctor: vpxd.cfg XML parse
   failure](17-vdt-and-lsdoctor-diagnostics.md#field-observed-symptom-vpxdcfg-xml-parse-failure-malformed-vcls-block).
 - **STS connection string drifted to the vCenter's own IP, correlated
   with a missing PTR record.** Observed on a **standalone (non-ELM)**
