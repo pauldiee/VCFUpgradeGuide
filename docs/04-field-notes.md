@@ -266,6 +266,13 @@ Expect every cluster to behave differently.
   Sites"** – the read-only check's own output names the exact fix
   (`lsdoctor.py -r`, option 2) for the affected node, see that doc for the
   full example.
+- **VDT's own "General Info" check can crash the whole run** with
+  `IndexError: list index out of range` in `getNtpServers()` – a bug in
+  VDT's NTP-config parsing (KB 426374), not a finding about the vCenter.
+  Clean up `/etc/ntp.conf` (remove blank lines/stray whitespace) and
+  re-run rather than assuming VDT is broken or unsupported. Full detail:
+  [VDT and lsdoctor: "General Info" check
+  crash](17-vdt-and-lsdoctor-diagnostics.md#known-issue-general-info-check-crashes-with-indexerror-list-index-out-of-range).
 - **STS connection string drifted to the vCenter's own IP, correlated
   with a missing PTR record.** Observed on a **standalone (non-ELM)**
   vCenter – `vmwSTSConnectionStrings` should read `ldap://localhost:389`

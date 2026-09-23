@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.7.1 – 2026-09-23
+- **Document VDT's "General Info" crash (`IndexError` in
+  `getNtpServers`).** New `docs/17` Known issue subsection plus a
+  `docs/04` pointer – per Broadcom KB 426374, VDT's own NTP-config
+  parsing crashes on a malformed `/etc/ntp.conf` line; it's a VDT bug,
+  not a finding about the vCenter. Includes the backup/clean/re-run fix.
+
 ## v1.7.0 – 2026-09-23
 - **Correct `cs.identity Missing Node ID`: observed pre-upgrade on
   vCenter 8.x, not just post-9.1.** KB 448977 frames this purely as a

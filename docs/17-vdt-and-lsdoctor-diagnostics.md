@@ -61,6 +61,35 @@ wrong. If the FAIL is in the Lookup Service / AD integration check
 specifically, that's the signal to move on to lsdoctor below rather than
 treating it as a standalone DNS/AD problem.
 
+### Known issue: "General Info" check crashes with `IndexError: list index out of range`
+
+The very first check VDT runs can itself fail outright rather than
+report PASS/FAIL, with a Python traceback ending:
+
+```
+File ".../vcenter/vc_scripts/vc_info.py", line 158, in getNtpServers
+    ntpservers.append(line.split()[1])
+IndexError: list index out of range
+```
+
+This is **a bug in VDT's own NTP-parsing code, not a finding about the
+vCenter's health** – per Broadcom KB 426374, `getNtpServers()` assumes
+every line in `/etc/ntp.conf` splits into at least two tokens, and chokes
+on a malformed line (stray whitespace, a blank line, or similar) instead
+of skipping it. Fix the input file, not VDT itself:
+
+1. Back up first: `cp /etc/ntp.conf /etc/ntp.conf_bak`.
+2. Edit with `vi /etc/ntp.conf` and remove any blank lines or
+   trailing/extraneous whitespace – valid entries should read cleanly as
+   `server xx.xx.xx.xx` with nothing else on the line.
+3. Re-run `python vdt.py` – General Info should now complete and report
+   its actual PASS/FAIL/WARN results instead of crashing before it gets
+   there.
+
+Fix it before assuming VDT itself is broken or unsupported on this
+build – the traceback is VDT's own parsing bug tripping on this
+specific file's contents, not a signal about the vCenter.
+
 ---
 
 ## lsdoctor: Lookup Service / SSO / vmdir troubleshooting
@@ -414,6 +443,7 @@ guessed at.
 ## Sources
 
 - [Using the VCF Diagnostic Tool for vSphere (VDT) (KB 344917)](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html)
+- [VDT run failed at "General Info" check with an Error while attempting to collect NTP server information (KB 426374)](https://knowledge.broadcom.com/external/article/426374/vdt-run-failed-at-general-info-check-wit.html) – the `getNtpServers()` crash and the `/etc/ntp.conf` cleanup fix
 - [Using the Appliance Shell to Configure vCenter Server (9.0)](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-0/vcenter-configuration/configuring-vcenter-server-using-the-appliance-shell.html) – confirms `appliancesh` is still the vCenter 9 default, behind the SCP-fails-until-bash-is-set note above
 - [Toggling the vCenter Server Appliance default shell (Broadcom KB 319670)](https://knowledge.broadcom.com/external/article/319670/toggling-the-vcenter-server-appliance-de.html)
 - [Using the "lsdoctor" Tool (KB 320837)](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html)
