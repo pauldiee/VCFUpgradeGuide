@@ -125,9 +125,11 @@ Server service stopped, `vpxd` generating coredumps, and `vapi` pinned at
 100% CPU in `vimtop`. **That KB's scenario is the worst case, not a
 guarantee** – field-observed: a vCenter can have this exact parse
 failure while running completely normally, none of those symptoms
-present. `vpxd` only re-parses `vpxd.cfg` on its own startup, so a
-currently-running instance can be carrying a corrupted file without
-anything visibly wrong yet.
+present – specifically confirmed **hostname not reverted to
+`localhost`** (the KB's own title symptom), alongside the service
+itself running fine. `vpxd` only re-parses `vpxd.cfg` on its own
+startup, so a currently-running instance can be carrying a corrupted
+file without anything visibly wrong yet.
 
 Treat that as reason for urgency on a *different* axis: not "is vpxd
 broken right now" (check anyway, but it may well say no), but "will

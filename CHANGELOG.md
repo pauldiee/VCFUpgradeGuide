@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.7.7 – 2026-09-23
+- **Make the hostname-not-reverted confirmation explicit in `docs/17`.**
+  Field-confirmed the vCenter hostname specifically hasn't reverted to
+  `localhost` (the KB's own title symptom) despite the `vpxd.cfg` parse
+  failure being present, instead of leaving it implied by the general
+  "none of those symptoms present" line.
+
 ## v1.7.6 – 2026-09-23
 - **Walk back the blanket `<vcls>` block deletion for a real,
   vCLS-enabled cluster.** KB (legacyId 416489)'s `sed`-delete-the-block
