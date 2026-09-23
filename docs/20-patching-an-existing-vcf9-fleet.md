@@ -152,6 +152,29 @@ over 100 GiB for one hop if left unfiltered:
 lines either): list first with `binaries list`, take the IDs for the
 release wanted, feed them back with `--id=<id1>,<id2>,<id3>`.
 
+**D – the `--latest` shortcut (VCFDT 9.1.1+ only).** Per William Lam
+(LinkedIn, 2026-09-22), VCFDT 9.1.1 added a `--latest` flag that resolves
+"latest" for a given `--vcf-version` and `--type` in one call, no
+separate `binaries list` lookup first. Two variants:
+
+```bash
+# EP patches only, for an already-deployed 9.1.1.0 fleet
+./vcf-download-tool binaries list \
+  --depot-download-activation-code-file ~/vcf_activation_code.txt \
+  --sku=VCF --vcf-version=9.1.1.0 --type=UPGRADE --patches-only --latest
+
+# Full install binaries (with EPs) for a fresh 9.1.1 deployment
+./vcf-download-tool binaries list \
+  --depot-download-activation-code-file ~/vcf_activation_code.txt \
+  --sku=VCF --vcf-version=9.1.1.0 --type=INSTALL --automated-install --latest
+```
+
+These are `binaries list` calls, not `binaries download` – confirm the
+resolved set looks right before downloading it with one of A-C above.
+**Not independently field-verified in this repo** – confirm the flag
+exists in the VCFDT version actually in use (`--version`) before relying
+on it in a patch window.
+
 Key filters (`--vcf-version` accepts ranges like `9.1.0..9.1.1`;
 `--component` takes `VCENTER`, `SDDC_MANAGER_VCF`, `NSX_T_MANAGER`,
 `ESX_HOST`, `VROPS`, `VRLI`, `VRNI`, `VSP`, and others; `--type` is
@@ -501,6 +524,7 @@ ordering and rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
 - [Download Binaries to an Offline Depot by Using the VCF Download Tool](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/download-bundles-to-an-offline-depot.html)
 - [Download Binaries to Software Depot in Disconnected Mode by Using the VCF Download Tool](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/offline-download-of-vmware-cloud-foundation-5-2-upgrade-bundles.html)
 - [VCF 9.1 - VCF Download Tool (VCFDT) Cheatsheet](https://williamlam.com/2026/05/vcf-9-1-vcf-download-tool-vcfdt-cheatsheet.html) – concrete VCFDT command examples
+- William Lam, LinkedIn post, 2026-09-22 – VCFDT 9.1.1's `--latest` flag and the two one-liner variants (EP patches only vs. full install w/EPs) in Step 1's "by binary ID" option D above (no direct URL retained; re-source if this doc is revisited)
 - [VCF 9.1 - New HTTP Offline Depot Support for VCF Installer & Fleet Depot Service](https://williamlam.com/2026/05/vcf-9-1-new-http-offline-depot-support-for-vcf-installer-fleet-depot-service.html)
 - [Installing Express Patches with VMware Cloud Foundation 9.1 (official VMware Cloud Foundation blog)](https://blogs.vmware.com/cloud-foundation/2026/06/29/installing-express-patches-with-vmware-cloud-foundation-9-1/) – the official Express Patch procedure, cadence, and ordering rule
 - [VCF 9.1 - Understanding VCF Express Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html) – supplementary community write-up of the same mechanism, source of the unified versioning model diagram used above

@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.6.3 – 2026-09-23
+- **Add VCFDT's `--latest` one-liner shortcut to `docs/20`.** A fourth
+  option (D) alongside the existing spec-file/filtered-catalog/binary-ID
+  pulls, sourced from William Lam's VCFDT 9.1.1 one-liners: EP-patches-only
+  for an already-deployed fleet, full install-with-EPs for a fresh
+  deployment. Flagged as not independently field-verified in this repo.
+
 ## v1.6.2 – 2026-09-22
 - **Add a version interop quick-reference table to `docs/22`.** One
   table across Converge and Import: target VCF build, min vCenter/ESX,
