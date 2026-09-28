@@ -110,6 +110,27 @@ condensed:
 - Target ESX host (where the *new* appliance deploys): not in lockdown or
   maintenance mode. If it sits in a DRS cluster, set DRS to **Manual** or
   **Partially Automated** so nothing reboots mid-upgrade.
+
+  > **⚠ WARNING – never disable DRS. Only set it to Manual or Partially
+  > Automated.** Turning DRS **off** on a cluster does more damage than it
+  > looks like:
+  >
+  > - **Resource pools are deleted.** The entire hierarchy (pools, shares,
+  >   reservations, limits) is removed, and per KB 339325 the resource pool
+  >   hierarchy **and affinity rules** are not re-established when DRS is
+  >   turned back on. The disable dialog offers to save a resource pool
+  >   tree snapshot, but don't rely on it as a safety net.
+  > - **Supervisor clusters are left unrecoverable.** Per KB 323409,
+  >   vSphere with Tanzu / Workload Management stores critical state in its
+  >   resource pools; deleting them "will render the cluster in an
+  >   unrecoverable state".
+  > - **vApps block it.** vApps need DRS, so vCenter refuses to disable DRS
+  >   while any exist and tells you to delete them first (KB 410683). Don't
+  >   take that as a step to follow.
+  >
+  > Manual or Partially Automated stops DRS from migrating the new appliance
+  > mid-upgrade while keeping all of the above intact. Set it back to its
+  > original automation level once the upgrade finishes.
 - Source appliance: port **22** open (the upgrade process opens an inbound
   SSH connection to export data) and port **443** open on the source ESX
   host.
@@ -388,4 +409,8 @@ Broadcom reference: [About the Upgrade Process of the vCenter appliance](https:/
 KB 448135; [KB 313288](https://knowledge.broadcom.com/external/article/313288/vcenter-server-upgrades-with-the-reduced.html)
 (old-appliance network-disconnect warning, documented for RDU);
 [KB 344917](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html)
-(VDT); the Broadcom Product Interoperability Matrix, Upgrade Path tool.
+(VDT); [KB 339325](https://knowledge.broadcom.com/external/article/339325/disabling-vmware-distributed-resource-sc.html),
+[KB 323409](https://knowledge.broadcom.com/external/article/323409/information-regarding-disabling-drs-on-a.html)
+and [KB 410683](https://knowledge.broadcom.com/external/article/410683/error-you-cannot-disable-drs-on-a-cluste.html)
+(what disabling DRS breaks); the Broadcom Product Interoperability Matrix,
+Upgrade Path tool.

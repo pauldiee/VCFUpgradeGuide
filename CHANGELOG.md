@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.8.3 – 2026-09-28
+- **Add a never-disable-DRS warning to `docs/07`'s prerequisites.**
+  Disabling DRS deletes the cluster's resource pools, loses affinity
+  rules (KB 339325), leaves a Supervisor cluster unrecoverable
+  (KB 323409), and is blocked outright while vApps exist (KB 410683).
+  Only use Manual or Partially Automated during the upgrade, then
+  restore the original automation level.
+
 ## v1.8.2 – 2026-09-28
 - **Note in `docs/17` that fixing the PTR alone doesn't clear the STS
   connection string FAIL** (#49). The IP-based value is written into
