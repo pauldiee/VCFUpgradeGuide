@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.8.1 – 2026-09-28
+- **Add an unverified field note on custom `/etc/hosts` ESX entries in a
+  vCenter 8 → 9 upgrade** (`docs/04`, #48). The migration upgrade most
+  likely doesn't carry hand-added entries over. Covers the DNS fix, the
+  re-add-after-Stage-2 fallback, and the unconfirmed option of adding
+  them between Stage 1 and Stage 2.
+
 ## v1.8.0 – 2026-09-23
 - **Add VDT's output log path to `docs/17`.** VDT writes its report to
   `/var/log/vmware/vdt/` on the appliance, accumulating a file per run.

@@ -151,6 +151,29 @@ with a `DELETE …/casa/auth/users` call.
   correct, and there was no clock skew. Full troubleshooting sequence (six
   other failure modes with the identical error text) in
   [manual GUI upgrade – Troubleshooting](07-vcenter-manual-upgrade.md#troubleshooting-invalid-single-sign-on-credentials-at-step-3).
+- **Custom ESX entries in vCenter's `/etc/hosts` most likely don't carry
+  over from 8 to 9.** *Unverified – not yet seen on a real upgrade.*
+  vCenter 8 → 9 is a migration upgrade: a new appliance is deployed and
+  Stage 2 copies configuration and inventory data, not hand-edited OS
+  files. The new appliance writes its own `/etc/hosts`. If ESX hosts were
+  added by an FQDN that only resolves through that file, expect them to
+  show as disconnected after Stage 2. The installer can also fail earlier
+  if it's pointed at a source vCenter or target host by such a name.
+  - **Preferred fix:** put the ESX names in DNS (forward and reverse)
+    before the upgrade. VCF 9 requires working DNS anyway.
+  - **Fallback:** save the old file (`cat /etc/hosts`) before the upgrade.
+    After Stage 2, re-add the ESX lines on the new appliance, leaving its
+    own generated entries alone, and reconnect any dropped hosts.
+  - **Possible shortcut, unconfirmed:** after Stage 1 the new appliance
+    is running on its temporary IP, and you can pause there and resume
+    Stage 2 later from `https://<temp-ip>:5480`. Adding the ESX lines in
+    that gap (shell via the VM console, or SSH) could keep the hosts
+    connected from the first vpxd start. Stage 2's identity swap
+    regenerates the appliance's own `/etc/hosts` entries, though, and it's
+    unknown whether that preserves added lines. Check the file after
+    Stage 2 either way.
+  - Run VDT on the source first ([VDT and lsdoctor](17-vdt-and-lsdoctor-diagnostics.md)),
+    since it flags DNS and hosts-file problems.
 - **The NSX back-in-time restriction blocks the whole fleet's upgrade
   plan, not just the domain that owns the offending component.**
   (Different engagement, VCF 9.1.0 – not the 5.2.2 → 9.0.2 upgrade this
