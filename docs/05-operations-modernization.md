@@ -314,6 +314,28 @@ Confirm which mode fits the target environment's firewall policy before
 committing – switching from disconnected to connected mode later is
 possible but is its own documented procedure, not a toggle.
 
+*Switching an already-registered instance from connected to
+disconnected* is the easy direction – no re-registration, the existing
+registration in the VCF Business Services console stays in place:
+
+1. In VCF Operations: **Manage → Licensing → Licenses & Registration**.
+2. On the **Registration and License Server Status** card, click **Manage
+   Registration Details**.
+3. On the **Registration Details** tab, next to **Reporting Mode**, click
+   **Switch to Disconnected**, then confirm **Switch to Disconnected** in
+   the dialog.
+
+The switch itself is trivial; the ongoing cost is that usage reporting
+stops being automatic. From then on, the manual usage-file / license-file
+exchange (disconnected step 9 above) is due at least every **180 days**.
+Broadcom is explicit about missing it: licenses are treated as expired,
+**hosts are disconnected from vCenter**, and no workload operations can be
+started. Put a recurring reminder well inside that window before
+switching. Going back to connected later is the separate reverse
+procedure (see Sources); if the instance has been disconnected for more
+than 180 days, that switch can fail and needs a new activation code
+(KB 428209).
+
 #### Isolated vCenter with no path to a shared VCF Operations/License Server
 
 **A vCenter that's genuinely air-gapped from every VCF Operations
@@ -550,6 +572,9 @@ notes for a non-HA removal:
 - [Registering VCF Operations and a License Server with the VCF Business Services Console](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations.html)
 - [Register VCF Operations in Connected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/register-vcf-operations/register-vcf-operation-in.html)
 - [Register VCF Operations in Disconnected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/register-vcf-operations/register-vcf-operations-in-disconnected-mode.html)
+- [Switch from Connected to Disconnected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/change-vcf-operations-mode.html)
+- [Report License Usage and Update Licenses in Disconnected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/licensing/update-licenses/update-licenses-in-disconnected-mode.html)
+- [KB 428209 – switching from disconnected to connected mode fails](https://knowledge.broadcom.com/external/article/428209/vcf-operations-license-management-is-fai.html)
 - [Switch from Disconnected to Connected Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/switch-from-disconnected-to-connected-mode.html)
 - [Licensing vCenter 9.x and ESXi 9.x in Air-gapped Environments (Broadcom KB 404155)](https://knowledge.broadcom.com/external/article/404155/unable-to-license-vcenter-after-upgradin.html) – the air-gapped/isolated licensing procedure, one VCF Operations instance per isolated segment
 - [VMware Aria Operations Cluster Node Networking Requirements](https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations/8-18/getting-started-with-vmware-aria-operations-8-18/preparing-for-installation/requirements/cluster-requirements/cluster-nodes-general-requirements/cluster-nodes-network-requirements.html) – same-subnet requirement behind the fresh-vs-in-place topology check

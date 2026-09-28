@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.8.4 – 2026-09-28
+- **Add the connected → disconnected licensing mode switch to `docs/05`.**
+  The procedure (Registration Details → Switch to Disconnected, no
+  re-registration), the 180-day manual usage-file cycle it commits you
+  to, Broadcom's stated consequence of missing it (hosts disconnected
+  from vCenter), and KB 428209 for switching back. Previously only the
+  reverse direction was linked.
+
 ## v1.8.3 – 2026-09-28
 - **Add a never-disable-DRS warning to `docs/07`'s prerequisites.**
   Disabling DRS deletes the cluster's resource pools, loses affinity
