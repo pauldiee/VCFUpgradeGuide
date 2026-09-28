@@ -378,7 +378,14 @@ string, which is exactly what an upgrade does (`vpxd`, `vapi-endpoint`,
 1. **Fix the PTR record first** – forward *and* reverse DNS is already
    a standard upgrade prerequisite independent of this symptom, and
    fixing the connection string before DNS risks the same drift
-   recurring on the next service restart/reconfig.
+   recurring on the next service restart/reconfig. **Fixing DNS alone
+   does not clear the FAIL.** The IP-based value was written into vmdir
+   at deployment and nothing rewrites it once reverse DNS resolves –
+   field-observed on a vCenter where the PTR was fixed by repointing it
+   to new DNS servers and VDT still reported the FAIL afterwards. Check
+   resolution from the appliance shell itself (`nslookup <vcenter-fqdn>`
+   and `nslookup <vcenter-ip>`), not from a workstation, since what
+   matters is the DNS servers the appliance is configured with.
 2. **Then run `fix_sts_attrs.py`** (KB 323195) to correct
    `vmwSTSConnectionStrings` back to `ldap://localhost:389`. The script's
    own instructions say to upload it to "any vCenter in ELM," but the

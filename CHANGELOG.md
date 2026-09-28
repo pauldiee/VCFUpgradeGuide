@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.8.2 – 2026-09-28
+- **Note in `docs/17` that fixing the PTR alone doesn't clear the STS
+  connection string FAIL** (#49). The IP-based value is written into
+  vmdir at deployment and isn't rewritten once DNS resolves; field-observed
+  after a PTR fix via new DNS servers. Also check resolution from the
+  appliance shell, not a workstation.
+
 ## v1.8.1 – 2026-09-28
 - **Add an unverified field note on custom `/etc/hosts` ESX entries in a
   vCenter 8 → 9 upgrade** (`docs/04`, #48). The migration upgrade most
