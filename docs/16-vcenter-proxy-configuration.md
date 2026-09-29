@@ -389,19 +389,97 @@ proxy/firewall
 lists `vvs.broadcom.com` and `storage.googleapis.com`; on VCF 9.1 also
 from the VCF services runtime IP range).
 
-**Workaround:** load the compatibility data by hand once, with the steps
-in KB 438438 (adapted from KB 405839, the offline procedure). They read
-the vLCM client ID and secret from
-`/usr/lib/vmware-updatemgr/config/vvs-config.json`, fetch a token and the
-bundle with `curl` (which, unlike the internal path, works through the
-proxy), and import it with `hcl_datastore.py update-offline`. After that,
-**Sync Updates** keeps the data current. The client secret is a
-credential – don't paste it anywhere.
+What's lost until it's fixed: hardware compatibility checks and reports
+in vLCM. Image and patch downloads are not affected.
 
-> **Not applied in the field case** (left for later), so the workaround
-> is untested here. KB 401192 advises a snapshot or file-level backup of
-> vCenter first. What's lost without it: hardware compatibility checks
-> and reports in vLCM. Image and patch downloads are not affected.
+#### Workaround: load the compatibility data by hand
+
+Broadcom's workaround is to fetch the compatibility bundle yourself and
+import it into vLCM's local database once. After that, **Lifecycle
+Manager → Actions → Sync Updates** keeps it current (KB 438438). The
+procedure is
+[KB 405839](https://knowledge.broadcom.com/external/article/405839/steps-to-upgrade-manually-the-vcg-databa.html)
+(written for vCenters without internet access); KB 438438 gives the
+variant for an online vCenter behind a proxy, where everything runs on
+the vCenter itself.
+
+> **Untested here.** Not yet applied in the field case; the commands are
+> Broadcom's, from the two KBs. The `read -s` prompts and the cleanup
+> step are this guide's additions to keep the client secret out of shell
+> history. Take a snapshot or file-level backup of vCenter first, per
+> KB 401192.
+
+**1. Read the vLCM client credentials** (vCenter shell, as root):
+
+```
+grep 'client_' /usr/lib/vmware-updatemgr/config/vvs-config.json
+```
+
+Note the `client_id` and `client_secret` values. **The client secret is a
+credential**: don't paste it into tickets, chat or scripts you keep.
+
+**2a. Download the bundle on the vCenter itself** (online variant,
+KB 438438). The shell's `curl` goes through `localhost:1082`, the path that
+works, unlike vLCM's internal route:
+
+```
+read -r  -p "client_id: "     CLIENT_ID
+read -rs -p "client_secret: " CLIENT_SECRET; echo
+JSON=$(curl -d "client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&grant_type=client_credentials" -X POST https://auth.esp.vmware.com/api/auth/v1/tokens)
+TOKEN=$(echo $JSON | jq -r .access_token)
+curl -L -H "X-Vmw-Esp-Client: $TOKEN" -X GET "https://vvs.esp.vmware.com/v1/compatible/vcg/bundles/all?format=gz" -o vlcm-vcg-offline.gz
+```
+
+If `TOKEN` comes back `null`, the credentials weren't accepted, or
+`auth.esp.vmware.com` isn't reachable. Check with the endpoint loop above.
+
+**2b. Or download it on a Windows admin machine** (KB 405839's PowerShell
+variant), when the vCenter can't reach the endpoints at all. The client
+ID and secret still come from step 1:
+
+```powershell
+$CLIENT_ID     = Read-Host 'client_id'
+$CLIENT_SECRET = [Net.NetworkCredential]::new('', (Read-Host 'client_secret' -AsSecureString)).Password   # works on 5.1 and 7
+$JSON  = Invoke-WebRequest -Uri "https://auth.esp.vmware.com/api/auth/v1/tokens" -Method POST -Body "client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&grant_type=client_credentials"
+$TOKEN = ($JSON.Content | ConvertFrom-Json).access_token
+Invoke-WebRequest -Uri "https://vvs.esp.vmware.com/v1/compatible/vcg/bundles/all?format=gz" -Method GET -Headers @{"X-Vmw-Esp-Client"="${TOKEN}"} -OutFile vlcm-vcg-offline.gz
+```
+
+Add `-Proxy http://<proxy-host>:<port>` to both `Invoke-WebRequest` calls
+if the workstation needs it explicitly. Then copy the file to the vCenter
+with `scp`. The shell must be `bash` first, see the SCP note at the top
+of [VDT and lsdoctor](17-vdt-and-lsdoctor-diagnostics.md):
+
+```
+scp .\vlcm-vcg-offline.gz root@<vcenter-fqdn>:/root/
+```
+
+**3. Unpack and import** (vCenter shell, in the folder holding the file):
+
+```
+gzip -d vlcm-vcg-offline.gz
+/usr/lib/vmware-updatemgr/python/hcl/hcl_datastore.py update-offline --filePath /<path to the file>/vlcm-vcg-offline
+```
+
+**4. Check it took:**
+
+```
+/usr/lib/vmware-updatemgr/python/hcl/hcl_datastore.py information
+```
+
+Then, in the vSphere Client, run the hardware compatibility check or
+report that failed before.
+
+**5. Clean up and keep it current:**
+
+```
+unset CLIENT_ID CLIENT_SECRET TOKEN JSON
+rm -f /<path to the file>/vlcm-vcg-offline
+```
+
+From here, **Sync Updates** refreshes the compatibility data. Only repeat
+the manual import if the data goes stale again while the known issue is
+still open. Check the KB for a fixed release before each vCenter update.
 
 ---
 
@@ -437,4 +515,5 @@ path if the appliance is pointed at it.
 - [Updating URL with token in vSphere Lifecycle Manager fails (KB 396787)](https://knowledge.broadcom.com/external/article/396787/updating-url-with-token-in-vsphere-lifec.html) – `wrong version number` from an `https://` scheme on an HTTP-only proxy
 - [Failed to add new token-based URL in Lifecycle Manager (KB 396511)](https://knowledge.broadcom.com/external/article/396511/failed-to-add-new-tokenbased-url-in-life.html) – SSL inspection on the proxy
 - [Generating the hardware compatibility report via the vCenter GUI is failing when a Proxy is in use (KB 438438)](https://knowledge.broadcom.com/external/article/438438/generating-the-hardware-compatibility-re.html) – the VCG known issue and its online workaround
+- [Steps to upgrade manually the VCG database in vCenter Servers without internet connectivity (KB 405839)](https://knowledge.broadcom.com/external/article/405839/steps-to-upgrade-manually-the-vcg-databa.html) – the manual compatibility-data import, curl and PowerShell variants
 - [vCenter Update Compatibility Data task fails (KB 401192)](https://knowledge.broadcom.com/external/article/401192/vcenter-update-compatibility-data-task-f.html) – endpoints the compatibility data needs

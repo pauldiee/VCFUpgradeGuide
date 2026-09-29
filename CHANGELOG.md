@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.8.9 – 2026-09-29
+- **`docs/16`: full step-by-step workaround for the compatibility-data
+  (VCG) known issue behind a proxy** (#56). Reads the vLCM client
+  credentials, downloads the bundle on the vCenter itself (KB 438438's
+  online variant) or on a Windows admin machine and copies it over with
+  `scp` (KB 405839's PowerShell variant), imports it with
+  `hcl_datastore.py`, verifies, and cleans up; Sync Updates keeps it
+  current afterwards. The secret prompts and cleanup are additions to
+  keep the client secret out of shell history. Flagged untested (not yet
+  applied in the field).
+
 ## v1.8.8 – 2026-09-29
 - **`docs/16`: vCenter 9.x proxy field findings** (#55), from a VVF 9.1
   upgrade. How the 9.x local proxy service (`vmware-envoy-system-proxy`)
