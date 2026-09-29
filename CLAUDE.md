@@ -83,7 +83,7 @@ here – see the Related repo section in `README.md`.
 | `docs/07-vcenter-manual-upgrade.md` | Manual GUI vCenter upgrade, Phase 6 alternate path (phase guide; VVF or standalone vSphere, no Fleet Management) |
 | `docs/08-vss-to-vds-migration.md` | VSS → VDS migration before extending standalone VVF to full VCF (pre-upgrade prep; **VVF only**) |
 | `docs/15-vum-to-vlcm-migration.md` | VUM (baselines) → vLCM images migration before the ESX host phase (pre-upgrade prep; VCF or VVF) |
-| `docs/16-vcenter-proxy-configuration.md` | vCenter appliance outbound proxy config – 7.0.x/8.0.x file method vs. the different 9.x JSON method (reference; VCF, VVF, or standalone vSphere) |
+| `docs/16-vcenter-proxy-configuration.md` | vCenter appliance outbound proxy config – 7.0.x/8.0.x file method vs. the different 9.x JSON method, plus the 9.x local proxy service's failure modes, License Server exclusion, vLCM download sources and the VCG known issue (reference; VCF, VVF, or standalone vSphere) |
 | `docs/17-vdt-and-lsdoctor-diagnostics.md` | Self-service diagnostic tools – VDT (general appliance health sweep) and `lsdoctor` (VC Lookup Service / SSO / vmdir issues) (reference; VCF, VVF, or standalone vSphere) |
 | `docs/18-vmware-tools-productlocker.md` | Shared VMware Tools repository (ProductLocker) – setup methods and why it needs re-verifying after upgrades (reference; VCF, VVF, or standalone vSphere) |
 | `docs/19-vvf-vs-vcf-feature-comparison.md` | What's VCF-only, VVF-only, or an add-on regardless of tier, from Broadcom's official comparison whitepaper (reference; VCF/VVF licensing decision) |

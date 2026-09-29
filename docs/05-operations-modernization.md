@@ -472,6 +472,19 @@ that cluster is later attached to a fleet.
   instance.
 - vCenter credentials with at least Read access at datacenter/vCenter level,
   plus **"Performance > Modify intervals"** permission for guest metrics.
+  **That is monitoring only.** For VCF Operations to also *license* the
+  vCenter – which on 9.1 is the only licensing path – the account needs
+  `Global.Licenses`, Certificate Management → Create/Delete (below Admins
+  priv), and membership of the `LicenseService.Administrators` SSO group,
+  followed by **Activate Management** on the integration. Without them the
+  vCenter collects fine but never appears under License Management →
+  vCenter Systems (field-verified). Full role, account and troubleshooting
+  detail, including the log lines that tell the causes apart:
+  [VCF Operations in VVF/Standalone – Post-Deployment Configuration (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/26-vcf-operations-vvf-vcenter/).
+- **vCenter 9.x behind an outbound proxy:** the License Server must bypass
+  it, or license assignment fails with *"The license server SSL
+  certificates are not trusted by the vCenter instance"* – see
+  [vCenter proxy configuration](16-vcenter-proxy-configuration.md#internal-vcf-components-must-bypass-the-proxy).
 - Log management appliance deployed, if log collection from this vCenter is
   wanted.
 

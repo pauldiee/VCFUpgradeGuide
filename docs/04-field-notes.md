@@ -25,7 +25,9 @@ cleared.
   the one SDDC Manager and Fleet Manager use – depot sync keeps working
   everywhere except vCenter, and **ESXi images disappear from the vCenter
   depot**. A vUM database reset does not fix it. Correct the token in
-  vCenter's Lifecycle Manager settings.
+  vCenter's Lifecycle Manager settings. The four token URLs, the click
+  path, and a failure table for adding them behind a proxy:
+  [vCenter proxy configuration → Lifecycle Manager download sources](16-vcenter-proxy-configuration.md#lifecycle-manager-download-sources-behind-a-proxy).
 
 ---
 

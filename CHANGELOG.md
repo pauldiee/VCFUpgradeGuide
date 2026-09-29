@@ -1,5 +1,33 @@
 # Changelog
 
+## v1.8.8 – 2026-09-29
+- **`docs/16`: vCenter 9.x proxy field findings** (#55), from a VVF 9.1
+  upgrade. How the 9.x local proxy service (`vmware-envoy-system-proxy`)
+  works, with the shell port map (1081/1082/1083) and why a `407` can come
+  from stale local settings. A field warning: after a reboot the service
+  failed with a hand-edited but valid, readable `config.json`, taking all
+  outbound traffic with it, and only saving the proxy through VAMI brought
+  it back (root cause not found). Hence: prefer VAMI, restart-test right
+  after any hand edit, `reset-failed` before repeat tests. New section on
+  Lifecycle Manager download sources behind a proxy (token URLs, click
+  path, curl tests, a KB-backed failure table), and the Broadcom known
+  issue that blocks compatibility data (VCG) updates behind a proxy
+  (KB 438438, workaround not applied). `docs/04`'s token note links to it.
+
+## v1.8.7 – 2026-09-29
+- **vCenter 9.x proxy blocks License Server trust** (`docs/16`, #54).
+  Field-verified: with an outbound proxy on vCenter 9.x, license assignment
+  from VCF Operations failed with *"The license server SSL certificates are
+  not trusted by the vCenter instance"*. The cause was the proxy (curl from
+  vCenter: `CONNECT` via `localhost:1082`, tunnel failed 502), not
+  privileges or certificates. Disabling the proxy for the assignment fixed
+  it. New section covers the diagnosis, a `--noproxy` direct-path test,
+  and `no_proxy` as the lasting fix (untested).
+- **`docs/05`: vCenter registration prerequisites now say monitoring
+  permissions alone don't license the vCenter.** Points to
+  VCF9-DeploymentPlanning `docs/26` for the licensing privileges, the SSO
+  group and Activate Management, and to `docs/16` for the proxy trap.
+
 ## v1.8.6 – 2026-09-29
 - **Verify `docs/14`'s Day-N Management Services quotes against the
   literal TechDocs text** (#53). The v1.8.5 quotes came from summarised
