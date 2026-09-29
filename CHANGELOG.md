@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.8.5 – 2026-09-29
+- **Add a Day-N walkthrough to `docs/14` for deploying VCF Management
+  Services on standalone VVF** (#52). On VVF this runs from the VCF
+  Installer (9.1.1+) Deployment Wizard → VMware vSphere Foundation →
+  Deploy VCF Management Services, not VCF Operations / the SDDC Manager
+  API. Covers prerequisites (FQDNs, IP pool per target build, internal
+  cluster CIDR, no SSL-terminating proxy), the wizard screen by screen,
+  and post-deployment checks. Identity Broker is not part of this
+  procedure; an existing License Server is reused, not duplicated. Adds a
+  version/product requirements table (stated vs. implied vs. not stated)
+  and a screenshot of the Installer's Deployment Paths screen. Flagged
+  not verified end-to-end.
+
 ## v1.8.4 – 2026-09-28
 - **Add the connected → disconnected licensing mode switch to `docs/05`.**
   The procedure (Registration Details → Switch to Disconnected, no

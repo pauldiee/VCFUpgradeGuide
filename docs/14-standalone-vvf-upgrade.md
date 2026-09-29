@@ -29,8 +29,9 @@ Services"](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/
   supported deployment model." Giving up VCF Management Services also gives
   up **log management, binary management (the software depot component),
   and integrated lifecycle management of VCF Operations** – if any of those
-  are required, VCF Management Services has to be deployed after all (see
-  [Full VCF upgrade sequence](13-vcf-upgrade-sequence.md)).
+  are required, VCF Management Services has to be deployed after all – as
+  a Day-N operation from the VCF Installer, see
+  [Adding VCF Management Services later](#adding-vcf-management-services-later-day-n).
 
 Confirm which model an engagement is actually on **before** running the
 planner or committing to a phase count – it changes whether Phases 2 and 3
@@ -95,7 +96,139 @@ phases, no SDDC Manager involved at any point:
 
 Landing here is explicitly a **stable intermediate state** – you can extend
 to full VVF or VCF later (deploying VCF Management Services as a Day-N
-operation) rather than needing to decide everything up front.
+operation, see the next section) rather than needing to decide everything
+up front.
+
+---
+
+## Adding VCF Management Services later (Day-N)
+
+Standalone VVF can add the VCF Management Services layer at any point after
+the upgrade – typically because log management, the software depot, or
+integrated VCF Operations lifecycle turns out to be needed after all. On
+VVF this is driven from the **VCF Installer**, not from VCF Operations or
+the SDDC Manager API (that is the full-VCF upgrade path, see
+[Phase 3](13-vcf-upgrade-sequence.md#phase-3--deploy-vcf-management-services--license-server)).
+Broadcom: *"If you need VCF management services, later you can deploy VCF
+management services by using VCF Installer."* Procedure source:
+["Deploy VCF Management Services and License Server for vSphere
+Foundation"](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1/install-vcf-management-services-to-vsphere-foundation-environment.html)
+(checked 2026-09-29).
+
+> **Not verified end-to-end.** This walkthrough follows the TechDocs
+> procedure. The Deployment Paths screen is confirmed from a real VCF
+> Installer (screenshot below); the later wizard pages and field order have
+> not yet been run through to a deployment. Check each screen against the
+> live wizard.
+
+### What you end up with
+
+The wizard installs the VCF services runtime, Fleet lifecycle, SDDC
+lifecycle, Software depot and Telemetry. **Identity Broker is not part of
+this procedure** – TechDocs doesn't mention it anywhere on the page, which
+matches Identity Broker being a VCF-only concern (see
+[Identity Broker migration](03-identity-broker-migration.md)).
+
+**License Server: reused, not duplicated.** TechDocs: *"For environments,
+where a license server already exists, this workflow does not deploy a
+second license server."* On a standalone VVF 9.1 fleet one already exists
+from the upgrade's step 2 above, so the wizard deploys one only if it
+somehow doesn't.
+
+### Version and product requirements
+
+What has to be true before the **Deploy VCF Management Services** option
+is usable. TechDocs is explicit about only a few of these; the rest follow
+from the upgrade order on the parent page or from what the wizard asks for,
+and are marked as such.
+
+| Requirement | Detail | Source |
+| --- | --- | --- |
+| **VCF Installer 9.1.1 or later** | The option is not available on a 9.1.0 Installer. Binaries downloaded to it first. | Stated: *"Verify that you deployed VCF Installer version 9.1.1 or later."* |
+| **An existing VMware vSphere Foundation environment** | This path adds services to a running VVF; for a new VVF use the other card. Standalone VVF only – no SDDC Manager, which would put you on the [full-VCF path](13-vcf-upgrade-sequence.md#phase-3--deploy-vcf-management-services--license-server) instead. | Stated on the wizard card: *"deploy VCF management services within an existing VMware vSphere Foundation environment"* |
+| **VCF Operations 9.1.x, already deployed** | The wizard asks for the existing instance's primary node FQDN and admin password; it does not deploy VCF Operations. | Implied: wizard input + upgrade order (VCF Operations first) |
+| **vCenter 9.1.x** | Upgraded before this step; the wizard asks for the vCenter the nodes deploy into. | Implied: upgrade order on the parent page. No minimum build stated |
+| **ESX** | No version stated. The VVF upgrade order puts the ESX upgrade after vCenter, so 8.0 U3 hosts under a 9.1 vCenter aren't ruled out – unconfirmed. | Not stated |
+| **License Server** | Optional as an input: reused if it exists, deployed if not. | Stated (see above) |
+| **Identity Broker** | Not deployed by this workflow. | Not mentioned on the page |
+| **vSAN / NSX** | Neither required nor excluded by the page. | Not stated |
+| **No SSL-terminating proxy on VCF Operations** | If VCF Operations has a proxy configured with SSL termination, remove the proxy configuration first. | Stated |
+| **Sizing** | Not on the VVF page. The full-VCF equivalent points at the VCF Fleet Sizing Models (see [Phase 3 sizing](13-vcf-upgrade-sequence.md#phase-3--deploy-vcf-management-services--license-server)) – budget for the same until confirmed. | Not stated for VVF |
+
+### Before you start
+
+- **FQDNs with forward and reverse DNS** for: fleet components, instance
+  components, VCF services runtime (and the License Server, if one doesn't
+  exist yet). Lowercase only; **`.local` domains are not supported**, and
+  only internet top-level domains are validated.
+- **Each of those FQDNs resolves to its own unique IP outside the IP pool**
+  below.
+- **An IP pool** for the services runtime nodes:
+  - target **9.1.0.0 – 9.1.0.300**: a contiguous range, **minimum 10
+    addresses**;
+  - target **9.1.0.400 or later**: a comma-separated list, contiguous or
+    not.
+
+  For comparison, the full-VCF path sizes the same layer at a /28 with
+  12 IPs minimum and 30 recommended (see the
+  [prerequisites table](13-vcf-upgrade-sequence.md#prerequisites-and-architectural-guardrails)); leaving headroom here
+  is cheap insurance.
+- **A free internal cluster CIDR** that doesn't collide with anything
+  routed in your environment – you pick one of `198.18.0.0/15`,
+  `240.0.0.0/15` or `250.0.0.0/15`.
+- **VCF Operations primary node FQDN and admin password** to hand.
+
+### Walkthrough
+
+1. **Log in to the VCF Installer** at `https://<installer-fqdn>` as
+   `admin@local`.
+2. **Start the right wizard.** Go to **Deployment Wizard → VMware vSphere
+   Foundation**. On **Introduction → Deployment Paths**, select **Deploy
+   VCF Management Services** (the right-hand card), not the default
+   **Deploy new VMware vSphere Foundation**.
+
+   ![VCF Installer, Deploy VMware vSphere Foundation wizard, Introduction > Deployment Paths: two cards, "Deploy new VMware vSphere Foundation" (selected by default) and "Deploy VCF Management Services" – "deploy VCF management services within an existing VMware vSphere Foundation environment"](images/vvf-management-services/deployment-paths.png)
+3. **Network configuration.** Keep the recommended values, or choose
+   **Customize** if the services need to land on a specific network.
+4. **Review prerequisites.** Use **PRE-FILL GENERATED FQDNs IN WIZARD**
+   to populate the FQDN fields from a naming template, or enter your own
+   later. Either way, the names must match what's already in DNS.
+5. **General configuration.** Select the version to deploy (match your
+   pinned target build), your CEIP choice, and whether passwords are
+   autogenerated. If autogenerated, record them straight after
+   deployment – don't assume they can be read back later.
+6. **VCF Operations.** Enter the primary node FQDN and admin password of
+   the existing VCF Operations instance. The new services register
+   against this instance.
+7. **vCenter.** Enter the vCenter details – this is where the Management
+   Services nodes are deployed.
+8. **IP pool.** Enter the range or list from *Before you start*; exclude
+   any addresses already in use. Add an IPv6 range/list too if dual-stack
+   is enabled.
+9. **VCF Management Services FQDNs.** Enter the fleet components, instance
+   components and VCF services runtime FQDNs.
+10. **Internal cluster CIDR.** Select the IPv4 CIDR (and an IPv6 one,
+    default `fd00::/111`, if dual-stack).
+11. **License Server FQDN.** IPv4 only at deployment; IPv6 can be added
+    afterwards. An existing License Server is reused rather than
+    duplicated – see *What you end up with*.
+12. **Validation.** Resolve errors, acknowledge warnings. Optionally
+    **download the JSON specification** here – worth keeping as a record
+    of what was deployed, and it can be edited and re-used for a
+    spec-driven deployment.
+13. **Deploy**, then watch the **Tasks** panel. Failed tasks can be
+    retried in place after fixing the cause.
+
+### After deployment
+
+- **Check the services runtime is healthy** before building on it – the
+  [VCF Inspector](21-vcf-inspector-fling.md) "Check Deployed VCF
+  Management Services" mode inspects exactly this layer.
+- **Next step per Broadcom: Log Management.** If log management was the
+  reason for adding the layer, continue with
+  [Log Management migration](11-log-management-migration.md).
+- **Configure backups** for VCF Management Services – an unconfigured
+  backup is one of the things VCF Inspector flags.
 
 ---
 
