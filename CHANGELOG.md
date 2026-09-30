@@ -1,5 +1,51 @@
 # Changelog
 
+## v1.9.0 – 2026-09-30
+- **`docs/21`: VCF Inspector v1.427** (#57), from the lab. The Actions
+  tab now has ten actions, up from six: new are Clear Interrupted
+  Software Downloads (KB 393159), Software Depot Connectivity & SSL Trust
+  Management (KB 327186, KB 442978), VCF Services Runtime Post-Shutdown
+  Recovery (KB 440862) and Shutdown VCF Services Runtime. Each is
+  described from its card and the KB it names; none has been run. The
+  consent banner now carries a backup advisory. New Runtime Health tab
+  section (not captured before): a 100/100 score that ignores a missing
+  backup listed as an issue right below it, the panel list, and what
+  differs from v1.300. The Services tab is shorter: its health panels
+  moved to Runtime Health. The readiness check now offers vCenter Server
+  as a target next to VCF 5.2.x and 9.0.x. A lab run against a vCenter
+  9.0.2 gave 41 checks with 2 failed, both probe timeouts that the tool
+  counts as failures and that flip the verdict to "Upgrade Not Advised"
+  (KB 421742 behind one of them). The full vCenter-path checklist is
+  listed per category, with a note that the page's own counts do not
+  add up (41 on the tile, 39 rows). A run against SDDC Manager on VCF
+  9.0.2 gave 82 checks in 13 categories (3 failed, 3 warnings); the
+  SDDC Manager, NSX, depot and version checks are listed and linked to
+  the guides they relate to. Three tool defects noted: a saved
+  connection restores the password despite the "never stored to disk"
+  claim, a Data Capture's precheck totals disagree with the result
+  page, and a vCenter run after an SDDC Manager run in one session
+  fails all SDDC Manager checks. Not yet run without SDDC Manager in
+  the environment, so the doc stays tagged VCF only for now. The
+  credential-storage contradiction between the landing page and the
+  Management Services connect form is still there in v1.427. Also
+  covered: the expanded Platform IP Pool row, the two Deployment Monitor
+  connect forms, Manage Connection, and Data Capture (a JSON snapshot
+  with remediation hints, reloadable via Load Capture File). Two
+  warnings: dark mode hides the conflicting status chips that light
+  mode still shows, and Node Placement reports "Spread correctly"
+  without any ESXi host data. Also the Actions tab's read-only kubectl console and its allowlist,
+  the Service Certificate Status dialog (41 certificates by namespace,
+  most on a 90-day cycle), and the proxy and CA import dialogs. Lab hostnames and IPs are redacted in the
+  screenshots. The Deployment Monitor now splits into
+  New Installation (VCF Installer) and Upgrade (SDDC Manager). Support
+  Bundle is now a dropdown with per-component toggles, and Data Capture
+  moved into the Menu next to a new Load Capture File entry. Dark mode
+  hides two badges on the Actions tab; light mode shows them. Node
+  Topology is documented as a service-by-node pod placement map, and
+  the Advanced Troubleshooting tab has a v1.427 block (normalised log
+  patterns, error counts on a healthy fleet, contradicting header
+  chips). Screenshots replaced and added.
+
 ## v1.8.9 – 2026-09-29
 - **`docs/16`: full step-by-step workaround for the compatibility-data
   (VCG) known issue behind a proxy** (#56). Reads the vLCM client
