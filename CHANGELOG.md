@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.9.1 – 2026-09-30
+- **`docs/21`: VCF Inspector download details** (#57). The binary table
+  gains the macOS Intel build and file sizes. New notes: the portal
+  lists the build as Release 1.400 while the tool's header says v1.427,
+  and the portal publishes SHA-256 and MD5 checksums, with the commands
+  to verify a download on Windows, macOS and Linux.
+
 ## v1.9.0 – 2026-09-30
 - **`docs/21`: VCF Inspector v1.427** (#57), from the lab. The Actions
   tab now has ten actions, up from six: new are Clear Interrupted

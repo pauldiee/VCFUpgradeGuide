@@ -84,11 +84,12 @@ Download the platform-matching binary from the Broadcom Support Portal
 Free Downloads / Flings section (search for **VCF Inspector**) – no
 installer, no appliance to deploy:
 
-| Platform | Binary |
-| --- | --- |
-| macOS (Apple Silicon) | `vcf-inspector-darwin-arm64-native` |
-| Linux (x86_64) | `vcf-inspector-linux-amd64` |
-| Windows (x86_64) | `vcf-inspector-windows-amd64-native.exe` |
+| Platform | Binary | Size (release of 2026-09-29) |
+| --- | --- | --- |
+| macOS (Intel) | `vcf-inspector-darwin-amd64-native` | 18.14 MB |
+| macOS (Apple Silicon) | `vcf-inspector-darwin-arm64-native` | 17.26 MB |
+| Linux (x86_64) | `vcf-inspector-linux-amd64` | 15.13 MB |
+| Windows (x86_64) | `vcf-inspector-windows-amd64-native.exe` | 19.66 MB |
 
 **macOS/Linux:**
 ```
@@ -97,6 +98,29 @@ chmod +x ./vcf-inspector-darwin-arm64-native
 ```
 
 **Windows:** double-click the `.exe`.
+
+**The portal's release number is not the version the tool reports.**
+The download page listed this build as **Release 1.400**, dated
+2026-09-29, while the running binary shows **v1.427** in its header.
+Version numbers in this doc are the ones from the tool's header. To
+tell which build you have, start it and read the header; do not go by
+the portal's release number.
+
+**Verify the download.** The portal lists a SHA2 (SHA-256) and an MD5
+checksum per file. This is Fling software that will be given SSH
+access to a control plane node, so compare the hash with the portal's
+value before running it:
+
+```
+# Windows (PowerShell)
+(Get-FileHash -Algorithm SHA256 .\vcf-inspector-windows-amd64-native.exe).Hash.ToLower()
+
+# macOS
+shasum -a 256 ./vcf-inspector-darwin-arm64-native
+
+# Linux
+sha256sum ./vcf-inspector-linux-amd64
+```
 
 **Each of the three modes connects to a different target with different
 credentials – there's no single generic login.** Field-observed (v1.300):
