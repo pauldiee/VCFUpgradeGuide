@@ -397,6 +397,44 @@ Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techd
   group**, reconnect the new appliance to it manually – that setting is not
   carried over automatically when deploying straight to an ESX host (not a
   limitation when deploying through a vCenter instance instead).
+- **Set DRS back.** If the cluster's DRS automation level was lowered to
+  Manual or Partially Automated for the upgrade (see
+  [Prerequisites](#prerequisites)), decide now whether to restore it. Per
+  Broadcom: *"you can either continue to use the modified settings or
+  revert the automation level to fully automated."* It does not revert on
+  its own.
+- **License the vCenter and activate it in VCF Operations.** Broadcom's
+  first two post-upgrade items: assign the vCenter a license in VCF
+  Operations, and *"Activate your vCenter instance for management by the
+  VCF Operations cluster"*. Per
+  [KB 424630](https://knowledge.broadcom.com/external/article/424630): in
+  VCF Operations go to **Administration → Integrations → VCF**, select
+  the vCenter entry, and click **Activate Management**. Until that is
+  done the vCenter is missing from License Management and can show
+  expired-license warnings. Background:
+  [Registering vCenter as a data source](05-operations-modernization.md#registering-vcenter-as-a-data-source-separate-from-the-fleet-attach).
+- **Verify the upgrade.** Broadcom's
+  [verification list](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/after-upgrading-vcenter-server/verify-vcenter-server-migration-is-successful.html):
+  IP address, Active Directory registration, network registration,
+  domain, valid certificates, inventory data migrated, events history,
+  performance charts, and **users, permissions, and roles**. Compare that
+  last one against the export taken in
+  [IWA to AD-over-LDAPS migration](06-iwa-ldaps-migration.md), if that
+  was part of the preparation.
+- **Plug-ins and historical data.** Broadcom's
+  [After Upgrading vCenter](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/after-upgrading-vcenter-server.html)
+  section also covers re-registering plug-in solutions after an upgrade,
+  and monitoring the historical data migration if Stage 2 deferred it to
+  the background. Check that third-party plug-ins (backup, storage,
+  monitoring) still load in the vSphere Client.
+- **Re-check the known 8 → 9 side effects**, none of which the installer
+  flags:
+  - the Lifecycle Manager **depot token**
+    ([field notes](04-field-notes.md#entitlement-and-the-depot-download-token));
+  - the **outbound proxy** configuration, which moved to a different file
+    on 9.x ([vCenter proxy configuration](16-vcenter-proxy-configuration.md));
+  - custom **`/etc/hosts`** entries, which most likely do not carry over
+    ([field notes](04-field-notes.md#nsx-and-vcenter), still unverified).
 - Continue with the rest of the [Standalone VVF manual upgrade](14-standalone-vvf-upgrade.md#standalone-vvf-manual-upgrade--exact-steps)
   steps (ESX hosts, vSAN on-disk format, vSAN File Service) as applicable,
   and its [Post-upgrade validation](14-standalone-vvf-upgrade.md#post-upgrade-validation)

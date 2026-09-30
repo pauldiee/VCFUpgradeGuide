@@ -288,9 +288,13 @@ VCF Automation) that don't exist on this path:
 
 - **Component builds** – vCenter, ESX, and Aria/VCF Operations on their
   expected builds.
+- **vCenter** – work through the post-cutover checks (DRS automation
+  level, licensing and Activate Management, Broadcom's verify list,
+  plug-ins) in [vCenter manual GUI upgrade → After cutover](07-vcenter-manual-upgrade.md#after-cutover).
 - **VMware Tools** – upgrade guests to **13.1**. Also re-verify the
   **ProductLocker** shared-repository location on every host, see [VMware
   Tools ProductLocker](18-vmware-tools-productlocker.md).
+- **VM hardware compatibility** – bump VM compatibility where appropriate.
 - **vSAN on-disk format** – upgrade the on-disk format version, if vSAN is
   in use.
 - **vSAN File Service** – upgrade if in use, after the on-disk format
@@ -301,9 +305,13 @@ VCF Automation) that don't exist on this path:
 - **Licensing** – vCenter and ESX licenses assigned from the License Server;
   no connectivity errors between vCenter and the License Server.
 - **Aria/VCF Operations** – reachable and healthy, metrics still flowing.
+- **Backups** – add the new License Server (and a freshly deployed VCF
+  Operations, if there was no Aria Operations to upgrade) to the backup
+  scope; re-verify the vCenter file-based backup runs clean against the
+  new appliance and take a fresh baseline.
 
 Same PowerCLI spot-check as the full-VCF checklist covers builds, VMware
-Tools, and vSAN on-disk format in one pass – see
+Tools, vDS version, and vSAN on-disk format in one pass – see
 [Full VCF upgrade sequence → Post-upgrade validation](13-vcf-upgrade-sequence.md#post-upgrade-validation).
 
 ---
@@ -312,5 +320,10 @@ Tools, and vSAN on-disk format in one pass – see
 
 - **Pre-upgrade snapshots** – delete once the upgrade is confirmed
   successful; leaving them attached causes performance degradation.
+- **Old vCenter appliance** – the two-stage upgrade leaves the source
+  appliance powered off as the rollback position. Delete it once the
+  upgrade is verified and the rollback window has closed. Until then,
+  never power it on with its network adapter connected – see
+  [After cutover](07-vcenter-manual-upgrade.md#after-cutover).
 - **Legacy Aria Operations appliances** – retire once the transition to VCF
   Operations 9.1 is confirmed, if applicable.

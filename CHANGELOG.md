@@ -1,5 +1,30 @@
 # Changelog
 
+## v1.9.3 – 2026-09-30
+- **Post-upgrade actions completed across the three track docs** (#60),
+  checked against Broadcom's 9.1 upgrade pages read verbatim.
+  `docs/13`: new items for VCF configuration upgrades (the last step in
+  Broadcom's management-domain list, not covered anywhere before) and
+  for what is still on the old version (remaining VCF instances,
+  workload domains as Day-N); the vDS upgrade is now marked optional;
+  the HCX row says paired appliances must follow to 9.0 or later; the
+  Supervisor section notes that vSphere Kubernetes Service 3.6.0 or
+  later is its own step before the Supervisor. `docs/14`: VM hardware
+  compatibility, a backups item, a pointer to the vCenter post-cutover
+  checks, and the old vCenter appliance under Cleanup; the spot-check
+  sentence now mentions vDS. `docs/07` After cutover: restore the DRS
+  automation level, license the vCenter and Activate Management in VCF
+  Operations (KB 424630), Broadcom's verification list, plug-ins and
+  background historical data, and links to the depot token, proxy and
+  `/etc/hosts` gotchas.
+- **`docs/17`: no `unzip` on vCenter 9.1.1, and VDT 2.3.1 does not run
+  there** (#59). A 9.1.1 appliance answers `command not found` to
+  `unzip`, which KB 344917 still documents. Two alternatives added:
+  Python's `zipfile` module on the appliance (flagged untested) or
+  extracting locally and copying the folder with `scp -r`. The doc also
+  quotes the KB's notice that VDT 2.3.1 is not currently working with
+  vCenter 9.1.1, fixed in 2.3.2. `docs/13` and `docs/06` point at it.
+
 ## v1.9.2 – 2026-09-30
 - **`docs/04`: stale vDS "upgrade in progress" banner** (#58), from the
   field. A vDS with no host members, upgraded from 8.0.0 to 9.1.0 on

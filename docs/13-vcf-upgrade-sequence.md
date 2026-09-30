@@ -165,7 +165,9 @@ python vdt.py
 See [VDT and lsdoctor: self-service diagnostic
 tools](17-vdt-and-lsdoctor-diagnostics.md) for the full reference,
 including what to do next if the Lookup Service / AD check turns up
-something (lsdoctor).
+something (lsdoctor). Two things change on a vCenter that is already on
+**9.1.1**: the appliance has no `unzip`, and VDT 2.3.1 does not currently
+run there – both covered in that doc.
 
 ---
 
@@ -432,7 +434,7 @@ they slot into the core spine:
 | --- | --- | --- |
 | **Disaster Recovery Products** | before the core (ahead of SDDC Manager) | Converge SRM / vSphere Replication to **Protection and Recovery** – own doc: [Disaster Recovery](02-disaster-recovery.md) |
 | **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | Own doc: [Avi + License Hub upgrade](09-avi-license-hub-upgrade.md) |
-| **VMware HCX** | after VCF Automation | Upgrade HCX before the NSX/vCenter/host tier |
+| **VMware HCX** | after VCF Automation | Upgrade HCX before the NSX/vCenter/host tier. Afterwards, upgrade **all paired appliances** to VCF Operations HCX 9.0 or later – per Broadcom, 9.0+ appliances *"are not compatible with earlier versions and pairing breaks"* |
 | **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** See [NSX Federation in detail](#nsx-global-manager--federation-in-detail) |
 | **vSphere Supervisor** | after vCenter (Phase 6), before the ESX host phase (Phase 7) | See [vSphere Supervisor in detail](#vsphere-supervisor-in-detail) |
 | **NSX Edge & NSX Finalize** | replaces the plain "NSX finalize", after the host phase | Edge nodes upgraded last, after ESX/host kernels, then finalize. Own doc: [NSX Edge & Finalize](10-nsx-edge-finalize.md) |
@@ -501,6 +503,9 @@ list it – it is an inserted advanced-product step.
 - **It touches the hosts.** The Supervisor upgrade rolls each ESX host in the
   cluster through maintenance mode to install the Spherelet – budget for that
   on top of the Phase 7 host remediation.
+- **The vSphere Kubernetes Service itself comes first.** Broadcom's upgrade
+  order lists *"Upgrade vSphere Kubernetes Service to 3.6.0 or later"* as
+  its own step directly **before** the Supervisor upgrade.
 - **vSphere Kubernetes Service (VKS / Tanzu guest) clusters** upgrade *after*
   the Supervisor, against the Supervisor ↔ VKS compatibility matrix.
 - **Before moving on:** Supervisor control plane healthy and on the matching
@@ -589,8 +594,21 @@ to closure.
   upgrade – see [vSAN File Service in detail](#vsan-file-service-in-detail).
 - **vSphere Distributed Switch** – upgrade vDS versions
   ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html)).
+  Broadcom marks this step **optional** – it is only needed *"to take
+  advantage of features that are available only in the later versions"*.
   A vDS with no host members can keep a stale "upgrade in progress"
   banner afterwards – see the [field notes](04-field-notes.md#nsx-and-vcenter).
+- **VCF configuration upgrades** – the last step in Broadcom's list for
+  the management domain, after vSAN File Service. They reconcile the
+  actual configuration with the prescribed one and *"might be required
+  after you apply software upgrades"*. In **VCF Operations → Build →
+  Lifecycle → VCF Instances**, select the instance and the domain, open
+  the **Upgrades** tab, **Run Precheck**, then expand **Available
+  Configuration Upgrades** and **Apply All**. Broadcom requires a
+  **maintenance window**. Domains can run in parallel, but never two
+  configuration upgrades on the same domain at once. Pending ones *"do
+  not block future BOM upgrades"*
+  ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/apply-configuration-updates.html)).
 - **Licensing** – all vCenter/NSX/host licenses assigned from the License
   Server; no connectivity errors between vCenter and the License Server.
 - **Certificates** – re-issue or replace certificates for every new appliance
@@ -607,6 +625,14 @@ to closure.
   image-based / file-based backups run clean; take fresh baselines.
 - **Fleet health** – SDDC Manager and VCF Operations report a healthy fleet;
   run a fresh precheck.
+- **What is still on the old version** – everything above covers the
+  management domain of the first VCF Instance. Per Broadcom's high-level
+  order, the management domains of the **remaining VCF instances** in the
+  fleet come next. **Workload domains** are optional and *"can be
+  performed at any time after the management domain of the respective
+  instance is already upgraded"* – plan them as their own Day-N windows
+  ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/upgrade-workload-domains-to-vcf-5-2.html)),
+  and record which domains are still behind in the handover.
 
 **Spot-check builds, VMware Tools, vSAN on-disk format, and vDS version with
 PowerCLI** (a fleet-wide sweep across the checklist's build/Tools/vSAN/vDS

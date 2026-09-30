@@ -48,6 +48,13 @@ equivalent to an SDDC Manager fleet precheck when there's no SDDC Manager
 to run one from (e.g. the standalone VVF / manual GUI upgrade path). Per
 [Broadcom KB 344917, "Using the VCF Diagnostic Tool for vSphere (VDT)"](https://knowledge.broadcom.com/external/article/344917/using-the-vcf-diagnostic-tool-for-vspher.html):
 
+> **VDT does not currently run on vCenter 9.1.1.** The KB opens with this
+> notice (read 2026-09-30): *"VDT version 2.3.1 is not currently working
+> with vCenter 9.1.1. These issues will be fixed in VDT version 2.3.2."*
+> 2.3.1 is the only 2.x build attached, so check the KB for 2.3.2 before
+> planning a VDT run against a 9.1.1 appliance. Source appliances on 7.x
+> and 8.x are not affected by the notice.
+
 1. Download the VDT version matching the source vCenter build from the KB
    attachments, copy it to the appliance (WinSCP or equivalent – see the
    default-shell note above) into
@@ -57,6 +64,19 @@ to run one from (e.g. the standalone VVF / manual GUI upgrade path). Per
    unzip vdt-<version_number>.zip
    cd vdt-<version_number>
    ```
+   **A vCenter 9.1.1 appliance has no `unzip`** – the shell answers
+   `command not found` (seen 2026-09-30), although the KB still
+   documents the command. Two ways around it, for this tool and for
+   lsdoctor below:
+   - Extract with Python's built-in zip module, already on the appliance
+     (use `python3` if `python` is not found):
+     ```
+     python -m zipfile -e vdt-<version_number>.zip .
+     ```
+     > **Untested.** Standard Python, but not yet run on a 9.1.1
+     > appliance.
+   - Extract the zip on the workstation and copy the folder over with
+     `scp -r` – see the note at the top of this page.
 2. Run it:
    ```
    python vdt.py
@@ -243,7 +263,9 @@ This doc is the general reference; that one shows it in context.
 1. Download the tool attachment from
    [Broadcom KB 320837, "Using the 'lsdoctor' Tool"](https://knowledge.broadcom.com/external/article/320837/using-the-lsdoctor-tool.html).
 2. Copy it to the target vCenter (WinSCP or equivalent – see the
-   default-shell note above), SSH in, and unzip it.
+   default-shell note above), SSH in, and unzip it. On a vCenter 9.1.1
+   appliance there is no `unzip` – use one of the two alternatives in
+   the [VDT extraction step](#vcf-diagnostic-tool-for-vsphere-vdt).
 3. Run it from inside the extracted `lsdoctor-main` directory – it must
    be run from there, not a copy of individual files elsewhere.
 

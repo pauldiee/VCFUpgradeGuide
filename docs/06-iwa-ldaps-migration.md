@@ -209,6 +209,8 @@ after step 6 makes it harder to roll back. Per
    ```
    unzip lsdoctor.zip
    ```
+   A vCenter 9.1.1 appliance has no `unzip` – see the alternatives in
+   the [VDT extraction step](17-vdt-and-lsdoctor-diagnostics.md#vcf-diagnostic-tool-for-vsphere-vdt).
 2. Run the **read-only** check (`-l` / `--lscheck`) – this only reports,
    it doesn't change anything, so it's safe to run without a fresh
    snapshot beyond the one already taken in
