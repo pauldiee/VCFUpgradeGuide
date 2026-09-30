@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.9.2 – 2026-09-30
+- **`docs/04`: stale vDS "upgrade in progress" banner** (#58), from the
+  field. A vDS with no host members, upgraded from 8.0.0 to 9.1.0 on
+  vCenter 9.1.1, keeps the "An upgrade for the vSphere Distributed Switch
+  in datacenter is in progress" issue with a 1970 trigger time. KB 318804
+  covers it but claims a fix in 6.7 U2 and lists only vCenter 6.x–8.x.
+  The dummy-portgroup workaround did not help; resetting
+  `vpx_dvs.upgrade_status` in VCDB and restarting vpxd did. The note
+  warns that the KB's `update` hits every vDS and gives a scoped variant,
+  flagged untested. Pointers added from `docs/13`'s post-upgrade vDS
+  step, a new vDS item in `docs/14`'s post-upgrade validation, and
+  `docs/07`'s After cutover list.
+
 ## v1.9.1 – 2026-09-30
 - **`docs/21`: VCF Inspector download details** (#57). The binary table
   gains the macOS Intel build and file sizes. New notes: the portal

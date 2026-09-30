@@ -589,6 +589,8 @@ to closure.
   upgrade – see [vSAN File Service in detail](#vsan-file-service-in-detail).
 - **vSphere Distributed Switch** – upgrade vDS versions
   ([TechDocs](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-the-management-domain-to-vmware-cloud-foundation-5-2/upgrade-vsphere-distributed-switch-versions.html)).
+  A vDS with no host members can keep a stale "upgrade in progress"
+  banner afterwards – see the [field notes](04-field-notes.md#nsx-and-vcenter).
 - **Licensing** – all vCenter/NSX/host licenses assigned from the License
   Server; no connectivity errors between vCenter and the License Server.
 - **Certificates** – re-issue or replace certificates for every new appliance

@@ -401,6 +401,10 @@ Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techd
   steps (ESX hosts, vSAN on-disk format, vSAN File Service) as applicable,
   and its [Post-upgrade validation](14-standalone-vvf-upgrade.md#post-upgrade-validation)
   checklist.
+- When the vDS version is upgraded later (after the ESX hosts), a vDS
+  with no host members can keep a stale "upgrade in progress" banner in
+  **All Issues** – see the [field notes](04-field-notes.md#nsx-and-vcenter)
+  for the fix.
 - This is a single vCenter, not Enhanced Linked Mode – the multi-node
   backup/restart sequencing called out for ELM environments in the
   prerequisites does not apply here.

@@ -295,6 +295,9 @@ VCF Automation) that don't exist on this path:
   in use.
 - **vSAN File Service** – upgrade if in use, after the on-disk format
   upgrade.
+- **vSphere Distributed Switch** – upgrade vDS versions, if a vDS is in
+  use. A vDS with no host members can keep a stale "upgrade in progress"
+  banner afterwards – see the [field notes](04-field-notes.md#nsx-and-vcenter).
 - **Licensing** – vCenter and ESX licenses assigned from the License Server;
   no connectivity errors between vCenter and the License Server.
 - **Aria/VCF Operations** – reachable and healthy, metrics still flowing.

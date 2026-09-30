@@ -207,6 +207,41 @@ with a `DELETE …/casa/auth/users` call.
   and Import: bringing existing infrastructure under
   VCF](22-converge-and-import-existing-infrastructure.md#the-shared-trap-auto-selected-nsx-version-can-be-chronologically-incompatible)
   for the root cause and how to avoid it on the next import.
+- **A vDS with no host members keeps an "upgrade in progress" banner
+  after its version upgrade.** (Different engagement again.)
+  **Field-verified (2026-09-30, vCenter 9.1.1, vDS 8.0.0 → 9.1.0).**
+  After the upgrade, **All Issues** keeps showing:
+  > *"An upgrade for the vSphere Distributed Switch in datacenter is in
+  > progress."*
+
+  Type *Configuration Issue*, trigger time **01/01/1970**. The switch had
+  no hosts attached. [Broadcom KB 318804](https://knowledge.broadcom.com/external/article/318804/upgrading-vsphere-distributed-switch-aft.html)
+  names exactly this trigger (*"if no host member is available in the
+  vSphere Distributed Switch configuration"*) and gives the cause as the
+  vDS property not being synchronized between vpxd memory and the
+  database. The KB says this was resolved in vCenter 6.7 U2 and lists only
+  vCenter 6.x–8.x, but it still reproduces on 9.1.1.
+  - **The dummy-portgroup workaround did not help.** Creating and deleting
+    a portgroup on the vDS (the KB's Workaround 2) left the banner in
+    place.
+  - **Resetting the flag in the vCenter database cleared it** (the KB's
+    Workaround 1). Snapshot vCenter first, then as root on the appliance:
+    ```
+    /opt/vmware/vpostgres/current/bin/psql -d VCDB -U postgres
+    select id, name, upgrade_status from vpx_dvs;
+    update vpx_dvs upgrade_status set upgrade_status=0;
+    \q
+    vmon-cli -r vpxd
+    ```
+    The affected switch showed `upgrade_status` **2** before the update.
+    After the vpxd restart the banner was gone.
+  - **The KB's `update` has no `WHERE` clause**, so it resets the flag on
+    **every** vDS in that vCenter. Read the `select` output first and make
+    sure no other switch has a real upgrade in flight. To touch only the
+    affected switch, scope it:
+    `update vpx_dvs set upgrade_status=0 where id=<id>;`
+    > **Untested.** The scoped variant was not run; the field case used
+    > the KB's statement as written.
 
 ---
 
