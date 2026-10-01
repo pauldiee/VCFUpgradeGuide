@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.0.0 – 2026-10-01
+- **Site: long first table columns wrap instead of overflowing** (#69).
+  `site.css` used to keep every table's first column on one line, which
+  was meant for short index columns but hit 25 tables across 11 docs
+  with long first cells (up to 87 characters in `docs/03`).
+  `rehypeWrapTables` in `astro.config.mjs` now marks tables whose first
+  column is at most 30 characters as `first-col-tight`, and only those
+  keep `nowrap`. The other first columns wrap, with a 16ch minimum
+  width. (Version rolls over from v1.9.9, per the max-10-values rule.)
+
 ## v1.9.9 – 2026-10-01
 - **Sources sections in `docs/09` and `docs/23` are now lists** (#68). On
   the site, every table's first column is set to `nowrap`, which turned

@@ -126,9 +126,41 @@ function rehypeBackToTop() {
   };
 }
 
+// First-column cells up to this many visible characters keep `nowrap`
+// (index / phase / component-name columns); longer ones wrap normally.
+const TIGHT_FIRST_COL_MAX = 30;
+
+/** Visible text of a hast node (all descendant text nodes joined). */
+function hastText(node) {
+  if (node.type === 'text') return node.value;
+  return (node.children || []).map(hastText).join('');
+}
+
+/**
+ * Longest visible text in a table's first body column, so short index-style
+ * columns can stay on one line without forcing long titles to.
+ */
+function maxFirstColumnLength(table) {
+  let max = 0;
+  const visit = (node) => {
+    if (node.type !== 'element') return;
+    if (node.tagName === 'tr') {
+      const firstCell = (node.children || []).find(
+        (c) => c.type === 'element' && c.tagName === 'td',
+      );
+      if (firstCell) max = Math.max(max, hastText(firstCell).trim().length);
+      return;
+    }
+    (node.children || []).forEach(visit);
+  };
+  visit(table);
+  return max;
+}
+
 /**
  * Wrap each <table> in <figure class="table-scroll"> so wide, fill-in tables
  * can scroll horizontally on narrow screens without breaking the page layout.
+ * Tables whose first column is short get `first-col-tight` (see site.css).
  * @returns {(tree: any) => void}
  */
 function rehypeWrapTables() {
@@ -137,6 +169,11 @@ function rehypeWrapTables() {
       if (!node.children) return;
       node.children = node.children.map((child) => {
         if (child.type === 'element' && child.tagName === 'table') {
+          if (maxFirstColumnLength(child) <= TIGHT_FIRST_COL_MAX) {
+            child.properties = child.properties || {};
+            const cls = child.properties.className || [];
+            child.properties.className = [...cls, 'first-col-tight'];
+          }
           return {
             type: 'element',
             tagName: 'figure',

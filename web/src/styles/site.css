@@ -626,8 +626,13 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
   content: "–";
   color: var(--text-faint);
 }
-/* Keep the leading "#" / index column tight and centered */
-.prose tbody td:first-child { white-space: nowrap; }
+/* Keep a short leading "#" / index / name column on one line. Only tables
+   whose first column stays short get this class (rehypeWrapTables in
+   astro.config.mjs); long first-column titles wrap like any other cell. */
+.prose table.first-col-tight tbody td:first-child { white-space: nowrap; }
+/* Long first columns: give them a sensible floor so they don't collapse
+   to one word per line next to a wide second column. */
+.prose table:not(.first-col-tight) tbody td:first-child { min-width: 16ch; }
 .prose tbody tr:nth-child(even) { background: var(--surface-row-alt); }
 .prose tbody tr:hover { background: var(--surface-hover); }
 
