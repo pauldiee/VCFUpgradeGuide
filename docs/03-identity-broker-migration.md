@@ -161,11 +161,9 @@ Seen on real upgrades – full detail in
 
 ## Sources
 
-| Reference | Covers |
-| --- | --- |
-| VCF 9.1.0.0 release notes – "What's new" (VCF Operations / identity) | The "script-based migration of data from VMware Identity Manager to identity broker" statement |
-| [Deploy VCF Management Services and License Server as Part of VCF Upgrade to 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html) | No VIDM upgrade path; Identity Broker deployed with Management Services; embedded vs. appliance handling |
-| [Import User Groups From Source](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/infrastructure-operations/-configuring-administration-settings/managing-user-access-control/access-control-overview/access-control-user-groups-tab/import-user-groups-from-source.html) | The VCF Operations Access Control group-import procedure (source: VMware Identity Manager) |
-| [Upgrade to Identity Broker 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html) | Upgrading an existing **9.0.x** Identity Broker to 9.1 – a different path |
-| KB 424497 – Group mapping and user search issues in VCF Operations with Identity Broker | Known issues after cut-over |
-| KB 433807 – Set up VCF Identity Broker and VCF Logs in VMware Cloud Foundation 9.0 | Base Identity Broker setup |
+- VCF 9.1.0.0 release notes: "What's new" (VCF Operations / identity) – The "script-based migration of data from VMware Identity Manager to identity broker" statement.
+- [Deploy VCF Management Services and License Server as Part of VCF Upgrade to 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html) – No VIDM upgrade path; Identity Broker deployed with Management Services; embedded vs. appliance handling.
+- [Import User Groups From Source](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/infrastructure-operations/-configuring-administration-settings/managing-user-access-control/access-control-overview/access-control-user-groups-tab/import-user-groups-from-source.html) – The VCF Operations Access Control group-import procedure (source: VMware Identity Manager).
+- [Upgrade to Identity Broker 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html): Upgrading an existing **9.0.x** Identity Broker to 9.1 – a different path.
+- KB 424497: Group mapping and user search issues in VCF Operations with Identity Broker – Known issues after cut-over.
+- KB 433807: Set up VCF Identity Broker and VCF Logs in VMware Cloud Foundation 9.0 – Base Identity Broker setup.

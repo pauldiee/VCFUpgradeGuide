@@ -9,6 +9,8 @@
   column is at most 30 characters as `first-col-tight`, and only those
   keep `nowrap`. The other first columns wrap, with a 16ch minimum
   width. (Version rolls over from v1.9.9, per the max-10-values rule.)
+- **Sources sections are now lists in every doc.** 14 docs already used
+  lists; `docs/02` and `docs/03` were the last ones still using tables.
 
 ## v1.9.9 – 2026-10-01
 - **Sources sections in `docs/09` and `docs/23` are now lists** (#68). On

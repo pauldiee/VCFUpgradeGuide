@@ -151,12 +151,10 @@ Post-upgrade validation](13-vcf-upgrade-sequence.md#post-upgrade-validation)).
 
 ## Sources
 
-| Reference | Covers |
-| --- | --- |
-| [Convergence and Upgrade (VCF Protection and Recovery 9.1 installation guide)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade.html) | The combined appliance; convergence for VLSR 9.0.2.3 and earlier; prerequisites, order, per-site Converge procedure, what is preserved |
-| Broadcom KB 408127 | Converge workflow source-version requirement (VLSR / vSphere Replication 9.0.2.2 or later) |
-| Broadcom KB 313905 | Build numbers and versions of VMware Live Site Recovery / SRM |
-| [Broadcom Product Interoperability Matrix](https://interopmatrix.broadcom.com/) | Protection and Recovery vs. vCenter / ESX / VCF Operations |
-| [VMware Live Site Recovery Licensing (TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-site-recovery/9-0-4/about-vmware-live-site-recovery-installation-and-configuration/overview/srm-licensing.html) | Advanced Cyber Compliance vs. standalone SRM license; per-VM capacity counting; legacy SRM key auto-conversion |
-| [Add a License to VCF Operations and License Server](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/add-a-license-to-vcf-operations.html) / [License Server Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/license-server-overview.html) | How ACC / SRM subscription capacity is registered and assigned via the VCF License Server |
-| [Purchasing a Subscription for VMware Live Recovery (Broadcom KB 428834)](https://knowledge.broadcom.com/external/article/428834/purchasing-a-subscription-for-vmware-liv.html) | ACC as a VCF advanced service; standalone SRM option for VVF / pre-9 vSphere |
+- [Convergence and Upgrade (VCF Protection and Recovery 9.1 installation guide)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/protection-and-recovery/9-1/protection-and-recovery-installation/setting-up-vmware-live-site-recovery-overview/convergence-and-upgrade.html) – The combined appliance; convergence for VLSR 9.0.2.3 and earlier; prerequisites, order, per-site Converge procedure, what is preserved.
+- Broadcom KB 408127 – Converge workflow source-version requirement (VLSR / vSphere Replication 9.0.2.2 or later).
+- Broadcom KB 313905 – Build numbers and versions of VMware Live Site Recovery / SRM.
+- [Broadcom Product Interoperability Matrix](https://interopmatrix.broadcom.com/) – Protection and Recovery vs. vCenter / ESX / VCF Operations.
+- [VMware Live Site Recovery Licensing (TechDocs)](https://techdocs.broadcom.com/us/en/vmware-cis/live-recovery/live-site-recovery/9-0-4/about-vmware-live-site-recovery-installation-and-configuration/overview/srm-licensing.html) – Advanced Cyber Compliance vs. standalone SRM license; per-VM capacity counting; legacy SRM key auto-conversion.
+- [Add a License to VCF Operations and License Server](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/add-a-license-to-vcf-operations.html) / [License Server Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/license-server-overview.html) – How ACC / SRM subscription capacity is registered and assigned via the VCF License Server.
+- [Purchasing a Subscription for VMware Live Recovery (Broadcom KB 428834)](https://knowledge.broadcom.com/external/article/428834/purchasing-a-subscription-for-vmware-liv.html) – ACC as a VCF advanced service; standalone SRM option for VVF / pre-9 vSphere.
