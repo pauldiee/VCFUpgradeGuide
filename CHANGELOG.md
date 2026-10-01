@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.9.8 – 2026-10-01
+- **`docs/09` License Hub now links to the companion deploy guides**
+  rather than leaving deployment unexplained. Links go to the
+  VCF9-DeploymentPlanning License Hub deployment guide (full sequence,
+  2.0 standalone OVA, 5.1.2 SSP Installer flow) and to the Avi guide's
+  Licensing section, which covers onboarding the upgraded Controller as
+  a License Hub endpoint.
+
 ## v1.9.7 – 2026-10-01
 - **`docs/09` Avi + License Hub upgrade expanded from a link into a full
   guide** (#67). Built from the Avi for VCF 9.1 upgrade chapter and its

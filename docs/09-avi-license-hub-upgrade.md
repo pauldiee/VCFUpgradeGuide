@@ -268,6 +268,17 @@ Security Services Platform alone.
 > and licenses the VCF *fleet*. **License Hub** is a separate Day-N
 > appliance for vDefend / Avi.
 
+**Deploying it** is covered in the companion repo, not repeated here:
+[License Hub – Deployment Guide (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/15-license-hub/).
+It walks through
+[the full sequence](https://vcf-planning.hollebollevsan.nl/docs/15-license-hub/#the-full-sequence-start-to-finish),
+the [2.0 standalone OVA](https://vcf-planning.hollebollevsan.nl/docs/15-license-hub/#license-hub-20-standalone-ova)
+and the older [5.1.2 SSP Installer flow](https://vcf-planning.hollebollevsan.nl/docs/15-license-hub/#license-hub-512-ssp-installer-flow).
+Pointing the upgraded Controller at the hub (**Administration → Licensing**,
+*Cloud Licensing* or *On-prem License Hub*, then onboarding the Controller
+as an endpoint with its full-chain certificate) is in the Avi guide's
+[Licensing section](https://vcf-planning.hollebollevsan.nl/docs/14-avi-load-balancer/#licensing).
+
 **How it relates to the Avi upgrade.** From
 [License Management for Avi Load Balancer](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer-vmware-cloud-foundation/9-1/build-and-deploy-avi-91/license-management-for-avi-load-balancer.html):
 
