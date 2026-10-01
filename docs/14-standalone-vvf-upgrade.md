@@ -73,6 +73,8 @@ phases, no SDDC Manager involved at any point:
    you cannot skip, even on the fully standalone path. What registration
    and usage reporting send to Broadcom, and connected vs. disconnected
    mode: [Licensing: what is sent to Broadcom](25-licensing-what-is-sent-to-broadcom.md).
+   Upgraded hosts and vCenter run in 90-day evaluation mode until licensed –
+   [don't let it expire](25-licensing-what-is-sent-to-broadcom.md#upgrades-from-8x-start-in-evaluation-mode).
 3. **vCenter.** Upgrade the vCenter instance – choose **in-place** (the
    two-stage GUI/CLI installer) or **reduced-downtime upgrade (RDU)** (the
    vSphere Client's Update Planner) the same as on the fleet-managed path

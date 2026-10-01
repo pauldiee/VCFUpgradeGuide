@@ -173,24 +173,114 @@ after **more than 180 days** in disconnected mode, switching to connected
 
 ---
 
-## What happens if usage isn't reported
+## What happens if usage isn't reported, or licenses lapse
+
+### Timeline
 
 From the
 [Licensing Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/licensing-overview.html):
 
-1. **Usage must be reported, and licenses updated, at least every 180
-   days.** If not, the license **expires**. Notifications appear
-   beforehand.
-2. **After expiry there are 90 days** to update the license. License
-   assignments are affected, and notifications appear in most components,
-   including VCF Operations and vCenter.
-3. **90 days after expiry:** management operations may be blocked, *"ESX
-   hosts disconnect from vCenter"*, and *"You cannot start workloads.
-   Existing workloads are not proactively stopped."*
-4. **Recovery:** download an updated license file.
+| When | What happens |
+| --- | --- |
+| Every day (connected) / at least every 180 days (disconnected) | Usage is reported and licenses are updated. Each update restarts the 180-day clock |
+| Before the 180 days run out | Notifications appear |
+| Day 180 without a report and update | The license **expires** (it also expires when the last contributing subscription ends) |
+| The 90 days after expiry | *"You have 90 days to update your license."* License assignments are affected and notifications appear in most components, including VCF Operations and vCenter. Workloads keep running |
+| More than 90 days after expiry | The full impact below. *"Existing workloads are not proactively stopped."* |
 
-So in disconnected mode, put the 180-day exchange in the operations
-calendar with a margin. The 90-day grace is a safety net, not a plan.
+In disconnected mode, that means roughly **270 days** from the last
+successful exchange until hosts disconnect. Treat the 90 days as a safety
+net, not a plan: put the 180-day exchange in the operations calendar with
+a margin.
+
+### What stops and what keeps running
+
+After the grace period (and when a vCenter or ESX evaluation period ends
+without a license), from the
+[Licensing Overview](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/licensing-overview.html)
+and
+[KB 391605](https://knowledge.broadcom.com/external/article/391605)
+(*Impact of vCenter/ESXi license expiration*):
+
+| Keeps working | Stops or is blocked |
+| --- | --- |
+| **Running VMs** *"will continue uninterrupted"* | **Powering on** any powered-off VM, *"whether they were shut down before or after license expiry"* |
+| Direct access to the ESX **Host Client** via the host's IP | **ESX hosts disconnect** from vCenter; host and VM management in the vSphere Client is impaired (configuration changes, resource adjustments) |
+| **Creating** new VMs | **Powering on** those new VMs fails |
+| **Removing** a host from vCenter | **Adding** hosts to an expired vCenter fails |
+| | Management operations of other components *"might be prevented"* |
+
+So the risk is not an immediate outage. It's that **anything that stops
+can't be started again**: a host crash with vSphere HA trying to restart
+its VMs, a VM shut down for maintenance, a patch reboot. The longer an
+environment sits past the grace period, the more of its workload ends up
+off and unstartable.
+
+**Scope** (from the
+[Licensing Model](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/licensing-overview/licensing-model.html)
+page):
+- If a **vCenter** is expired, *"all hosts added to the vCenter instance
+  are disconnected from it."*
+- If only an **ESX host** is expired and the vCenter is licensed, *"only
+  the ESX host with an expired evaluation period is disconnected."*
+
+KB 391605 is Broadcom's general vCenter / ESX expiry KB, not
+version-specific. Its behaviour matches the 9.1 Licensing Overview.
+
+### Upgrades from 8.x start in evaluation mode
+
+Per the Licensing Model page, evaluation mode *"applies to new
+deployments and upgrades from version 8.x to version 9.1"*. Each ESX host
+(from first boot), vCenter and VCF Operations instance runs up to **90
+days** in evaluation until a 9.x license is assigned. Hosts added without
+free license capacity also stay in evaluation, counted from install, not
+from when they were added. Stateless Auto Deploy hosts get no evaluation
+period at all.
+
+> **Don't let the fleet's evaluation run out.** *"If you fail to license
+> your VCF fleet before the evaluation period expires, you must reinstall
+> the software because you cannot license a fleet with an expired
+> evaluation period."* License VCF Operations, vCenter and the hosts as
+> part of the upgrade, not afterwards.
+
+Individual components can still be recovered after their evaluation ends:
+register VCF Operations and add a license; assign a license to the
+vCenter from VCF Operations; or add the host to a licensed vCenter with
+free capacity.
+
+### When VCF Operations or the License Server is down
+
+From
+[License Server Downtime Impact](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/license-server-overview/license-server-downtime-impact.html)
+and [KB 443240](https://knowledge.broadcom.com/external/article/443240):
+
+- **No immediate impact** on running workloads or management operations
+  in a fully licensed environment. Existing entitlements on vCenter stay
+  active.
+- **Blocked:** assigning licenses, capacity updates, generating usage
+  reports (including the daily connected-mode report) and importing
+  license files. New vCenters, hosts and vSAN clusters can be added, but
+  only in evaluation mode.
+- **The outage counts against the clock.** No usage reports can be
+  generated while it lasts, so *"After the 180-day update period, the
+  licenses expire."* An environment already in evaluation can also run
+  out its 90 days.
+- **Warnings to watch for:** the vSphere Client banner *"One or more vCenter
+  instances are not connected to a license server"*, and VCF Operations
+  sync errors *"Licenses could not be synchronized with the vCenter
+  systems."*
+
+The TechDocs page says the License Server *"does not need to be always
+online"* and recommends vSphere HA on its cluster. KB 443240 is stricter:
+it *"should remain powered on at all times"*. Plan for the KB, and alert on
+the vCenter banner.
+
+### Recovery
+
+*"You can recover expired environments by downloading an updated license
+file"*: an update in connected mode, or the usage-file exchange in
+disconnected mode. Expired evaluation periods are recovered per component
+as described above, except for a never-licensed fleet.
 
 ---
 
@@ -202,4 +292,7 @@ calendar with a margin. The 90-day grace is a safety net, not a plan.
 - [Report License Usage and Update Licenses in Disconnected Mode (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/update-licenses/update-licenses-in-disconnected-mode.html) – the manual exchange.
 - [Switch from Disconnected to Connected Mode (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/switch-from-disconnected-to-connected-mode.html) – the 180-day activation-code caveat.
 - [Licensing Overview (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/licensing-overview.html) – 180-day reporting, expiry and the 90-day grace.
+- [Licensing Model (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/licensing-overview/licensing-model.html) – evaluation mode (including 8.x upgrades), vCenter vs. host expiry scope, reinstall if the fleet's evaluation expires.
+- [KB 391605](https://knowledge.broadcom.com/external/article/391605) – what stops and what keeps running when a vCenter or ESX license expires.
+- [License Server Downtime Impact (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/licensing/license-server-overview/license-server-downtime-impact.html) and [KB 443240](https://knowledge.broadcom.com/external/article/443240) – License Server / VCF Operations outages.
 - Christopher Kusek, [What's inside a VCF 9 license file](https://www.linkedin.com/pulse/whats-inside-vcf-9-license-file-understanding-connected-kusek-95gfc/) (June 2025, VCF 9.0) – community walkthrough of decoding the registration file.

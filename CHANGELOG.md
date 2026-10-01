@@ -12,8 +12,18 @@
     (Untested).
   - How to decode the files yourself.
   - Connected vs. disconnected mode.
-  - The 180-day reporting rule, then the 90-day grace before hosts
-    disconnect and new workloads can't start.
+  - What happens when licenses lapse:
+    - a timeline: 180-day reporting, expiry, a 90-day grace, then impact;
+    - what stops and what keeps running (KB 391605): running VMs carry
+      on, but nothing powered off can be powered on and hosts disconnect;
+    - vCenter vs. host expiry scope;
+    - upgrades from 8.x start in 90-day evaluation mode, and a fleet whose
+      evaluation expires unlicensed must be reinstalled;
+    - what a VCF Operations or License Server outage blocks, and how it
+      counts against the 180 days (KB 443240).
+
+  `docs/13`'s licensing row and `docs/14` also flag the evaluation-mode
+  trap.
 
   Linked from `docs/13`'s licensing row and `docs/14`'s License Server
   step; added to `nav.ts` (Reference, VCF + VVF), `README.md` and
