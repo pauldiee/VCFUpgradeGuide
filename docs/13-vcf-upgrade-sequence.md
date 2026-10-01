@@ -109,7 +109,7 @@ your target build.
 | --- | --- |
 | **Fleet health** | Healthy source fleet; no failed workflows; all SDDC Manager prechecks green |
 | **Bundle staging** | All upgrade bundles downloaded, staged, and integrity-checked before the window; confirm **free disk space on SDDC Manager** – a common, avoidable staging failure |
-| **CPU & TPM** | No deprecated CPU families for the target build; TPM 2.0 firmware current, or TPM disabled |
+| **CPU & TPM** | No **discontinued** CPU series: the ESX installer blocks them (e.g. Broadwell, Skylake-D/W, Kaby Lake). **Deprecated** series (e.g. Cascade Lake, AMD EPYC 7001/7002) are *"still Supported"* on all of 9.x and only trigger an installer warning, but are discontinued in the next major release, so plan their replacement ([KB 318697](https://knowledge.broadcom.com/external/article/318697)). Intel **Skylake-SP**, discontinued at 9.0 GA, is now supported in deprecated mode on 9.x with limitations ([KB 428874](https://knowledge.broadcom.com/external/article/428874)). Also confirm the server model is still on the BCG; some are marked *"VCF Supported. Confirm w/Vendor"*, which means the OEM provides the hardware support. TPM 2.0 firmware current, or TPM disabled |
 | **Backups** | vCenter file-based backup configured; SDDC Manager + VCF Operations image-based backups to an external SFTP target |
 | **vSphere Lifecycle Manager** | All clusters managed by **vLCM images** – transition any remaining baseline-managed clusters first. Full walkthrough: [VUM to vLCM images migration](15-vum-to-vlcm-migration.md) |
 | **DNS** | Strictly **lowercase** forward *and* reverse records for every existing and new name |

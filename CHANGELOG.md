@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.0.1 – 2026-10-01
+- **`docs/13`: CPU prerequisite corrected** (#70). It said "no deprecated
+  CPU families", but per KB 318697 deprecated CPU series (e.g. Cascade
+  Lake, AMD EPYC 7001/7002) are still supported on all of 9.x, with only
+  an installer warning. Only discontinued series block the install. Also
+  added the Skylake-SP exception (deprecated-mode support on 9.x, KB
+  428874) and the BCG "VCF Supported. Confirm w/Vendor" marking.
+
 ## v2.0.0 – 2026-10-01
 - **Site: long first table columns wrap instead of overflowing** (#69).
   `site.css` used to keep every table's first column on one line, which
