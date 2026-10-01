@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.9.4 – 2026-10-01
+- **`docs/07` After cutover: plug-in re-registration and background
+  historical data, with the actual steps** (#64). Both Broadcom 9.1
+  pages were read word for word. Plug-ins: use the vendor's procedure
+  first, and only if it fails unregister the extension through the
+  Managed Object Browser (`ExtensionManager` → `UnregisterExtension`)
+  and register again. Verify under Client Plug-Ins. KB 344648 covers
+  removing unwanted plug-ins. Historical data: monitor it in the vCenter
+  Management Interface (port 5480) and pause or resume it under
+  **Manage**. Do not cancel: the data cannot be recovered, and
+  importing it later means restarting from Stage 1.
+
 ## v1.9.3 – 2026-09-30
 - **Post-upgrade actions completed across the three track docs** (#60),
   checked against Broadcom's 9.1 upgrade pages read verbatim.

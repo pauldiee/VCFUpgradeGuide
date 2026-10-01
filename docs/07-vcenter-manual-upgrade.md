@@ -421,12 +421,35 @@ Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techd
   last one against the export taken in
   [IWA to AD-over-LDAPS migration](06-iwa-ldaps-migration.md), if that
   was part of the preparation.
-- **Plug-ins and historical data.** Broadcom's
-  [After Upgrading vCenter](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/after-upgrading-vcenter-server.html)
-  section also covers re-registering plug-in solutions after an upgrade,
-  and monitoring the historical data migration if Stage 2 deferred it to
-  the background. Check that third-party plug-ins (backup, storage,
-  monitoring) still load in the vSphere Client.
+- **Re-register plug-ins.** Third-party plug-ins (backup, storage,
+  monitoring) may need registering again, because the SSL certificate is
+  refreshed during the upgrade. Per Broadcom's
+  [Reregister Plug-In Solution](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/after-upgrading-vcenter-server/reregister-solution-in-vcenter-server-after-upgrade-or-migration.html)
+  page, **use the vendor's own re-registration procedure first**. Only
+  if that fails, remove the registration through the Managed Object
+  Browser and register again:
+  1. Browse to `https://<vcenter-fqdn>/mob/?moid=ExtensionManager` and
+     log in with vCenter credentials.
+  2. Under **Methods**, click **UnregisterExtension**.
+  3. Enter the extension's `key` value and click **Invoke Method**.
+  4. Register the plug-in again from the vendor's solution registration
+     page.
+
+  Verify it in the vSphere Client under **Administration → Solutions →
+  Client Plug-Ins → Check for New Plug-Ins**, or log out and back in (the
+  client checks for new plug-ins on each new session). To remove
+  plug-ins you no longer need, Broadcom points to
+  [KB 344648](https://knowledge.broadcom.com/external/article/344648).
+- **Historical data migrating in the background.** If Stage 2 imported
+  historical data in the background, follow the
+  [progress](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/after-upgrading-vcenter-server/monitoring-and-managing-historical-data-migration.html)
+  in the vCenter Management Interface (`https://<vcenter-fqdn>:5480`, as
+  root): a status bar shows the percentage copied, and **Manage** offers
+  **Pause** and **Resume**, to keep performance up during business
+  hours. **Do not pick Cancel:** per Broadcom, *"You cannot recover the
+  data once you cancel the operation"*, and importing it later means
+  restarting the upgrade from Stage 1. A success message in the status
+  bar marks the end.
 - **Re-check the known 8 → 9 side effects**, none of which the installer
   flags:
   - the Lifecycle Manager **depot token**
