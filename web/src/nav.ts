@@ -245,6 +245,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '24-vcf-operations-sizing-and-scaling',
+    step: 'Reference',
+    band: 'Reference',
+    label: 'VCF Operations sizing and scaling',
+    icon: 'maximize',
+    blurb: 'VCF Operations 9.1 node sizes and object / metric limits from Configuration Maximums, how to check whether the current size still fits, and how to scale up (bigger nodes) or scale out (more nodes, cloud proxies). VCF or VVF.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',

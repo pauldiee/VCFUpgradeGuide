@@ -1,5 +1,24 @@
 # Changelog
 
+## v2.0.3 – 2026-10-01
+- **New `docs/24-vcf-operations-sizing-and-scaling.md`** (#73).
+  Contents:
+  - VCF Operations 9.1 node sizes from Configuration Maximums (KB 324340
+    now points there for 9.1.x): vCPU, RAM, objects and metrics per node
+    for a single node and in a cluster, max nodes, latency, and cloud
+    proxy sizes.
+  - How to check whether the current size still fits.
+  - Which scaling each model supports.
+  - Scale up (Build → Lifecycle → VCF Management → Scale), with downtime
+    and a new backup afterwards.
+  - Scale out (add replica / data nodes; the certificate must include the
+    new FQDNs first, KB 430384; the Admin UI route for standalone VVF).
+  - Collector scale-out with cloud proxies.
+
+  All procedures were read word for word from the 9.1 TechDocs pages.
+  Linked from `docs/05`; added to `nav.ts` (Reference, VCF + VVF),
+  `README.md` and `CLAUDE.md`.
+
 ## v2.0.2 – 2026-10-01
 - **`docs/14`: CPU and server check added to the pre-upgrade precheck**
   (#71). This is the same rule as `docs/13`'s prerequisites:

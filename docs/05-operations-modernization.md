@@ -40,6 +40,11 @@ relying on it for anything not explicitly listed here.
 | Network subnet compliance (see below) | Inherited as-is – an already-non-compliant layout stays non-compliant | Built compliant from the start, on a single subnet |
 | Effort | Lower – one cluster, one upgrade | Higher – two clusters running in parallel during cutover, every adapter/integration re-registered |
 
+**Check the cluster's size either way.** Whether the existing nodes (or the
+fresh cluster you are about to build) are big enough for the object and
+metric counts on 9.1, and how to scale up or out later, is in
+[VCF Operations sizing and scaling](24-vcf-operations-sizing-and-scaling.md).
+
 Decide primarily on **whether historical metric/trend data needs to survive
 the upgrade**. If yes, in-place is close to mandatory. If a clean start is
 acceptable, fresh install removes the re-IP problem and lets the target
