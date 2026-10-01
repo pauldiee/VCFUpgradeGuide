@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.9.9 – 2026-10-01
+- **Sources sections in `docs/09` and `docs/23` are now lists** (#68). On
+  the site, every table's first column is set to `nowrap`, which turned
+  long source titles into a wide horizontal scroll with an unreadable
+  "Used for" column.
+
 ## v1.9.8 – 2026-10-01
 - **`docs/09` License Hub now links to the companion deploy guides**
   rather than leaving deployment unexplained. Links go to the
