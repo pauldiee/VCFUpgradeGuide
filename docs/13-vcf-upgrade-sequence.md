@@ -410,8 +410,10 @@ Confirm each component landed on its expected build.
     so pre-upgrade backups must be verified first.
   - **vCenter** – the reduced-downtime upgrade auto-reverts on failure
     (Phase 6); no manual rollback needed in the normal case.
-  - **Avi** – follow Avi's own documented rollback procedure, where present
-    as a conditional phase.
+  - **Avi** – Avi's own System / Controller / SE-group rollback, where
+    present as a conditional phase. Config changes made after the upgrade
+    are lost, and per Broadcom rollback is not possible once the VCF
+    upgrade is complete – see [Avi + License Hub upgrade](09-avi-license-hub-upgrade.md#rollback).
   - **ESX / host** – forward-only; rollback is only possible within the
     maintenance window, not after.
 
@@ -434,7 +436,7 @@ they slot into the core spine:
 | Inserted phase | Position | Notes |
 | --- | --- | --- |
 | **Disaster Recovery Products** | before the core (ahead of SDDC Manager) | Converge SRM / vSphere Replication to **Protection and Recovery** – own doc: [Disaster Recovery](02-disaster-recovery.md) |
-| **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | Own doc: [Avi + License Hub upgrade](09-avi-license-hub-upgrade.md) |
+| **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | Avi 32.1.1+ is a hard blocker for NSX / vCenter 9.1. Later upgrades on 32.1.x go through the CLI, not the UI (KB 456265). Own doc: [Avi + License Hub upgrade](09-avi-license-hub-upgrade.md) |
 | **VMware HCX** | after VCF Automation, before the NSX/vCenter/host tier | HCX Manager at every paired site, then the Service Mesh appliances. **All paired appliances** must reach VCF Operations HCX 9.0 or later – per Broadcom, 9.0+ appliances *"are not compatible with earlier versions and pairing breaks"*. Own doc: [HCX upgrade](23-hcx-upgrade.md) |
 | **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** See [NSX Federation in detail](#nsx-global-manager--federation-in-detail) |
 | **vSphere Supervisor** | after vCenter (Phase 6), before the ESX host phase (Phase 7) | Upgrade vSphere Kubernetes Service to 3.6.0 or later first (every VKS cluster on VKr 1.32+ beforehand), then the Supervisor. See [vSphere Supervisor in detail](#vsphere-supervisor-in-detail) |

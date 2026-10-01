@@ -1,5 +1,34 @@
 # Changelog
 
+## v1.9.7 – 2026-10-01
+- **`docs/09` Avi + License Hub upgrade expanded from a link into a full
+  guide** (#67). Built from the Avi for VCF 9.1 upgrade chapter and its
+  child pages, the 32.1.x upgrade checklist, the Avi 32.1 Upgrade Guide,
+  KB 456265, the Avi for VCF 9.1.1 release notes and the 9.1 Avi license
+  management page, all read word for word. New sections:
+  - Which procedure applies: the 9.1 chapter covers SDDC-Manager-deployed
+    Controllers only.
+  - Supported source versions: 22.1.4 is the minimum, and 31.2.3 can only
+    go to 32.1.3.
+  - Two traps:
+    - On an upgraded 32.1.1–32.1.3 Controller, a UI-started upgrade can
+      roll back to the old version (KB 456265), so later upgrades go
+      through the CLI.
+    - Legacy licenses get a hard 90-day grace period after the upgrade.
+  - Prerequisites (single VPC-enabled cloud, Essentials-flavor block,
+    `allow_unauthenticated_nodes`, backups and images).
+  - Controller-then-SE-group procedure with data-plane impact. The CLI
+    examples carry an Untested callout.
+  - Post-upgrade Controller configuration for 9.1: truststore PKI profile,
+    Enterprise Admin role, auto onboarding, VCF Automation discovery.
+  - The ANSIX-4485 `nsxt-alb` lockout on the way to 9.1.1.
+  - Before-moving-on checks and rollback scopes.
+  - License Hub: how licensing relates to the Avi upgrade. Connected
+    Controllers can register directly with the Avi Cloud Console.
+  - Open item: upgrading a Controller that VCF Operations deployed.
+
+  `docs/13`'s Avi row and rollback bullet were updated to match.
+
 ## v1.9.6 – 2026-10-01
 - **New `docs/23-hcx-upgrade.md`: the VMware HCX phase** (#7). Built
   from Broadcom's 9.1 HCX upgrade chapter, the 9.1 lifecycle page, the
