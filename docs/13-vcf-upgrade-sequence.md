@@ -436,7 +436,7 @@ they slot into the core spine:
 | **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | Own doc: [Avi + License Hub upgrade](09-avi-license-hub-upgrade.md) |
 | **VMware HCX** | after VCF Automation | Upgrade HCX before the NSX/vCenter/host tier. Afterwards, upgrade **all paired appliances** to VCF Operations HCX 9.0 or later – per Broadcom, 9.0+ appliances *"are not compatible with earlier versions and pairing breaks"* |
 | **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** See [NSX Federation in detail](#nsx-global-manager--federation-in-detail) |
-| **vSphere Supervisor** | after vCenter (Phase 6), before the ESX host phase (Phase 7) | See [vSphere Supervisor in detail](#vsphere-supervisor-in-detail) |
+| **vSphere Supervisor** | after vCenter (Phase 6), before the ESX host phase (Phase 7) | Upgrade vSphere Kubernetes Service to 3.6.0 or later first (every VKS cluster on VKr 1.32+ beforehand), then the Supervisor. See [vSphere Supervisor in detail](#vsphere-supervisor-in-detail) |
 | **NSX Edge & NSX Finalize** | replaces the plain "NSX finalize", after the host phase | Edge nodes upgraded last, after ESX/host kernels, then finalize. Own doc: [NSX Edge & Finalize](10-nsx-edge-finalize.md) |
 | **Post-Infrastructure Products → Log Management** | after NSX finalize (after Operations for Networks, before Identity Broker) | Deploy fresh Log Management as part of VCF Management Services. Own doc: [Log Management migration](11-log-management-migration.md) |
 | **Operations for Networks** (vRNI / Aria Operations for Networks) | with the operations tier | Upgrade-path is version-gated – e.g. 6.14.1 reaches 9.1.0.0100 but not 9.1.0.0200 directly, and the newest 6.14.x may have no 9.x path. Collector nodes are version-locked to the platform – redeploy / re-pair |
@@ -503,11 +503,36 @@ list it – it is an inserted advanced-product step.
 - **It touches the hosts.** The Supervisor upgrade rolls each ESX host in the
   cluster through maintenance mode to install the Spherelet – budget for that
   on top of the Phase 7 host remediation.
-- **The vSphere Kubernetes Service itself comes first.** Broadcom's upgrade
-  order lists *"Upgrade vSphere Kubernetes Service to 3.6.0 or later"* as
-  its own step directly **before** the Supervisor upgrade.
-- **vSphere Kubernetes Service (VKS / Tanzu guest) clusters** upgrade *after*
-  the Supervisor, against the Supervisor ↔ VKS compatibility matrix.
+- **The vSphere Kubernetes Service itself comes first.** Broadcom's
+  [upgrade order](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation.html)
+  lists *"Upgrade vSphere Kubernetes Service to 3.6.0 or later"* as its
+  own step, after vCenter and directly **before** the Supervisor upgrade.
+  Prerequisites per the
+  [VKS 3.6 release notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-service-administration-and-development/9-1/release-notes/vks-release-notes/vmware-tanzu-kubernetes-grid-service-36-release-notes.html):
+  - **Supervisor Kubernetes version 1.30 or later** – available with
+    vCenter 9.0 and vCenter 8.0 Update 3g and above.
+  - **Every VKS cluster on VKr 1.32 or later** – *"VKS 3.6 drops
+    compatibility for VKr v1.31. Before upgrading to VKS 3.6, you must
+    ensure all your VKS Clusters are running at least on VKr 1.32."*
+    Clusters still on VKr 1.31 or older therefore need a cluster upgrade
+    **before** this step, not only after the Supervisor.
+  - **VKS 3.3 or later already on the Supervisor** for a direct upgrade
+    to 3.6; older versions need an intermediate hop (check the upgrade
+    path tool in the interoperability matrix).
+
+  The
+  [procedure](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-service-administration-and-development/9-1/managing-vsphere-kubernetes-service/installing-and-upgrading-the-tkg-service/upgrade-the-tkg-service-version.html)
+  runs per Supervisor in the vSphere Client: first register the new VKS
+  version, then **Supervisor Management → Services → vSphere Kubernetes
+  Service tile → Actions → Install on Supervisors**, pick the target
+  version and Supervisor, confirm service compatibility and click **OK**.
+  The tile shows the resulting version and status; `kubectl get kr`
+  also works. The 9.1 page also lists regional Harbor, installed on the
+  Supervisor or one in the same region, as a prerequisite.
+- **vSphere Kubernetes Service (VKS / Tanzu guest) clusters** move to newer
+  VKr versions *after* the Supervisor, against the Supervisor ↔ VKS
+  compatibility matrix. The VKr 1.32 minimum above is the exception that
+  has to be met beforehand.
 - **Before moving on:** Supervisor control plane healthy and on the matching
   version; namespaces and workloads intact.
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.9.5 – 2026-10-01
+- **`docs/13`: vSphere Kubernetes Service step before the Supervisor,
+  checked and expanded** (#63). The 9.1 upgrade-order table, the VKS 3.6
+  release notes and the 9.1 "Upgrade the VKS Version" page were all read
+  word for word. The step is confirmed. New prerequisites: Supervisor
+  Kubernetes 1.30 or later, VKS 3.3 or later for a direct upgrade, and
+  every VKS cluster on VKr 1.32 or later **before** VKS 3.6. That
+  corrects the earlier claim that guest clusters only upgrade after the
+  Supervisor. Also added: the vSphere Client procedure (Install on
+  Supervisors) and the regional Harbor prerequisite. The
+  conditional-phases table now has no separate VKS row; the step is
+  named in the Supervisor row instead.
+
 ## v1.9.4 – 2026-10-01
 - **`docs/07` After cutover: plug-in re-registration and background
   historical data, with the actual steps** (#64). Both Broadcom 9.1
