@@ -91,6 +91,7 @@ here – see the Related repo section in `README.md`.
 | `docs/21-vcf-inspector-fling.md` | VCF Inspector – a standalone VMware Fling for fleet-level pre-upgrade validation, deployment monitoring with stuck-task detection, and health diagnostics (reference; **VCF only**, needs a VCF control-plane node) |
 | `docs/22-converge-and-import-existing-infrastructure.md` | Converge (VCF Installer, brownfield vSphere into a new VCF/VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, shared NSX auto-selection back-in-time trap (reference; VCF or VVF, Import specifically VCF only) |
 | `docs/09-avi-license-hub-upgrade.md` | Avi Load Balancer + License Hub upgrade, before SDDC Manager (phase guide; VCF or VVF, if Avi is in use) |
+| `docs/23-hcx-upgrade.md` | VMware HCX upgrade – HCX Manager per paired site, then Service Mesh; version/pairing rules, rollback, VCF Operations lifecycle from 9.1 on (phase guide; **VCF only**, if HCX is in use) |
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade + NSX finalize, replacing plain Phase 8 (phase guide; VCF or VVF) |
 | `docs/11-log-management-migration.md` | VCF Operations for Logs → Log Management 9.1, after NSX finalize (phase guide; VCF or VVF) |
 | `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at `docs/14`'s procedure rather than duplicating it (**vSphere-standard only**; excluded from the live site for now, see Project overview above) |

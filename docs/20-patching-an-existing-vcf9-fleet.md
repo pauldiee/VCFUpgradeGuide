@@ -326,6 +326,12 @@ suggestions:
   hosting a service patches before that service.
 - *"Before you patch the migration service engine component from
   9.1.0.x to 9.1.1, you must first patch VCF Automation."*
+- **HCX, if present** (from a separate 9.1 page,
+  [Upgrade VCF Operations HCX 9.1.x](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components/update-vcf-operations-hcx.html)):
+  for HCX already on 9.1, *"you must use VCF Operations and upgrade the
+  component in the beginning of the domain upgrade plan sequence."* That
+  covers HCX Manager only; the Service Mesh appliances stay manual. See
+  [HCX upgrade](23-hcx-upgrade.md#after-91-hcx-through-vcf-operations).
 
 ### The full 9.1.1 order in practice
 

@@ -1,5 +1,32 @@
 # Changelog
 
+## v1.9.6 – 2026-10-01
+- **New `docs/23-hcx-upgrade.md`: the VMware HCX phase** (#7). Built
+  from Broadcom's 9.1 HCX upgrade chapter, the 9.1 lifecycle page, the
+  HCX 4.11.4 release notes and KB 427904, all read word for word.
+  Covers:
+  - Position: step 13 in the 9.1 order, after VCF Automation and before
+    the NSX Global Manager. VCF only, because the VVF 9.1 order has no
+    HCX step.
+  - Two paths: manual HCX Manager upgrade *to* 9.1; VCF Operations
+    lifecycle (with its precheck) once HCX is on 9.1.
+  - Version rules: pairing breaks across the 9.0 line, with no
+    guardrail; 4.11.4 → 9.0 is not supported; 4.11.2 and earlier are
+    End of Service.
+  - Prerequisites, including removing WAN Optimization, V2T Migration
+    and Disaster Recovery from the compute profile and service mesh when
+    upgrading from 4.11.
+  - Manager-then-Service-Mesh order (IX before NE, about a minute of
+    network-extension disruption), automatic appliance password changes,
+    OSAM redeploy, before-moving-on checks, and snapshot rollback
+    (HCX Manager only).
+  - Open item: the exact 4.11.x → 9.1.x source builds.
+
+  `docs/13`'s HCX row, guide list and companion-doc list link to it;
+  `docs/20` notes HCX's place at the start of the domain upgrade plan;
+  added to `nav.ts` (Phase guides, VCF only), `README.md` and
+  `CLAUDE.md`.
+
 ## v1.9.5 – 2026-10-01
 - **`docs/13`: vSphere Kubernetes Service step before the Supervisor,
   checked and expanded** (#63). The 9.1 upgrade-order table, the VKS 3.6

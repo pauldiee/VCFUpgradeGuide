@@ -137,6 +137,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '23-hcx-upgrade',
+    step: 'Phase guide · VCF only',
+    band: 'Phase guides',
+    label: 'HCX upgrade',
+    icon: 'right-left',
+    blurb: 'HCX Manager at every paired site, then the Service Mesh appliances, after VCF Automation and before the NSX tier. Pairing breaks across the 9.0 line; once on 9.1, VCF Operations drives HCX Manager lifecycle. Not in the VVF upgrade order, so VCF only.',
+    tracks: ['vcf'],
+  },
+  {
     slug: '10-nsx-edge-finalize',
     step: 'Phase guide',
     band: 'Phase guides',

@@ -82,6 +82,7 @@ phase:
 | `docs/05-operations-modernization.md` | Aria Operations to VCF Operations (Phase 1): in-place vs. fresh install, re-IP, HA setup, vCenter integrations | VCF or VVF |
 | `docs/07-vcenter-manual-upgrade.md` | Manual GUI upgrade of a standalone vCenter (Phase 6 alternate path, no Fleet Management), plus the vCenter-specific back-in-time compatibility check | VVF or standalone vSphere (no VCF Management Services) |
 | `docs/09-avi-license-hub-upgrade.md` | Avi Load Balancer + License Hub upgrade, before SDDC Manager | VCF or VVF, if Avi is in use |
+| `docs/23-hcx-upgrade.md` | VMware HCX upgrade: HCX Manager at every paired site, then the Service Mesh appliances, after VCF Automation; version and pairing rules, rollback, VCF Operations-driven lifecycle once on 9.1 | **VCF only**, if HCX is in use |
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade and NSX finalize (replaces the plain Phase 8), after the host phase | VCF or VVF, if NSX is in use |
 | `docs/11-log-management-migration.md` | VCF Operations for Logs migration to Log Management 9.1, after NSX finalize | VCF or VVF |
 

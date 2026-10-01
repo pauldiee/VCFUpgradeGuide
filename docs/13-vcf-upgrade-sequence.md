@@ -36,6 +36,7 @@ which applies.
   · [vSAN File Service](#vsan-file-service-in-detail)
   · companion docs: [Disaster Recovery](02-disaster-recovery.md)
   · [Avi + License Hub upgrade](09-avi-license-hub-upgrade.md)
+  · [HCX upgrade](23-hcx-upgrade.md)
   · [NSX Edge & Finalize](10-nsx-edge-finalize.md)
   · [Log Management migration](11-log-management-migration.md)
   · [Identity Broker migration](03-identity-broker-migration.md)
@@ -434,7 +435,7 @@ they slot into the core spine:
 | --- | --- | --- |
 | **Disaster Recovery Products** | before the core (ahead of SDDC Manager) | Converge SRM / vSphere Replication to **Protection and Recovery** – own doc: [Disaster Recovery](02-disaster-recovery.md) |
 | **Upgrade Avi Load Balancer + Deploy License Hub** | after DR Products, before SDDC Manager | Own doc: [Avi + License Hub upgrade](09-avi-license-hub-upgrade.md) |
-| **VMware HCX** | after VCF Automation | Upgrade HCX before the NSX/vCenter/host tier. Afterwards, upgrade **all paired appliances** to VCF Operations HCX 9.0 or later – per Broadcom, 9.0+ appliances *"are not compatible with earlier versions and pairing breaks"* |
+| **VMware HCX** | after VCF Automation, before the NSX/vCenter/host tier | HCX Manager at every paired site, then the Service Mesh appliances. **All paired appliances** must reach VCF Operations HCX 9.0 or later – per Broadcom, 9.0+ appliances *"are not compatible with earlier versions and pairing breaks"*. Own doc: [HCX upgrade](23-hcx-upgrade.md) |
 | **NSX Global Manager upgrade** | before NSX Local Manager | **NSX Federation only.** See [NSX Federation in detail](#nsx-global-manager--federation-in-detail) |
 | **vSphere Supervisor** | after vCenter (Phase 6), before the ESX host phase (Phase 7) | Upgrade vSphere Kubernetes Service to 3.6.0 or later first (every VKS cluster on VKr 1.32+ beforehand), then the Supervisor. See [vSphere Supervisor in detail](#vsphere-supervisor-in-detail) |
 | **NSX Edge & NSX Finalize** | replaces the plain "NSX finalize", after the host phase | Edge nodes upgraded last, after ESX/host kernels, then finalize. Own doc: [NSX Edge & Finalize](10-nsx-edge-finalize.md) |
@@ -452,6 +453,10 @@ Several of the conditional workstreams have their own docs:
 - **[Avi + License Hub upgrade](09-avi-license-hub-upgrade.md)** – Avi
   Controller/Service Engine upgrade and the separate License Hub appliance
   (runs before SDDC Manager).
+- **[HCX upgrade](23-hcx-upgrade.md)** – HCX Manager at every paired site,
+  then the Service Mesh appliances; version and pairing rules, rollback,
+  and VCF Operations-driven HCX lifecycle once on 9.1 (runs after VCF
+  Automation, before the NSX tier).
 - **[NSX Edge & Finalize](10-nsx-edge-finalize.md)** – Edge cluster upgrade
   and NSX finalize, replacing the plain Phase 8 (runs after the host phase).
 - **[Log Management migration](11-log-management-migration.md)** – VCF
