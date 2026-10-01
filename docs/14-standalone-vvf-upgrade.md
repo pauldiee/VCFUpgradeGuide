@@ -278,6 +278,25 @@ With no SDDC Manager on this path, there's no fleet precheck to run.
 before the window opens: [VDT and lsdoctor: self-service diagnostic
 tools](17-vdt-and-lsdoctor-diagnostics.md).
 
+**Check every host's CPU and server model before step 4 (ESX hosts).**
+The ESX 9 installer applies the same rules on this path as on full VCF
+([KB 318697](https://knowledge.broadcom.com/external/article/318697)):
+
+- **Discontinued** CPU series block the upgrade (e.g. Broadwell,
+  Skylake-D/W, Kaby Lake). Replace those hosts before the window.
+- **Deprecated** series (e.g. Cascade Lake, AMD EPYC 7001/7002) are
+  *"still Supported"* on all of 9.x and only trigger an installer warning.
+  They are discontinued in the next major release, so plan their
+  replacement.
+- Intel **Skylake-SP** is supported in deprecated mode on 9.x with
+  limitations ([KB 428874](https://knowledge.broadcom.com/external/article/428874)).
+- Also confirm the server model is still on the Broadcom Compatibility
+  Guide. Models marked *"VCF Supported. Confirm w/Vendor"* get their
+  hardware support from the OEM.
+
+Same rule as the full-VCF
+[prerequisites table](13-vcf-upgrade-sequence.md#prerequisites-and-architectural-guardrails).
+
 ---
 
 ## Post-upgrade validation

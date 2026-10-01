@@ -34,11 +34,11 @@ site scaffolding was seeded from. It also holds foundational VCF9 knowledge
 that's directly useful during an upgrade – check there rather than
 duplicating it here:
 
-- `docs/13-shutdown-startup.md` – the ordered fleet shutdown/startup runbook
-- `docs/07-firewall-ports.md` – firewall flows by zone
-- `docs/prerequisites.md` – environment prerequisites, incl. certificate authority setup
-- `docs/12-sso-configuration.md` – fleet SSO / Identity Broker
-- `docs/16-remove-components.md` – cleanly removing/reinstalling optional Day-N components
+- [Shutdown / Startup](https://vcf-planning.hollebollevsan.nl/docs/13-shutdown-startup/) – the ordered fleet shutdown/startup runbook
+- [Firewall & Ports](https://vcf-planning.hollebollevsan.nl/docs/07-firewall-ports/) – firewall flows by zone
+- [Prerequisites](https://vcf-planning.hollebollevsan.nl/docs/prerequisites/) – environment prerequisites, incl. [certificate authority setup](https://vcf-planning.hollebollevsan.nl/docs/prerequisites/#certificate-authority)
+- [SSO Configuration](https://vcf-planning.hollebollevsan.nl/docs/12-sso-configuration/) – fleet SSO / Identity Broker
+- [Remove Components](https://vcf-planning.hollebollevsan.nl/docs/16-remove-components/) – cleanly removing/reinstalling optional Day-N components
 
 ## Contents
 

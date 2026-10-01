@@ -125,13 +125,14 @@ your target build.
 | **vCLS** | vSphere Cluster Services is **deactivated by default** in 9.x – expect the behaviour change |
 | **Licensing** | VCF 9 is **subscription-only** – no perpetual model, no 25-character keys; managed through VCF Operations and the **VCF Business Services console**. A valid term subscription with the required capacity must be in place **before** the upgrade window. VCF Operations must be licensed within **90 days** of upgrade; the License Server is deployed during Phase 3 |
 
-Cross-references in the sister repo (foundational VCF9 detail that also
+Cross-references in the sister repo,
+[VCF9-DeploymentPlanning](https://vcf-planning.hollebollevsan.nl/) (foundational VCF9 detail that also
 applies during an upgrade – don't duplicate it here):
 
-- Firewall flows by zone – `VCF9-DeploymentPlanning/docs/07-firewall-ports.md`
-- Certificate-authority setup – `VCF9-DeploymentPlanning/docs/prerequisites.md`
-- Fleet SSO / Identity Broker – `VCF9-DeploymentPlanning/docs/12-sso-configuration.md`
-- Ordered fleet shutdown/startup – `VCF9-DeploymentPlanning/docs/13-shutdown-startup.md`
+- Firewall flows by zone – [Firewall & Ports](https://vcf-planning.hollebollevsan.nl/docs/07-firewall-ports/)
+- Certificate-authority setup – [Prerequisites → Certificate authority](https://vcf-planning.hollebollevsan.nl/docs/prerequisites/#certificate-authority)
+- Fleet SSO / Identity Broker – [SSO Configuration](https://vcf-planning.hollebollevsan.nl/docs/12-sso-configuration/)
+- Ordered fleet shutdown/startup – [Shutdown / Startup](https://vcf-planning.hollebollevsan.nl/docs/13-shutdown-startup/)
 
 ## Run the pre-upgrade precheck
 
@@ -736,7 +737,7 @@ After the fleet is stable on 9.1:
 - **Pre-upgrade snapshots** – delete once the upgrade is confirmed
   successful; leaving them attached causes performance degradation.
 - General Day-N component removal/reinstall guidance –
-  `VCF9-DeploymentPlanning/docs/16-remove-components.md`.
+  [Remove Components (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/16-remove-components/).
 
 ---
 

@@ -638,7 +638,7 @@ applies; the location of each panel may not.
   appear** in this lab's 8-service list – consistent with VCF Automation
   running its own separate deployment rather than being one of the 8
   fleet-wide VCF Services Runtime services (though a field-verified fact
-  from the sister repo confirms Automation's *lifecycle operations* do
+  from the sister repo's [Remove Components → VCF Automation](https://vcf-planning.hollebollevsan.nl/docs/16-remove-components/#vcf-automation) confirms Automation's *lifecycle operations* do
   authenticate against this same fleet-wide runtime, not a separate
   Automation-specific one). This is also the highest-risk, most complex
   pair in [docs/20's patching

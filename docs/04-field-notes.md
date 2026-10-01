@@ -440,7 +440,7 @@ Expect every cluster to behave differently.
 
 Upgrade-specific flows that had to be opened (in addition to the standard
 VCF 9 firewall model – see
-`VCF9-DeploymentPlanning/docs/07-firewall-ports.md`):
+[Firewall & Ports (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/07-firewall-ports/)):
 
 | Flow | Ports |
 | --- | --- |

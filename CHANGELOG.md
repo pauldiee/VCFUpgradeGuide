@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.0.2 – 2026-10-01
+- **`docs/14`: CPU and server check added to the pre-upgrade precheck**
+  (#71). This is the same rule as `docs/13`'s prerequisites:
+  discontinued CPU series block the ESX 9 upgrade, deprecated ones are
+  supported on 9.x with a warning, Skylake-SP is in deprecated mode
+  (KB 318697, KB 428874), and models marked "VCF Supported. Confirm
+  w/Vendor" on the BCG get their hardware support from the OEM.
+- **References to VCF9-DeploymentPlanning are now real links** (#72). In
+  `docs/04`, `docs/13`, `docs/21` and the README, the plain
+  `VCF9-DeploymentPlanning/docs/....md` paths now link to the live pages
+  on vcf-planning.hollebollevsan.nl, including the certificate-authority
+  and VCF Automation anchors. All targets were checked.
+
 ## v2.0.1 – 2026-10-01
 - **`docs/13`: CPU prerequisite corrected** (#70). It said "no deprecated
   CPU families", but per KB 318697 deprecated CPU series (e.g. Cascade
