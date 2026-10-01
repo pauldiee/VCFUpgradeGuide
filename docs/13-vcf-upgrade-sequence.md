@@ -123,7 +123,7 @@ your target build.
 | **Certificates & passwords** | All component certs valid and not near expiry; all managed credentials valid |
 | **Syslog** | vCenter syslog moves to **TLS on port 1514** |
 | **vCLS** | vSphere Cluster Services is **deactivated by default** in 9.x – expect the behaviour change |
-| **Licensing** | VCF 9 is **subscription-only** – no perpetual model, no 25-character keys; managed through VCF Operations and the **VCF Business Services console**. A valid term subscription with the required capacity must be in place **before** the upgrade window. VCF Operations must be licensed within **90 days** of upgrade; the License Server is deployed during Phase 3 |
+| **Licensing** | VCF 9 is **subscription-only** – no perpetual model, no 25-character keys; managed through VCF Operations and the **VCF Business Services console**. A valid term subscription with the required capacity must be in place **before** the upgrade window. VCF Operations must be licensed within **90 days** of upgrade; the License Server is deployed during Phase 3 (what registration and usage reporting send to Broadcom: [Licensing: what is sent to Broadcom](25-licensing-what-is-sent-to-broadcom.md)) |
 
 Cross-references in the sister repo,
 [VCF9-DeploymentPlanning](https://vcf-planning.hollebollevsan.nl/) (foundational VCF9 detail that also

@@ -1,5 +1,24 @@
 # Changelog
 
+## v2.0.4 – 2026-10-01
+- **New `docs/25-licensing-what-is-sent-to-broadcom.md`** (#74). For
+  customers asking what leaves their environment. Contents:
+  - The registration file, the 9.1 confirmation file and the usage file,
+    field by field, from the 9.1 TechDocs tables. That includes 9.1's
+    `additional_data` object counts (vCenter GUIDs and versions, hosts
+    per ESX version, cluster, VKS and vSAN counts) and the relicensing
+    statistics.
+  - The documented setting to keep the FQDN out of registration
+    (Untested).
+  - How to decode the files yourself.
+  - Connected vs. disconnected mode.
+  - The 180-day reporting rule, then the 90-day grace before hosts
+    disconnect and new workloads can't start.
+
+  Linked from `docs/13`'s licensing row and `docs/14`'s License Server
+  step; added to `nav.ts` (Reference, VCF + VVF), `README.md` and
+  `CLAUDE.md`.
+
 ## v2.0.3 – 2026-10-01
 - **New `docs/24-vcf-operations-sizing-and-scaling.md`** (#73).
   Contents:

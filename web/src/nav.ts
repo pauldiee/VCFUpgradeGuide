@@ -254,6 +254,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '25-licensing-what-is-sent-to-broadcom',
+    step: 'Reference',
+    band: 'Reference',
+    label: 'Licensing: what is sent to Broadcom',
+    icon: 'file-shield',
+    blurb: 'What the VCF 9 registration and license usage files contain field by field, how to inspect them yourself, connected vs. disconnected mode, and what happens when usage is not reported within 180 days. VCF or VVF.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: 'vxrail-addendum',
     step: 'Addendum',
     band: 'Hardware addenda',
