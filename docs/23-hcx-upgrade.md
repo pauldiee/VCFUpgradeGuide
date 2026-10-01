@@ -52,16 +52,46 @@ The Service Mesh upgrade is a **manual operation on both paths**.
   4.11.x and 9.x, but *"it is not supported. There is no guardrail in the
   software to prohibit this configuration."* **Plan every paired site
   into the same upgrade**, even if the sites go in separate windows.
-- **Check the source build before planning.** From the
-  [HCX 4.11.4 release notes](https://techdocs.broadcom.com/us/en/vmware-cis/hcx/vmware-hcx/4-11/hcx-4-11-release-notes/vmware-hcx-4114-release-notes.html):
-  *"Upgrades to VMware Cloud Foundation Operations HCX 9.0 and later are
-  supported from HCX 4.11.0. Upgrades to VMware Cloud Foundation
-  Operations HCX 9.0 are not supported from HCX 4.11.4."* That second
-  sentence names 9.0 only; for the exact 4.11.x → 9.1.x pair, confirm in
-  the **Upgrade Path** view of the Broadcom Product Interoperability
-  Matrix before the window.
+- **The source build decides the path – check it before planning.** HCX
+  follows the same **back-in-time rule** as the rest of VCF: a 4.11.x
+  release that came out *after* a given 9.x release cannot upgrade to
+  that 9.x release. The matrix gives the reason in its own words, for
+  example: *"Upgrading VCF Operations HCX from source version 4.11.5 to
+  target version 9.1.0.0 is not supported, as the source version's
+  release date (2026-05-27) is after the target version's release date
+  (2026-05-11), making it a newer release."* The
+  [HCX 4.11.4 release notes](https://techdocs.broadcom.com/us/en/vmware-cis/hcx/vmware-hcx/4-11/hcx-4-11-release-notes/vmware-hcx-4114-release-notes.html)
+  state the same for 4.11.4 → 9.0. Direct paths listed in the Broadcom
+  Product Interoperability Matrix (**Upgrade Path** view, VCF Operations
+  HCX), captured 2026-10-01:
+
+  | Running | Direct to 9.0.x | Direct to 9.1.0.x | Direct to 9.1.1.0 |
+  | --- | --- | --- | --- |
+  | 4.10.x | – | – | – (go to 4.11.x first) |
+  | 4.11.0 | 9.0.0 / 9.0.1 / 9.0.2 | – | – |
+  | 4.11.1 | 9.0.1 / 9.0.2 | – | – |
+  | 4.11.2 | 9.0.1 / 9.0.2 | ✓ | – |
+  | 4.11.3 | 9.0.2 | ✓ | ✓ |
+  | 4.11.4 | – (back-in-time) | ✓ | ✓ |
+  | 4.11.5 | – (back-in-time) | – (back-in-time) | ✓ |
+  | 9.0.x | – | ✓ | ✓ |
+  | 9.1.0.x | – | ✓ (later patch) | ✓ |
+
+  "–" means the matrix lists no direct path. A missing combination is
+  not the same as an explicit "incompatible", but it is not a supported
+  path either. In practice, for a **9.1.1 target**:
+  - **4.11.3, 4.11.4 or 4.11.5:** upgrade directly.
+  - **4.11.0 or 4.11.1:** two steps. Either go to 4.11.3 or later first,
+    or go to 9.0.x first and then to 9.1.1.
+  - **4.11.2:** no direct path to 9.1.1. Go to 9.1.0.x first, or to
+    4.11.3 or later first.
+  - **4.10.x:** upgrade to 4.11.x first.
+
+  **Every hop also has to work for the paired site**, since pairing
+  breaks across the 9.0 line. Re-check the matrix for the exact pair
+  just before the window, because new 4.11.x releases move these lines.
 - **HCX 4.11.2 and earlier are End of Service** (24 December 2025, per
-  the same release notes).
+  the 4.11.4 release notes).
 - **Multi-site topologies:** *"If Site A is paired with Site B, and Site
   A is also paired with Site C, plan the upgrades for Site A, B and C for
   the maximum compatibility across all environments."*
@@ -218,15 +248,6 @@ surrounding fleet-patching flow, see
 
 ---
 
-## Open items to confirm
-
-- **Exact 4.11.x → 9.1.x source builds.** The 4.11.4 release notes rule
-  out 4.11.4 → 9.0 only. Confirm the specific pair in the
-  Interoperability Matrix's Upgrade Path view, and record the result
-  here.
-
----
-
 ## Sources
 
 | Source | Used for |
@@ -235,5 +256,6 @@ surrounding fleet-patching flow, see
 | [Upgrade VCF Operations HCX](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/updating-vmware-hcx.html) (9.1 chapter: About, Planning, HCX Manager, Service Mesh, Rollback) | Prerequisites, sequence, procedures, rollback |
 | [Upgrade VCF Operations HCX 9.1.x (lifecycle management)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components/update-vcf-operations-hcx.html) | Manual vs. VCF Operations path, precheck contents |
 | [Lifecycle Management of VCF Components](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components.html) | HCX in Component Versions tracking |
+| [Broadcom Product Interoperability Matrix – Upgrade Path](https://interopmatrix.broadcom.com/Upgrade) (VCF Operations HCX, captured 2026-10-01) | Direct source → target paths, back-in-time footnotes |
 | [VMware HCX 4.11.4 Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/hcx/vmware-hcx/4-11/hcx-4-11-release-notes/vmware-hcx-4114-release-notes.html) | 4.11.0 / 4.11.4 upgrade support, End of Service |
 | [KB 427904](https://knowledge.broadcom.com/external/article/427904) | 4.10.x / 4.11.x ↔ 9.x site pairing unsupported, no guardrail |
