@@ -83,7 +83,7 @@ export const NAV: NavItem[] = [
     band: 'Planning & licensing',
     label: 'VVF vs VCF feature comparison',
     icon: 'scale-balanced',
-    blurb: 'Side-by-side VVF vs VCF tables from Broadcom's 9.1.1 comparison whitepaper: VCF Operations, Log Management, compute, storage, networking, VKS, add-ons, and upgrade paths from older SKUs. Applies to the VCF/VVF licensing decision.',
+    blurb: 'Side-by-side VVF vs VCF tables from Broadcom\'s 9.1.1 comparison whitepaper: VCF Operations, Log Management, compute, storage, networking, VKS, add-ons, and upgrade paths from older SKUs. Applies to the VCF/VVF licensing decision.',
     tracks: ['vcf', 'vvf'],
   },
   {
