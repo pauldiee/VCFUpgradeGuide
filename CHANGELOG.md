@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.0.5 – 2026-10-08
+- **README and GitHub repo description now match the live site** (#75).
+  The repo description still described the original internal VxRail
+  5.2 to VCF 9.1.1 engagement; it now describes the public VMware Docs
+  site, and the repo homepage points at docs.hollebollevsan.nl. README:
+  - the intro now walks through what the site actually shows: the track
+    picker (`/vcf/`, `/vvf/`; standalone vSphere still held back), the
+    track-leading sequences, and the guide bands;
+  - the Reference table gains an **Applies to** column taken from
+    `web/src/nav.ts` tracks, in the site's order;
+  - `docs/12` is marked repo-only, and the leftover `/vsphere/` landing
+    page mention is dropped.
+
 ## v2.0.4 – 2026-10-01
 - **New `docs/25-licensing-what-is-sent-to-broadcom.md`** (#74). For
   customers asking what leaves their environment. Contents:

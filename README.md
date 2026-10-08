@@ -1,30 +1,40 @@
 # VCFUpgradeGuide
 
-**ITQ.** General guidance for planning a VMware upgrade, split into three
-tracks depending on what's actually driving the fleet:
+**ITQ.** Source for **[docs.hollebollevsan.nl](https://docs.hollebollevsan.nl)**
+– ITQ's VMware Docs site. Its first (and so far only) section is VCF 9 /
+VVF 9 upgrade guidance, written to apply regardless of underlying
+hardware. Future sections need not be upgrade-specific or VCF-specific,
+just VMware.
 
-- **Full VCF** – SDDC Manager / VCF Management Services / Fleet Management
-  drives the upgrade.
-- **Standalone VVF** (VMware vSphere Foundation, no VCF Management
-  Services) – vCenter/ESXi patched via standard vSphere lifecycle
-  mechanisms.
+The site's start page asks **which track you're on** and each track's
+landing page shows only the docs that apply to it:
+
+- **Full VCF** (`/vcf/`) – SDDC Manager / VCF Management Services / Fleet
+  Management drives the upgrade. Leads with the 9-phase upgrade sequence.
+- **Standalone VVF** (`/vvf/`) – VMware vSphere Foundation without VCF
+  Management Services; vCenter/ESXi upgraded via standard vSphere
+  lifecycle mechanisms. Leads with the 6-step manual procedure.
 - **Standalone vSphere** – no VCF or VVF entitlement at all. Broadcom
   documents the same procedure as standalone VVF for this case, so
   [`docs/12-vsphere-standard-upgrade.md`](docs/12-vsphere-standard-upgrade.md)
-  points into that rather than inventing a separate one. Not yet on the
-  live site (no landing page or nav entry) since there's nothing distinct
-  to show for it yet.
+  points into that rather than inventing a separate one. **Not on the live
+  site yet** (no picker card, landing page or nav entry) since there's
+  nothing distinct to show for it.
 
-Each track covers pre-upgrade checks, the upgrade sequence, and
-post-upgrade validation – applicable regardless of underlying hardware.
-Hardware/HCI-specific extra steps (currently: **Dell VxRail**, full VCF
-only) are layered on top as their own addendum, not baked into the general
-flow.
+Around those two sequences the site carries:
 
-Live at **[docs.hollebollevsan.nl](https://docs.hollebollevsan.nl)** – the
-first section of a general VMware docs site; future guides need not be
-upgrade-specific or VCF-specific. The site's `/vcf/` and `/vvf/` landing
-pages route to the docs relevant to each track (`/vsphere/` pending).
+- **Pre-upgrade prep** – DR convergence, IWA to LDAPS, VSS to VDS, VUM to
+  vLCM images.
+- **Phase guides** – Operations modernization, manual vCenter upgrade, Avi
+  + License Hub, HCX, NSX Edge and finalize, Log Management.
+- **Post-upgrade** – VIDM / Workspace ONE Access to VCF Identity Broker.
+- **Reference** – field notes from real upgrades, plus topics useful
+  around (not only during) an upgrade: patching an existing 9.1 fleet,
+  Converge vs. Import, VCF Operations sizing, what licensing sends to
+  Broadcom, VVF vs. VCF features, vCenter proxy config, VDT / lsdoctor,
+  VMware Tools ProductLocker, the VCF Inspector Fling.
+- **Hardware addenda** – extra steps layered on top of the general flow
+  rather than baked into it; currently **Dell VxRail** (full VCF only).
 
 ## Related repo
 
@@ -45,7 +55,7 @@ duplicating it here:
 ### The spine
 
 `01-overview.md` is a shared, short router – confirming a supported path
-and target build applies to both tracks, so it stays common ground. The
+and target build applies to every track, so it stays common ground. The
 actual phase-by-phase procedure is track-specific and lives in its own
 doc, so that landing on either track's page leads straight into real
 content instead of a one-size-fits-all wall of text:
@@ -55,13 +65,13 @@ content instead of a one-size-fits-all wall of text:
 | `docs/01-overview.md` | Shared prerequisites, target-build guidance, and a pointer to the two sequences below (work in progress) | VCF, VVF, or standalone vSphere |
 | `docs/13-vcf-upgrade-sequence.md` | The 9-phase spine, prerequisites, conditional phases, post-upgrade validation, cleanup | **VCF only** |
 | `docs/14-standalone-vvf-upgrade.md` | The 6-step manual procedure, no VCF Management Services | **VVF only** |
-| `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at `docs/14`'s procedure rather than duplicating it | **Standalone vSphere only** |
+| `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at `docs/14`'s procedure rather than duplicating it. In the repo only, not on the live site yet | **Standalone vSphere only** |
 
 ### Guides, grouped by where they slot into the flow
 
 The `docs/NN-` file numbers are stable identifiers (linked from across the
 repo), not a reading order. The site sidebar mirrors these bands; the
-site's `/vcf/`, `/vvf/`, `/vsphere/` landing pages filter by track instead.
+site's `/vcf/` and `/vvf/` landing pages filter by track instead.
 **Applies to** follows the three-track split described above – most
 guides work for more than one track, some are scoped to one.
 
@@ -94,18 +104,18 @@ phase:
 
 **Reference:**
 
-| Path              | Purpose                                                |
-| ----------------- | ------------------------------------------------------- |
-| `docs/04-field-notes.md` | Known issues and gotchas from real upgrades |
-| `docs/16-vcenter-proxy-configuration.md` | vCenter appliance outbound proxy config, both the 7.0.x/8.0.x and 9.x methods; the 9.x local proxy service and its failure modes, excluding the License Server, Lifecycle Manager download sources, and the compatibility-data (VCG) known issue |
-| `docs/17-vdt-and-lsdoctor-diagnostics.md` | Self-service diagnostic tools – VDT for a general appliance health sweep, `lsdoctor` for VC Lookup Service / SSO / vmdir issues |
-| `docs/18-vmware-tools-productlocker.md` | Shared VMware Tools repository (ProductLocker) – setting it, and why it needs re-verifying after upgrades |
-| `docs/19-vvf-vs-vcf-feature-comparison.md` | What's VCF-only, VVF-only, or requires an add-on regardless of tier, summarized from Broadcom's official comparison whitepaper |
-| `docs/20-patching-an-existing-vcf9-fleet.md` | Patching a fleet already on VCF 9.1 to a later maintenance release (e.g. 9.1.0.x to 9.1.1) – Express Patches, depot prep, mandatory component order, UI walkthrough, gotchas |
-| `docs/21-vcf-inspector-fling.md` | VCF Inspector – a standalone VMware Fling for fleet-level pre-upgrade validation, deployment monitoring with stuck-task detection, and health diagnostics. **VCF only** (needs a VCF control-plane node) |
-| `docs/24-vcf-operations-sizing-and-scaling.md` | VCF Operations 9.1 node sizes and object / metric limits (Configuration Maximums), checking whether the current size still fits, scale up and scale out procedures |
-| `docs/25-licensing-what-is-sent-to-broadcom.md` | What VCF 9 licensing sends to Broadcom: registration and usage file contents field by field, how to inspect them, connected vs. disconnected, the 180-day rule and 90-day grace |
-| `docs/22-converge-and-import-existing-infrastructure.md` | Converge (VCF Installer, brownfield vSphere into a new VCF/VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the shared NSX auto-selection back-in-time trap. Import is **VCF only** |
+| Path              | Purpose                                                | Applies to |
+| ----------------- | ------------------------------------------------------- | ---------- |
+| `docs/04-field-notes.md` | Known issues and gotchas from real VCF 5.2 to 9.x upgrades, grouped by phase | VCF, VVF, or standalone vSphere |
+| `docs/16-vcenter-proxy-configuration.md` | vCenter appliance outbound proxy config, both the 7.0.x/8.0.x and 9.x methods; the 9.x local proxy service and its failure modes, excluding the License Server, Lifecycle Manager download sources, and the compatibility-data (VCG) known issue | VCF, VVF, or standalone vSphere |
+| `docs/17-vdt-and-lsdoctor-diagnostics.md` | Self-service diagnostic tools – VDT for a general appliance health sweep, `lsdoctor` for VC Lookup Service / SSO / vmdir issues | VCF, VVF, or standalone vSphere |
+| `docs/18-vmware-tools-productlocker.md` | Shared VMware Tools repository (ProductLocker) – setting it, and why it needs re-verifying after upgrades | VCF, VVF, or standalone vSphere |
+| `docs/19-vvf-vs-vcf-feature-comparison.md` | What's VCF-only, VVF-only, or requires an add-on regardless of tier, summarized from Broadcom's official comparison whitepaper | VCF or VVF (licensing decision) |
+| `docs/20-patching-an-existing-vcf9-fleet.md` | Patching a fleet already on VCF 9.1 to a later maintenance release (e.g. 9.1.0.x to 9.1.1) – Express Patches, depot prep, mandatory component order, UI walkthrough, gotchas | VCF or VVF |
+| `docs/21-vcf-inspector-fling.md` | VCF Inspector – a standalone VMware Fling for fleet-level pre-upgrade validation, deployment monitoring with stuck-task detection, and health diagnostics | **VCF only** (needs a VCF control-plane node) |
+| `docs/22-converge-and-import-existing-infrastructure.md` | Converge (VCF Installer, brownfield vSphere into a new VCF/VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the shared NSX auto-selection back-in-time trap | VCF or VVF (Import is **VCF only**) |
+| `docs/24-vcf-operations-sizing-and-scaling.md` | VCF Operations 9.1 node sizes and object / metric limits (Configuration Maximums), checking whether the current size still fits, scale up and scale out procedures | VCF or VVF |
+| `docs/25-licensing-what-is-sent-to-broadcom.md` | What VCF 9 licensing sends to Broadcom: registration and usage file contents field by field, how to inspect them, connected vs. disconnected, the 180-day rule, and what stops when licenses lapse | VCF or VVF |
 
 **Hardware addenda:**
 
