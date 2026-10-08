@@ -1,5 +1,25 @@
 # Changelog
 
+## v2.0.7 – 2026-10-08
+- **`docs/19` (VVF vs VCF) rewritten around real comparison tables**
+  (#77). It was bullet lists only and never mentioned Log Management.
+  Re-read row by row from the whitepaper's revision dated Sep 30, 2026,
+  now:
+  - an at-a-glance component table;
+  - **Log Management**: fully included in VVF, every log row ticked;
+  - the complete VCF Operations list, split into "in VVF" and "VCF only"
+    (incl. what needs the Advanced Cyber Compliance add-on);
+  - only the differing rows for compute/storage, networking (incl. the
+    three separate load-balancing rows) and VKS;
+  - the add-on matrix, the upgrade paths from older SKUs, and the
+    footnotes the tables cite;
+  - VCF Edge is noted once: its column matches VCF on every row.
+
+  **Correction:** the old text said VVF's row for SSO via the VCF
+  Operations interface was "N/A". The N/A is on the VCF row for SSO
+  via the *vSphere* interface; VVF simply has no tick for the VCF
+  Operations interface.
+
 ## v2.0.6 – 2026-10-08
 - **Site nav: the overloaded Reference band is split up** (#76).
   Reference held 10 guides mixing planning, Day-2 and troubleshooting
