@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.0.6 – 2026-10-08
+- **Site nav: the overloaded Reference band is split up** (#76).
+  Reference held 10 guides mixing planning, Day-2 and troubleshooting
+  material. The Guides menu now has six bands, two even rows in the
+  three-column mega-menu:
+  - **Planning & licensing** – `docs/19`, `22`, `24`, `25`;
+  - **Pre-upgrade prep** – gains `docs/16` (vCenter proxy, i.e. depot
+    access);
+  - **Phase guides** – unchanged;
+  - **Post-upgrade & Day 2** – `docs/03` plus `20` (patching a 9.1 fleet)
+    and `18` (ProductLocker);
+  - **Troubleshooting & tools** – `docs/04`, `17`, `21`;
+  - **Hardware addenda** – unchanged.
+
+  Page eyebrows follow (Planning / Day 2 / Troubleshooting). The track
+  sequences still lead each landing page. README tables and CLAUDE.md
+  labels regrouped to match.
+
 ## v2.0.5 – 2026-10-08
 - **README and GitHub repo description now match the live site** (#75).
   The repo description still described the original internal VxRail

@@ -4,7 +4,8 @@
 // glob collection id (filename without extension).
 //
 // `step` doubles as a per-page eyebrow label: general flow steps use
-// "Overview" / "Pre-upgrade prep" / "Phase guide" / "Post-upgrade" / etc;
+// "Overview" / "Planning" / "Pre-upgrade prep" / "Phase guide" /
+// "Post-upgrade" / "Day 2" / "Troubleshooting";
 // hardware-specific addenda use "Addendum". A guide scoped to only one
 // licensing model gets a " · VCF only" / " · VVF only" suffix (see
 // docs/01-overview.md's "Confirm which track applies" for what that split
@@ -37,11 +38,14 @@ export interface NavItem {
 }
 
 // Render order for the mega-menu's guide bands.
+// Six bands on purpose: the mega-menu's .ref-grid is three columns wide, so
+// six fills two even rows. Think twice before adding a seventh.
 export const REFERENCE_BANDS = [
+  'Planning & licensing',
   'Pre-upgrade prep',
   'Phase guides',
-  'Post-upgrade',
-  'Reference',
+  'Post-upgrade & Day 2',
+  'Troubleshooting & tools',
   'Hardware addenda',
 ] as const;
 
@@ -72,6 +76,42 @@ export const NAV: NavItem[] = [
     icon: 'layer-group',
     blurb: 'The 6-step manual procedure for VMware vSphere Foundation with no VCF Management Services layer.',
     tracks: ['vvf'],
+  },
+  {
+    slug: '19-vvf-vs-vcf-feature-comparison',
+    step: 'Planning',
+    band: 'Planning & licensing',
+    label: 'VVF vs VCF feature comparison',
+    icon: 'scale-balanced',
+    blurb: 'What is VCF-only, VVF-only, or an add-on regardless of tier – summarized from Broadcom\'s official comparison whitepaper. Applies to the VCF/VVF licensing decision.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
+    slug: '22-converge-and-import-existing-infrastructure',
+    step: 'Planning',
+    band: 'Planning & licensing',
+    label: 'Converge and Import existing infrastructure',
+    icon: 'right-to-bracket',
+    blurb: 'Converge (VCF Installer, brownfield vSphere into a new VCF or VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the NSX auto-selection back-in-time trap both share. Import is VCF only.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
+    slug: '24-vcf-operations-sizing-and-scaling',
+    step: 'Planning',
+    band: 'Planning & licensing',
+    label: 'VCF Operations sizing and scaling',
+    icon: 'maximize',
+    blurb: 'VCF Operations 9.1 node sizes and object / metric limits from Configuration Maximums, how to check whether the current size still fits, and how to scale up (bigger nodes) or scale out (more nodes, cloud proxies). VCF or VVF.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
+    slug: '25-licensing-what-is-sent-to-broadcom',
+    step: 'Planning',
+    band: 'Planning & licensing',
+    label: 'Licensing: what is sent to Broadcom',
+    icon: 'file-shield',
+    blurb: 'What the VCF 9 registration and license usage files contain field by field, how to inspect them yourself, connected vs. disconnected mode, and what happens when usage is not reported within 180 days. VCF or VVF.',
+    tracks: ['vcf', 'vvf'],
   },
   {
     slug: '02-disaster-recovery',
@@ -108,6 +148,15 @@ export const NAV: NavItem[] = [
     icon: 'layer-group',
     blurb: 'Transition any remaining vLCM-baseline-managed clusters and standalone hosts to vLCM images before the ESX host phase – the PowerShell script for VCF, the vSphere Client for standalone VVF. Applies to VCF and VVF.',
     tracks: ['vcf', 'vvf'],
+  },
+  {
+    slug: '16-vcenter-proxy-configuration',
+    step: 'Pre-upgrade prep',
+    band: 'Pre-upgrade prep',
+    label: 'vCenter proxy configuration',
+    icon: 'network-wired',
+    blurb: 'Configuring the vCenter appliance\'s own outbound proxy – the 7.0.x/8.0.x file method and the different, JSON-based 9.x method. Applies to VCF, VVF, or standalone vSphere.',
+    tracks: ['vcf', 'vvf', 'vsphere'],
   },
   {
     slug: '05-operations-modernization',
@@ -166,101 +215,56 @@ export const NAV: NavItem[] = [
   {
     slug: '03-identity-broker-migration',
     step: 'Post-upgrade · VCF only',
-    band: 'Post-upgrade',
+    band: 'Post-upgrade & Day 2',
     label: 'Identity Broker migration',
     icon: 'key',
     blurb: 'VIDM / Workspace ONE Access to VCF Identity Broker, after the core upgrade (or before Phase 1 for the 9.0.x source case). Requires VCF Management Services, so VCF only – not applicable to standalone VVF.',
     tracks: ['vcf'],
   },
   {
-    slug: '04-field-notes',
-    step: 'Reference',
-    band: 'Reference',
-    label: 'Field notes',
-    icon: 'triangle-exclamation',
-    blurb: 'Known issues and gotchas from real VCF 5.2 to 9.x upgrades, grouped by phase.',
-    tracks: ['vcf', 'vvf', 'vsphere'],
-  },
-  {
-    slug: '16-vcenter-proxy-configuration',
-    step: 'Reference',
-    band: 'Reference',
-    label: 'vCenter proxy configuration',
-    icon: 'network-wired',
-    blurb: 'Configuring the vCenter appliance\'s own outbound proxy – the 7.0.x/8.0.x file method and the different, JSON-based 9.x method. Applies to VCF, VVF, or standalone vSphere.',
-    tracks: ['vcf', 'vvf', 'vsphere'],
-  },
-  {
-    slug: '17-vdt-and-lsdoctor-diagnostics',
-    step: 'Reference',
-    band: 'Reference',
-    label: 'VDT and lsdoctor diagnostics',
-    icon: 'user-lock',
-    blurb: 'Self-service diagnostic tools – VDT for a general appliance health sweep, lsdoctor for deeper VC Lookup Service / SSO / vmdir issues. Applies to VCF, VVF, or standalone vSphere.',
-    tracks: ['vcf', 'vvf', 'vsphere'],
-  },
-  {
-    slug: '18-vmware-tools-productlocker',
-    step: 'Reference',
-    band: 'Reference',
-    label: 'VMware Tools ProductLocker',
-    icon: 'folder-tree',
-    blurb: 'Shared VMware Tools repository setup, both PowerCLI methods, and why the location needs re-verifying after every ESXi upgrade. Applies to VCF, VVF, or standalone vSphere.',
-    tracks: ['vcf', 'vvf', 'vsphere'],
-  },
-  {
-    slug: '19-vvf-vs-vcf-feature-comparison',
-    step: 'Reference',
-    band: 'Reference',
-    label: 'VVF vs VCF feature comparison',
-    icon: 'scale-balanced',
-    blurb: 'What is VCF-only, VVF-only, or an add-on regardless of tier – summarized from Broadcom\'s official comparison whitepaper. Applies to the VCF/VVF licensing decision.',
-    tracks: ['vcf', 'vvf'],
-  },
-  {
     slug: '20-patching-an-existing-vcf9-fleet',
-    step: 'Reference',
-    band: 'Reference',
+    step: 'Day 2',
+    band: 'Post-upgrade & Day 2',
     label: 'Patching an existing VCF 9.1 fleet',
     icon: 'download',
     blurb: 'Applying a maintenance/patch release to a fleet already on VCF 9.1 (e.g. 9.1.0.x to 9.1.1) – Express Patches vs. maintenance releases, depot prep, the mandatory component patching order, UI walkthrough, and known gotchas. Applies to VCF or VVF.',
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '18-vmware-tools-productlocker',
+    step: 'Day 2',
+    band: 'Post-upgrade & Day 2',
+    label: 'VMware Tools ProductLocker',
+    icon: 'folder-tree',
+    blurb: 'Shared VMware Tools repository setup, both PowerCLI methods, and why the location needs re-verifying after every ESXi upgrade. Applies to VCF, VVF, or standalone vSphere.',
+    tracks: ['vcf', 'vvf', 'vsphere'],
+  },
+  {
+    slug: '04-field-notes',
+    step: 'Troubleshooting',
+    band: 'Troubleshooting & tools',
+    label: 'Field notes',
+    icon: 'triangle-exclamation',
+    blurb: 'Known issues and gotchas from real VCF 5.2 to 9.x upgrades, grouped by phase.',
+    tracks: ['vcf', 'vvf', 'vsphere'],
+  },
+  {
+    slug: '17-vdt-and-lsdoctor-diagnostics',
+    step: 'Troubleshooting',
+    band: 'Troubleshooting & tools',
+    label: 'VDT and lsdoctor diagnostics',
+    icon: 'user-lock',
+    blurb: 'Self-service diagnostic tools – VDT for a general appliance health sweep, lsdoctor for deeper VC Lookup Service / SSO / vmdir issues. Applies to VCF, VVF, or standalone vSphere.',
+    tracks: ['vcf', 'vvf', 'vsphere'],
+  },
+  {
     slug: '21-vcf-inspector-fling',
-    step: 'Reference · VCF only',
-    band: 'Reference',
+    step: 'Troubleshooting · VCF only',
+    band: 'Troubleshooting & tools',
     label: 'VCF Inspector Fling',
     icon: 'magnifying-glass',
     blurb: 'A standalone VMware Fling for fleet-level pre-upgrade validation, deployment monitoring with stuck-task detection, and health diagnostics. Requires VCF Management Services, so VCF only.',
     tracks: ['vcf'],
-  },
-  {
-    slug: '22-converge-and-import-existing-infrastructure',
-    step: 'Reference',
-    band: 'Reference',
-    label: 'Converge and Import existing infrastructure',
-    icon: 'right-to-bracket',
-    blurb: 'Converge (VCF Installer, brownfield vSphere into a new VCF or VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the NSX auto-selection back-in-time trap both share. Import is VCF only.',
-    tracks: ['vcf', 'vvf'],
-  },
-  {
-    slug: '24-vcf-operations-sizing-and-scaling',
-    step: 'Reference',
-    band: 'Reference',
-    label: 'VCF Operations sizing and scaling',
-    icon: 'maximize',
-    blurb: 'VCF Operations 9.1 node sizes and object / metric limits from Configuration Maximums, how to check whether the current size still fits, and how to scale up (bigger nodes) or scale out (more nodes, cloud proxies). VCF or VVF.',
-    tracks: ['vcf', 'vvf'],
-  },
-  {
-    slug: '25-licensing-what-is-sent-to-broadcom',
-    step: 'Reference',
-    band: 'Reference',
-    label: 'Licensing: what is sent to Broadcom',
-    icon: 'file-shield',
-    blurb: 'What the VCF 9 registration and license usage files contain field by field, how to inspect them yourself, connected vs. disconnected mode, and what happens when usage is not reported within 180 days. VCF or VVF.',
-    tracks: ['vcf', 'vvf'],
   },
   {
     slug: 'vxrail-addendum',

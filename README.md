@@ -21,18 +21,19 @@ landing page shows only the docs that apply to it:
   site yet** (no picker card, landing page or nav entry) since there's
   nothing distinct to show for it.
 
-Around those two sequences the site carries:
+Around those two sequences the site groups its guides into six bands:
 
+- **Planning & licensing** – VVF vs. VCF features, Converge vs. Import,
+  VCF Operations sizing, what licensing sends to Broadcom.
 - **Pre-upgrade prep** – DR convergence, IWA to LDAPS, VSS to VDS, VUM to
-  vLCM images.
-- **Phase guides** – Operations modernization, manual vCenter upgrade, Avi
-  + License Hub, HCX, NSX Edge and finalize, Log Management.
-- **Post-upgrade** – VIDM / Workspace ONE Access to VCF Identity Broker.
-- **Reference** – field notes from real upgrades, plus topics useful
-  around (not only during) an upgrade: patching an existing 9.1 fleet,
-  Converge vs. Import, VCF Operations sizing, what licensing sends to
-  Broadcom, VVF vs. VCF features, vCenter proxy config, VDT / lsdoctor,
-  VMware Tools ProductLocker, the VCF Inspector Fling.
+  vLCM images, vCenter proxy / depot access.
+- **Phase guides** – the two track sequences, then Operations
+  modernization, manual vCenter upgrade, Avi + License Hub, HCX, NSX Edge
+  and finalize, Log Management.
+- **Post-upgrade & Day 2** – VCF Identity Broker migration, patching an
+  existing 9.1 fleet, VMware Tools ProductLocker.
+- **Troubleshooting & tools** – field notes from real upgrades, VDT /
+  lsdoctor, the VCF Inspector Fling.
 - **Hardware addenda** – extra steps layered on top of the general flow
   rather than baked into it; currently **Dell VxRail** (full VCF only).
 
@@ -75,6 +76,16 @@ site's `/vcf/` and `/vvf/` landing pages filter by track instead.
 **Applies to** follows the three-track split described above – most
 guides work for more than one track, some are scoped to one.
 
+**Planning & licensing** – decisions and sizing to settle before (or
+alongside) an upgrade:
+
+| Path              | Purpose                                                | Applies to |
+| ----------------- | ------------------------------------------------------- | ---------- |
+| `docs/19-vvf-vs-vcf-feature-comparison.md` | What's VCF-only, VVF-only, or requires an add-on regardless of tier, summarized from Broadcom's official comparison whitepaper | VCF or VVF (licensing decision) |
+| `docs/22-converge-and-import-existing-infrastructure.md` | Converge (VCF Installer, brownfield vSphere into a new VCF/VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the shared NSX auto-selection back-in-time trap | VCF or VVF (Import is **VCF only**) |
+| `docs/24-vcf-operations-sizing-and-scaling.md` | VCF Operations 9.1 node sizes and object / metric limits (Configuration Maximums), checking whether the current size still fits, scale up and scale out procedures | VCF or VVF |
+| `docs/25-licensing-what-is-sent-to-broadcom.md` | What VCF 9 licensing sends to Broadcom: registration and usage file contents field by field, how to inspect them, connected vs. disconnected, the 180-day rule, and what stops when licenses lapse | VCF or VVF |
+
 **Pre-upgrade prep** – done before the core sequence, or before a specific
 phase:
 
@@ -84,8 +95,10 @@ phase:
 | `docs/06-iwa-ldaps-migration.md` | IWA to AD-over-LDAPS migration, before Phase 6, with a permissions/roles backup | VCF, VVF, or standalone vSphere |
 | `docs/08-vss-to-vds-migration.md` | VSS to VDS migration, before extending a standalone VVF fleet to full VCF | **VVF only** (extending to full VCF) |
 | `docs/15-vum-to-vlcm-migration.md` | VUM to vLCM images migration, before the ESX host phase | VCF or VVF |
+| `docs/16-vcenter-proxy-configuration.md` | vCenter appliance outbound proxy config, both the 7.0.x/8.0.x and 9.x methods; the 9.x local proxy service and its failure modes, excluding the License Server, Lifecycle Manager download sources, and the compatibility-data (VCG) known issue | VCF, VVF, or standalone vSphere |
 
-**Phase guides** – detail for a specific core-sequence phase:
+**Phase guides** – detail for a specific core-sequence phase (on the site,
+the two track sequences above also sit in this band):
 
 | Path              | Purpose                                                | Applies to |
 | ----------------- | ------------------------------------------------------- | ---------- |
@@ -96,26 +109,21 @@ phase:
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade and NSX finalize (replaces the plain Phase 8), after the host phase | VCF or VVF, if NSX is in use |
 | `docs/11-log-management-migration.md` | VCF Operations for Logs migration to Log Management 9.1, after NSX finalize | VCF or VVF |
 
-**Post-upgrade:**
+**Post-upgrade & Day 2:**
 
 | Path              | Purpose                                                | Applies to |
 | ----------------- | ------------------------------------------------------- | ---------- |
 | `docs/03-identity-broker-migration.md` | VIDM / Workspace ONE Access to VCF Identity Broker, after core (or before Phase 1 for the 9.0.x source case) | **VCF only** (needs VCF Management Services) |
+| `docs/20-patching-an-existing-vcf9-fleet.md` | Patching a fleet already on VCF 9.1 to a later maintenance release (e.g. 9.1.0.x to 9.1.1) – Express Patches, depot prep, mandatory component order, UI walkthrough, gotchas | VCF or VVF |
+| `docs/18-vmware-tools-productlocker.md` | Shared VMware Tools repository (ProductLocker) – setting it, and why it needs re-verifying after upgrades | VCF, VVF, or standalone vSphere |
 
-**Reference:**
+**Troubleshooting & tools:**
 
 | Path              | Purpose                                                | Applies to |
 | ----------------- | ------------------------------------------------------- | ---------- |
 | `docs/04-field-notes.md` | Known issues and gotchas from real VCF 5.2 to 9.x upgrades, grouped by phase | VCF, VVF, or standalone vSphere |
-| `docs/16-vcenter-proxy-configuration.md` | vCenter appliance outbound proxy config, both the 7.0.x/8.0.x and 9.x methods; the 9.x local proxy service and its failure modes, excluding the License Server, Lifecycle Manager download sources, and the compatibility-data (VCG) known issue | VCF, VVF, or standalone vSphere |
 | `docs/17-vdt-and-lsdoctor-diagnostics.md` | Self-service diagnostic tools – VDT for a general appliance health sweep, `lsdoctor` for VC Lookup Service / SSO / vmdir issues | VCF, VVF, or standalone vSphere |
-| `docs/18-vmware-tools-productlocker.md` | Shared VMware Tools repository (ProductLocker) – setting it, and why it needs re-verifying after upgrades | VCF, VVF, or standalone vSphere |
-| `docs/19-vvf-vs-vcf-feature-comparison.md` | What's VCF-only, VVF-only, or requires an add-on regardless of tier, summarized from Broadcom's official comparison whitepaper | VCF or VVF (licensing decision) |
-| `docs/20-patching-an-existing-vcf9-fleet.md` | Patching a fleet already on VCF 9.1 to a later maintenance release (e.g. 9.1.0.x to 9.1.1) – Express Patches, depot prep, mandatory component order, UI walkthrough, gotchas | VCF or VVF |
 | `docs/21-vcf-inspector-fling.md` | VCF Inspector – a standalone VMware Fling for fleet-level pre-upgrade validation, deployment monitoring with stuck-task detection, and health diagnostics | **VCF only** (needs a VCF control-plane node) |
-| `docs/22-converge-and-import-existing-infrastructure.md` | Converge (VCF Installer, brownfield vSphere into a new VCF/VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the shared NSX auto-selection back-in-time trap | VCF or VVF (Import is **VCF only**) |
-| `docs/24-vcf-operations-sizing-and-scaling.md` | VCF Operations 9.1 node sizes and object / metric limits (Configuration Maximums), checking whether the current size still fits, scale up and scale out procedures | VCF or VVF |
-| `docs/25-licensing-what-is-sent-to-broadcom.md` | What VCF 9 licensing sends to Broadcom: registration and usage file contents field by field, how to inspect them, connected vs. disconnected, the 180-day rule, and what stops when licenses lapse | VCF or VVF |
 
 **Hardware addenda:**
 
