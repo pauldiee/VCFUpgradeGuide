@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.0.8 – 2026-10-08
+- **`docs/20`: the 9.1.1 UI's "VCF Operations patches on its own" banner**
+  (#78). The VCF Management → Upgrade tab shows a banner stating that VCF
+  Operations must be patched independently from the other management
+  components, and that you must wait for it to complete before
+  continuing. Quoted next to the matching TechDocs rule in Step 2
+  (Lab-verified 2026-10-06, 9.1.1), with the screenshot in the Step 3
+  UI walkthrough.
+
 ## v2.0.7 – 2026-10-08
 - **`docs/19` (VVF vs VCF) rewritten around real comparison tables**
   (#77). It was bullet lists only and never mentioned Log Management.

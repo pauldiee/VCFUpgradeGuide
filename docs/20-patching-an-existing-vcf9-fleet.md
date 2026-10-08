@@ -312,7 +312,13 @@ suggestions:
   always goes first.
 - *"VCF Operations must not be patched in parallel with other
   components."* Serialize it – don't batch it alongside anything else,
-  and don't start other lifecycle operations while it's running.
+  and don't start other lifecycle operations while it's running. The
+  9.1.1 UI enforces the same rule with a banner on the **VCF Management →
+  Upgrade** tab: *"VCF Operations must be patched independently from
+  other management components. Wait for this patch to successfully
+  complete before proceeding with other management components."*
+  (Lab-verified 2026-10-06, 9.1.1; screenshot in
+  [Step 3](#step-3-the-ui-walkthrough-per-component).)
 - *"Before you patch ESX hosts from 9.1.0.x to 9.1.1.0, you must first
   patch the VCF Operations instance and the license servers connected
   to it."* Cloud Proxy and License Server patch automatically as part
@@ -448,6 +454,11 @@ licensing, see [Operations modernization](05-operations-modernization.md)):
    Instance** (that path is for domain-level components instead – see
    below).
 2. Confirm the target version is set to the correct **9.1.1.\*** build.
+   The tab also shows a yellow banner reminding you that VCF Operations
+   patches on its own – don't dismiss it as boilerplate, it's the
+   "never in parallel" rule from Step 2:
+
+   ![VCF Management, Upgrade tab: a yellow banner reading "VCF Operations must be patched independently from other management components. Wait for this patch to successfully complete before proceeding with other management components." above Target VCF version: 9.1.1.* with a Select Version button and a collapsed Check Required Binaries section](images/vcf-management-upgrade/vcf-operations-patch-alone-banner.png)
 3. Filter to and select a **single component row** – not multiple at
    once, per the concurrency warning above.
 4. **Run Prechecks** – open **Precheck details** and remediate anything
