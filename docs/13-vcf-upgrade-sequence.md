@@ -118,6 +118,7 @@ your target build.
 | **Management Services IP block** | Free **/28 CIDR minimum** on the management network (or a dedicated network); **12 IPs minimum, 30 recommended**. FQDNs for: Fleet component service, Instance component service, VCF services runtime, Identity Broker, License Server |
 | **Internal runtime range** | VCF services runtime uses **198.18.0.0/15** internally – must not overlap the management network. Changeable to 240.0.0.0/15 or 250.0.0.0/15 **only** via the deployment JSON spec |
 | **vCenter temp IPs** | A temporary IP per vCenter for the reduced-downtime upgrade |
+| **Cisco ACI VMM** *(if a VMM domain points at vCenter)* | Cisco supports ACI VMM on **VCF 9.0 only** (APIC 6.2(2)+); VCF 9.1 support is pending, so a 9.1 target needs Cisco's qualification first. After the upgrade, do host and cluster operations in **vCenter, not SDDC Manager**, or give each its own VDS. AVE must be gone before upgrading ([KB 450715](https://knowledge.broadcom.com/external/article/450715); details: [Cisco ACI VMM integration](04-field-notes.md#cisco-aci-vmm-integration)) |
 | **vSAN HCL** | Update the vSAN Hardware Compatibility database; confirm Broadcom vSAN plugins are supported on the target build |
 | **vSAN health** | Resolve every red/yellow **Skyline Health** finding (vSAN cluster → Monitor → Skyline Health) before upgrading; only silence alerts that are understood and accepted |
 | **Certificates & passwords** | All component certs valid and not near expiry; all managed credentials valid |

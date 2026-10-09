@@ -476,6 +476,105 @@ components are firewalled independently and it is an easy step to miss.
 
 ---
 
+## Cisco ACI VMM integration
+
+When a customer runs **Cisco ACI with a VMM domain** against vCenter, the
+VMM integration is gated by **Cisco's** support, separately from Broadcom's
+VCF/vSphere interop matrix. ACI VMM *"uses the public vSphere API to
+configure vSphere networking. This includes VDS, uplinks, LAG/LACP and
+portgroups."* That is the same VDS configuration SDDC Manager manages, which
+is the root of the conflict below.
+([KB 450715](https://knowledge.broadcom.com/external/article/450715), read
+2026-10-09; not yet field-verified against a real engagement.)
+
+**Target build: VCF 9.0 only, for now.** Quoted verbatim from KB 450715:
+
+- *"In May 2026 Cisco added support for VCF (vSphere) 9.0 to ACI VMM
+  6.2(2)."*
+- *"Customers using vSphere 8.x can install or upgrade to VCF 9.0 and
+  receive support from Cisco. Cisco is in the process of qualifying VCF 9.1,
+  and support is pending. Customers who want to install or upgrade to VCF
+  9.1 should contact Cisco and request technical qualification."*
+- Cause: *"Cisco ACI VMM 6.2(2) may not function with SDDC Manager. Cisco
+  does not currently support VCF 9.1 with their ACI VMM integration."*
+
+So an ACI-VMM fleet targeting **9.1.x** is blocked on Cisco, not Broadcom,
+until Cisco's matrix lists it. Pin the target at 9.0 or get Cisco's
+qualification first.
+
+**SDDC Manager vs ACI VMM: who owns the VDS.** This resolves the
+*"VCF 9.0 does not support the SDDC manager"* remark in Cisco's matrix. The
+KB's resolution, verbatim:
+
+- *"After upgrading to VCF 9.x, customers are advised to use vCenter for
+  all host and cluster operations, and avoid using SDDC Manager to change
+  configuration managed by Cisco ACI VMM."*
+- *"Customers who want to use the SDDC Manager can use a dedicated VDS for
+  the SDDC Manager and a second dedicated VDS for Cisco ACI VMM so there is
+  no management conflict between the two solutions."*
+- *"Please note that customers will need to deploy VCF Operations as part
+  of the upgrade process to VCF 9.x (for license activation)."*
+- The upgrade itself follows *"standard upgrade procedures. This could be
+  either using the VCF upgrade process or the vSphere upgrade process."*
+  New installs use the VCF Installer for the full stack, then deploy ACI
+  VMM on top.
+- *"Support for Cisco ACI VMM is provided by Cisco"* – ACI VMM issues go to
+  Cisco support, not Broadcom (third-party support policy:
+  [KB 324518](https://knowledge.broadcom.com/external/article/324518)).
+
+In practice: if the fleet shares one VDS between SDDC Manager workflows
+(host commissioning, cluster expansion, host-cluster network changes) and
+ACI VMM, plan for those operations to move to vCenter after the upgrade,
+or split the VDS before relying on SDDC Manager for them.
+
+**Cisco's matrix, per APIC train.** Reviewed 2026-09-18 against Cisco's live
+[ACI Virtualization Compatibility Matrix](https://www.cisco.com/c/en/us/td/docs/Website/datacenter/aci/virtualization/matrix/virtmatrix.html)
+(page last revised 2026-09-01). Quoted verbatim from the page's VMware
+section:
+
+- Every vSphere row, including 9.x: *"VMM integration requires the
+  Distributed Virtual Switch feature on vCenter"* – VDS-based VMM is the
+  baseline requirement, not just the common deployment choice.
+- vSphere 9 is listed there as **"VMware VCF (vSphere) 9.0"**, not bare
+  "vSphere 9" – Cisco's own matrix already uses the VCF name.
+- vSphere 8.0 note: *"vSphere 8.0 does not support the vCenter Plug-in and
+  Cisco ACI Virtual Edge (AVE). If you need to continue to use the vCenter
+  Plug-in and Cisco AVE, use vSphere 7.0."*
+- VCF (vSphere) 9.0 note: *"VCF (vSphere) 9.0 does not support the vCenter
+  Plug-in and Cisco ACI Virtual Edge (AVE)... Also, VCF 9.0 does not
+  support the SDDC manager."* (See the KB quotes above for what this means
+  in practice.)
+- **AVE (ACI Virtual Edge, formerly AVS) is a hard blocker for 8.0 and
+  9.0**, confirmed directly by Cisco, not just "deprecated." A customer
+  still on AVE must migrate to VDS-based VMM integration (and drop the
+  vCenter Plug-in) before the vSphere 8 or 9 upgrade can proceed.
+
+Supported APIC trains (read from the matrix's underlying cell data, not
+just the rendered tooltip text – see below):
+
+- **vSphere 8.0** is supported on APIC **5.2(8)**, **5.3(1)–5.3(2)**, then
+  **not** 6.0(1)–6.0(2) (an explicit gap in Cisco's own matrix, not a
+  transcription error here), then supported again on **6.0(3)–6.0(9)**,
+  **6.1(x)–6.2(1)**, and **6.2(2)–6.2(3)**. Not supported on any APIC
+  release before 5.2(8).
+- **VCF (vSphere) 9.0** is supported starting **only at APIC
+  6.2(2)–6.2(3)** (matches the KB's *"ACI VMM 6.2(2)"*). Every earlier
+  train – including 6.0(3)–6.1(x)/6.2(1), which already supports vSphere
+  8.0 – is marked not supported for VCF 9.0. A customer on an APIC train
+  older than 6.2(2) cannot integrate VMM with a VCF 9.0 vCenter yet, full
+  stop, regardless of vSphere-side readiness.
+
+These come from the page's `v-yes`/`v-no` cell classes (extracted via the
+live DOM, since the rendered tooltip popups aren't present as plain
+extractable text) – re-verify against the live tool before relying on them
+for a specific engagement, as Cisco updates this matrix over time (watch for
+a 9.1 row). APIC and vCenter do not need to upgrade in lockstep, but the VMM
+domain must always point at a vCenter/ESXi combination certified for the
+*currently running* APIC version – check the matrix at each hop, not just
+at the start and end of the upgrade.
+
+---
+
 ## Open items to confirm
 
 - **"Internal certificates renew automatically on upgrade."** An
@@ -505,51 +604,3 @@ components are firewalled independently and it is an easy step to miss.
   were not confirmed. **Treat the sequential Phase 5 → Phase 6 order as the
   safe default** until this is clarified – do not attempt to interleave
   them based on this note alone.
-- **Third-party ACI (Cisco APIC/VMM) integration can gate the vSphere
-  upgrade independently of the VCF interop matrix.** (reviewed 2026-09-18
-  against Cisco's live
-  [ACI Virtualization Compatibility Matrix](https://www.cisco.com/c/en/us/td/docs/Website/datacenter/aci/virtualization/matrix/virtmatrix.html),
-  page last revised 2026-09-01; not yet field-verified against a real
-  engagement.) When a customer runs Cisco ACI with a VMM domain against
-  vCenter, the VMM domain integration is gated by that matrix independent of
-  Broadcom's VCF/vSphere interop matrix. Quoted verbatim from the page's
-  VMware section:
-  - Every vSphere row, including 9.x: *"VMM integration requires the
-    Distributed Virtual Switch feature on vCenter"* – VDS-based VMM is the
-    baseline requirement, not just the common deployment choice.
-  - vSphere 9 is listed there as **"VMware VCF (vSphere) 9.0"**, not bare
-    "vSphere 9" – Cisco's own matrix already uses the VCF name.
-  - vSphere 8.0 note: *"vSphere 8.0 does not support the vCenter Plug-in and
-    Cisco ACI Virtual Edge (AVE). If you need to continue to use the vCenter
-    Plug-in and Cisco AVE, use vSphere 7.0."*
-  - VCF (vSphere) 9.0 note: *"VCF (vSphere) 9.0 does not support the vCenter
-    Plug-in and Cisco ACI Virtual Edge (AVE)... Also, VCF 9.0 does not
-    support the SDDC manager."* The SDDC Manager remark needs its own
-    follow-up – unclear yet whether that means Cisco's ACI integration
-    doesn't recognize SDDC-Manager-driven upgrades, or something narrower.
-  - **AVE (ACI Virtual Edge, formerly AVS) is a hard blocker for 8.0 and
-    9.0**, confirmed directly by Cisco, not just "deprecated." A customer
-    still on AVE must migrate to VDS-based VMM integration (and drop the
-    vCenter Plug-in) before the vSphere 8 or 9 upgrade can proceed.
-
-  **Per-APIC-train support** (read from the matrix's underlying cell data,
-  not just the rendered tooltip text – see below):
-  - **vSphere 8.0** is supported on APIC **5.2(8)**, **5.3(1)–5.3(2)**, then
-    **not** 6.0(1)–6.0(2) (an explicit gap in Cisco's own matrix, not a
-    transcription error here), then supported again on **6.0(3)–6.0(9)**,
-    **6.1(x)–6.2(1)**, and **6.2(2)–6.2(3)**. Not supported on any APIC
-    release before 5.2(8).
-  - **VCF (vSphere) 9.0** is supported starting **only at APIC
-    6.2(2)–6.2(3)**. Every earlier train – including 6.0(3)–6.1(x)/6.2(1),
-    which already supports vSphere 8.0 – is marked not supported for VCF 9.0.
-    A customer on an APIC train older than 6.2(2) cannot integrate VMM with
-    a VCF 9.0 vCenter yet, full stop, regardless of vSphere-side readiness.
-
-  These come from the page's `v-yes`/`v-no` cell classes (extracted via the
-  live DOM, since the rendered tooltip popups aren't present as plain
-  extractable text) – re-verify against the live tool before relying on them
-  for a specific engagement, as Cisco updates this matrix over time. APIC
-  and vCenter do not need to upgrade in lockstep, but the VMM domain must
-  always point at a vCenter/ESXi combination certified for the *currently
-  running* APIC version – check the matrix at each hop, not just at the
-  start and end of the upgrade.

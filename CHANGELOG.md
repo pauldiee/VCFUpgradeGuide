@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.0.9 – 2026-10-09
+- **Cisco ACI VMM: Broadcom KB 450715 folded in** (#79). The ACI note
+  in `docs/04` moves out of "Open items" into its own section, **Cisco
+  ACI VMM integration**. The KB answers the open question behind Cisco's
+  "VCF 9.0 does not support the SDDC manager" remark: SDDC Manager may
+  not work with ACI VMM 6.2(2). The KB's advice is to do host and
+  cluster operations in vCenter, or to run SDDC Manager and ACI VMM on
+  separate VDSes. The KB also says Cisco does **not** support VCF 9.1
+  with ACI VMM yet. New pointers: a prerequisites row in `docs/13` and a
+  target-build note in `docs/14`.
+
 ## v2.0.8 – 2026-10-08
 - **`docs/20`: the 9.1.1 UI's "VCF Operations patches on its own" banner**
   (#78). The VCF Management → Upgrade tab shows a banner stating that VCF

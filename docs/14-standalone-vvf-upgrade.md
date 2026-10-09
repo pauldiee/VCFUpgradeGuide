@@ -52,6 +52,14 @@ build-level detail and the standalone-path procedure.
 Prerequisites for this scenario: vCenter 8 U3+, ESX 8 U3+, optionally vSAN 8
 U3+ and Aria Operations 8.18.x.
 
+**Cisco ACI VMM gates the target build.** If a Cisco ACI VMM domain
+points at vCenter, Cisco supports it on **VCF (vSphere) 9.0** only (APIC
+6.2(2)+); 9.1 support is pending Cisco's qualification
+([KB 450715](https://knowledge.broadcom.com/external/article/450715)). The
+KB's upgrade route explicitly includes *"the vSphere upgrade process"*, so
+this path is covered. Details and the APIC-train matrix: [Cisco ACI VMM
+integration](04-field-notes.md#cisco-aci-vmm-integration).
+
 ---
 
 ## Standalone VVF manual upgrade – exact steps
