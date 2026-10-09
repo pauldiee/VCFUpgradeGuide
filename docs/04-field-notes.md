@@ -500,7 +500,9 @@ is the root of the conflict below.
 
 So an ACI-VMM fleet targeting **9.1.x** is blocked on Cisco, not Broadcom,
 until Cisco's matrix lists it. Pin the target at 9.0 or get Cisco's
-qualification first.
+qualification first. **This applies to standalone VVF too:** Cisco
+qualifies the vSphere layer, not the license, and VVF 9.1 runs vCenter
+and ESX 9.1. VVF only avoids the SDDC Manager conflict below.
 
 **SDDC Manager vs ACI VMM: who owns the VDS.** This resolves the
 *"VCF 9.0 does not support the SDDC manager"* remark in Cisco's matrix. The

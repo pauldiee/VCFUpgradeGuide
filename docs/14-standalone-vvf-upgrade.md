@@ -56,8 +56,12 @@ U3+ and Aria Operations 8.18.x.
 points at vCenter, Cisco supports it on **VCF (vSphere) 9.0** only (APIC
 6.2(2)+); 9.1 support is pending Cisco's qualification
 ([KB 450715](https://knowledge.broadcom.com/external/article/450715)). The
-KB's upgrade route explicitly includes *"the vSphere upgrade process"*, so
-this path is covered. Details and the APIC-train matrix: [Cisco ACI VMM
+9.1 limit applies to VVF exactly as to full VCF: Cisco qualifies the
+vSphere layer (its matrix row is *"VMware VCF (vSphere) 9.0"*), and a VVF
+9.1 fleet runs vCenter and ESX 9.1. VVF only sidesteps the SDDC Manager
+conflict, since there is no SDDC Manager here. The KB's mention of *"the
+vSphere upgrade process"* is about how to upgrade, not which version Cisco
+supports. Details and the APIC-train matrix: [Cisco ACI VMM
 integration](04-field-notes.md#cisco-aci-vmm-integration).
 
 ---

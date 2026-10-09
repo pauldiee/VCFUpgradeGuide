@@ -8,7 +8,7 @@
   not work with ACI VMM 6.2(2). The KB's advice is to do host and
   cluster operations in vCenter, or to run SDDC Manager and ACI VMM on
   separate VDSes. The KB also says Cisco does **not** support VCF 9.1
-  with ACI VMM yet. New pointers: a prerequisites row in `docs/13` and a
+  with ACI VMM yet, which applies to standalone VVF 9.1 as well. New pointers: a prerequisites row in `docs/13` and a
   target-build note in `docs/14`.
 
 ## v2.0.8 – 2026-10-08
