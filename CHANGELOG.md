@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.1.5 – 2026-10-13
+- **`docs/04`: "Cannot find vSphere HA master agent" after the vCenter
+  upgrade** (#86). Field-observed on several clusters after a vCenter 9
+  upgrade; some cleared by themselves, the lingering ones had hosts in
+  maintenance mode and disconnected hosts. New section: wait about two
+  hours for ImageService depot validation on vLCM clusters (KB 374242),
+  then check disconnected hosts (KB 449121), maintenance-mode hosts,
+  pending reboots (KB 444836), reconfigure HA, and the image-version
+  mismatch fix (KB 445940).
+
 ## v2.1.4 – 2026-10-13
 - **`docs/05`: the VCF Operations credentials tip, for VVF readers too**
   (#85). The Credentials button on Administration → Integrations, the

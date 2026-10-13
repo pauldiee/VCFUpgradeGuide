@@ -181,6 +181,51 @@ Anything below `8.0` needs one of the two fixes above.
 
 ---
 
+## "Cannot find vSphere HA master agent" after the vCenter upgrade
+
+Field-observed after a vCenter 9 upgrade: several clusters showed
+*"Cannot find vSphere HA master agent"*. On some it cleared without any
+action within a few hours; the clusters where it lingered had hosts in
+maintenance mode and disconnected hosts.
+
+**Wait first.** On vLCM image-managed clusters, vCenter's ImageService
+has to finish validating the depots after the upgrade before HA can
+configure the hosts. Broadcom puts that at *"one to two hours"*, and
+notes that turning HA off and on before then *"does not resolve the
+issue"* ([KB 374242](https://knowledge.broadcom.com/external/article/374242)).
+
+**If a cluster is still stuck after about two hours,** work through these
+in order:
+
+1. **Disconnected hosts.** vCenter can't push the new HA (FDM) agent to a
+   host it can't reach, and a not-responding host can block the
+   cluster's Remediate HA task
+   ([KB 449121](https://knowledge.broadcom.com/external/article/449121)).
+   Reconnect it, or remove it from inventory if it's actually retired.
+   The KB's further step edits the vCenter database: only with Broadcom
+   support.
+2. **Hosts in maintenance mode.** These don't take part in the HA master
+   election. If every connected host in the cluster is in maintenance
+   mode, there's nothing to elect; bring at least one healthy host out.
+3. **Pending reboots.** A host with a staged patch, firmware or driver
+   change waiting for a reboot refuses live VIB installs, so the old FDM
+   agent can't be replaced. Signs: HA state *Uninitialized*, and *"Only
+   reboot-required installations are possible right now"* in
+   `/var/run/log/esxupdate.log`. Fix: turn HA off on the cluster, put the
+   host in maintenance mode, reboot it, exit maintenance mode, turn HA
+   back on ([KB 444836](https://knowledge.broadcom.com/external/article/444836)).
+4. **Reconfigure.** Run **Reconfigure for vSphere HA** on the affected
+   hosts. Only if that fails, turn HA off and back on at the cluster
+   level (*Configure → Services → vSphere Availability*), which briefly
+   leaves the cluster unprotected.
+5. **HA still won't enable on a vLCM cluster:** the cluster image may be
+   out of step with the hosts. Set the image's ESX version to match the
+   hosts, save to trigger a new compliance check, then enable HA
+   ([KB 445940](https://knowledge.broadcom.com/external/article/445940),
+   written for vCenter 9.0.2).
+
+---
+
 ## NSX and vCenter
 
 - **Promote Manager-mode objects to Policy mode first.** A mandatory NSX
