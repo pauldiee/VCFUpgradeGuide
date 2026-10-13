@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.1.7 – 2026-10-13
+- **`docs/04`: what actually resolved "Cannot find vSphere HA master
+  agent"** (#88). In the field case the HA election started and finished
+  on each cluster as soon as its vLCM image tasks completed or timed
+  out; powering on a disconnected host wasn't needed. The note now leads
+  with waiting for the image tasks, and the checklist only applies to a
+  cluster still stuck after they're done.
+
 ## v2.1.6 – 2026-10-13
 - **A 9.x license won't assign to vCenter until it has an ESX 9 host**
   (#87). Field-observed: with every host still on ESX 8, assigning the

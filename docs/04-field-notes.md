@@ -184,18 +184,23 @@ Anything below `8.0` needs one of the two fixes above.
 ## "Cannot find vSphere HA master agent" after the vCenter upgrade
 
 Field-observed after a vCenter 9 upgrade: several clusters showed
-*"Cannot find vSphere HA master agent"*. On some it cleared without any
-action within a few hours; the clusters where it lingered had hosts in
-maintenance mode and disconnected hosts.
+*"Cannot find vSphere HA master agent"*. It cleared on every cluster
+without intervention: **as soon as the vLCM image tasks on a cluster
+completed or timed out, the HA election started and finished.** Some
+clusters cleared sooner than others. The slower ones also had hosts in
+maintenance mode and disconnected hosts; one disconnected host was
+powered on along the way, but that turned out not to be what fixed it.
 
-**Wait first.** On vLCM image-managed clusters, vCenter's ImageService
-has to finish validating the depots after the upgrade before HA can
-configure the hosts. Broadcom puts that at *"one to two hours"*, and
-notes that turning HA off and on before then *"does not resolve the
-issue"* ([KB 374242](https://knowledge.broadcom.com/external/article/374242)).
+**Wait for the image tasks first.** On vLCM image-managed clusters,
+vCenter's ImageService has to finish validating the depots after the
+upgrade before HA can configure the hosts. Watch the cluster's image
+tasks in **Recent Tasks**; until they finish or time out, HA won't
+elect a master. Broadcom puts that at *"one to two hours"*, and notes
+that turning HA off and on before then *"does not resolve the issue"*
+([KB 374242](https://knowledge.broadcom.com/external/article/374242)).
 
-**If a cluster is still stuck after about two hours,** work through these
-in order:
+**If a cluster is still stuck after its image tasks are done,** work
+through these in order:
 
 1. **Disconnected hosts.** vCenter can't push the new HA (FDM) agent to a
    host it can't reach, and a not-responding host can block the
