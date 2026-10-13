@@ -164,7 +164,9 @@ upgrade:
 - **Profile not in use:** delete it – *Policies and Profiles → Host
   Profiles → select the profile → Actions → Delete* (KB 439270's
   resolution). Leftover profiles from long-retired clusters are the usual
-  case; check nothing is attached before deleting.
+  case; check nothing is attached before deleting. This is the fix used
+  in the field case above: none of the flagged profiles were attached to
+  anything, so they were deleted rather than re-extracted.
 
 Find old profiles ahead of the window instead of at the precheck (PowerCLI,
 from KB 318864):

@@ -6,7 +6,7 @@
   Server has unsupported version of host profiles"*. New `docs/04`
   section covering why (a profile's version is that of the host it was
   extracted from), the two fixes (re-extract from an 8.0 host, or delete
-  unused profiles), and a PowerCLI one-liner to list profile versions
+  unused profiles; the field case deleted them, as none were in use), and a PowerCLI one-liner to list profile versions
   ahead of the window (marked Untested). Sources: KB 318864 (legacy KB
   52932, the one the error cites) and KB 439270. Pointers added to the
   prerequisites in `docs/07`, `docs/13` and `docs/14`.
