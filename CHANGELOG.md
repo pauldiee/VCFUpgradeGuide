@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.1.1 – 2026-10-13
+- **`docs/16`: a working proxy exclusion doesn't make `localhost:1082`
+  disappear from curl** (#82). The License Server callout said it would,
+  which contradicts how the 9.x local proxy service works. Field-observed:
+  with the License Server excluded, curl still shows the `CONNECT` and a
+  `200`, which is the local proxy opening a tunnel, not proof of either
+  path. Replaced with checks that do tell direct from proxied: the
+  certificate issuer in the same output, the `--noproxy '*'` comparison,
+  and the local proxy's access log (marked Untested).
+
 ## v2.1.0 – 2026-10-13
 - **Custom `/etc/hosts` entries do carry over in a vCenter 8 → 9
   upgrade** (#80). Field-verified on 8.0.x → 9.1.1 with the manual GUI

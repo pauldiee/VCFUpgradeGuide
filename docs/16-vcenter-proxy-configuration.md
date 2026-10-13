@@ -251,8 +251,9 @@ the VCF Operations account, made no difference. **Disabling the proxy for
 the assignment fixed it.** No Broadcom KB found that ties this message to
 the proxy (searched 2026-09-29).
 
-**Diagnose it from the vCenter shell** – the tell is curl going through a
-local proxy listener and the tunnel failing:
+**Diagnose it from the vCenter shell** – the tell is the tunnel through
+the local proxy failing (going through `localhost:1082` on its own is
+normal on 9.x, see [How the 9.x proxy works](#how-the-9x-proxy-works-on-the-appliance)):
 
 ```
 curl -v https://<license-server-fqdn>/ -o /dev/null
@@ -285,10 +286,45 @@ covers VCF Operations and the VCF Management Services FQDNs.
 > **Not yet verified end-to-end.** In the field case, the exclusion was
 > added while the proxy service was in trouble (see the warning above), so
 > "licensing keeps working with the proxy on and the License Server
-> excluded" hasn't been confirmed on its own. Check afterwards: the plain
-> `curl -v` above should connect directly, with no `localhost:1082`
-> `CONNECT`, and the vSphere Client should show no *"not connected to a
-> license server"* banner.
+> excluded" hasn't been confirmed on its own.
+
+**A plain `curl` can't show whether the exclusion works.** The shell's
+`https_proxy` always points at the local proxy, and the exclusion is
+applied inside that service, after curl has handed the request over. So
+even with the License Server excluded, curl still shows `CONNECT
+<license-server-fqdn>:443` to `localhost:1082`, followed by:
+
+```
+* CONNECT tunnel established, response 200
+```
+
+(Field-observed 2026-10-13, vCenter 9.1.1.0100, License Server FQDN in
+the exclusion list.) That `200` is the local proxy saying it opened a
+tunnel. It doesn't say whether the next hop was the corporate proxy or
+the License Server itself. Ways to tell:
+
+- **The certificate in the rest of the same `curl -v` output.** After the
+  `CONNECT` lines comes the TLS handshake. The `Server certificate:`
+  issuer should be your VCF or internal CA. A corporate proxy's CA there
+  means TLS inspection, which is exactly what produces the *"not
+  trusted"* error above. A `502` instead of `200` means nothing got
+  through at all.
+- **`curl -v --noproxy '*'`** (above) for the direct path, to compare
+  with.
+- **The local proxy's access log** (`/var/log/vmware/envoy/envoy-access*.log`):
+  the entry for the License Server FQDN should list the License Server's
+  own address as upstream, not the corporate proxy's.
+
+  > **Untested** – the log location is from KB 438438, but which field
+  > holds the upstream address hasn't been checked on an appliance.
+
+  ```
+  grep -h '<license-server-fqdn>' /var/log/vmware/envoy/envoy-access*.log | tail -3
+  ```
+
+The final check is in the product: license assignment from VCF
+Operations succeeds, and the vSphere Client shows no *"not connected to
+a license server"* banner.
 
 ---
 
