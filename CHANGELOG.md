@@ -3,7 +3,9 @@
 ## v2.1.6 – 2026-10-13
 - **A 9.x license won't assign to vCenter until it has an ESX 9 host**
   (#87). Field-observed: with every host still on ESX 8, assigning the
-  upgraded vCenter its 9.x license from VCF Operations doesn't work. New
+  upgraded vCenter its 9.x license from VCF Operations fails with *"No
+  licenses are assignable. Check the Assignable column below to view
+  details."* on Licenses & Registration → Assign Primary License. New
   `docs/04` section on what that means for the order of work (vCenter
   stays in 90-day evaluation until the host phase starts; mixed clusters
   count against 9.x capacity per KB 441187 / 445407). Pointers in

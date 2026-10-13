@@ -230,8 +230,14 @@ in order:
 
 Field-observed: right after the vCenter 9 upgrade, assigning the vCenter
 its 9.x license from VCF Operations doesn't work while every host it
-manages is still on ESX 8. It works once there is an ESX 9 host. We
-haven't found a Broadcom KB that states this directly.
+manages is still on ESX 8. In VCF Operations, **Licenses & Registration
+→ Assign Primary License** with the vCenter selected shows:
+
+> No licenses are assignable. Check the Assignable column below to view
+> details.
+
+It works once there is an ESX 9 host. We haven't found a Broadcom KB
+that states this directly.
 
 What that means for the order of work:
 
