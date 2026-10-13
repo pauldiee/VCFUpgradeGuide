@@ -153,27 +153,21 @@ with a `DELETE …/casa/auth/users` call.
   correct, and there was no clock skew. Full troubleshooting sequence (six
   other failure modes with the identical error text) in
   [manual GUI upgrade – Troubleshooting](07-vcenter-manual-upgrade.md#troubleshooting-invalid-single-sign-on-credentials-at-step-3).
-- **Custom ESX entries in vCenter's `/etc/hosts` most likely don't carry
-  over from 8 to 9.** *Unverified – not yet seen on a real upgrade.*
-  vCenter 8 → 9 is a migration upgrade: a new appliance is deployed and
-  Stage 2 copies configuration and inventory data, not hand-edited OS
-  files. The new appliance writes its own `/etc/hosts`. If ESX hosts were
-  added by an FQDN that only resolves through that file, expect them to
-  show as disconnected after Stage 2. The installer can also fail earlier
-  if it's pointed at a source vCenter or target host by such a name.
-  - **Preferred fix:** put the ESX names in DNS (forward and reverse)
-    before the upgrade. VCF 9 requires working DNS anyway.
-  - **Fallback:** save the old file (`cat /etc/hosts`) before the upgrade.
-    After Stage 2, re-add the ESX lines on the new appliance, leaving its
-    own generated entries alone, and reconnect any dropped hosts.
-  - **Possible shortcut, unconfirmed:** after Stage 1 the new appliance
-    is running on its temporary IP, and you can pause there and resume
-    Stage 2 later from `https://<temp-ip>:5480`. Adding the ESX lines in
-    that gap (shell via the VM console, or SSH) could keep the hosts
-    connected from the first vpxd start. Stage 2's identity swap
-    regenerates the appliance's own `/etc/hosts` entries, though, and it's
-    unknown whether that preserves added lines. Check the file after
-    Stage 2 either way.
+- **Custom entries in vCenter's `/etc/hosts` carry over from 8 to 9.**
+  *Field-verified – vCenter 8.0.x → 9.1.1, manual GUI installer
+  ([manual upgrade](07-vcenter-manual-upgrade.md)).* Entries hand-added
+  on the source appliance before the upgrade were present on the new
+  appliance after Stage 2, with nothing re-added in between. This
+  corrects an earlier note here that expected them to be lost, since
+  vCenter 8 → 9 is a migration upgrade (new appliance, Stage 2 copies
+  data). Only the GUI installer path has been seen; a fleet-driven
+  vCenter upgrade has not been checked.
+  - **Still preferred:** put ESX names in DNS (forward and reverse).
+    VCF 9 requires working DNS anyway, and a hosts-file entry is
+    invisible to every other system that has to resolve the name.
+  - Save a copy of the old file (`cat /etc/hosts`) before the upgrade
+    and compare it with the new appliance's after Stage 2. It costs
+    nothing and catches a different result on another path or build.
   - Run VDT on the source first ([VDT and lsdoctor](17-vdt-and-lsdoctor-diagnostics.md)),
     since it flags DNS and hosts-file problems.
 - **The NSX back-in-time restriction blocks the whole fleet's upgrade

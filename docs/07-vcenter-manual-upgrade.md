@@ -450,14 +450,15 @@ Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techd
   data once you cancel the operation"*, and importing it later means
   restarting the upgrade from Stage 1. A success message in the status
   bar marks the end.
-- **Re-check the known 8 → 9 side effects**, none of which the installer
-  flags:
+- **Re-check the known 8 → 9 side effects and carry-overs**, none of
+  which the installer flags:
   - the Lifecycle Manager **depot token**
     ([field notes](04-field-notes.md#entitlement-and-the-depot-download-token));
   - the **outbound proxy** configuration, which moved to a different file
     on 9.x ([vCenter proxy configuration](16-vcenter-proxy-configuration.md));
-  - custom **`/etc/hosts`** entries, which most likely do not carry over
-    ([field notes](04-field-notes.md#nsx-and-vcenter), still unverified).
+  - custom **`/etc/hosts`** entries, which do carry over (field-verified
+    8.0.x → 9.1.1); compare against a copy of the old file
+    ([field notes](04-field-notes.md#nsx-and-vcenter)).
 - Continue with the rest of the [Standalone VVF manual upgrade](14-standalone-vvf-upgrade.md#standalone-vvf-manual-upgrade--exact-steps)
   steps (ESX hosts, vSAN on-disk format, vSAN File Service) as applicable,
   and its [Post-upgrade validation](14-standalone-vvf-upgrade.md#post-upgrade-validation)

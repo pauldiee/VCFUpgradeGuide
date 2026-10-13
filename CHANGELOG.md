@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.1.0 – 2026-10-13
+- **Custom `/etc/hosts` entries do carry over in a vCenter 8 → 9
+  upgrade** (#80). Field-verified on 8.0.x → 9.1.1 with the manual GUI
+  installer: entries added on the source before the upgrade were on the
+  new appliance after Stage 2. This overturns the unverified v1.8.1 note
+  (#48) in `docs/04` that expected them to be lost; the
+  between-stages workaround is dropped. DNS stays the preferred fix, and
+  `docs/07`'s post-upgrade side-effects bullet is updated to match.
+
 ## v2.0.9 – 2026-10-09
 - **Cisco ACI VMM: Broadcom KB 450715 folded in** (#79). The ACI note
   in `docs/04` moves out of "Open items" into its own section, **Cisco
