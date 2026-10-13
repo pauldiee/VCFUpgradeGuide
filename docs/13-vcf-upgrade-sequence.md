@@ -219,6 +219,11 @@ transition **from Aria Operations** (via vRSLCM) to VCF Operations 9.1.
   Services; its VIDM-management role disappears when VIDM is replaced by
   Identity Broker. Retire it after the Aria → VCF component migration is
   confirmed (see [Cleanup](#cleanup--decommission)).
+- **Stored credentials have no menu entry of their own.** They sit behind
+  a **Credentials** button on **Administration → Integrations**, which
+  is useful when an integration needs its credentials re-entered after
+  the upgrade. You can only view a credential you own, so log in as the
+  user that created it. Field-observed on 9.x.
 
 **Before moving on:** VCF Operations reachable and healthy; metrics still
 flowing through the (unified) Cloud Proxy.
