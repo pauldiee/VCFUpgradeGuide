@@ -236,8 +236,10 @@ manages is still on ESX 8. In VCF Operations, **Licenses & Registration
 > No licenses are assignable. Check the Assignable column below to view
 > details.
 
-Despite the wording, there's no Assignable column or any list below the
-warning, so the page itself gives no reason. It works once there is an
+The license table below the warning can take a moment to appear. It
+lists the 9.x license with **Assignable: No**, while Used Capacity is
+0 cores and the full capacity is still available. So it isn't a capacity
+problem, and the page gives no further reason. It works once there is an
 ESX 9 host. We haven't found a Broadcom KB
 that states this directly.
 
