@@ -225,6 +225,13 @@ transition **from Aria Operations** (via vRSLCM) to VCF Operations 9.1.
   the upgrade. You can only view a credential you own, so log in as the
   user that created it. Field-observed on 9.x.
 
+  > **Use the local `admin` account to create integrations and
+  > credentials.** A credential created under a personal or AD account
+  > is owned by that account, and nobody else can view it. When that
+  > person leaves, or the account is disabled, the credential is stuck
+  > with them. Doing this setup as `admin` keeps every credential in
+  > one place that the team can always reach.
+
 **Before moving on:** VCF Operations reachable and healthy; metrics still
 flowing through the (unified) Cloud Proxy.
 

@@ -4,7 +4,10 @@
 - **`docs/13` Phase 1: where VCF Operations keeps stored credentials**
   (#84). Field-observed: there's no Credentials menu entry; they're
   behind a **Credentials** button on Administration → Integrations, and
-  a credential can only be viewed by the user that owns it.
+  a credential can only be viewed by the user that owns it. Added
+  advice to always create integrations and credentials as the local
+  `admin` account, so no credential ends up owned by a personal
+  account.
 
 ## v2.1.2 – 2026-10-13
 - **Host profiles below 8.0 block the vCenter 9 upgrade** (#83).
