@@ -236,7 +236,9 @@ manages is still on ESX 8. In VCF Operations, **Licenses & Registration
 > No licenses are assignable. Check the Assignable column below to view
 > details.
 
-It works once there is an ESX 9 host. We haven't found a Broadcom KB
+Despite the wording, there's no Assignable column or any list below the
+warning, so the page itself gives no reason. It works once there is an
+ESX 9 host. We haven't found a Broadcom KB
 that states this directly.
 
 What that means for the order of work:
