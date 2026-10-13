@@ -416,7 +416,11 @@ Broadcom reference: [Upgrade a vCenter Appliance by Using the CLI](https://techd
   VCF Operations go to **Administration → Integrations → VCF**, select
   the vCenter entry, and click **Activate Management**. Until that is
   done the vCenter is missing from License Management and can show
-  expired-license warnings. Background:
+  expired-license warnings. The license assignment itself only works
+  once the vCenter manages at least one **ESX 9** host, so with every
+  host still on 8.x it waits until the host phase starts:
+  [field note](04-field-notes.md#a-9x-license-wont-assign-to-vcenter-until-it-has-an-esx-9-host).
+  Background:
   [Registering vCenter as a data source](05-operations-modernization.md#registering-vcenter-as-a-data-source-separate-from-the-fleet-attach).
 - **Verify the upgrade.** Broadcom's
   [verification list](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-upgrade/after-upgrading-vcenter-server/verify-vcenter-server-migration-is-successful.html):

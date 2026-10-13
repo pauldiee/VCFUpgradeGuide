@@ -226,6 +226,31 @@ in order:
 
 ---
 
+## A 9.x license won't assign to vCenter until it has an ESX 9 host
+
+Field-observed: right after the vCenter 9 upgrade, assigning the vCenter
+its 9.x license from VCF Operations doesn't work while every host it
+manages is still on ESX 8. It works once there is an ESX 9 host. We
+haven't found a Broadcom KB that states this directly.
+
+What that means for the order of work:
+
+- **Don't count on licensing vCenter straight after its upgrade.** It
+  runs in [90-day evaluation
+  mode](25-licensing-what-is-sent-to-broadcom.md#upgrades-from-8x-start-in-evaluation-mode)
+  until the license is assigned, so there's time, but the clock is
+  running.
+- **Assign the license once the first host is on ESX 9**, early in the
+  host phase, and don't let the host upgrades stall for weeks in
+  between.
+- **Mixed 8.x/9.x clusters count against the 9.x capacity too.** ESX 8
+  hosts still need their pre-9 key, but their cores also draw on the
+  9.x subscription; if the total exceeds it, assignment is blocked
+  ([KB 441187](https://knowledge.broadcom.com/external/article/441187),
+  [KB 445407](https://knowledge.broadcom.com/external/article/445407)).
+
+---
+
 ## NSX and vCenter
 
 - **Promote Manager-mode objects to Policy mode first.** A mandatory NSX
