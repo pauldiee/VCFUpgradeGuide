@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.1.4 – 2026-10-13
+- **`docs/05`: the VCF Operations credentials tip, for VVF readers too**
+  (#85). The Credentials button on Administration → Integrations, the
+  owner-only viewing rule, and the advice to register integrations as
+  the local `admin` account were only in `docs/13` (VCF only). Now also
+  under "Registering vCenter as a data source" in `docs/05`.
+
 ## v2.1.3 – 2026-10-13
 - **`docs/13` Phase 1: where VCF Operations keeps stored credentials**
   (#84). Field-observed: there's no Credentials menu entry; they're

@@ -520,6 +520,17 @@ for a large environment can take more than one cycle to fully populate.
 engagement with several existing vCenter instances), each one is registered
 as its own account through this same flow – there is no bulk-register step.
 
+**Where the stored credentials live.** There's no menu entry for them:
+they sit behind a **Credentials** button on **Administration →
+Integrations**. You can only view a credential you own (field-observed
+on 9.x).
+
+> **Do this as the local `admin` account.** A credential created under
+> a personal or AD account is owned by that account, and nobody else can
+> view it. When that person leaves, or the account is disabled, the
+> credential is stuck with them. Registering integrations as `admin`
+> keeps every credential in one place the team can always reach.
+
 ---
 
 ## Continuous Availability vs. plain HA – don't conflate them
