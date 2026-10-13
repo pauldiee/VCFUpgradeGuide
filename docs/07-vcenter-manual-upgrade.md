@@ -135,6 +135,11 @@ condensed:
   SSH connection to export data) and port **443** open on the source ESX
   host.
 - Sufficient free disk space on the source appliance to stage the export.
+- No host profiles below version **8.0** on the source vCenter. The
+  pre-upgrade check fails with *"Source vCenter Server has unsupported
+  version of host profiles"* otherwise. Re-extract or delete them first:
+  [Host profiles below 8.0 block the vCenter 9
+  upgrade](04-field-notes.md#host-profiles-below-80-block-the-vcenter-9-upgrade).
 - Static-IP path: forward and reverse DNS records ready for the temporary
   IP. DHCP path: the target ESX host must be on the same subnet as the
   source, on a port group that accepts MAC address changes.

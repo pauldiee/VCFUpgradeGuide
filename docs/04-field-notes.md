@@ -126,6 +126,59 @@ with a `DELETE …/casa/auth/users` call.
 
 ---
 
+## Host profiles below 8.0 block the vCenter 9 upgrade
+
+Field-observed on an 8.0.x → 9.x vCenter upgrade: the pre-upgrade check
+stops with an **Error**, not a warning:
+
+> Source vCenter Server has unsupported version of host profiles.
+> Host profiles with versions lower than 8.0 are not supported by vCenter
+> Server 9.0.0. Upgrade the [N] host profiles listed below to version 8.0
+> or later before proceeding with the upgrade of vCenter Server.
+
+The check runs on every path – the manual GUI installer
+([docs/07](07-vcenter-manual-upgrade.md)), and the SDDC Manager / VCF
+Operations reduced-downtime upgrade, where it shows up as *"The host
+profiles are of version … which is lower than version 8.0.0"* and fails
+validation ([KB 439270](https://knowledge.broadcom.com/external/article/439270)).
+Per that KB, profiles created on 7.x use a metadata schema vCenter 9
+can't process. The error lists the offending profiles by name; the same
+list is in `/var/log/vmware/upgrade/vcdb_req.err` on the source appliance
+([KB 318864](https://knowledge.broadcom.com/external/article/318864)).
+
+A host profile's version is the ESX version of the host it was
+**extracted from**, not the version of the hosts it's attached to. A
+cluster of 8.0 hosts still carrying a profile extracted back on 7.0 trips
+this check. Two ways out, both on the **source** vCenter before the
+upgrade:
+
+- **Profile still in use:** extract a new profile from a host already on
+  8.0 or later, attach it to the cluster, check compliance and remediate,
+  then delete the old profile. Hosts still on 7.x need to reach 8.0
+  first, since there's no 8.0 host to extract from otherwise. Export the
+  old profile and its host customizations first, so settings can be
+  compared afterwards. Broadcom's walkthrough of this flow is the KB the
+  error cites, legacy KB 52932, now
+  [KB 318864](https://knowledge.broadcom.com/external/article/318864)
+  (written for older version pairs, same steps).
+- **Profile not in use:** delete it – *Policies and Profiles → Host
+  Profiles → select the profile → Actions → Delete* (KB 439270's
+  resolution). Leftover profiles from long-retired clusters are the usual
+  case; check nothing is attached before deleting.
+
+Find old profiles ahead of the window instead of at the precheck (PowerCLI,
+from KB 318864):
+
+> **Untested.** Not yet run against a lab or field environment.
+
+```powershell
+Get-VMHostProfile | ForEach-Object { $_.ExtensionData.Config.ApplyProfile.ProfileVersion + "`t" + $_.Name }
+```
+
+Anything below `8.0` needs one of the two fixes above.
+
+---
+
 ## NSX and vCenter
 
 - **Promote Manager-mode objects to Policy mode first.** A mandatory NSX

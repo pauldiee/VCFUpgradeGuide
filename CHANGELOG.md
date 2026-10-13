@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.1.2 – 2026-10-13
+- **Host profiles below 8.0 block the vCenter 9 upgrade** (#83).
+  Field-observed: the pre-upgrade check errors with *"Source vCenter
+  Server has unsupported version of host profiles"*. New `docs/04`
+  section covering why (a profile's version is that of the host it was
+  extracted from), the two fixes (re-extract from an 8.0 host, or delete
+  unused profiles), and a PowerCLI one-liner to list profile versions
+  ahead of the window (marked Untested). Sources: KB 318864 (legacy KB
+  52932, the one the error cites) and KB 439270. Pointers added to the
+  prerequisites in `docs/07`, `docs/13` and `docs/14`.
+
 ## v2.1.1 – 2026-10-13
 - **`docs/16`: a working proxy exclusion doesn't make `localhost:1082`
   disappear from curl** (#82). The License Server callout said it would,

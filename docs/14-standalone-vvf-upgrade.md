@@ -313,6 +313,12 @@ The ESX 9 installer applies the same rules on this path as on full VCF
 Same rule as the full-VCF
 [prerequisites table](13-vcf-upgrade-sequence.md#prerequisites-and-architectural-guardrails).
 
+**Check host profile versions before the vCenter step.** Host profiles
+below version **8.0** fail the vCenter 9 pre-upgrade check with an
+error. Re-extract them from an 8.0 host or delete unused ones first:
+[Host profiles below 8.0 block the vCenter 9
+upgrade](04-field-notes.md#host-profiles-below-80-block-the-vcenter-9-upgrade).
+
 ---
 
 ## Post-upgrade validation
