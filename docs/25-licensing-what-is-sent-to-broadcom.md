@@ -241,9 +241,10 @@ period at all.
 > your VCF fleet before the evaluation period expires, you must reinstall
 > the software because you cannot license a fleet with an expired
 > evaluation period."* License VCF Operations, vCenter and the hosts as
-> part of the upgrade, not afterwards. Note that the vCenter license only
-> assigns once vCenter manages an ESX 9 host – [field
-> note](04-field-notes.md#a-9x-license-wont-assign-to-vcenter-until-it-has-an-esx-9-host).
+> part of the upgrade, not afterwards. If the vCenter license shows
+> **Assignable: No**, the license usually has too few allocated cores
+> for every host vCenter manages – [field
+> note](04-field-notes.md#a-9x-license-shows-assignable-no-for-vcenter).
 
 Individual components can still be recovered after their evaluation ends:
 register VCF Operations and add a license; assign a license to the

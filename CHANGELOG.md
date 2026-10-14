@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.1.9 – 2026-10-14
+- **`docs/04`: Assignable: No on vCenter is a capacity shortfall** (#90).
+  Corrects the #87 field note. Hovering over the No shows the reason:
+  the license needs at least the vCenter's full core requirement as
+  allocated capacity (every managed host, ESX 8 included, at least
+  16 cores per CPU), even with 0 cores used. Adds a PowerCLI one-liner
+  (untested) to work out the requirement, and the ways to close the gap
+  (portal allocation, removing hosts from scope, true-up). The ESX 9 host
+  link is now noted as unconfirmed. Section renamed. Links in `docs/07`,
+  `docs/14` and `docs/25` are updated.
+
 ## v2.1.8 – 2026-10-14
 - **`docs/20`: which ESX 9 patches are live-patchable** (#89). New
   section with a per-release table for 9.0.x and 9.1.x, using each

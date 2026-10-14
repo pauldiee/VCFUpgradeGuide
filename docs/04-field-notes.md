@@ -231,38 +231,67 @@ through these in order:
 
 ---
 
-## A 9.x license won't assign to vCenter until it has an ESX 9 host
+## A 9.x license shows Assignable: No for vCenter
 
-Field-observed: right after the vCenter 9 upgrade, assigning the vCenter
-its 9.x license from VCF Operations doesn't work while every host it
-manages is still on ESX 8. In VCF Operations, **Licenses & Registration
-→ Assign Primary License** with the vCenter selected shows:
+Field-observed: assigning the vCenter its 9.x license from VCF
+Operations (**Licenses & Registration → Assign Primary License**, with
+the vCenter selected) can show:
 
 > No licenses are assignable. Check the Assignable column below to view
 > details.
 
 The license table below the warning can take a moment to appear. It
 lists the 9.x license with **Assignable: No**, while Used Capacity is
-0 cores and the full capacity is still available. So it isn't a capacity
-problem, and the page gives no further reason. It works once there is an
-ESX 9 host. We haven't found a Broadcom KB
-that states this directly.
+0 cores and the full capacity shows as available. That looks like there
+is no capacity problem, but there is. **Hover over the No** in the
+Assignable column for the reason:
 
-What that means for the order of work:
+> To assign this license, it must have allocated capacity of *N* cores
 
-- **Don't count on licensing vCenter straight after its upgrade.** It
-  runs in [90-day evaluation
-  mode](25-licensing-what-is-sent-to-broadcom.md#upgrades-from-8x-start-in-evaluation-mode)
-  until the license is assigned, so there's time, but the clock is
-  running.
-- **Assign the license once the first host is on ESX 9**, early in the
-  host phase, and don't let the host upgrades stall for weeks in
-  between.
-- **Mixed 8.x/9.x clusters count against the 9.x capacity too.** ESX 8
-  hosts still need their pre-9 key, but their cores also draw on the
-  9.x subscription; if the total exceeds it, assignment is blocked
+Assignment covers the whole vCenter at once. VCF Operations compares
+the cores the vCenter needs against the license's **Allocated
+Capacity**, not against what is still free. If the requirement is
+higher, the license can't be assigned at all, even with nothing used
+yet.
+
+What counts toward the requirement:
+
+- **Every host the vCenter manages, ESX 8 hosts included.** Hosts still
+  on 8.x need their pre-9 key, but their cores also draw on the 9.x
+  subscription
   ([KB 441187](https://knowledge.broadcom.com/external/article/441187),
   [KB 445407](https://knowledge.broadcom.com/external/article/445407)).
+- **At least 16 cores per CPU.** A CPU with fewer physical cores still
+  counts as 16, so the requirement can exceed the real core count.
+
+To work out the requirement yourself (**Untested**, and check whether
+disconnected or maintenance-mode hosts count too):
+
+```powershell
+Get-VMHost | Select Name, ConnectionState,
+  @{n='Sockets';e={$_.ExtensionData.Hardware.CpuInfo.NumCpuPackages}},
+  @{n='LicCores';e={$s=$_.ExtensionData.Hardware.CpuInfo.NumCpuPackages; $c=$_.ExtensionData.Hardware.CpuInfo.NumCpuCores/$s; [math]::Max(16,$c)*$s}} |
+  Tee-Object -Variable h; ($h | Measure-Object LicCores -Sum).Sum
+```
+
+Ways to close the gap:
+
+- **Check for unallocated cores in the subscription.** Allocated
+  Capacity is what the Broadcom portal assigned to this license. If the
+  entitlement is larger, raise the allocation there, then sync the
+  License Server (connected) or re-import the license file
+  (disconnected).
+- **Take hosts out of scope.** Retired or spare hosts still in the
+  vCenter inventory count. Removing them lowers the requirement.
+- **True up** the missing cores with Broadcom or the reseller.
+
+Meanwhile vCenter runs in [90-day evaluation
+mode](25-licensing-what-is-sent-to-broadcom.md#upgrades-from-8x-start-in-evaluation-mode)
+until the license is assigned. There's time, but the clock is running,
+so check the tooltip straight after the vCenter upgrade rather than at
+the end. An earlier field case cleared once the first host was on
+ESX 9. We haven't confirmed whether that was related or whether the
+capacity changed in between, so treat the tooltip as the reason.
 
 ---
 
