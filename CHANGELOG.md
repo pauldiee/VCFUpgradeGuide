@@ -1,6 +1,16 @@
 # Changelog
 
 ## v2.1.9 – 2026-10-14
+- **`docs/24`: links to the Ops & Logs Sizer** (#91). The companion repo's
+  new [sizer](https://vcf-planning.hollebollevsan.nl/tools/ops-logs-sizing/)
+  and its [guide](https://vcf-planning.hollebollevsan.nl/docs/30-ops-logs-sizing/)
+  (pauldiee/VCF9-DeploymentPlanning#394) recommend a VCF Operations size
+  and node count, Cloud Proxies, Log Management replicas and a Real-Time
+  Metrics size. docs/24 now links them from "Where 9.1 sizing lives",
+  "Does the current size still fit?" and Sources, rather than repeating
+  the tables.
+
+## v2.1.9 – 2026-10-14
 - **`docs/04`: Assignable: No on vCenter is a capacity shortfall** (#90).
   Corrects the #87 field note. Hovering over the No shows the reason:
   the license needs at least the vCenter's full core requirement as
