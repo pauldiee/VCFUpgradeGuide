@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.1.8 – 2026-10-14
+- **`docs/20`: which ESX 9 patches are live-patchable** (#89). New
+  section with a per-release table for 9.0.x and 9.1.x, using each
+  release note's "Live Patchable" row. Yes: 9.0.0.0100, 9.0.2.0100,
+  9.1.0.0100 and 9.1.1.0100. Reboot: 9.0.2.0, 9.1.0.0200 and 9.1.1.0.
+  9.0.1.0 is unconfirmed (its release note returns 404). It also covers
+  the vLCM prerequisites
+  ([KB 419942](https://knowledge.broadcom.com/external/article/419942/prerequisites-for-enabling-vsphere-lifec.html):
+  DPU hosts are excluded, TPM is supported from 9.1), the VMkernel
+  module blocker
+  ([KB 428958](https://knowledge.broadcom.com/external/article/428958/vmkernel-live-patch-is-incompatible-beca.html))
+  and the vSAN compute precheck failure going to 9.1.0.0100
+  ([KB 442180](https://knowledge.broadcom.com/external/article?articleNumber=442180)).
+  All of it comes from TechDocs and the KBs; none is field-verified yet.
+
 ## v2.1.7 – 2026-10-13
 - **`docs/04`: what actually resolved "Cannot find vSphere HA master
   agent"** (#88). In the field case the HA election started and finished
