@@ -70,11 +70,84 @@ version number:
   it.
 - **ESX 9.1.1.0 is not live-patchable**, despite messaging elsewhere
   about zero-downtime operations – plan host remediation with a normal
-  maintenance-mode cycle, not an in-place live patch.
+  maintenance-mode cycle, not an in-place live patch. See [Which ESX
+  patches are live-patchable](#which-esx-patches-are-live-patchable)
+  below for every 9.0 / 9.1 release.
 - **Distributed firewall configurations can cause upgrade failures
   needing post-installation remediation**, and **Host Profiles with
   vSAN configuration can fail batch remediation** – check both before
   relying on unattended remediation across a cluster.
+
+---
+
+## Which ESX patches are live-patchable
+
+Live patching is decided **per release**, not per release type: each
+ESX release note carries a **Live Patchable** row (next to **Host Reboot
+Required**), and being an Express Patch or "security only" doesn't make
+a release live-patchable on its own (9.1.0.0200 is security-only and
+still needs a reboot). Read from each release note on 2026-10-14:
+
+| ESX release | Build | Released | Type | Live patchable | Host reboot |
+| --- | --- | --- | --- | --- | --- |
+| 9.1.1.0100 | 25782009 | 12 Oct 2026 | Security only | **Yes** | No |
+| 9.1.1.0 | 25714478 | 03 Sep 2026 | Maintenance (bugfix + security) | No | Yes |
+| 9.1.0.0200 | 25557999 | 13 Jul 2026 | Security only | No | Yes |
+| 9.1.0.0100 | 25433460 | 05 Jun 2026 | Express Patch | **Yes** | No |
+| 9.1.0.0 | 25370933 | 12 May 2026 | GA | – | – |
+| 9.0.2.0100 | 25595025 | 29 Jul 2026 | Security only | **Yes** | No |
+| 9.0.2.0 | 25148076 | 20 Jan 2026 | Maintenance (bugfix) | No | Yes |
+| 9.0.1.0 | 24957456 | 29 Sep 2025 | Maintenance | Not confirmed – its release-note URL returns 404 | – |
+| 9.0.0.0100 | 24813472 | 15 Jul 2025 | Security patch | **Yes** | No |
+| 9.0.0.0 | 24755229 | 17 Jun 2025 | GA | – | – |
+
+Builds and dates come from [Build numbers and versions of VMware ESX (KB
+316595)](https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esx.html).
+The release notes are linked under [Sources](#sources). For whatever is
+current on each 9.1 line, the [VCF 9.1 Version
+Overview](https://vcf-planning.hollebollevsan.nl/version-overview/)
+shows the same flag on its ESXi row and refreshes it daily.
+
+Every maintenance release so far has been a reboot. Only patch releases
+have been live-patchable, and not all of them.
+
+A **Yes** in the table doesn't guarantee the host will actually take the
+patch live. Per [Prerequisites for Enabling vSphere Lifecycle Manager
+Live Patching for ESXi Hosts (KB
+419942)](https://knowledge.broadcom.com/external/article/419942/prerequisites-for-enabling-vsphere-lifec.html):
+
+- Live Patch is **disabled by default**. Turn it on in the vLCM
+  remediation settings, globally or per cluster.
+- **vLCM single-image clusters only.** Every host in the cluster must
+  support Live Patch, and must be eligible for that specific live patch
+  of its base image.
+- **DRS on, parallel remediation off.** Live patches are installed one
+  host at a time.
+- **DPU hosts (vSphere Distributed Services Engine) are not
+  supported.** TPM hosts were excluded before 9.1 but are supported
+  from vSphere 9.1 on.
+- **VMs that can't Fast Suspend and Resume** (FT, DirectPath I/O,
+  vSphere Pods, shared-disk clustering such as SQL FCI) must be migrated
+  or power-cycled to pick up the change. They trigger compliance
+  warnings but don't block remediation.
+
+Two known blockers on 9.1:
+
+- **Some loaded VMkernel modules block live patching of the VMkernel.**
+  On 9.1.0 these are `emcp`, `nvidia`, `nvidia-gpu` and `scini`, per [KB
+  428958](https://knowledge.broadcom.com/external/article/428958/vmkernel-live-patch-is-incompatible-beca.html).
+  The precheck reports *"VMKernel Live Patch is incompatible because the
+  following modules cannot be scanned..."*. Either unload the module or
+  patch that host with a reboot.
+- **vSAN compute clusters fail the live-patch precheck going 9.1 GA →
+  9.1.0.0100** with *"The health check failed to complete"*, although
+  vSAN health is clean. HCI and vSAN storage clusters are unaffected.
+  The workaround is to exclude the failing vLCM check, using the
+  KB's script or its manual option, per [KB
+  442180](https://knowledge.broadcom.com/external/article?articleNumber=442180).
+
+Everything in this section comes from Broadcom's release notes and KBs.
+None of it has been seen on a real deployment yet.
 
 ---
 
@@ -547,6 +620,8 @@ ordering and rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
 - [VCF 9.1 - Understanding VCF Express Patches](https://williamlam.com/2026/07/vcf-9-1-understanding-vcf-express-patches.html) – supplementary community write-up of the same mechanism, source of the unified versioning model diagram used above
 - [Upgrading VCF Management Components to 9.1.1 All in One (Cosmin.us)](https://cosmin.us/upgrading-vcf-management-components-to-9-1-1-all-in-one/) – the full 14-step worked order, UI walkthrough, gotchas (KB 388305, 448993, 451147, 400822), and timing table – a practitioner account, not a Broadcom TechDocs page
 - [Upgrade All: how one button left a VCF 9.1.1 lab deadlocked for two weeks](https://mb-labs.de/2026/09/18/upgrade-all-how-one-button-left-my-vcf-9-1-1-lab-deadlocked-for-two-weeks/) – the real-world Upgrade All / parallel-patching failure mode
+- ESX release notes behind the [live-patchable table](#which-esx-patches-are-live-patchable): [9.1.1.0100](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-1-x/vsphere/esx/esx-9-1-1-0100-release-notes.html), [9.1.1.0](https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=esx-9-1-1&appid=vcf-9-1&language=en&format=rendered), [9.1.0.0200](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vsphere/esx/esx-9-1-0-0200-release-notes.html), [9.1.0.0100](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/patch-releases-9-1-0-x/vsphere/esx/esx-9-1-0-0100-release-notes.html), [9.0.2.0100](https://techdocs.broadcom.com/bin/gethidpage?ux-context-string=esx-9-0-2-1&appid=vcf-9-0&language=en&format=rendered), [9.0.2.0](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/release-notes/vmware-cloud-foundation-9-0-2-release-notes/esx-9-0-2-0000.html), [9.0.0.0100](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/release-notes/patch-releases-9-0-0-x/esx/esx-9-0-0-0100.html)
+- [Prerequisites for Enabling vSphere Lifecycle Manager Live Patching for ESXi Hosts (Broadcom KB 419942)](https://knowledge.broadcom.com/external/article/419942/prerequisites-for-enabling-vsphere-lifec.html), [VMKernel Live Patch is incompatible because the following modules cannot be scanned (KB 428958)](https://knowledge.broadcom.com/external/article/428958/vmkernel-live-patch-is-incompatible-beca.html), [vSAN Compute Cluster Live Patch Pre-check Fails during Upgrade from 9.1 to 9.1.0.0100 (KB 442180)](https://knowledge.broadcom.com/external/article?articleNumber=442180) – the live-patch prerequisites and known blockers
 - [VCF 9.1.1 – Not a Maintenance Release](https://mysticmarvin.com/blog/vcf-9-1-1-not-a-maintenance-release/) – the Secure Boot cert migration, ESX live-patching, distributed firewall, and Host Profile/vSAN gotchas
 - [Patching Order: VCF Management Components 9.1.1.0](https://arunnukula.com/blog/patching-order-vcf-management-components-9-1-1-0) – a second independent account confirming only Fleet Lifecycle and VCF Services Runtime are strictly fixed-first, plus the concrete 6-hour `vmsp_upgrade` failure symptom
 - [VCF management component upgrade fails due to backup precheck failure (Broadcom KB 453300)](https://knowledge.broadcom.com/external/article/453300/vcf-management-component-upgrade-fails-d.html) – the automatic pre-patch backup mechanism and the lowercase-FQDN requirement
