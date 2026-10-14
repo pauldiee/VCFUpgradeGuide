@@ -97,9 +97,10 @@ phases, no SDDC Manager involved at any point:
    why. Full manual GUI walkthrough, including the vCenter-specific
    back-in-time compatibility check:
    [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md).
-   Don't expect to license the vCenter yet: the 9.x license only
-   assigns once it manages an ESX 9 host
-   ([field note](04-field-notes.md#a-9x-license-wont-assign-to-vcenter-until-it-has-an-esx-9-host)).
+   If the 9.x license shows **Assignable: No** for the vCenter,
+   hover over the No: it is usually a core-capacity shortfall, with
+   ESX 8 hosts counted too
+   ([field note](04-field-notes.md#a-9x-license-shows-assignable-no-for-vcenter)).
 4. **ESX hosts.** Upgrade the ESX hosts (vLCM images) – same host-by-host
    rolling approach as the full-VCF sequence's
    [Phase 7](13-vcf-upgrade-sequence.md#phase-7--esx--host-cluster-upgrade),
