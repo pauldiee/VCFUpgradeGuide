@@ -26,6 +26,14 @@ Operations*). The 9.0 equivalent was
 For a sizing based on your own object and metric counts, use the
 [VCF Operations Sizing Estimator](https://vcfopssizer.broadcom.com/).
 
+To pick a size and node count before a build, the companion repo's
+[Ops & Logs Sizer](https://vcf-planning.hollebollevsan.nl/tools/ops-logs-sizing/)
+applies the limits below, including HA's halved capacity and the Continuous
+Availability fault-domain rules. It also sizes Cloud Proxies, Log Management
+replicas and Real-Time Metrics. Its
+[guide](https://vcf-planning.hollebollevsan.nl/docs/30-ops-logs-sizing/)
+explains the rules and where Broadcom's sources disagree.
+
 ---
 
 ## Node sizes (Configuration Maximums, VCF Operations 9.1)
@@ -91,6 +99,11 @@ metrics VCF Operations creates itself, so it reads higher.)
 - **Many vCenters or remote sites:** look at the collectors as well. Each
   size supports a maximum number of vCenter adapters per collector, so
   more cloud proxies may fit better than bigger analytics nodes.
+- **Which size to move to:** enter the current (or target) object and
+  metric counts in the
+  [Ops & Logs Sizer](https://vcf-planning.hollebollevsan.nl/tools/ops-logs-sizing/).
+  It shows the node count each size would need under your model, and
+  picks the configuration with the fewest nodes.
 
 ---
 
@@ -200,6 +213,7 @@ see [Continuous Availability vs. plain HA](05-operations-modernization.md#contin
 - [VMware Cloud Foundation (VCF) Operations Sizing Guidelines (KB 324340)](https://knowledge.broadcom.com/external/article/324340) – 9.1.x sizing lives in Configuration Maximums.
 - VMware Configuration Maximums, VCF Operations 9.1.0 ([configmax.broadcom.com](https://configmax.broadcom.com/)) – node sizes, object and metric limits, latency, cloud proxy sizes.
 - [VCF Operations Sizing Estimator](https://vcfopssizer.broadcom.com/) – sizing from your own counts.
+- [VCF Operations & Log Management Sizing (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/30-ops-logs-sizing/) and its [interactive sizer](https://vcf-planning.hollebollevsan.nl/tools/ops-logs-sizing/) – size and node / replica count for VCF Operations, Cloud Proxies, Log Management and Real-Time Metrics.
 - [VCF Operations Models (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/design/vmware-cloud-foundation-concepts/vcf-operations.html) – which model supports which scaling.
 - [Scaling VCF Management Components (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/configuring-management-components/using-vcf-management-services-to-perform-day-n-actions/scale-out-vrealize-suite-products.html) – scale-up procedure, downtime, backup warning.
 - [Add Nodes in VCF Operations and VCF Operations for networks (9.1)](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/configuring-management-components/using-vcf-management-services-to-perform-day-n-actions/scale-up-vrealize-suite-products.html) – scale-out procedure, certificate prerequisite.
