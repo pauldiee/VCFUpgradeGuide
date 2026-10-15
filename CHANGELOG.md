@@ -7,8 +7,10 @@
   minimum works. Untested becomes Lab-verified for connected hosts. A
   new warning says a host with no CPU data counts as 0 and lowers the
   sum. Disconnected and maintenance-mode hosts and a vSAN witness stay
-  open questions, as does a match with the tooltip's *N* (the lab has
-  no license connected, so this needs a field check).
+  open questions. VCF Operations' vCenter detail panel in the same lab
+  showed *No (72 unlicensed cores)*, matching the snippet's total. The
+  note now points to that panel as a way to read the requirement
+  before any license is assigned.
 
 ## v2.2.1 – 2026-10-15
 - **`docs/04` + `docs/13`: how to take the Supervisor backup** (#93). The

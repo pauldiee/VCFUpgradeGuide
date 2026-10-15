@@ -267,9 +267,16 @@ What counts toward the requirement:
 - **At least 16 cores per CPU.** A CPU with fewer physical cores still
   counts as 16, so the requirement can exceed the real core count.
 
-To work out the requirement yourself (**Lab-verified 2026-10-15**,
-connected 9.0.2 hosts only: 12-core CPUs came out at 16, a 24-core CPU
-at 24):
+VCF Operations also shows the requirement before any license is
+assigned. Select the vCenter under **Licenses → vCenter Systems**. With
+no primary license, the detail panel's **This vCenter Instance Fully
+Licensed** reads *No (N unlicensed cores)*, and that *N* is the full
+requirement.
+
+To work out the requirement yourself (**Lab-verified 2026-10-15** on
+connected 9.0.2 hosts: 12-core CPUs counted as 16 and a 24-core CPU as
+24, a total of 72. VCF Operations showed the same 72 unlicensed cores
+for that vCenter):
 
 ```powershell
 Get-VMHost | Select Name, ConnectionState,
@@ -280,8 +287,7 @@ Get-VMHost | Select Name, ConnectionState,
 
 Check every host has a **Sockets** value. A host with no CPU data
 throws a divide-by-zero error and counts as 0, so the sum comes out
-too low. The sum has not yet been compared with the tooltip's *N* on
-a licensed vCenter. Still untested: whether VCF Operations counts disconnected or
+too low. Still untested: whether VCF Operations counts disconnected or
 maintenance-mode hosts, and whether a vSAN witness appliance in the
 inventory should be left out.
 
