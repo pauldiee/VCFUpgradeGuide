@@ -280,7 +280,8 @@ Get-VMHost | Select Name, ConnectionState,
 
 Check every host has a **Sockets** value. A host with no CPU data
 throws a divide-by-zero error and counts as 0, so the sum comes out
-too low. Still untested: whether VCF Operations counts disconnected or
+too low. The sum has not yet been compared with the tooltip's *N* on
+a licensed vCenter. Still untested: whether VCF Operations counts disconnected or
 maintenance-mode hosts, and whether a vSAN witness appliance in the
 inventory should be left out.
 
