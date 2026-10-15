@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.2.1 – 2026-10-15
+- **`docs/04` + `docs/13`: how to take the Supervisor backup** (#93). The
+  #92 field note asked for a Supervisor backup without saying how. Step 3
+  now explains that it is the **Supervisors Control Plane** option in the
+  vCenter (VAMI) backup schedule, supported from vSphere 8 U3, and to
+  confirm a successful run. The recovery paragraph notes that the
+  Supervisor restore is a separate vSphere Client workflow that needs a
+  backup with a matching Kubernetes version. `docs/13`'s Backups
+  prerequisite gets a Supervisor line. The full method lives in the
+  planning repo's new
+  [Supervisor control-plane backup and restore](https://vcf-planning.hollebollevsan.nl/docs/10-supervisor-enablement/#supervisor-control-plane-backup-and-restore)
+  section (pauldiee/VCF9-DeploymentPlanning#403), linked rather than
+  copied.
+
 ## v2.2.0 – 2026-10-15
 - **`docs/04`: a past vLCM database reset deletes Supervisor VMs on the
   9.1.x upgrade** (#92). New subsection under vSphere Supervisor, based on
