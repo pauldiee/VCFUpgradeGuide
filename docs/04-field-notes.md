@@ -273,6 +273,8 @@ no primary license, the detail panel's **This vCenter Instance Fully
 Licensed** reads *No (N unlicensed cores)*, and that *N* is the full
 requirement.
 
+![VCF Operations, Licenses > vCenter Systems with one vCenter selected and no license assigned: the detail panel shows Used Capacity by this vCenter Instance 0 cores and This vCenter Instance Fully Licensed "No (72 unlicensed cores)"; the vSAN add-on shows "No (4 unlicensed TiB)"](images/vcf-licensing/vcenter-unlicensed-cores.png)
+
 To work out the requirement yourself (**Lab-verified 2026-10-15** on
 connected 9.0.2 hosts: 12-core CPUs counted as 16 and a 24-core CPU as
 24, a total of 72. VCF Operations showed the same 72 unlicensed cores

@@ -10,7 +10,7 @@
   open questions. VCF Operations' vCenter detail panel in the same lab
   showed *No (72 unlicensed cores)*, matching the snippet's total. The
   note now points to that panel as a way to read the requirement
-  before any license is assigned.
+  before any license is assigned, with a redacted lab screenshot.
 
 ## v2.2.1 – 2026-10-15
 - **`docs/04` + `docs/13`: how to take the Supervisor backup** (#93). The
