@@ -267,8 +267,9 @@ What counts toward the requirement:
 - **At least 16 cores per CPU.** A CPU with fewer physical cores still
   counts as 16, so the requirement can exceed the real core count.
 
-To work out the requirement yourself (**Untested**, and check whether
-disconnected or maintenance-mode hosts count too):
+To work out the requirement yourself (**Lab-verified 2026-10-15**,
+connected 9.0.2 hosts only: 12-core CPUs came out at 16, a 24-core CPU
+at 24):
 
 ```powershell
 Get-VMHost | Select Name, ConnectionState,
@@ -276,6 +277,12 @@ Get-VMHost | Select Name, ConnectionState,
   @{n='LicCores';e={$s=$_.ExtensionData.Hardware.CpuInfo.NumCpuPackages; $c=$_.ExtensionData.Hardware.CpuInfo.NumCpuCores/$s; [math]::Max(16,$c)*$s}} |
   Tee-Object -Variable h; ($h | Measure-Object LicCores -Sum).Sum
 ```
+
+Check every host has a **Sockets** value. A host with no CPU data
+throws a divide-by-zero error and counts as 0, so the sum comes out
+too low. Still untested: whether VCF Operations counts disconnected or
+maintenance-mode hosts, and whether a vSAN witness appliance in the
+inventory should be left out.
 
 Ways to close the gap:
 

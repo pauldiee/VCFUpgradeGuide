@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.2.2 – 2026-10-15
+- **`docs/04`: the Assignable: No core-count snippet is lab-verified**
+  (#94). Ran against the holodeck lab (9.0.2, connected hosts). 12-core
+  CPUs counted as 16 and a 24-core CPU as 24, so the 16-core-per-CPU
+  minimum works. Untested becomes Lab-verified for connected hosts. A
+  new warning says a host with no CPU data counts as 0 and lowers the
+  sum. Disconnected and maintenance-mode hosts and a vSAN witness stay
+  open questions.
+
 ## v2.2.1 – 2026-10-15
 - **`docs/04` + `docs/13`: how to take the Supervisor backup** (#93). The
   #92 field note asked for a Supervisor backup without saying how. Step 3
