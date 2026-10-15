@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.2.0 – 2026-10-15
+- **`docs/04`: a past vLCM database reset deletes Supervisor VMs on the
+  9.1.x upgrade** (#92). New subsection under vSphere Supervisor, based on
+  Broadcom's 2026-10-09 critical advisory. If the vLCM/VUM database was
+  reset ([KB 316581](https://knowledge.broadcom.com/external/article/316581))
+  on vCenter 8.0 U3 or 9.0.x, the upgrade to 9.1.0 / 9.1.1 deletes the
+  Supervisor Control Plane VMs and Foundation Load Balancers. It covers
+  the pre-upgrade check (VDT `[FAIL] VUM SCHEMA CHECK`, or the checker in
+  [KB 455737](https://knowledge.broadcom.com/external/article/455737)),
+  the fix, and the revert-and-restore recovery
+  ([KB 457944](https://knowledge.broadcom.com/external/article/457944)).
+  The depot-token note now warns against the reset. From the advisory and
+  KBs only, not field-verified; the SQL steps are flagged Untested.
+
 ## v2.1.9 – 2026-10-14
 - **`docs/24`: links to the Ops & Logs Sizer** (#91). The companion repo's
   new [sizer](https://vcf-planning.hollebollevsan.nl/tools/ops-logs-sizing/)

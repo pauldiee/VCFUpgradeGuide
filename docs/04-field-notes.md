@@ -24,7 +24,10 @@ cleared.
   the vCenter 9 upgrade the **vCenter LCM token can silently stop matching**
   the one SDDC Manager and Fleet Manager use – depot sync keeps working
   everywhere except vCenter, and **ESXi images disappear from the vCenter
-  depot**. A vUM database reset does not fix it. Correct the token in
+  depot**. A vUM database reset does not fix it (and on 8.0 U3 / 9.0.x a
+  reset breaks Supervisor environments on the later 9.1 upgrade – see
+  [A past vLCM database reset deletes Supervisor VMs](#a-past-vlcm-database-reset-deletes-supervisor-vms-on-the-91x-upgrade)).
+  Correct the token in
   vCenter's Lifecycle Manager settings. The four token URLs, the click
   path, and a failure table for adding them behind a proxy:
   [vCenter proxy configuration → Lifecycle Manager download sources](16-vcenter-proxy-configuration.md#lifecycle-manager-download-sources-behind-a-proxy).
@@ -440,6 +443,59 @@ Expect every cluster to behave differently.
 - A `vmware-system-csi` pod start-up failure on the Supervisor was a
   code-level defect; the Broadcom workaround involved volume-snapshot
   deletion (production-snapshot-touching, so schedule it deliberately).
+
+### A past vLCM database reset deletes Supervisor VMs on the 9.1.x upgrade
+
+**Not field-observed here** – this comes from a Broadcom
+[critical advisory](https://blogs.vmware.com/cloud-foundation/2026/10/09/critical-advisory-pre-upgrade-verification-required-for-vsphere-supervisor-and-vks-environments-upgrading-to-vcenter-9-1-0-or-9-1-1/)
+(2026-10-09) and the KBs it cites. It is listed here because the
+consequence is data loss, not a failed precheck.
+
+| | |
+| --- | --- |
+| **Applies to** | vCenter 8.0 U3 or 9.0.x (9.0.0–9.0.2) upgrading to **vCenter 9.1.0 or 9.1.1**, with vSphere Supervisor / VKS and Foundation Load Balancers (FLBs) |
+| **Trigger** | The vLCM/VUM database was **reset at some point while on 8.0 U3 or 9.0.x** ([KB 316581](https://knowledge.broadcom.com/external/article/316581), `python /usr/lib/vmware-updatemgr/bin/updatemgr-utility.py reset-db`), typically to clear depot sync or patch repository corruption |
+| **Cause** | On those builds the reset drops the `vm_placement_policy` column and the `system_vms_cluster_solution_spec_vm_placement_policies`, `..._vm_networks` and `..._vm_datastores` relations. vCenter 9.1's LCCM subsystem needs them to reconcile system VMs |
+| **Impact** | After the upgrade the **Supervisor Control Plane VMs and FLBs are deleted from inventory** |
+| **Fixed in** | "The next release" of 9.1, per both KBs – no build named yet |
+
+**Before the vCenter upgrade** – check every vCenter with a Supervisor,
+whether or not anyone remembers a reset:
+
+1. Run VDT ([docs/17](17-vdt-and-lsdoctor-diagnostics.md)). A
+   `[FAIL] VUM SCHEMA CHECK` ("VUM DB Schema fix is required before
+   upgrading to 9.1") means the schema is affected. Or use the checker
+   from [KB 455737](https://knowledge.broadcom.com/external/article/455737)
+   directly: upload `VUM_DB_Inconsistency_Checker.sql` to the appliance
+   and run `psql -U postgres -d VCDB -f VUM_DB_Inconsistency_Checker.sql`.
+   `VUM DB SCHEMA VALID` means no action; `VUM DB SCHEMA FIX REQUIRED`
+   means fix it first.
+2. To fix, run the KB's `VUM_DB_Inconsistency_Fixer.sql` the same way
+   (expected output `SET BEGIN DO ALTER TABLE DO COMMIT`), then re-run the
+   checker until it reports `VUM DB SCHEMA VALID`.
+3. Take a vCenter backup **and a Supervisor backup** before upgrading –
+   the recovery path below needs both.
+
+> **Untested.** The checker and fixer commands are quoted from KB 455737
+> and have not been run against a lab or field environment here. Use the
+> scripts attached to the KB, not a copy.
+
+Other signs of the broken schema, before any upgrade: `column
+"vm_placement_policy" of relation
+"system_vms_cluster_solution_spec_vm_placement_policies" does not exist`
+in `/var/log/vmware/vmware-updatemgr/vum-server/vmware-vum-server.log` or
+`/var/log/vmware/vpostgres/postgresql.log`. KB 455737 also links it to
+Supervisor enablement hanging on FLB deployment ("Timed out waiting for
+LB service update").
+
+**Already upgraded and the Supervisor VMs are gone**
+([KB 457944](https://knowledge.broadcom.com/external/article/457944)):
+the VMs are deleted, so the only recovery is to revert the vCenter
+upgrade, restore the Supervisor from its backup, apply the KB 455737 fix,
+then upgrade to 9.1.0 / 9.1.1 again.
+
+**Don't reach for a vLCM reset on 8.0 U3 or 9.0.x as a casual fix**
+before a 9.1 upgrade. If one has to run, re-check the schema afterwards.
 
 ---
 
