@@ -474,7 +474,14 @@ whether or not anyone remembers a reset:
    (expected output `SET BEGIN DO ALTER TABLE DO COMMIT`), then re-run the
    checker until it reports `VUM DB SCHEMA VALID`.
 3. Take a vCenter backup **and a Supervisor backup** before upgrading –
-   the recovery path below needs both.
+   the recovery path below needs both. The Supervisor backup is not a
+   separate tool: in the VAMI (`:5480`) → **Backup** → edit the schedule
+   → tick **Supervisors Control Plane**, so it is included in the vCenter
+   file-based backup (supported from vSphere 8 U3; below that it is
+   silently left out). Confirm the latest run with the option on actually
+   succeeded, and change nothing on the Supervisor between that backup and
+   the upgrade. Full method, what it covers and when a restore is blocked:
+   [Supervisor control-plane backup and restore](https://vcf-planning.hollebollevsan.nl/docs/10-supervisor-enablement/#supervisor-control-plane-backup-and-restore).
 
 > **Untested.** The checker and fixer commands are quoted from KB 455737
 > and have not been run against a lab or field environment here. Use the
@@ -492,7 +499,11 @@ LB service update").
 ([KB 457944](https://knowledge.broadcom.com/external/article/457944)):
 the VMs are deleted, so the only recovery is to revert the vCenter
 upgrade, restore the Supervisor from its backup, apply the KB 455737 fix,
-then upgrade to 9.1.0 / 9.1.1 again.
+then upgrade to 9.1.0 / 9.1.1 again. Reverting vCenter does not bring
+the Supervisor back by itself: the Supervisor restore is a separate
+workflow (vSphere Client → **Supervisor Management** → **Supervisors** →
+**Restore**). It needs a backup with the same Supervisor Kubernetes
+version, which a backup taken just before the upgrade has.
 
 **Don't reach for a vLCM reset on 8.0 U3 or 9.0.x as a casual fix**
 before a 9.1 upgrade. If one has to run, re-check the schema afterwards.
