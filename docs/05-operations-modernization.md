@@ -490,6 +490,15 @@ that cluster is later attached to a fleet.
   it, or license assignment fails with *"The license server SSL
   certificates are not trusted by the vCenter instance"* – see
   [vCenter proxy configuration](16-vcenter-proxy-configuration.md#internal-vcf-components-must-bypass-the-proxy).
+- **That message is a catch-all.** VCF Operations pushes the License
+  Server's certificate into vCenter's trusted roots with the vCenter
+  account (`trusted_root_chains.create`, KB 443480), then vCenter talks to
+  the License Server itself. Missing certificate privileges, the proxy, or
+  a push that simply didn't land all produce the same message. If both
+  privileges and proxy are ruled out, adding the License Server's
+  certificate to vCenter's trusted roots by hand is a field-reported
+  workaround – the flow, KB 424533's checklist and the steps:
+  [License Server certificate trust (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/26-vcf-operations-vvf-vcenter/#license-server-certificate-trust--how-it-works-and-a-manual-workaround).
 - Log management appliance deployed, if log collection from this vCenter is
   wanted.
 

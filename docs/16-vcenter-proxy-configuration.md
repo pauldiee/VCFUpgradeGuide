@@ -243,7 +243,11 @@ Operations failed with:
 > *Failed: The license server SSL certificates are not trusted by the
 > vCenter instance.*
 
-The message points at certificates, but the cause was the proxy. vCenter's
+The message points at certificates, but the cause was the proxy (the
+message is a catch-all – it also appears when the certificate push from VCF
+Operations fails or simply didn't land; see
+[License Server certificate trust](https://vcf-planning.hollebollevsan.nl/docs/26-vcf-operations-vvf-vcenter/#license-server-certificate-trust--how-it-works-and-a-manual-workaround) for the flow and a manual
+trusted-root workaround). vCenter's
 traffic to the License Server went through the appliance's system proxy
 to the corporate proxy, which couldn't reach the internal License Server.
 Correct licensing privileges, and even `administrator@vsphere.local` as

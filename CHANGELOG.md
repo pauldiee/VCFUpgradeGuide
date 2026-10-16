@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.2.4 – 2026-10-16
+- **`docs/05` + `docs/16`: "license server SSL certificates are not
+  trusted" is a catch-all** (#96). VCF Operations pushes the License
+  Server's certificate into vCenter's trusted roots with the vCenter
+  account (KB 443480), and vCenter then talks to the License Server
+  itself. Missing privileges, the vCenter proxy or a push that didn't land
+  all show the same message. Both docs now point to the planning repo's
+  new [License Server certificate trust](https://vcf-planning.hollebollevsan.nl/docs/26-vcf-operations-vvf-vcenter/#license-server-certificate-trust--how-it-works-and-a-manual-workaround)
+  section. It has the flow, KB 424533's checklist and a field-reported
+  manual trusted-root import workaround.
+
 ## v2.2.3 – 2026-10-16
 - **`docs/01`: why 9.1.1, and which sources reach it** (#95). Prompted by
   Broadcom's [VCF blog of 2026-10-13](https://blogs.vmware.com/cloud-foundation/2026/10/13/customer-favorite-capabilities-accelerating-your-path-to-vcf-9-1-1/), read word for word.
