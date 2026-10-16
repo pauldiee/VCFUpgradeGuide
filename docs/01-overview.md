@@ -64,6 +64,15 @@ the first stop regardless of track. Feed it your current deployment
 (vSphere vs VCF), installed components and their **exact** versions, your
 goal, and a target build; it returns a phase-by-phase plan, the
 networking/resource requirements, and an add-on compatibility pre-check.
+Updated for **9.1.1**, it also marks **safe stopping points** (where the
+upgrade can pause between change windows) and exports the plan for change
+management tools such as Jira or ServiceNow ([VCF blog, 2026-10-13](https://blogs.vmware.com/cloud-foundation/2026/10/13/customer-favorite-capabilities-accelerating-your-path-to-vcf-9-1-1/)).
+
+**Aim for 9.1.1, not 9.0 – the support dates.** vSphere 8.0 and the VCF 5.x
+stack reach **End of General Support on 2027-10-11**. VCF 9.0's ends **earlier,
+on 2027-09-17**, so stepping to 9.0 buys no time; 9.1.1 extends general
+support to **August 2028** ([VCF blog, 2026-10-13](https://blogs.vmware.com/cloud-foundation/2026/10/13/customer-favorite-capabilities-accelerating-your-path-to-vcf-9-1-1/); support model:
+[VCF 9 support model and release cadence](https://blogs.vmware.com/cloud-foundation/2025/07/16/vmware-cloud-foundation-9-ushers-in-new-support-model-and-release-cadence/)).
 
 Supported **source** versions for a 9.1 upgrade (confirm on the release
 notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes/upgrade-sequence-to-91.html)):
@@ -76,22 +85,41 @@ notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-c
 
 > **The source patch level matters – per component, not just SDDC Manager.**
 > Broadcom qualifies the 9.1 upgrade **from a specific source version** for
-> each product, and the *next* patch after that qualified level often has **no
-> path to any 9.x build yet** – a patch **released after a target build**
-> upgrades *backwards* to it ("back in time"), which is unsupported. Observed
-> against 9.1.0.0x00: SDDC Manager 5.2.2
-> upgrades directly but 5.2.3.0 / 5.2.4.0 do not; VCF Operations 8.18.6
-> upgrades directly to a 9.1.0.0x00 build but **8.18.7 skips the 9.1.0 line
-> entirely – its only 9.x target is 9.1.1.0** (Upgrade Path tool, checked
-> 2026-09-04); Operations for Networks 6.14.1 reaches 9.1.0.0100 but not
-> 9.1.0.0200, and 6.14.3 has no 9.x path. **vCenter itself hits the identical
-> pattern**: 8.0 U3j and later has no path to any 9.1.0.x or 9.0.x build, and
-> the only 9.x target is 9.1.1.0 (KB 448135, Upgrade Path tool, checked
-> 2026-09-15) – see [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md)
-> for the full detail and the standalone-path procedure.
-> **Applying "the latest patch" as preparation can strip the qualified path.**
-> Stay on the version that already has a direct path; only patch a component
-> when the matrix shows the current version is *below* the floor.
+> each product, and a patch **released after a target build** often has no
+> path to it – it would upgrade *backwards* ("back in time"), which is
+> unsupported. **9.1.1 reopens most of these paths**: its BOM is newer than
+> the recent 8.x / 5.2.x / 9.0.2 security patches (KB 448135; Broadcom's
+> [VCF blog of 2026-10-13](https://blogs.vmware.com/cloud-foundation/2026/10/13/customer-favorite-capabilities-accelerating-your-path-to-vcf-9-1-1/) names vSphere 8.0U3j and 8.0U3k, VCF 9.0.2
+> EP2 and VCF 5.2.4). Upgrade Path tool, "Hide Patch Releases" unticked,
+> **checked 2026-10-16**:
+>
+> | Source | Reaches 9.1.0.x | Reaches 9.1.1.x |
+> | --- | --- | --- |
+> | vCenter / ESX 8.0 U3j, U3k | no | **yes – only target** |
+> | vCenter / ESX 8.0 U3i and earlier U3 | yes | yes |
+> | vCenter 9.0.2.0100 | 9.1.0.0300 only | yes |
+> | ESX 9.0.2.0100 | 9.1.0.0200 only | yes |
+> | SDDC Manager 5.2.4.0 | no | **yes – only target** |
+> | SDDC Manager 5.2.3.0, 5.2.2 | yes | yes |
+> | SDDC Manager 9.0.2.0100 | no | yes |
+> | NSX 4.2.4, 4.2.4.1 | no | **yes – only target** |
+> | VCF Operations 8.18.7 | no | **yes – only target** |
+> | VCF Operations 8.18.6 | yes | yes |
+> | VCF Operations 8.18.5 | yes | **no** – 9.1.0.x (or 9.0.2) first |
+> | VCF Operations 9.0.2.0200 | 9.1.0.0300 / 0400 only | yes |
+> | Operations for Networks 6.14.3 | no | **yes – only target** |
+> | Operations for Networks 6.14.1, 6.14.2 | yes | yes |
+>
+> Two things changed since the earlier checks (2026-09-04 / 09-15): SDDC
+> Manager 5.2.3.0 and Operations for Networks 6.14.1 now reach every 9.1.0.x
+> build, and Operations for Networks 6.14.3 now has a 9.1.1 path. The blog
+> calls one source "VCF 9.0.2 EP2"; the matrix lists only 9.0.2.0100 (late
+> July 2026) for vCenter, ESX and SDDC Manager, so match on the **build
+> number**, not the EP name. **vCenter** detail and the standalone procedure:
+> [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md).
+> **Applying "the latest patch" as preparation can strip the qualified path**,
+> and the next out-of-band security patch can close a path that is open today
+> – re-check the matrix right before the change window.
 
 Check each component in the **[Broadcom Product Interoperability
 Matrix](https://interopmatrix.broadcom.com/)** before committing to a date:

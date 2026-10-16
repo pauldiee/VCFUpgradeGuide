@@ -656,7 +656,13 @@ before a 9.1 upgrade. If one has to run, re-check the schema afterwards.
   reconcile existing worker sizing, so a management domain that has **not**
   had Log Management or Real-time Metrics added yet stays on its larger
   pre-patch worker VMs indefinitely. Per Broadcom
-  [KB 455842](https://knowledge.broadcom.com/external/article/455842):
+  [KB 455842](https://knowledge.broadcom.com/external/article/455842).
+  What the shrink is worth, per Broadcom's [VCF blog of 2026-10-13](https://blogs.vmware.com/cloud-foundation/2026/10/13/customer-favorite-capabilities-accelerating-your-path-to-vcf-9-1-1/)
+  (management services only, no Day-N services): Simple 28 vCPU / 58 GiB →
+  16 / 34 (3 workers → 1); Medium HA 60 / 126 → 36 / 78 (3 workers of
+  24 / 48 → 2 of 12 / 24); Large HA 96 / 186 → 56 / 106 (worker size 24 / 48
+  → 16 / 32); roughly 40 % less each. A new **Small HA** profile (3 control +
+  2 workers, 32 / 62) exists only on 9.1.1+. The procedure:
   1. SSH to the control-plane node as `vmware-system-user`, elevate to `root`.
   2. Copy Broadcom's `rightsize-day0-workers.sh` remediation script to the
      control-plane node.

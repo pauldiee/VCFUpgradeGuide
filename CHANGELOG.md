@@ -1,5 +1,27 @@
 # Changelog
 
+## v2.2.3 – 2026-10-16
+- **`docs/01`: why 9.1.1, and which sources reach it** (#95). Prompted by
+  Broadcom's [VCF blog of 2026-10-13](https://blogs.vmware.com/cloud-foundation/2026/10/13/customer-favorite-capabilities-accelerating-your-path-to-vcf-9-1-1/), read word for word.
+  - **Support dates:** vSphere 8.0 and VCF 5.x reach End of General Support
+    on 2027-10-11. VCF 9.0 ends earlier, on 2027-09-17, and 9.1.1 runs to
+    August 2028.
+  - **Upgrade Planner:** now covers 9.1.1, shows safe stopping points and
+    exports to Jira and ServiceNow.
+  - **Upgrade paths:** the back-in-time note now has a table re-checked in
+    the Upgrade Path tool on 2026-10-16 (vCenter, ESX, SDDC Manager, NSX,
+    VCF Operations, Operations for Networks).
+  - **Corrections to the 2026-09-04 / 09-15 checks:** SDDC Manager 5.2.3.0
+    and Operations for Networks 6.14.1 now reach every 9.1.0.x build, and
+    6.14.3 now has a 9.1.1 path.
+  - **New:** VCF Operations 8.18.5 has no 9.1.1 path. Go through 9.1.0.x
+    (or 9.0.2) first.
+  - The blog's "VCF 9.0.2 EP2" is matched to build 9.0.2.0100. That mapping
+    isn't confirmed, so the doc says to match on build numbers.
+- **`docs/04`: what the KB 455842 shrink is worth.** The blog's 9.1.0 → 9.1.1
+  footprint figures (about 40 % less per profile) are added, plus the new
+  Small HA profile that exists only from 9.1.1.
+
 ## v2.2.2 – 2026-10-15
 - **`docs/04`: the Assignable: No core-count snippet is lab-verified**
   (#94). Ran against the holodeck lab (9.0.2, connected hosts). 12-core
