@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.2.5 – 2026-10-16
+- **`docs/20`: a License Server patch replaces its self-signed
+  certificate** (#96). Field-reported: after patching VCF Operations, the
+  Cloud Proxies and the License Server from 9.1.1 GA to the 9.1.1.0100
+  Express Patch, the License Server had a new self-signed certificate.
+  vCenters with a manually imported trusted root needed it re-imported. A
+  new *Known gotchas for 9.1.1 Express Patches* section covers this and
+  links to the planning repo's workaround.
+
 ## v2.2.4 – 2026-10-16
 - **`docs/05` + `docs/16`: "license server SSL certificates are not
   trusted" is a catch-all** (#96). VCF Operations pushes the License

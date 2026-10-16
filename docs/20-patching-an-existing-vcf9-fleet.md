@@ -583,6 +583,19 @@ run through the same precheck → remediate → upgrade cycle per domain.
   Availability)**, patch SDDC Lifecycle to 9.1.1 first – doing it the
   other way round is unsupported per the order above.
 
+## Known gotchas for 9.1.1 Express Patches
+
+- **Patching the License Server replaces its self-signed certificate.**
+  Field-reported: after patching VCF Operations, the Cloud Proxies and the
+  License Server from 9.1.1 GA to the **9.1.1.0100** Express Patch, the
+  License Server came back with a **new self-signed certificate**. vCenters
+  that trust it through a **manually imported** trusted root then can't
+  reach it for licensing, so re-import the new certificate on each vCenter
+  right after the patch and re-check license assignment. Normally VCF
+  Operations pushes the certificate into vCenter's trusted roots itself; the
+  manual import, and why you might have one, is in
+  [License Server certificate trust (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/26-vcf-operations-vvf-vcenter/#workaround-add-the-license-servers-certificate-to-vcenters-trusted-roots-by-hand).
+
 ---
 
 ## Rough timing, per component
