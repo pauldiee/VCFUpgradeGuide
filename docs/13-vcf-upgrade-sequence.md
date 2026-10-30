@@ -36,6 +36,7 @@ which applies.
   · [vSAN File Service](#vsan-file-service-in-detail)
   · companion docs: [Disaster Recovery](02-disaster-recovery.md)
   · [Avi + License Hub upgrade](09-avi-license-hub-upgrade.md)
+  · [Aria Automation to VCF Automation upgrade](26-aria-automation-to-vcf-automation-upgrade.md)
   · [HCX upgrade](23-hcx-upgrade.md)
   · [NSX Edge & Finalize](10-nsx-edge-finalize.md)
   · [Log Management migration](11-log-management-migration.md)
@@ -298,6 +299,11 @@ present) upgrades alongside Automation to **Orchestrator 9.1** – on a
 5.2.x source this is a **manual** step; on a 9.0.x source it is **driven by
 VCF Operations**. Confirm which applies for your source build.
 
+**Full procedure:** prerequisites, the import and blue-green upgrade steps,
+what happens to tenants and organizations, the external Orchestrator and
+the open questions are in [Aria Automation to VCF Automation
+upgrade](26-aria-automation-to-vcf-automation-upgrade.md).
+
 **Before moving on:** Automation portal reachable at its original FQDN;
 catalog/deployments intact; Orchestrator (if present) on the target build.
 
@@ -470,6 +476,10 @@ Several of the conditional workstreams have their own docs:
 - **[Avi + License Hub upgrade](09-avi-license-hub-upgrade.md)** – Avi
   Controller/Service Engine upgrade and the separate License Hub appliance
   (runs before SDDC Manager).
+- **[Aria Automation to VCF Automation upgrade](26-aria-automation-to-vcf-automation-upgrade.md)** –
+  prerequisites, import and blue-green upgrade, tenants and organizations
+  (mapped to VM Apps organizations), and the separate upgrade of an
+  external Orchestrator (Phase 4).
 - **[HCX upgrade](23-hcx-upgrade.md)** – HCX Manager at every paired site,
   then the Service Mesh appliances; version and pairing rules, rollback,
   and VCF Operations-driven HCX lifecycle once on 9.1 (runs after VCF

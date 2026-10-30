@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.3.0 – 2026-10-30
+- **New `docs/26`: Aria Automation 8.18.x to VCF Automation 9.1.1, with an
+  external Orchestrator** (#97). Expands Phase 4 of `docs/13`. Covers the
+  import into VCF Operations and the blue-green upgrade, the prerequisites
+  and blockers (5 IPs or a /29, runtime FQDN, FIPS and truststore, binaries,
+  Migration Service Engine order), tenants mapped to VM Apps organizations,
+  and the separate Orchestrator upgrade after Automation (ISO procedure,
+  version match, known issues). **VCF only**: the VVF order has no
+  Automation step. Four questions Broadcom does not answer are listed as
+  open items. Sourced from TechDocs, the 9.1.1.0 release notes and KBs
+  ([440630](https://knowledge.broadcom.com/external/article/440630),
+  [443720](https://knowledge.broadcom.com/external/article/443720),
+  [455559](https://knowledge.broadcom.com/external/article/455559)),
+  read 2026-10-30. Not run on a build in this repo.
+
 ## v2.2.5 – 2026-10-16
 - **`docs/20`: a License Server patch replaces its self-signed
   certificate** (#96). Field-reported: after patching VCF Operations, the
