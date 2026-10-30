@@ -195,6 +195,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf'],
   },
   {
+    slug: '26-aria-automation-to-vcf-automation-upgrade',
+    step: 'Phase guide · VCF only',
+    band: 'Phase guides',
+    label: 'Automation upgrade',
+    icon: 'arrows-rotate',
+    blurb: 'Aria Automation 8.18.x to VCF Automation 9.1.1 (Phase 4): prerequisites, import and blue-green upgrade, tenants mapped to VM Apps organizations, and the separate upgrade of an external Orchestrator. Not in the VVF upgrade order, so VCF only.',
+    tracks: ['vcf'],
+  },
+  {
     slug: '10-nsx-edge-finalize',
     step: 'Phase guide',
     band: 'Phase guides',
