@@ -85,6 +85,7 @@ alongside) an upgrade:
 | `docs/22-converge-and-import-existing-infrastructure.md` | Converge (VCF Installer, brownfield vSphere into a new VCF/VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, and the shared NSX auto-selection back-in-time trap | VCF or VVF (Import is **VCF only**) |
 | `docs/24-vcf-operations-sizing-and-scaling.md` | VCF Operations 9.1 node sizes and object / metric limits (Configuration Maximums), checking whether the current size still fits, scale up and scale out procedures | VCF or VVF |
 | `docs/25-licensing-what-is-sent-to-broadcom.md` | What VCF 9 licensing sends to Broadcom: registration and usage file contents field by field, how to inspect them, connected vs. disconnected, the 180-day rule, and what stops when licenses lapse | VCF or VVF |
+| `docs/27-avn-after-upgrade.md` | Application Virtual Networks after a VCF 5.x to 9.1 upgrade: keep or migrate, what Broadcom says (KB 443842), the matching 9.1 network model, where each component lands | **VCF only**, 5.x source with AVN |
 
 **Pre-upgrade prep** – done before the core sequence, or before a specific
 phase:

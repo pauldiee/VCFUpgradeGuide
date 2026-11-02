@@ -283,6 +283,12 @@ Extra IPs (up to 18 more, 30 recommended total) can be added later in the
 VCF Operations Lifecycle UI as CIDR or individual IPs – they need not be
 contiguous.
 
+**Coming from 5.x with AVN?** The Aria components stay on their AVN
+segments; that remains supported
+([KB 443842](https://knowledge.broadcom.com/external/article/443842/vcf-91-brownfield-upgrade-support-for-vc.html)).
+Choose the Management Services network before this phase. See
+[AVN after an upgrade from 5.x](27-avn-after-upgrade.md).
+
 **Before moving on:** Management Services cluster healthy; License Server
 reachable; licenses assigned; vCenter(s) still show valid licensing.
 

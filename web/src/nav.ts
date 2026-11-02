@@ -114,6 +114,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '27-avn-after-upgrade',
+    step: 'Planning · VCF only',
+    band: 'Planning & licensing',
+    label: 'AVN after an upgrade from 5.x',
+    icon: 'network-wired',
+    blurb: 'Keep or migrate the Application Virtual Networks after a VCF 5.x to 9.1 upgrade: what Broadcom says, the matching 9.1 network model, and where each component lands. VCF only.',
+    tracks: ['vcf'],
+  },
+  {
     slug: '02-disaster-recovery',
     step: 'Pre-upgrade prep',
     band: 'Pre-upgrade prep',
