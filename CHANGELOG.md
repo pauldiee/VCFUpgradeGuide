@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.4.0 – 2026-11-02
+- **New `docs/27`: Application Virtual Networks after an upgrade from VCF
+  5.x** (#100). Keep or migrate: KB 443842 says no migration is required;
+  the 9.1 design library's *Dedicated VLAN and NSX (Stretched) Overlay
+  Segment* models are the AVN layout carried forward (the overlay page
+  still has `logical-application-virtual-network-design` in its URL).
+  Component placement table (VCF Automation stays on the existing network,
+  Log Management on the Management Services network per KB 441062),
+  Management Services network choice before Phase 3, recommendation, open
+  items. **VCF only.** Pointer added to `docs/13` Phase 3. Read
+  2026-11-02; not run on a build in this repo.
+
 ## v2.3.2 – 2026-11-02
 - **`docs/26`: 5-IP rule confirmed for 9.1.1** (#99). TechDocs applies it to
   "9.1.0.400 and later", so the caveat is gone and no /29 is needed. The
