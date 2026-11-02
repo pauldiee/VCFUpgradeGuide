@@ -27,19 +27,21 @@ overlay** network, the VCF Operations upgrade ([Phase 1](13-vcf-upgrade-sequence
 - **Impact.** Service-disruptive – plan its own maintenance window, separate
   from the main upgrade window, and do it **before** Phase 1 starts.
 
-> **Status: partial.** The 9.1.0.0 release notes state "Support for
-> script-based migration of data from VMware Identity Manager to identity
-> broker", but Broadcom has not published a prominent standalone procedure for
-> it. What *is* documented is the **Access Control group import** (below).
-> Treat the "script" as a thing to confirm against the current 9.1 identity
-> guide or a KB before relying on it.
+> **Status: documented (read 2026-11-02).** The script-based migration from
+> the 9.1.0.0 release notes is documented in
+> [Migrating VMware Identity Manager to Identity Broker](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html). See
+> [Scripted migration](#scripted-migration) below. The **Access Control group
+> import** remains an alternative for groups only.
 
 ---
 
 ## The short version
 
 - **No in-place upgrade for VIDM.** Identity Broker 9.1 is deployed fresh as
-  part of **VCF Management Services** ([Full VCF upgrade sequence,
+  part of **VCF Management Services**, "only in the first VCF instance" of the
+  fleet, as the HA **instance** type. It can be added to other instances
+  later. An embedded Identity Broker only comes into play with a 9.0.x
+  source ([Full VCF upgrade sequence,
   Phase 3](13-vcf-upgrade-sequence.md#phase-3--deploy-vcf-management-services--license-server)).
   VIDM is not consumed by VCF 9.
 - **Parallel run.** Identity Broker is an *additional* authentication source
@@ -48,6 +50,37 @@ overlay** network, the VCF Operations upgrade ([Phase 1](13-vcf-upgrade-sequence
 - **Users and groups can be brought across.** The upstream identity source
   (AD / LDAP / SAML IdP) itself is unchanged – only the broker layer moves.
 - **Everything else is rebuilt by hand.**
+
+---
+
+## Scripted migration
+
+Broadcom's scripts export users and groups from VIDM, import them into
+Identity Broker, and switch the identity source of VCF Operations, the VCF
+Automation provider and the NSX **Local** Managers
+([Migrating VMware Identity Manager to Identity Broker](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html)).
+
+- **Source:** VIDM 3.3.7 GA, or 3.3.7 with the latest patch.
+- **Target:** Identity Broker 9.1, **instance** deployment type, with the
+  AD / LDAP directory already configured on it.
+- **One VIDM tenant per export.** Several tenants means several runs.
+- **Not migrated:** identity provider configurations ("must be configured
+  manually in identity broker"), OAuth clients, sync settings (compared and
+  shown only).
+- **Not supported in Identity Broker:** VIDM local accounts, MFA with AD.
+- **NSX Global Manager:** "Migration is not supported for Global Manager
+  NSX." Configure it by hand.
+- **VCF Automation:** VM Apps organizations keep their VIDM OIDC connection
+  after the upgrade. Provider Management and the Organization Portal move
+  with a separate procedure
+  ([Migrate VCF Automation Authentication from VMware Identity Manager to VCF Identity Broker](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-3-import-and-upgrade-aria-automation-8-to-vcf-automation-9/migrate-vcf-automation-single-sign-on-configuration-from-vmware-identity-manager-to-vcf-identity-broker.html);
+  [Configure Authentication for the VCF Automation Organization Portal](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-3-import-and-upgrade-aria-automation-8-to-vcf-automation-9/migrate-vcf-automation-single-sign-on-configuration-from-vmware-identity-manager-to-vcf-identity-broker/configure-authentication-for-the-vcf-automation-organization-portal.html)).
+  See [docs/26](26-aria-automation-to-vcf-automation-upgrade.md).
+
+Order that follows from the prerequisites: directory on Identity Broker
+first, then the script per tenant, then the VCF Automation procedure, NSX
+Global Managers by hand, OAuth clients regenerated, VIDM retired last.
+Not run on a build in this repo.
 
 ---
 
@@ -70,8 +103,9 @@ overlay** network, the VCF Operations upgrade ([Phase 1](13-vcf-upgrade-sequence
 - The account doing the work has **'All Objects' scope** in VCF Operations
   (Administration → Control Panel → Access Control → User Accounts / User
   Groups).
-- If the upgrade produced an **embedded** Identity Broker and an HA cluster is
-  wanted, that is a *separate* migration – see
+- Only for a **9.0.x source**: if the fleet has an **embedded** Identity
+  Broker and an HA cluster is wanted, that is a *separate* migration. An
+  upgrade from 5.2 deploys the instance type directly – see
   [Do not confuse](#do-not-confuse-embedded--instance).
 
 ---
@@ -151,9 +185,8 @@ Seen on real upgrades – full detail in
 
 ## Open items to confirm
 
-- The **script-based migration** from the 9.1.0.0 release notes: its name,
-  where it runs, whether it does more than the Access Control group import,
-  and whether a **clustered** VIDM 3.3.x source is supported.
+- Whether a **clustered** VIDM 3.3.7 source needs anything extra for the
+  migration script. The page lists no clustering limitation.
 - Whether the directory can be **synced** (SCIM / JIT provisioning / LDAP
   sync) rather than imported once.
 
@@ -162,6 +195,8 @@ Seen on real upgrades – full detail in
 ## Sources
 
 - VCF 9.1.0.0 release notes: "What's new" (VCF Operations / identity) – The "script-based migration of data from VMware Identity Manager to identity broker" statement.
+- [Migrating VMware Identity Manager to Identity Broker](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/migrating-vmware-identity-manager-to-vcf-identity-broker.html) – The migration scripts: scope, source/target versions, limitations.
+- [Migrate VCF Automation Authentication from VMware Identity Manager to VCF Identity Broker](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/phase-3-import-and-upgrade-aria-automation-8-to-vcf-automation-9/migrate-vcf-automation-single-sign-on-configuration-from-vmware-identity-manager-to-vcf-identity-broker.html) – Provider Management and Organization Portal.
 - [Deploy VCF Management Services and License Server as Part of VCF Upgrade to 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/deploy-vcf-management-services.html) – No VIDM upgrade path; Identity Broker deployed with Management Services; embedded vs. appliance handling.
 - [Import User Groups From Source](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/infrastructure-operations/-configuring-administration-settings/managing-user-access-control/access-control-overview/access-control-user-groups-tab/import-user-groups-from-source.html) – The VCF Operations Access Control group-import procedure (source: VMware Identity Manager).
 - [Upgrade to Identity Broker 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation/upgrade-vcf-identity-broker.html): Upgrading an existing **9.0.x** Identity Broker to 9.1 – a different path.
