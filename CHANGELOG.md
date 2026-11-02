@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.3.1 – 2026-11-02
+- **Open items answered in `docs/03`, `docs/26` and `docs/02`** (#98).
+  `docs/03`: the VIDM to Identity Broker migration script is documented
+  (new *Scripted migration* section: VIDM 3.3.7 source, instance-type
+  target, one tenant per export, no NSX Global Manager, IdP config and
+  OAuth clients by hand). An upgrade from 5.2 deploys Identity Broker only
+  in the first VCF instance, as the instance type; embedded applies to
+  9.0.x sources only. `docs/26`: KB 441811 (certificate chain leads to a
+  silent greenfield deploy), KB 443720 still not fixed, per-tenant
+  comparison as acceptance test, `vracli vro authentication` check after
+  the upgrade (untested). `docs/02`: new section on VCF Fleet Disaster
+  Recovery of the fleet components onto a different VLAN (DNS plus
+  KB 443506, same size profile). Read from TechDocs 2026-11-02; not run on
+  a build in this repo.
+
 ## v2.3.0 – 2026-10-30
 - **New `docs/26`: Aria Automation 8.18.x to VCF Automation 9.1.1, with an
   external Orchestrator** (#97). Expands Phase 4 of `docs/13`. Covers the

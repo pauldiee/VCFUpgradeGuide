@@ -132,6 +132,33 @@ Post-upgrade validation](13-vcf-upgrade-sequence.md#post-upgrade-validation)).
 
 ---
 
+## Fleet components after a site loss (VCF only)
+
+Separate from SRM / Protection and Recovery of workloads: Broadcom documents
+recovering the fleet components to another VCF instance in the same fleet
+([VCF Fleet Disaster Recovery](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/vcf-fleet-disaster-recovery.html)). This matters when the fleet
+components moved from a cross-region AVN segment to a management VLAN
+during the upgrade.
+
+- **VCF Operations and VCF Operations for Networks** fail over through
+  Protection and Recovery replication.
+- **Identity Broker, fleet lifecycle and depot, Log Management and VCF
+  Automation** are restored from their SFTP backup onto the recovery site's
+  VCF Management Services instance.
+- **A different VLAN at the recovery site is supported:** FQDNs stay, DNS is
+  pointed to free IPs on the recovery VLAN before the restore, and the VIPs
+  are updated afterwards with Broadcom's script
+  ([Modify DNS Entries for Fleet Component VIPs Before Recovery](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/vcf-fleet-disaster-recovery/fleet-disaster-recovery-task-library/fleet-component-recovery-tasks/modify-dns-entries-for-fleet-component-vips-before-recovery.html);
+  [KB 443506](https://knowledge.broadcom.com/external/article/443506)).
+- **The recovery site's Management Services instance must have the same
+  size profile**, or be scaled up to it before the restore
+  ([Scale the Recovery Site VCF Management Services Instance](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/vcf-fleet-disaster-recovery/fleet-disaster-recovery-task-library/fleet-component-recovery-tasks/scale-the-recovery-site-vcf-management-services-instance-for-vcf-fleet-disaster-recovery.html)).
+  Reserve that capacity in the recovery management cluster.
+
+Not run on a build in this repo.
+
+---
+
 ## Open items to confirm
 
 - The **exact supported vCenter / ESX set** for the target Protection and

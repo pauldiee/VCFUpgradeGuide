@@ -124,6 +124,10 @@ management services.
 - The **truststore is not migrated**, so some endpoints fail TLS after the
   upgrade. Read [KB 425489](https://knowledge.broadcom.com/external/article/425489)
   first; follow-up in [KB 447667](https://knowledge.broadcom.com/external/article/447667).
+- **Leaf certificate only.** If the web certificate carries extra
+  certificates in its chain, the import can silently fail and deploy an
+  empty, greenfield VCF Automation instance while the UI shows *completed*
+  ([KB 441811](https://knowledge.broadcom.com/external/article/441811/upgrade-to-vcf-automation-9x-from-aria-a.html)).
 
 ### Accounts
 
@@ -175,7 +179,11 @@ upgrade again
 
 What Broadcom does **not** state: whether projects, user assignments and
 resources (cloud accounts, zones, profiles, image mappings) are all carried
-over per tenant. See [Open items](#open-items-to-confirm).
+over per tenant, and there is no per-object list. Treat a per-tenant
+comparison as the acceptance test: record projects and members, cloud
+accounts, zones, profiles, image and flavor mappings, templates, catalog
+items and subscriptions before the upgrade, and compare before the old
+nodes are deleted. See [Open items](#open-items-to-confirm).
 
 ---
 
@@ -243,8 +251,11 @@ vracli vro authentication set -p tm -u <org-admin> -hn https://<vcfa-fqdn> --ten
 /opt/scripts/deploy.sh
 ```
 
-Whether this has to be repeated after an upgrade is **not documented**. See
-[Open items](#open-items-to-confirm).
+Whether this has to be repeated after an upgrade is **not documented**;
+Broadcom only says integrations are preserved as-is. After the upgrade,
+check with `vracli vro authentication`, and run the set command above per
+VM Apps organization only if it does not point to VCF Automation for that
+organization. **Untested.** See [Open items](#open-items-to-confirm).
 
 ### Known issues
 
@@ -256,7 +267,7 @@ Whether this has to be repeated after an upgrade is **not documented**. See
 | After upgrading a standalone Orchestrator no authentication provider is configured (fixed in 9.0.1) | [KB 407495](https://knowledge.broadcom.com/external/article/407495/after-upgrading-standalone.html) |
 | Import of an Aria Automation 8.18.x with a **standalone** Orchestrator into VCF Operations can end in `LCMLEGACYMIGRATION15114` | [KB 404646](https://knowledge.broadcom.com/external/article/404646) |
 | Custom Day-2 actions intermittently disappear in VM Apps organizations upgraded from 8.18.1 | [KB 454245](https://knowledge.broadcom.com/external/article/454245) |
-| Classic-tenant Orchestrator endpoint records may be remapped wrongly, so the embedded integration is not shown as Embedded. **No fix version named.** The published SQL workaround also rewrites **external** endpoints, so it is not safe when an external Orchestrator is integrated | [KB 443720](https://knowledge.broadcom.com/external/article/443720) |
+| Classic-tenant Orchestrator endpoint records may be remapped wrongly, so the embedded integration is not shown as Embedded. **Not fixed** ("working on fix for upcoming release", checked 2026-11-02). The published SQL workaround also rewrites **external** endpoints, so it is not safe when an external Orchestrator is integrated | [KB 443720](https://knowledge.broadcom.com/external/article/443720) |
 
 ---
 
@@ -288,9 +299,8 @@ these to Broadcom Support, or test on a copy first:
    tenant? Is there a list of what is not migrated?
 2. After the upgrade, must the **authentication of an external
    Orchestrator be set again per tenant**, or is it carried over?
-3. Is **KB 443720** fixed in 9.1.1 or a patch? What is the safe approach
-   for a tenant with an external endpoint? (No fix version is named, and it
-   is not in the 9.1.1.0 release notes.)
+3. ~~Is **KB 443720** fixed?~~ Answered 2026-11-02: not fixed yet; do not
+   apply the workaround in a tenant with an external Orchestrator.
 4. Are there **known incompatibilities** for workflows, packages,
    configuration elements and custom plug-ins from Orchestrator 8.18 to
    9.1.1? Broadcom only states that content is preserved and that versions
@@ -305,4 +315,5 @@ these to Broadcom Support, or test on a copy first:
 - [Integrate VCF Operations orchestrator with VCF Automation for VM Apps](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/deploying-a-new-vmware-cloud-foundation-or-vmware-vsphere-foundation-private-cloud-/manual-deployment-of-components-to-complete-your-vcf-platform/download-and-deploy-the-vco-va/integrate-vcf-operations-orchestrator-with-vcf-automation-for-vm-apps.html)
 - [VCF Automation 9.1.1.0 Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcfautomation-9-1-1-0-release-notes.html)
 - [Upgrading to VMware Cloud Foundation 9.1.x](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-cloud-foundation.html) and the [vSphere Foundation 9.1 upgrade order](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1.html)
+- [KB 441811](https://knowledge.broadcom.com/external/article/441811/upgrade-to-vcf-automation-9x-from-aria-a.html) (certificate chain, greenfield deploy)
 - [KB 440630](https://knowledge.broadcom.com/external/article/440630) (upgrade sequence for 9.1), [KB 433806](https://knowledge.broadcom.com/external/article/433806) (import and upgrade), [KB 389563](https://knowledge.broadcom.com/external/article?articleNumber=389563) (prechecks), [KB 443720](https://knowledge.broadcom.com/external/article/443720), [KB 455559](https://knowledge.broadcom.com/external/article/455559), [KB 402057](https://knowledge.broadcom.com/external/article/402057/how-to-retrigger-a-failed-vcf-automation.html)
