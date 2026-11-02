@@ -102,9 +102,9 @@ unless another source is given.
 
 | Item | Requirement |
 | --- | --- |
-| IP addresses (9.1.0.400 and later) | **5 unique IPs** on the same network as the current Automation nodes, contiguous or not. Three go to the 9.1 nodes, two are buffer. Assumed to apply to 9.1.1, which the page does not say in so many words |
+| IP addresses (9.1.0.400 and later) | **5 unique IPs** on the same network as the current Automation nodes, contiguous or not. Three go to the 9.1 nodes, two are buffer. Covers 9.1.1 ("9.1.0.400 and later"); no /29 needed |
 | IP addresses (9.1.0.0 to 9.1.0.300) | A dedicated **CIDR with 8 addresses** (a /29) on the same network |
-| New FQDN | One for the **VCF services runtime**, no capital letters, resolving to an IP **outside** the dedicated pool. Internal only |
+| New FQDN | One for the **VCF services runtime**, no capital letters, resolving to an IP **outside** the dedicated pool, so a sixth address. Same network not stated, but the obvious choice. Internal only |
 | Automation UI FQDN | Reused; moves to the 9.1 instance automatically |
 | External load balancer | No configuration change |
 | Internal CIDR | Default `198.18.0.0/15`; use `240.0.0.0/15` or `250.0.0.0/15` if it overlaps |

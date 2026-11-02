@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.3.2 – 2026-11-02
+- **`docs/26`: 5-IP rule confirmed for 9.1.1** (#99). TechDocs applies it to
+  "9.1.0.400 and later", so the caveat is gone and no /29 is needed. The
+  services runtime FQDN resolves to a sixth IP outside the 5.
+
 ## v2.3.1 – 2026-11-02
 - **Open items answered in `docs/03`, `docs/26` and `docs/02`** (#98).
   `docs/03`: the VIDM to Identity Broker migration script is documented
