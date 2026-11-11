@@ -239,6 +239,51 @@ v1.427 adds **vCenter Server** as a third target next to the two VCF
 versions, with no version stated for it (above). It accepted a vCenter
 9.0.2 in the lab.
 
+### Windows: the WebView2 Runtime is required
+
+**Field-verified (2026-11-11):** on an admin host without the Microsoft
+Edge WebView2 Runtime, the Windows binary showed an error at start. Not
+every admin or jump host has the runtime, so check before you plan a
+session around it. Microsoft's detection method is the `pv` value, under
+HKLM for a per-machine install (below) or HKCU for a per-user one:
+
+```powershell
+Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}' -ErrorAction SilentlyContinue | Select-Object pv
+```
+
+**Air-gapped admin host: use the offline installer.** Microsoft: *"For
+offline clients: WebView2 Runtime Standalone Installer is a full installer
+that installs the Evergreen WebView2 Runtime in offline environments."*
+([WebView2 distribution](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution),
+read 2026-11-11.)
+
+1. On a connected machine, download the **Evergreen Standalone Installer
+   (x64)** from [Download the WebView2
+   Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/).
+   Not the bootstrapper (`MicrosoftEdgeWebview2Setup.exe`): that one
+   downloads the runtime at install time.
+2. Move it to the admin host through the environment's normal transfer
+   route and check its hash.
+3. Install from an **elevated** prompt, so it's per-machine and works for
+   every admin on a shared jump host (without elevation it installs
+   per-user):
+
+   ```
+   MicrosoftEdgeWebView2RuntimeInstallerX64.exe /silent /install
+   ```
+
+4. Re-run the registry check above, then start the Fling.
+
+Two things to plan for:
+
+- **No automatic updates offline.** The Evergreen runtime normally updates
+  itself with Microsoft Edge; on an air-gapped host it stays at the
+  installed version. Add it to the host's patch process (Microsoft names
+  WSUS as a servicing route).
+- **It's a software change on the admin host,** so it usually goes through
+  the environment's change process. Arrange it before the upgrade window,
+  not during it.
+
 ---
 
 ## Field-observed: Upgrade Readiness run against a vCenter Server (lab environment)
@@ -1156,3 +1201,4 @@ only Support Bundle there and moves Data Capture into the header's
 - [Public URL list for VCF Products (Broadcom KB 327186)](https://knowledge.broadcom.com/external/article/327186) – the URLs the Worker Node Egress check is based on
 - [Error: "Failed to connect to the authorization server" when using SSL inspection proxy in VCF Operations (Broadcom KB 442978)](https://knowledge.broadcom.com/external/article/442978) – the manual trust store fix behind Import Enterprise CA Certificate
 - [VCF Management Services cluster or the VCF Automation cluster does not automatically recover after powering on VMs following a graceful shutdown (Broadcom KB 440862)](https://knowledge.broadcom.com/external/article/440862) – the manual procedure behind Post-Shutdown Recovery
+- [Distribute your app and the WebView2 Runtime (Microsoft Learn)](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution) – offline Evergreen Standalone Installer, silent install, per-machine vs per-user, and the `pv` detection key behind the Windows WebView2 subsection
