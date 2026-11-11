@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.4.1 – 2026-11-11
+- **`docs/21`: Windows needs the WebView2 Runtime** (#101). Field-verified:
+  the Windows binary errors at start on an admin host without it. New
+  subsection with the registry check and, for air-gapped admin hosts, the
+  Evergreen Standalone Installer (elevated, `/silent /install`), plus the
+  no-updates-offline and change-process caveats. Microsoft Learn *WebView2
+  distribution*, read 2026-11-11.
+
 ## v2.4.0 – 2026-11-02
 - **New `docs/27`: Application Virtual Networks after an upgrade from VCF
   5.x** (#100). Keep or migrate: KB 443842 says no migration is required;
