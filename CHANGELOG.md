@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.5.1 – 2026-11-12
+- **`docs/28`: new section *Route C: the agents*** (#104). Sort the Log
+  Insight agents by platform first: the 9.1 agent supports only RHEL 9/10,
+  SLES 15 SP7/16, Ubuntu 22.04/24.04/26.04, Debian 12/13 and Photon 4.0+;
+  Windows has no native agent and moves to Fluent Bit (Server 2022/2025,
+  event logs only, 9543 to the VIP); older OS versions aren't documented.
+  Re-pointing `liagent.ini` and the certificate-trust trap (KB 386897),
+  embedded agents on VCF components, agent groups and auto-update in Log
+  Management, and why agent authentication can only be enforced at the
+  very end. TechDocs VCF 9.1 and KBs 371900 / 386897, read 2026-11-12.
+
 ## v2.5.0 – 2026-11-12
 - **New `docs/28`: Log Insight to Log Management 9.1** (#103). Part by part
   from Aria Operations for Logs 8.x: the configuration import at deploy
