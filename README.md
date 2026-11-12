@@ -110,6 +110,7 @@ the two track sequences above also sit in this band):
 | `docs/26-aria-automation-to-vcf-automation-upgrade.md` | Aria Automation 8.18.x to VCF Automation 9.1.1 (Phase 4): prerequisites and blockers, import and blue-green upgrade, tenants mapped to VM Apps organizations, upgrading an external Orchestrator after Automation, known issues, open questions for Broadcom Support | **VCF only**, if Aria Automation is in use |
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade and NSX finalize (replaces the plain Phase 8), after the host phase | VCF or VVF, if NSX is in use |
 | `docs/11-log-management-migration.md` | VCF Operations for Logs migration to Log Management 9.1, after NSX finalize | VCF or VVF |
+| `docs/28-log-insight-to-log-management.md` | Log Insight (Aria Operations for Logs 8.x) to Log Management 9.1, part by part: configuration import, content pack to management pack conversion, re-pointing agents and sources, log data tools, and what isn't documented; with a route diagram | VCF or VVF |
 
 **Post-upgrade & Day 2:**
 

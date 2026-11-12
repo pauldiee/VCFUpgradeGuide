@@ -494,7 +494,9 @@ Several of the conditional workstreams have their own docs:
   and NSX finalize, replacing the plain Phase 8 (runs after the host phase).
 - **[Log Management migration](11-log-management-migration.md)** – VCF
   Operations for Logs migration to Log Management 9.1 (runs after NSX
-  finalize).
+  finalize). From Log Insight / Aria Operations for Logs 8.x, see
+  [Log Insight to Log Management](28-log-insight-to-log-management.md)
+  for what moves which way, part by part.
 - **[Identity Broker migration](03-identity-broker-migration.md)** – VIDM /
   Workspace ONE Access → VCF Identity Broker (runs *after* the core upgrade).
 

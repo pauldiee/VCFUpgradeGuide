@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.5.0 – 2026-11-12
+- **New `docs/28`: Log Insight to Log Management 9.1** (#103). Part by part
+  from Aria Operations for Logs 8.x: the configuration import at deploy
+  (forwarders copied but inactive, the 90-day link to the old cluster that
+  can only be made during the deploy), the content pack to management pack
+  converter for alerts, dashboards and third-party packs (steps, Java
+  builds, unsigned PAK setting), re-pointing agents, sources and upstream
+  forwarders, Logs Data Transfer (SSH 22, at most 90 days) and legacy
+  archive import (NFS only), and the parts Broadcom doesn't document for
+  an import (users and roles, data sets, partitions, archiving,
+  notifications). With a route diagram (`docs/images/log-insight-migration/`).
+  TechDocs VCF 9.1, read 2026-11-12.
+- **`docs/11` corrected:** from 8.x there's no in-place upgrade, but the
+  deploy wizard does import an 8.x configuration; the doc said to migrate
+  it by hand. Links to docs/28. `docs/13` links docs/28 too.
+
 ## v2.4.1 – 2026-11-11
 - **`docs/21`: Windows needs the WebView2 Runtime** (#101). Field-verified:
   the Windows binary errors at start on an admin host without it. New

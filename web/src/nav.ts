@@ -231,6 +231,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '28-log-insight-to-log-management',
+    step: 'Phase guide',
+    band: 'Phase guides',
+    label: 'Log Insight to Log Management',
+    icon: 'route',
+    blurb: 'Log Insight / Aria Operations for Logs 8.x to Log Management 9.1, part by part: what the import brings, converting alerts and dashboards to management packs, re-pointing agents, old log data, and what you rebuild yourself.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: '03-identity-broker-migration',
     step: 'Post-upgrade · VCF only',
     band: 'Post-upgrade & Day 2',

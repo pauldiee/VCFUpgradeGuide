@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 904" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Log Insight to Log Management 9.1: which route each part takes</title>
+<desc id="d">For each part of an Aria Operations for Logs 8.x (Log Insight) instance, the route to VCF Operations 9.1 with Log Management and where it ends up. Forwarding rules: Import at deploy, Tick "Import configuration" in the deploy wizard, ends up as Log Forwarding: copied but inactive, activate by hand. Logs on the old cluster: Import at deploy, Connect the old cluster in the same deploy, ends up as Logs page, legacy partition: queryable for 90 days. Up to 90 days of logs (copy): Log data tools, Logs Data Transfer (SSH 22 to every old node), ends up as Log Management log store. Archived logs (NFS): Log data tools, Archive import, type "legacy import" (NFS only), ends up as Import partition: one archive active at a time. Custom alerts: Content pack to management pack, Export content pack, run converter, install .pak, ends up as Management pack: Alert Definitions. Custom dashboards: Content pack to management pack, Same content pack and .pak, ends up as Management pack: dashboards. Saved queries, extracted fields: Content pack to management pack, Include them in the content pack, ends up as Result not documented: check after install. Third-party content packs: Content pack to management pack, Run the converter on the pack file, ends up as Content-only management pack. Agents and log sources: Re-point by hand, Point them at the new FQDN, ends up as Log Collection (old cluster collects until then). Forwarders sending to Log Insight: Re-point by hand, Point them at the new FQDN, ends up as Log Management ingestion. Users, roles, AD, data sets: Not documented: rebuild, Recreate in VCF Operations, ends up as Access Control: roles, scopes, data sets.</desc>
+<defs>
+<marker id="mA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker>
+<marker id="mB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7c3aed"/></marker>
+<marker id="mC" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d97706"/></marker>
+<marker id="mD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
+<marker id="mE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#64748b"/></marker>
+</defs>
+<rect width="1260" height="904" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="38" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Log Insight to Log Management 9.1: which route each part takes</text>
+<text x="630.0" y="62" font-size="13" fill="#475569" text-anchor="middle">From Aria Operations for Logs 8.x (Broadcom's steps are written for 8.18) to VCF Operations 9.1 with Log Management</text>
+<rect x="40" y="84" width="144" height="26" rx="13" fill="#dbeafe" stroke="#2563eb" stroke-width="1.6"/>
+<text x="53" y="102" font-size="13" font-weight="700" fill="#2563eb">A</text>
+<text x="67" y="102" font-size="12.5" fill="#0f172a">Import at deploy</text>
+<rect x="197.6" y="84" width="250" height="26" rx="13" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.6"/>
+<text x="210.6" y="102" font-size="13" font-weight="700" fill="#7c3aed">B</text>
+<text x="224.6" y="102" font-size="12.5" fill="#0f172a">Content pack to management pack</text>
+<rect x="461.70000000000005" y="84" width="144" height="26" rx="13" fill="#fef3c7" stroke="#d97706" stroke-width="1.6"/>
+<text x="474.70000000000005" y="102" font-size="13" font-weight="700" fill="#d97706">C</text>
+<text x="488.70000000000005" y="102" font-size="12.5" fill="#0f172a">Re-point by hand</text>
+<rect x="619.3000000000001" y="84" width="129" height="26" rx="13" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="632.3000000000001" y="102" font-size="13" font-weight="700" fill="#16a34a">D</text>
+<text x="646.3000000000001" y="102" font-size="12.5" fill="#0f172a">Log data tools</text>
+<rect x="762.7" y="84" width="193" height="26" rx="13" fill="#f1f5f9" stroke="#64748b" stroke-width="1.6" stroke-dasharray="5 4"/>
+<text x="775.7" y="102" font-size="13" font-weight="700" fill="#64748b">E</text>
+<text x="789.7" y="102" font-size="12.5" fill="#0f172a">Not documented: rebuild</text>
+<text x="180.0" y="154" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">In Log Insight 8.x</text>
+<text x="580.0" y="154" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Route</text>
+<text x="1030.0" y="154" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">In VCF Operations 9.1</text>
+<rect x="16" y="163" width="1228" height="58" fill="#f8fafc"/>
+<rect x="30" y="170" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="197.0" font-size="14" fill="#0f172a" text-anchor="middle">Forwarding rules</text>
+<path d="M330 192.0 H368" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mA)"/>
+<rect x="370" y="170" width="420" height="44" rx="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="394" cy="192.0" r="12" fill="#2563eb"/><text x="394" y="197.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">A</text>
+<text x="416" y="197.0" font-size="13.5" fill="#0f172a">Tick "Import configuration" in the deploy wizard</text>
+<path d="M790 192.0 H828" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mA)"/>
+<rect x="830" y="170" width="400" height="44" rx="7" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="1030" y="197.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Log Forwarding: copied but inactive, activate by hand</text>
+<rect x="30" y="228" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="255.0" font-size="14" fill="#0f172a" text-anchor="middle">Logs on the old cluster</text>
+<path d="M330 250.0 H368" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mA)"/>
+<rect x="370" y="228" width="420" height="44" rx="22" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="394" cy="250.0" r="12" fill="#2563eb"/><text x="394" y="255.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">A</text>
+<text x="416" y="255.0" font-size="13.5" fill="#0f172a">Connect the old cluster in the same deploy</text>
+<path d="M790 250.0 H828" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mA)"/>
+<rect x="830" y="228" width="400" height="44" rx="7" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="1030" y="255.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Logs page, legacy partition: queryable for 90 days</text>
+<rect x="16" y="279" width="1228" height="58" fill="#f8fafc"/>
+<rect x="30" y="286" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="313.0" font-size="14" fill="#0f172a" text-anchor="middle">Up to 90 days of logs (copy)</text>
+<path d="M330 308.0 H368" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#mD)"/>
+<rect x="370" y="286" width="420" height="44" rx="22" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+<circle cx="394" cy="308.0" r="12" fill="#16a34a"/><text x="394" y="313.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">D</text>
+<text x="416" y="313.0" font-size="13.5" fill="#0f172a">Logs Data Transfer (SSH 22 to every old node)</text>
+<path d="M790 308.0 H828" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#mD)"/>
+<rect x="830" y="286" width="400" height="44" rx="7" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+<text x="1030" y="313.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Log Management log store</text>
+<rect x="30" y="344" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="371.0" font-size="14" fill="#0f172a" text-anchor="middle">Archived logs (NFS)</text>
+<path d="M330 366.0 H368" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#mD)"/>
+<rect x="370" y="344" width="420" height="44" rx="22" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+<circle cx="394" cy="366.0" r="12" fill="#16a34a"/><text x="394" y="371.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">D</text>
+<text x="416" y="371.0" font-size="13.5" fill="#0f172a">Archive import, type "legacy import" (NFS only)</text>
+<path d="M790 366.0 H828" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#mD)"/>
+<rect x="830" y="344" width="400" height="44" rx="7" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+<text x="1030" y="371.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Import partition: one archive active at a time</text>
+<rect x="16" y="395" width="1228" height="58" fill="#f8fafc"/>
+<rect x="30" y="402" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="429.0" font-size="14" fill="#0f172a" text-anchor="middle">Custom alerts</text>
+<path d="M330 424.0 H368" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#mB)"/>
+<rect x="370" y="402" width="420" height="44" rx="22" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.8"/>
+<circle cx="394" cy="424.0" r="12" fill="#7c3aed"/><text x="394" y="429.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">B</text>
+<text x="416" y="429.0" font-size="13.5" fill="#0f172a">Export content pack, run converter, install .pak</text>
+<path d="M790 424.0 H828" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#mB)"/>
+<rect x="830" y="402" width="400" height="44" rx="7" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1030" y="429.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Management pack: Alert Definitions</text>
+<rect x="30" y="460" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="487.0" font-size="14" fill="#0f172a" text-anchor="middle">Custom dashboards</text>
+<path d="M330 482.0 H368" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#mB)"/>
+<rect x="370" y="460" width="420" height="44" rx="22" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.8"/>
+<circle cx="394" cy="482.0" r="12" fill="#7c3aed"/><text x="394" y="487.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">B</text>
+<text x="416" y="487.0" font-size="13.5" fill="#0f172a">Same content pack and .pak</text>
+<path d="M790 482.0 H828" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#mB)"/>
+<rect x="830" y="460" width="400" height="44" rx="7" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1030" y="487.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Management pack: dashboards</text>
+<rect x="16" y="511" width="1228" height="58" fill="#f8fafc"/>
+<rect x="30" y="518" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="545.0" font-size="14" fill="#0f172a" text-anchor="middle">Saved queries, extracted fields</text>
+<path d="M330 540.0 H368" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#mB)"/>
+<rect x="370" y="518" width="420" height="44" rx="22" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.8"/>
+<circle cx="394" cy="540.0" r="12" fill="#7c3aed"/><text x="394" y="545.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">B</text>
+<text x="416" y="545.0" font-size="13.5" fill="#0f172a">Include them in the content pack</text>
+<path d="M790 540.0 H828" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#mB)"/>
+<rect x="830" y="518" width="400" height="44" rx="7" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="1030" y="545.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Result not documented: check after install</text>
+<rect x="30" y="576" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="603.0" font-size="14" fill="#0f172a" text-anchor="middle">Third-party content packs</text>
+<path d="M330 598.0 H368" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#mB)"/>
+<rect x="370" y="576" width="420" height="44" rx="22" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.8"/>
+<circle cx="394" cy="598.0" r="12" fill="#7c3aed"/><text x="394" y="603.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">B</text>
+<text x="416" y="603.0" font-size="13.5" fill="#0f172a">Run the converter on the pack file</text>
+<path d="M790 598.0 H828" fill="none" stroke="#7c3aed" stroke-width="2" marker-end="url(#mB)"/>
+<rect x="830" y="576" width="400" height="44" rx="7" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="1030" y="603.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Content-only management pack</text>
+<rect x="16" y="627" width="1228" height="58" fill="#f8fafc"/>
+<rect x="30" y="634" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="661.0" font-size="14" fill="#0f172a" text-anchor="middle">Agents and log sources</text>
+<path d="M330 656.0 H368" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#mC)"/>
+<rect x="370" y="634" width="420" height="44" rx="22" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
+<circle cx="394" cy="656.0" r="12" fill="#d97706"/><text x="394" y="661.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">C</text>
+<text x="416" y="661.0" font-size="13.5" fill="#0f172a">Point them at the new FQDN</text>
+<path d="M790 656.0 H828" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#mC)"/>
+<rect x="830" y="634" width="400" height="44" rx="7" fill="#ffffff" stroke="#d97706" stroke-width="1.5"/>
+<text x="1030" y="661.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Log Collection (old cluster collects until then)</text>
+<rect x="30" y="692" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="719.0" font-size="14" fill="#0f172a" text-anchor="middle">Forwarders sending to Log Insight</text>
+<path d="M330 714.0 H368" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#mC)"/>
+<rect x="370" y="692" width="420" height="44" rx="22" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
+<circle cx="394" cy="714.0" r="12" fill="#d97706"/><text x="394" y="719.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">C</text>
+<text x="416" y="719.0" font-size="13.5" fill="#0f172a">Point them at the new FQDN</text>
+<path d="M790 714.0 H828" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#mC)"/>
+<rect x="830" y="692" width="400" height="44" rx="7" fill="#ffffff" stroke="#d97706" stroke-width="1.5"/>
+<text x="1030" y="719.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Log Management ingestion</text>
+<rect x="16" y="743" width="1228" height="58" fill="#f8fafc"/>
+<rect x="30" y="750" width="300" height="44" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="180" y="777.0" font-size="14" fill="#0f172a" text-anchor="middle">Users, roles, AD, data sets</text>
+<path d="M330 772.0 H368" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#mE)"/>
+<rect x="370" y="750" width="420" height="44" rx="22" fill="#f1f5f9" stroke="#64748b" stroke-width="1.8" stroke-dasharray="5 4"/>
+<circle cx="394" cy="772.0" r="12" fill="#64748b"/><text x="394" y="777.0" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">E</text>
+<text x="416" y="777.0" font-size="13.5" fill="#0f172a">Recreate in VCF Operations</text>
+<path d="M790 772.0 H828" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#mE)"/>
+<rect x="830" y="750" width="400" height="44" rx="7" fill="#ffffff" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="1030" y="777.0" font-size="13.5" fill="#0f172a" text-anchor="middle">Access Control: roles, scopes, data sets</text>
+<text x="30" y="830" font-size="13" fill="#0f172a">Order: deploy with import first (A), export custom content before the old cluster goes (B), re-point collection (C), copy or import data within 90 days (D).</text>
+<text x="30" y="854" font-size="13" fill="#0f172a">Dashed: Broadcom's documentation does not say what happens; check the import report and the installed management pack.</text>
+<text x="30" y="880" font-size="12" fill="#475569">Sources: TechDocs VCF 9.1, the Log Management deploy, upgrade, data transfer, partition, archive import and content pack conversion pages (read 2026-11-12).</text>
+</svg>

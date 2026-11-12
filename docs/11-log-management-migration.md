@@ -21,15 +21,20 @@ and is deployed from **VCF Operations**, not upgraded in place.
   Log Management 9.1 and *transfers the configuration* from the 9.0.x
   Operations for Logs instance. Agents and log sources are re-pointed
   automatically.
-- **From 8.x (VCF 5.x source):** no direct path. Deploy 9.1 fresh, then
-  migrate configuration by hand and re-point every agent / log source.
+- **From 8.x (VCF 5.x source):** no direct upgrade path. Deploy 9.1 fresh
+  from VCF Operations and tick **Import configuration from an earlier
+  Operations for logs instance** in the wizard – it takes an 8.x
+  configuration. Agents and log sources are then re-pointed by hand.
+  What goes which way, part by part, is in
+  [Log Insight to Log Management](28-log-insight-to-log-management.md).
 
 ---
 
 ## What does not carry automatically
 
 - **Custom dashboards, alerts and saved queries** are **not** transferred –
-  convert them with the Content Pack → Management Pack tool.
+  convert them with the Content Pack → Management Pack tool (steps in
+  [docs/28](28-log-insight-to-log-management.md#route-b-custom-content)).
 - **Log forwarders are copied but left inactive** – activate each one by
   hand after cut-over.
 - **Integrations** (SIEM, webhook, ticketing) are re-pointed manually.

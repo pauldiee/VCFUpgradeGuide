@@ -97,6 +97,7 @@ here – see the Related repo section in `README.md`.
 | `docs/23-hcx-upgrade.md` | VMware HCX upgrade – HCX Manager per paired site, then Service Mesh; version/pairing rules, rollback, VCF Operations lifecycle from 9.1 on (phase guide; **VCF only**, if HCX is in use) |
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade + NSX finalize, replacing plain Phase 8 (phase guide; VCF or VVF) |
 | `docs/11-log-management-migration.md` | VCF Operations for Logs → Log Management 9.1, after NSX finalize (phase guide; VCF or VVF) |
+| `docs/28-log-insight-to-log-management.md` | Log Insight / Aria Operations for Logs 8.x → Log Management 9.1 part by part, with a route diagram in `docs/images/log-insight-migration/` (PNG shown; the SVG next to it is the editable source, re-render the PNG after editing it; phase guide companion to docs/11; VCF or VVF) |
 | `docs/12-vsphere-standard-upgrade.md` | Standalone vSphere track landing doc – points at `docs/14`'s procedure rather than duplicating it (**vSphere-standard only**; excluded from the live site for now, see Project overview above) |
 | `docs/13-vcf-upgrade-sequence.md` | The full-VCF 9-phase spine, prerequisites, conditional phases, post-upgrade validation, cleanup (**VCF only**) – what `01-overview.md` used to contain directly |
 | `docs/14-standalone-vvf-upgrade.md` | The standalone-VVF 6-step manual procedure, no VCF Management Services (**VVF only**) – ditto |
