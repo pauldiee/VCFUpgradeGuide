@@ -297,6 +297,8 @@ membership. So:
 - **Plan time for it** in the migration plan, separate from the network
   work in steps 2 and 3.
 
+![Migrating the NSX distributed firewall step by step with Jeroen Buren's toolkit. Read-only: from the source NSX 4 Manager, 4.2 export to one CSV per object type, 4.3 sanitize to renamed IDs with _sanitized and _id_mapping files while keeping tags that groups use, 4.4 review in Excel with the rule owners and check service groups by hand, 4.5 dry run with WhatIf. Changes the target: 4.6 import into the target NSX 9 Manager, conflict action Skip first. Read-only: 4.7 compare source and target with the mapping files, HTML report as sign-off. Rehearse 4.2 to 4.7 against a lab or empty target and wipe it with 4.10 until the comparison is clean. Later: 4.8 after each HCX extension, re-point groups with an extended segment as member; 4.9 per wave in phase 5, import the VM tags or use HCX Migrate NSX Tags. Gateway Firewall is not covered.](images/networks-firewall/dfw.png)
+
 The walkthrough below goes through it in nine steps:
 
 | | What | Script | Changes the target? |

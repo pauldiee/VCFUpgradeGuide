@@ -17,7 +17,9 @@
   4.5 dry run, 4.6 import (conflict actions), 4.7 compare (results table,
   review list, HTML report as sign-off), 4.8 groups on HCX-extended
   networks, 4.9 VM tags per wave, 4.10 undo. From Jeroen Buren's posts and
-  the script help, read 2026-11-13.
+  the script help, read 2026-11-13. With its own diagram of the pipeline
+  (`docs/images/networks-firewall/dfw.png`): what is read-only, what
+  changes the target, the rehearsal loop, and what comes later.
 
 ## v2.6.2 – 2026-11-13
 - **New `docs/31`: Carrying over the networks and the firewall** (#110,
