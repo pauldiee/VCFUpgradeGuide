@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 782" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Carrying over the networks and the firewall</title>
+<desc id="d">Carrying over the networks and the firewall. Step 1: a network mapping table built from the networks VMs use. Step 2, VDS port groups (On the source VDS): VDSPortGroupManager. Export zip, import on target VDS. Uplink names must match; names unique per datacenter. Target: VDS port groups VLAN per mapping table. Step 3, NSX segments + profiles (VLAN or overlay): nsx-segment-migration. Edit name CSV, pick transport zone, dry run, import. Overlay needs gateway and subnet. Target: NSX segments profiles bound. Networks HCX extends (IPs kept with HCX): HCX Network Extension. Not recreated by hand. No second gateway for the same subnet until the cutover. Target: Extended network one gateway. Step 4, NSX distributed firewall (IP sets, services, groups, profiles, policies, rules): NSX DFW toolkit (J. Buren). Export, sanitize, review, import -WhatIf, import, compare. After step 3, before any VM. Target: DFW on target nothing missing. VM NSX tags follow per wave in phase 5.</desc>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker></defs>
+<rect width="1260" height="782" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Carrying over the networks and the firewall</text>
+<text x="630.0" y="64" font-size="13" fill="#475569" text-anchor="middle">Everything here exists on the target before the first VM moves. Numbers are the steps on this page.</text>
+<rect x="40" y="86" width="1180" height="46" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="1.6"/>
+<circle cx="68" cy="109" r="15" fill="#334155"/><text x="68" y="114" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<text x="96" y="114" font-size="14.5" fill="#0f172a"><tspan font-weight="700">Network mapping table</tspan>: one row per network VMs actually use. Source, VLAN, subnet and gateway, target, route, waves, DFW groups.</text>
+<text x="190.0" y="170" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Source</text>
+<text x="615.0" y="170" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Route and toolkit</text>
+<text x="1055.0" y="170" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Target</text>
+<rect x="24" y="180" width="1212" height="118" fill="#f8fafc"/>
+<rect x="40" y="190" width="300" height="98" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="68" cy="218" r="15" fill="#334155"/><text x="68" y="223" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="92" y="223" font-size="15" font-weight="700" fill="#0f172a">VDS port groups</text>
+<text x="92" y="246" font-size="13" fill="#334155">On the source VDS</text>
+<path d="M340 239.0 H376" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="380" y="190" width="470" height="98" rx="8" fill="#ffffff" stroke="#7c3aed" stroke-width="1.6"/>
+<rect x="394" y="202" width="230" height="26" rx="13" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="509" y="220" font-size="12.5" fill="#0f172a" text-anchor="middle">VDSPortGroupManager</text>
+<text x="396" y="246" font-size="13" fill="#0f172a">Export zip, import on target VDS.</text>
+<text x="396" y="264" font-size="13" fill="#0f172a">Uplink names must match; names</text>
+<text x="396" y="282" font-size="13" fill="#0f172a">unique per datacenter.</text>
+<path d="M850 239.0 H886" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="890" y="190" width="330" height="98" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="910" y="232" font-size="14" font-weight="700" fill="#0f172a">VDS port groups</text>
+<text x="910" y="254" font-size="14" fill="#0f172a">VLAN per mapping table</text>
+<rect x="40" y="308" width="300" height="98" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="68" cy="336" r="15" fill="#334155"/><text x="68" y="341" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="92" y="341" font-size="15" font-weight="700" fill="#0f172a">NSX segments + profiles</text>
+<text x="92" y="364" font-size="13" fill="#334155">VLAN or overlay</text>
+<path d="M340 357.0 H376" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="380" y="308" width="470" height="98" rx="8" fill="#ffffff" stroke="#7c3aed" stroke-width="1.6"/>
+<rect x="394" y="320" width="230" height="26" rx="13" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="509" y="338" font-size="12.5" fill="#0f172a" text-anchor="middle">nsx-segment-migration</text>
+<text x="396" y="364" font-size="13" fill="#0f172a">Edit name CSV, pick transport zone,</text>
+<text x="396" y="382" font-size="13" fill="#0f172a">dry run, import. Overlay needs</text>
+<text x="396" y="400" font-size="13" fill="#0f172a">gateway and subnet.</text>
+<path d="M850 357.0 H886" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="890" y="308" width="330" height="98" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="910" y="350" font-size="14" font-weight="700" fill="#0f172a">NSX segments</text>
+<text x="910" y="372" font-size="14" fill="#0f172a">profiles bound</text>
+<rect x="24" y="416" width="1212" height="118" fill="#f8fafc"/>
+<rect x="40" y="426" width="300" height="98" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6" stroke-dasharray="6 4"/>
+<text x="92" y="459" font-size="15" font-weight="700" fill="#0f172a">Networks HCX extends</text>
+<text x="92" y="482" font-size="13" fill="#334155">IPs kept with HCX</text>
+<path d="M340 475.0 H376" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="380" y="426" width="470" height="98" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.6"/>
+<rect x="394" y="438" width="230" height="26" rx="13" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="509" y="456" font-size="12.5" fill="#0f172a" text-anchor="middle">HCX Network Extension</text>
+<text x="396" y="482" font-size="13" fill="#0f172a">Not recreated by hand. No second</text>
+<text x="396" y="500" font-size="13" fill="#0f172a">gateway for the same subnet</text>
+<text x="396" y="518" font-size="13" fill="#0f172a">until the cutover.</text>
+<path d="M850 475.0 H886" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="890" y="426" width="330" height="98" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="910" y="468" font-size="14" font-weight="700" fill="#0f172a">Extended network</text>
+<text x="910" y="490" font-size="14" fill="#0f172a">one gateway</text>
+<rect x="40" y="544" width="300" height="98" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="68" cy="572" r="15" fill="#334155"/><text x="68" y="577" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="92" y="577" font-size="15" font-weight="700" fill="#0f172a">NSX distributed firewall</text>
+<text x="92" y="600" font-size="13" fill="#334155">IP sets, services, groups,</text>
+<text x="92" y="619" font-size="13" fill="#334155">profiles, policies, rules</text>
+<path d="M340 593.0 H376" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="380" y="544" width="470" height="98" rx="8" fill="#ffffff" stroke="#0d9488" stroke-width="1.6"/>
+<rect x="394" y="556" width="230" height="26" rx="13" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5"/>
+<text x="509" y="574" font-size="12.5" fill="#0f172a" text-anchor="middle">NSX DFW toolkit (J. Buren)</text>
+<text x="396" y="600" font-size="13" fill="#0f172a">Export, sanitize, review, import</text>
+<text x="396" y="618" font-size="13" fill="#0f172a">-WhatIf, import, compare.</text>
+<text x="396" y="636" font-size="13" fill="#0f172a">After step 3, before any VM.</text>
+<path d="M850 593.0 H886" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="890" y="544" width="330" height="98" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="910" y="586" font-size="14" font-weight="700" fill="#0f172a">DFW on target</text>
+<text x="910" y="608" font-size="14" fill="#0f172a">nothing missing</text>
+<rect x="40" y="676" width="1180" height="40" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+<text x="630.0" y="701" font-size="13.5" fill="#78350f" text-anchor="middle">Later, in phase 5 per wave: NSX tags on the arrived VMs (DFW toolkit or HCX "Migrate NSX Tags"), so they fall into their security groups.</text>
+<rect x="40" y="739" width="26" height="18" rx="9" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="74" y="753" font-size="12.5" fill="#334155">Toolkit by Paul van Dieen</text>
+<rect x="340" y="739" width="26" height="18" rx="9" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5"/>
+<text x="374" y="753" font-size="12.5" fill="#334155">Toolkit by Jeroen Buren</text>
+<rect x="640" y="739" width="26" height="18" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="674" y="753" font-size="12.5" fill="#334155">HCX, see the HCX page of this set</text>
+</svg>

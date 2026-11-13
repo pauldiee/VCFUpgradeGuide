@@ -407,7 +407,8 @@ later wave.
 - [ ] Other permissions are recreated or listed for later waves.
 - [ ] All exports are in the working folder.
 
-Then go on with phase 3 in [docs/29](29-side-by-side-migration.md#phase-3-carry-over-the-networks-and-the-firewall).
+Then go on with phase 3:
+[Carrying over the networks and the firewall](31-carry-over-networks-and-firewall.md).
 
 ---
 

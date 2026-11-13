@@ -1,5 +1,25 @@
 # Changelog
 
+## v2.6.2 – 2026-11-13
+- **New `docs/31`: Carrying over the networks and the firewall** (#110,
+  third page of the set in #105). Phase 3 of the side-by-side migration
+  step by step: a network mapping table built from the networks VMs
+  actually use, VDS port groups with VDSPortGroupManager (uplink names,
+  unique names per datacenter, NSX-backed port groups skipped), NSX
+  segments and profiles with nsx-segment-migration (transport zone,
+  overlay gateway and subnet), networks HCX extends (one gateway per
+  subnet), and the NSX DFW with Jeroen Buren's toolkit (export, sanitize,
+  review, import, compare; Windows desktop needed; no Gateway Firewall;
+  DFW also on VDS port groups, vDefend TechDocs and KB 393650). Undo and a
+  check per step, closing checklist, overview diagram
+  (`docs/images/networks-firewall/`). `docs/29` and `docs/30` link it.
+- **Site: the side-by-side migration set grouped** (#111). A third card on
+  the start page (*Upgrade in place, or build new and migrate?*), a
+  `/migrate/` landing page with the set in phase order and the planned
+  pages marked as coming, an own dropdown in the top navigation and an own
+  sidebar group, a breadcrumb back to `/migrate/`, and pointers from the
+  `/vcf/` and `/vvf/` pages. The docs left the Planning & licensing band.
+
 ## v2.6.1 – 2026-11-13
 - **New `docs/30`: Carrying over the vCenter configuration** (#107, second
   page of the set in #105). Phase 2 of the side-by-side migration step by

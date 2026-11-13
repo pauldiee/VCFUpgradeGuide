@@ -25,7 +25,33 @@
 // full-VCF and standalone-VVF spines (docs/13, docs/14) sit right after
 // 01-overview in this array on purpose, so each track's landing page leads
 // with its own dedicated procedure doc, not just the shared Overview.
-export type Track = 'vcf' | 'vvf' | 'vsphere';
+export type Track = 'vcf' | 'vvf' | 'vsphere' | 'migrate';
+
+// The side-by-side migration set (docs/29 onwards) is its own route, not an
+// upgrade track: it has its own landing page (/migrate/), its own dropdown in
+// the top navigation and its own sidebar group. Its items carry this band,
+// which is deliberately NOT in REFERENCE_BANDS, so they stay out of the
+// Guides mega-menu (keeps that grid at six bands). Order = NAV order = phase
+// order. Pages that are planned but not written yet are listed in
+// MIGRATION_PLANNED for the landing page only.
+export const MIGRATION_BAND = 'Side-by-side migration';
+export const MIGRATION_PLANNED: { label: string; blurb: string; icon: string }[] = [
+  {
+    label: 'Phase 5: migrating with HCX',
+    blurb: 'Site pairing, Service Mesh, network extension, choosing the migration type, Mobility Groups.',
+    icon: 'arrow-right-arrow-left',
+  },
+  {
+    label: 'Phase 5: migrating without HCX',
+    blurb: 'Advanced Cross vCenter vMotion, VDS version handling, cold migration.',
+    icon: 'right-to-bracket',
+  },
+  {
+    label: 'Phase 6: cutover and clean-up',
+    blurb: 'Gateways, removing network extensions, retiring the source environment.',
+    icon: 'flag-checkered',
+  },
+];
 
 export interface NavItem {
   slug: string;
@@ -97,21 +123,30 @@ export const NAV: NavItem[] = [
   },
   {
     slug: '29-side-by-side-migration',
-    step: 'Planning',
-    band: 'Planning & licensing',
-    label: 'Side-by-side migration',
+    step: 'Side-by-side migration',
+    band: MIGRATION_BAND,
+    label: 'Overview: build new, then migrate',
     icon: 'truck-moving',
     blurb: 'Build a new VCF or VVF 9 environment next to the old one, carry roles, tags, storage policies, folders and networks over, then migrate the VMs with or without HCX. Five questions to pick the route, seven phases each closed by a check.',
-    tracks: ['vcf', 'vvf'],
+    tracks: ['migrate'],
   },
   {
     slug: '30-carry-over-vcenter-configuration',
-    step: 'Planning',
-    band: 'Planning & licensing',
-    label: 'Carrying over the vCenter configuration',
+    step: 'Side-by-side migration',
+    band: MIGRATION_BAND,
+    label: 'Phase 2: vCenter configuration',
     icon: 'tags',
     blurb: 'Phase 2 of a side-by-side migration, step by step: roles, tag categories and tags, custom attributes, storage policies, folders and permissions, with the commands and a check after each step.',
-    tracks: ['vcf', 'vvf'],
+    tracks: ['migrate'],
+  },
+  {
+    slug: '31-carry-over-networks-and-firewall',
+    step: 'Side-by-side migration',
+    band: MIGRATION_BAND,
+    label: 'Phase 3: networks and firewall',
+    icon: 'network-wired',
+    blurb: 'Phase 3 of a side-by-side migration, step by step: the network mapping table, VDS port groups, NSX segments and profiles, and the NSX distributed firewall with Jeroen Buren\'s toolkit, each with commands, undo and a check.',
+    tracks: ['migrate'],
   },
   {
     slug: '24-vcf-operations-sizing-and-scaling',
@@ -340,6 +375,11 @@ export function navReferenceBands(): { band: string; items: NavItem[] }[] {
     band,
     items: NAV.filter((n) => n.band === band),
   })).filter((group) => group.items.length > 0);
+}
+
+/** The side-by-side migration set, in phase order. */
+export function navMigrationItems(): NavItem[] {
+  return NAV.filter((n) => n.band === MIGRATION_BAND);
 }
 
 /** Items applicable to a given track (VCF / VVF / standalone vSphere), in NAV order. */

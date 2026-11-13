@@ -3,7 +3,7 @@ import '../styles/site.css';
 import Sidebar from '../components/Sidebar.astro';
 import { withBase } from '../lib/path';
 import { siteVersion } from '../lib/version';
-import { navFlowItems, navReferenceBands, navBySlug } from '../nav';
+import { navFlowItems, navReferenceBands, navBySlug, navMigrationItems, MIGRATION_BAND } from '../nav';
 import { docHref as href } from '../lib/path';
 
 interface Props {
@@ -23,6 +23,7 @@ const feedbackUrl = `${repoUrl}/issues/new`;
 
 const flowItems = navFlowItems();
 const referenceBands = navReferenceBands();
+const migrationItems = navMigrationItems();
 const meta = active ? navBySlug(active) : undefined;
 ---
 
@@ -86,6 +87,36 @@ const meta = active ? navBySlug(active) : undefined;
               </a>
             ))
           }
+
+          <div class="nav-item">
+            <button type="button" class="nav-trigger">
+              Side-by-side migration <i class="fa-solid fa-chevron-down nav-chev" aria-hidden="true"></i>
+            </button>
+            <div class="nav-panel nav-panel--migration">
+              <div class="ref-band">
+                <h4>Build new, then migrate</h4>
+                <ul>
+                  <li>
+                    <a class="ref-link" href={asset('migrate/')}>
+                      <i class="fa-solid fa-route" aria-hidden="true" />
+                      Start here: the route
+                    </a>
+                  </li>
+                  {migrationItems.map((item) => (
+                    <li>
+                      <a
+                        class:list={['ref-link', { 'is-active': active === item.slug }]}
+                        href={href(item.slug)}
+                      >
+                        <i class={`fa-solid fa-${item.icon}`} aria-hidden="true" />
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
 
           <div class="nav-item">
             <button type="button" class="nav-trigger">
@@ -182,7 +213,13 @@ const meta = active ? navBySlug(active) : undefined;
     {
       meta && (
         <nav class="breadcrumb" aria-label="Breadcrumb">
-          {meta.band ? (
+          {meta.band === MIGRATION_BAND ? (
+            <>
+              <a href={asset('migrate/')}>{MIGRATION_BAND}</a>
+              <i class="fa-solid fa-chevron-right" aria-hidden="true" />
+              <span class="breadcrumb__current">{meta.label}</span>
+            </>
+          ) : meta.band ? (
             <>
               <span>Guides</span>
               <i class="fa-solid fa-chevron-right" aria-hidden="true" />

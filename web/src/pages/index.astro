@@ -17,6 +17,12 @@ const TRACKS = [
     label: 'Standalone VVF',
     hint: 'VMware vSphere Foundation, no VCF Management Services.',
   },
+  {
+    href: withBase('migrate/'),
+    icon: 'truck-moving',
+    label: 'Side-by-side migration',
+    hint: 'Not upgrading in place: build a new 9.x environment, carry the configuration over, migrate the VMs.',
+  },
   // Standalone vSphere track intentionally left out for now – see the
   // exclusion comment in web/src/content.config.ts.
 ];
@@ -30,14 +36,14 @@ const TRACKS = [
   <section class="hero hero--compact">
     <div class="hero__inner">
       <p class="itq-eyebrow hero__eyebrow">ITQ &middot; VMware Docs</p>
-      <h1 class="hero__title">VCF upgrade guidance for any hardware, plus HCI add-ons.</h1>
+      <h1 class="hero__title">VCF upgrade and migration guidance for any hardware, plus HCI add-ons.</h1>
     </div>
   </section>
 
   <section class="workflow">
     <div class="workflow__inner">
       <p class="itq-eyebrow">Start here</p>
-      <h2 class="workflow__heading">Which track are you on?</h2>
+      <h2 class="workflow__heading">Upgrade in place, or build new and migrate?</h2>
       <div class="card-grid card-grid--tracks">
         {
           TRACKS.map((track) => (

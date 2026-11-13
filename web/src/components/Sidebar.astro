@@ -1,6 +1,6 @@
 ---
-import { navFlowItems, navReferenceBands } from '../nav';
-import { docHref as href } from '../lib/path';
+import { navFlowItems, navReferenceBands, navMigrationItems, MIGRATION_BAND } from '../nav';
+import { docHref as href, withBase } from '../lib/path';
 
 interface Props {
   active?: string;
@@ -8,6 +8,7 @@ interface Props {
 const { active } = Astro.props;
 const flowItems = navFlowItems();
 const referenceBands = navReferenceBands();
+const migrationItems = navMigrationItems();
 ---
 
 <aside class="sidebar" aria-label="Upgrade planning docs">
@@ -33,6 +34,30 @@ const referenceBands = navReferenceBands();
       }
     </ol>
   </nav>
+
+  <details class="sidebar__reference sidebar__eyebrow--spaced" open>
+    <summary class="sidebar__eyebrow itq-eyebrow sidebar__reference-summary">{MIGRATION_BAND}</summary>
+    <a class="sidebar__link" href={withBase('migrate/')}>
+      <i class="fa-solid fa-route sidebar__icon" aria-hidden="true" />
+      <span class="sidebar__text">
+        <span class="sidebar__label">Start here: the route</span>
+      </span>
+    </a>
+    {
+      migrationItems.map((item) => (
+        <a
+          class:list={['sidebar__link', { 'is-active': active === item.slug }]}
+          href={href(item.slug)}
+          aria-current={active === item.slug ? 'page' : undefined}
+        >
+          <i class={`fa-solid fa-${item.icon} sidebar__icon`} aria-hidden="true" />
+          <span class="sidebar__text">
+            <span class="sidebar__label">{item.label}</span>
+          </span>
+        </a>
+      ))
+    }
+  </details>
 
   <details class="sidebar__reference sidebar__eyebrow--spaced" open>
     <summary class="sidebar__eyebrow itq-eyebrow sidebar__reference-summary">Guides</summary>
