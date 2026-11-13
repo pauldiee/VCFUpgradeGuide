@@ -34,14 +34,14 @@ blogs, and the toolkits' own documentation and code, checked on
 
 ## What goes where
 
-![Carrying over the networks and the firewall. Step 1: a network mapping table, from the networks VMs actually use. Step 2: VDS port groups go from the source VDS to the target VDS with VDSPortGroupManager; clone the target switch's uplink names, and port group names must be unique per datacenter. Step 3: NSX segments and segment profiles go from the source NSX Manager to the target with nsx-segment-migration; pick the target transport zone, and overlay segments need a gateway and subnet. Networks that HCX extends are not recreated by hand. Step 4: the NSX distributed firewall goes with Jeroen Buren's NSX DFW toolkit: export, sanitize, review, import with WhatIf, import, compare; VM tags follow in phase 5.](images/networks-firewall/routes.png)
+![Carrying over the networks and the firewall. Step 1: a network mapping table, from the networks VMs actually use. Step 2: VDS port groups go from the source VDS to the target VDS with VDSPortGroupManager; clone the target switch's uplink names, and port group names must be unique per datacenter. Step 3: NSX segments and segment profiles go from the source NSX Manager to the target with nsx-segment-migration; pick the target transport zone, and overlay segments need a gateway and subnet. Networks that HCX extends are not recreated by hand: HCX creates them on the target when you extend them. Step 4: the NSX distributed firewall goes with Jeroen Buren's NSX DFW toolkit: export, sanitize, review, import with WhatIf, import, compare; VM tags follow in phase 5.](images/networks-firewall/routes.png)
 
 | Source | Route | Target | Toolkit |
 | --- | --- | --- | --- |
 | VDS port group | Recreate | VDS port group | [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) |
 | Standard switch port group | Recreate as a VDS port group (step 2, by hand or from a template port group) | VDS port group | – |
 | NSX segment (VLAN or overlay) | Recreate | NSX segment | [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration) |
-| Any network whose VMs keep their IP addresses through HCX | Extend with HCX Network Extension | Extended network | HCX, see the HCX page of this set |
+| Any network whose VMs keep their IP addresses through HCX | Extend with HCX Network Extension; HCX creates the target network | Extended network | HCX, see [Networks that HCX extends](#networks-that-hcx-extends) |
 | NSX DFW: IP sets, services, groups, context profiles, policies and rules | Export, sanitize, import | NSX DFW | [NSX DFW migration toolkit](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit) (Jeroen Buren) |
 | NSX tags on VMs | Per wave, after the VM arrives | NSX tags | Same toolkit, or HCX *Migrate NSX Tags* (phase 5) |
 
@@ -54,8 +54,10 @@ blogs, and the toolkits' own documentation and code, checked on
 decides what you build here:
 
 - **Kept, with HCX:** the extended networks come from HCX Network
-  Extension. Don't also build them by hand with their own gateway on the
-  target: one subnet should have one gateway at a time.
+  Extension, which creates them on the target (see
+  [Networks that HCX extends](#networks-that-hcx-extends)). Don't also
+  build them by hand with their own gateway on the target: one subnet
+  should have one gateway at a time.
 - **Kept, without HCX:** the source VLANs must be trunked to the target
   hosts' uplinks, and you recreate the port groups or VLAN segments with
   the **same VLAN IDs**. The gateway stays on the physical network or the
@@ -172,6 +174,10 @@ to, with the VLAN from the mapping table.
 
 ## Step 3: NSX segments and segment profiles
 
+**Only for networks that are not extended by HCX.** For those, see
+[Networks that HCX extends](#networks-that-hcx-extends) at the end of this
+step.
+
 **Toolkit:** [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration).
 Works against NSX 4.x and 9.x; it tries both API path formats and uses
 the one that answers (README).
@@ -206,9 +212,6 @@ connection (`connectivity_path`, a Tier-0 or Tier-1) and a subnet with the
 gateway address; the script asks for any that are missing before it
 starts. VLAN segments skip that check.
 
-Overlay segments with a gateway on the target are exactly the case from
-[Before you start](#before-you-start): if HCX extends the same subnet,
-don't give it a second gateway on the target until the cutover.
 
 **Undo.** `Remove-NSXSegments.ps1` on the target, with `-WhatIf` first.
 It removes bindings, then segments, then profiles, flags segments with
@@ -218,6 +221,47 @@ attached ports, and asks for a typed `YES`.
 target, in the right transport zone, with its profiles bound. The
 segment is visible as a network on the target hosts that will run the
 VMs.
+
+### Networks that HCX extends
+
+These you don't create in this step. Broadcom:
+*"When you extend a network, a corresponding network is created at the
+destination site."* You can extend *"Distributed Port Groups, NSX or VLAN
+segments, or NSX VPC subnets"*
+([VCF 9.0 HCX user guide, Extending Networks](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/workload-mobility/vmware-hcx-user-guide-vcf-9-0/extending-networks-with-vmware-hcx/extending-networks-using-vmware-hcx.html)).
+
+What HCX asks for depends on the type of network on the target (same
+page):
+
+| Target network | You give |
+| --- | --- |
+| NSX VLAN | The destination VLAN ID; optionally the gateway IP address (when the source is a VDS port group or an NSX VLAN segment) |
+| NSX overlay | The **Destination First Hop Router** (an NSX gateway) and *"the Gateway IP address and Prefix"*; optionally Mobility Optimized Networking (MON) |
+| NSX VPC subnet | The VPC as first hop, the gateway IP address and prefix, and an access mode |
+
+Two consequences for this phase:
+
+- **Don't create the segment yourself first.** *"By default, VCF
+  Operations HCX blocks attempts to extend the same subnet to the same
+  Tier 1 router at the destination site."* A segment you made with
+  nsx-segment-migration for the same subnet on that Tier-1 stands in the
+  way. HCX has an option to allow overlapping subnets; you don't need it
+  if you leave the segment to HCX.
+- **The extension is done when HCX is set up**, not in this phase. In the
+  mapping table, mark these networks as route "HCX extend". They get their
+  target network during the HCX setup (the HCX page of this set, still to
+  be written), before the first wave that needs them.
+
+The gateway stays where it is until the cutover: one subnet, one gateway
+(see [Before you start](#before-you-start)). MON changes that for the
+VMs you select: *"You can select Mobility Optimized Networking (MON) for
+all workloads that require routing through the local gateway at the
+target site."* MON *"is not supported when extending networks to VLAN
+segments or VPC subnets"*.
+
+**Check.** Every "HCX extend" row in the mapping table has the target
+type, first hop and gateway/prefix written down, so the extension can be
+set up in one go.
 
 ---
 
@@ -311,6 +355,13 @@ destination, and every mismatch has been explained. Policies and rules on
 the target apply to the groups you expect (check a few in the NSX
 Manager UI against the mapping table's DFW column).
 
+**Groups that refer to an HCX-extended network.** A security group with
+a segment as member refers to that segment by its path. A network that
+HCX extends only exists on the target after the extension, and this
+page doesn't confirm what HCX names it. So check those groups again
+**after** each extension, and point them at the network HCX created where
+needed.
+
 ---
 
 ## Phase 3 is done when
@@ -321,6 +372,8 @@ Manager UI against the mapping table's DFW column).
       hosts in the cluster are connected to.
 - [ ] Every recreated NSX segment exists in the right transport zone,
       with its profiles.
+- [ ] Networks that HCX will extend are marked "HCX extend" with their
+      target details, and have no hand-made segment on the target.
 - [ ] No subnet has a gateway on both sides while HCX extends it.
 - [ ] The DFW comparison shows nothing missing on the destination, and
       mismatches are explained.
@@ -340,6 +393,8 @@ Checked on 2026-11-13.
 - [KB 344959](https://knowledge.broadcom.com/external/article/344959):
   Cross vCenter Migration and Clone requirements in VMware vSphere 6.x and
   later
+- VCF 9.0 HCX user guide:
+  [Extending Networks](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/workload-mobility/vmware-hcx-user-guide-vcf-9-0/extending-networks-with-vmware-hcx/extending-networks-using-vmware-hcx.html)
 - vDefend Firewall 9.0 TechDocs:
   [Distributed Firewall for vSphere Distributed Switch](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-0/vdefend-distributed-firewall/distributed-security-for-vds.html)
 - [KB 393650](https://knowledge.broadcom.com/external/article/393650):

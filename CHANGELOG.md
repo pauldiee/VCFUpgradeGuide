@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.6.3 – 2026-11-13
+- **`docs/31`: networks that HCX extends** (#113). Per the VCF 9.0 HCX user
+  guide, *"When you extend a network, a corresponding network is created
+  at the destination site"*: these networks skip nsx-segment-migration.
+  New subsection with what HCX asks per target type (NSX VLAN, overlay with
+  Destination First Hop Router, VPC subnet), why not to pre-create the
+  segment (HCX blocks the same subnet on the same Tier-1 by default), MON,
+  and a check in step 4 for segment-based DFW groups after the extension.
+  Diagram and closing checklist updated.
+
 ## v2.6.2 – 2026-11-13
 - **New `docs/31`: Carrying over the networks and the firewall** (#110,
   third page of the set in #105). Phase 3 of the side-by-side migration
