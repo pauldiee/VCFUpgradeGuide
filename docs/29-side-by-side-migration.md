@@ -354,7 +354,23 @@ The detailed steps for this phase come in the cutover page of this set.
 
 PowerShell toolkits for the configuration work in phases 0, 2, 3 and 5.
 They export to files you can read and keep, and import into the target
-vCenter or NSX Manager. All but the last are by the author of this guide.
+vCenter or NSX Manager.
+
+**Who made them.** VIRoleManager, StoragePolicyManager, VIFolderManager,
+VDSPortGroupManager, nsx-segment-migration and the tags and custom
+attributes toolkit are written by Paul van Dieen, the author of this guide
+([hollebollevsan.nl](https://www.hollebollevsan.nl)). The NSX DFW migration
+toolkit is written by Jeroen Buren
+([configmgr.nl](https://configmgr.nl)).
+
+> **Use at your own risk.** These are community tools, not Broadcom
+> products, and they come without support or warranty. Before you use one
+> on a real environment, read its README, test it in a lab or against a
+> non-production vCenter or NSX Manager first, check every export file
+> before you import it, use the dry run where the toolkit has one, and
+> check the result yourself afterwards. You are responsible for what they
+> change in your environment. Found a problem? Open an issue in the
+> toolkit's GitHub repository.
 
 | Toolkit | Moves | Status |
 | --- | --- | --- |

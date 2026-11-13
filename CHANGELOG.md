@@ -10,7 +10,8 @@
   decide the route (HCX and its licensing, KB 440126; keeping IP
   addresses; NSX; VDS versions, KB 318582 incl. its 7.0.3 contradiction
   and William Lam's two options; identity across SSO domains), seven
-  phases each closed by a check, and the PowerShell toolkits per phase
+  phases each closed by a check, and the PowerShell toolkits per phase,
+  who made them and a use-at-your-own-risk disclaimer
   (VIFolderManager still in test, the tags toolkit in development, and
   Jeroen Buren's NSX DFW migration toolkit for the distributed firewall). With
   a phase diagram (`docs/images/side-by-side-migration/`). Linked from
