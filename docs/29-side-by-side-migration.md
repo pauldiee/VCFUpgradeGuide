@@ -319,6 +319,9 @@ In short:
 
 ### Phase 5: migrate in waves
 
+Without HCX, step by step:
+[Migrating without HCX](32-migrating-without-hcx.md). In short:
+
 - **Do:** group the VMs into waves per application, not per host, so an
   application moves as a whole and its owner can test it in one go.
   - With HCX: one Mobility Group per wave. Be careful with
@@ -402,15 +405,13 @@ dry run where the toolkit has one.
 ## The rest of this set
 
 Published: [Carrying over the vCenter configuration](30-carry-over-vcenter-configuration.md)
-(phase 2) and [Carrying over the networks and the firewall](31-carry-over-networks-and-firewall.md)
-(phase 3).
+(phase 2), [Carrying over the networks and the firewall](31-carry-over-networks-and-firewall.md)
+(phase 3) and [Migrating without HCX](32-migrating-without-hcx.md) (phase 5).
 
 These pages are planned and will be linked here when they're published:
 
 - **Migrating with HCX:** site pairing, Service Mesh, network extension,
   choosing the migration type, Mobility Groups.
-- **Migrating without HCX:** Advanced Cross vCenter vMotion, VDS version
-  handling, cold migration.
 - **Cutover and clean-up:** gateways, removing extensions, retiring the
   source.
 

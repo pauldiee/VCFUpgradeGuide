@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.6.4 – 2026-11-13
+- **New `docs/32`: Migrating without HCX** (#119, fourth page of the set
+  in #105). Phase 5 with Advanced Cross vCenter vMotion: before the first
+  wave (ports, broadcast domain, VDS versions, privileges), which way to
+  start a migration (Import VMs, Export, PowerCLI `Move-VM`) with the
+  version rule for each, sizing a wave on vCenter's simultaneous-migration
+  limits (two per host, eight per datastore), a five-step runbook per wave
+  (before, migrate, after, check, sign off) with the tag export and
+  re-apply, special cases (encrypted VMs need the API and a shared key
+  provider, VDS versions, EVC, RDMs, powered-off batches, MAC addresses),
+  moving a VM back, and a wave diagram (`docs/images/without-hcx/`).
+  vSphere 9.1 TechDocs, KBs 344959 / 318582 and the PowerCLI help, read
+  2026-11-13. The HCX route stays in VCF9-DeploymentPlanning docs/38.
+
 ## v2.6.3 – 2026-11-13
 - **`docs/31`: networks that HCX extends** (#113). Per the VCF 9.0 HCX user
   guide, *"When you extend a network, a corresponding network is created

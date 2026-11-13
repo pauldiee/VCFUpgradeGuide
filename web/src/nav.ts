@@ -38,13 +38,8 @@ export const MIGRATION_BAND = 'Side-by-side migration';
 export const MIGRATION_PLANNED: { label: string; blurb: string; icon: string }[] = [
   {
     label: 'Phase 5: migrating with HCX',
-    blurb: 'Site pairing, Service Mesh, network extension, choosing the migration type, Mobility Groups.',
+    blurb: 'A short bridge page: which steps of the HCX build guide in the deployment-planning guide (docs/38) fall in which phase, and what a wave looks like with Mobility Groups.',
     icon: 'arrow-right-arrow-left',
-  },
-  {
-    label: 'Phase 5: migrating without HCX',
-    blurb: 'Advanced Cross vCenter vMotion, VDS version handling, cold migration.',
-    icon: 'right-to-bracket',
   },
   {
     label: 'Phase 6: cutover and clean-up',
@@ -146,6 +141,15 @@ export const NAV: NavItem[] = [
     label: 'Phase 3: networks and firewall',
     icon: 'network-wired',
     blurb: 'Phase 3 of a side-by-side migration, step by step: the network mapping table, VDS port groups, NSX segments and profiles, and the NSX distributed firewall with Jeroen Buren\'s toolkit, each with commands, undo and a check.',
+    tracks: ['migrate'],
+  },
+  {
+    slug: '32-migrating-without-hcx',
+    step: 'Side-by-side migration',
+    band: MIGRATION_BAND,
+    label: 'Phase 5: migrating without HCX',
+    icon: 'right-to-bracket',
+    blurb: 'Advanced Cross vCenter vMotion in waves: which way to start a migration, sizing a wave, a five-step runbook per wave, encrypted VMs, VDS versions, EVC, and moving a VM back.',
     tracks: ['migrate'],
   },
   {
