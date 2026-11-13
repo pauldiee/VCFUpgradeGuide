@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.6.4 – 2026-11-13
+## v2.6.5 – 2026-11-13
 - **New `docs/32`: Migrating without HCX** (#119, fourth page of the set
   in #105). Phase 5 with Advanced Cross vCenter vMotion: before the first
   wave (ports, broadcast domain, VDS versions, privileges), which way to
@@ -13,6 +13,17 @@
   moving a VM back, and a wave diagram (`docs/images/without-hcx/`).
   vSphere 9.1 TechDocs, KBs 344959 / 318582 and the PowerCLI help, read
   2026-11-13. The HCX route stays in VCF9-DeploymentPlanning docs/38.
+
+## v2.6.4 – 2026-11-13
+- **`docs/31` step 2: different uplink names are mapped, not rebuilt by
+  hand** (#117). VDSPortGroupManager 1.2.0 writes a settings file with the
+  complete port group configuration next to each zip, checks uplink names
+  before importing, and rebuilds the port group with `-UplinkMap` when the
+  target switch's names differ; a zip from a newer vCenter that won't
+  restore on an older one falls back to the settings file. 2.1, 2.2
+  (write down the uplink map, LACP), 2.3 (settings file), 2.4 (import with
+  the map, what the rebuild carries, lab results) updated; `docs/29`
+  toolkit table too.
 
 ## v2.6.3 – 2026-11-13
 - **`docs/31`: networks that HCX extends** (#113). Per the VCF 9.0 HCX user
