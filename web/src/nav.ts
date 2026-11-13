@@ -96,6 +96,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '29-side-by-side-migration',
+    step: 'Planning',
+    band: 'Planning & licensing',
+    label: 'Side-by-side migration',
+    icon: 'truck-moving',
+    blurb: 'Build a new VCF or VVF 9 environment next to the old one, carry roles, tags, storage policies, folders and networks over, then migrate the VMs with or without HCX. Five questions to pick the route, seven phases each closed by a check.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: '24-vcf-operations-sizing-and-scaling',
     step: 'Planning',
     band: 'Planning & licensing',
