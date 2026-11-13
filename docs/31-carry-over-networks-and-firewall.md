@@ -122,53 +122,171 @@ row has a target and a route.
 
 ## Step 2: VDS port groups
 
-**Toolkit:** [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager).
+**Toolkit:** [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager)
+(Paul van Dieen). It exports port groups in vCenter's own backup format
+(`Export-VDPortGroup`, *"exports the configuration of a specified
+distributed port group to a specified .zip file"*, PowerCLI help) and
+imports them with `New-VDPortgroup -BackupPath`. It needs VCF.PowerCLI and
+therefore PowerShell 7.4+.
 
-**Export from the source.** Pick the source switch, then the port groups
-(each entry shows its VLAN configuration and port count; uplink port
-groups are left out):
+| | What | Changes the target? |
+| --- | --- | --- |
+| [2.1](#21-decide-where-the-port-groups-land) | Decide where the port groups land | No |
+| [2.2](#22-compare-the-switches) | Compare the switches | No |
+| [2.3](#23-export-from-the-source) | Export from the source | No |
+| [2.4](#24-import-into-the-target) | Import into the target | **Yes** |
+| [2.5](#25-a-new-switch-hosts-and-uplinks) | A new switch: hosts and uplinks | **Yes** |
+| [2.6](#26-standard-switch-port-groups) | Standard switch port groups | **Yes**, by hand |
+| [2.7](#27-undo) | Undo | **Yes** |
+
+### 2.1 Decide where the port groups land
+
+Usually on the distributed switch that VCF built for the target cluster.
+Sometimes on a separate switch. Decide per mapping-table row:
+
+| Target switch | When | Watch out for |
+| --- | --- | --- |
+| The VDS VCF built | The default: the hosts and uplinks are already there | Uplink **names** must match the source switch's (2.2) |
+| A new VDS at the **source's** VDS version | Live migration without HCX, where the VDS versions differ (question 4 in [docs/29](29-side-by-side-migration.md#4-which-vds-versions-are-on-both-sides)) | It needs its own hosts and physical uplinks (2.5); a switch outside the one VCF built is a design decision, check it against the target design |
+| Not on a VDS at all | The network is an NSX segment on the target, or HCX extends it | Step 3, or [Networks that HCX extends](#networks-that-hcx-extends) |
+
+**Check.** Every VDS row in the mapping table has a target switch.
+
+### 2.2 Compare the switches
+
+An exported port group's teaming policy refers to uplinks **by name**.
+VCF-built switches use `uplink1`, `uplink2`; a source switch with other
+names (`Uplink 1`, `lag1`, ...) makes the import fail with
+*"activeUplinkPortName ... is not valid"* (VDSPortGroupManager README).
+Compare before you export. On **both** vCenters:
 
 ```powershell
-.\Invoke-VDSPortGroupManager.ps1 -vCenterServer <source-vcenter> -Mode Export -BackupDirectory <working-folder>\portgroups
+Get-VDSwitch | Select-Object Name, Version, NumUplinkPorts, Mtu,
+  @{N='UplinkNames';E={$_.ExtensionData.Config.UplinkPortPolicy.UplinkPortName -join ', '}}
 ```
 
-Each port group becomes `<portgroup>.zip` in vCenter's own backup format
-(`Export-VDPortGroup`). Port groups that NSX manages (segments shown on
-the VDS, Supervisor and VPC networks) can't be exported this way; the
-picker marks them `[NSX-backed]` and skips them. Those go across in
-step 3.
+- **Names match:** import onto the target switch as is (2.4).
+- **Names differ:** the script can't rewrite a teaming policy. Either
+  recreate those port groups on the target switch by hand with the same
+  VLAN and settings (like 2.6), or use a new switch whose uplink names
+  match (2.4, option B; it clones names only from a switch in the
+  **target** vCenter).
+- **MTU** is set on the switch, not on the port group. Check that the
+  target switch's MTU is at least the source switch's when networks carry
+  jumbo frames.
 
-**Import into the target:**
+**Check.** For every source switch you know whether its uplink names and
+MTU fit the target switch.
+
+### 2.3 Export from the source
+
+1. Run the export against the **source** vCenter:
+
+   ```powershell
+   .\Invoke-VDSPortGroupManager.ps1 -vCenterServer <source-vcenter> -Mode Export -BackupDirectory <working-folder>\portgroups
+   ```
+
+2. Pick the source switch, then the port groups: a number, a list
+   (`1,3,5`), a range (`2-6`) or `all`. Each entry shows its VLAN and port
+   count; uplink port groups are left out.
+3. Port groups that NSX manages are tagged `[NSX-backed]` and skipped:
+   *"the vCenter backup API does not support them and their
+   configuration lives in NSX Manager"* (README). Those go across in
+   step 3.
+4. Read the summary: *succeeded / skipped (NSX-backed) / failed*. The log
+   file is in `Logs\` next to the script.
+
+**Check.** One `<portgroup>.zip` per port group in the mapping table, and
+the summary shows no failures.
+
+### 2.4 Import into the target
+
+1. Run the import against the **target** vCenter:
+
+   ```powershell
+   .\Invoke-VDSPortGroupManager.ps1 -vCenterServer <target-vcenter> -Mode Import -BackupDirectory <working-folder>\portgroups
+   ```
+
+2. Pick the zips.
+3. Pick the target switch:
+   - **A. An existing switch**, normally the one VCF built (2.1).
+   - **B. `<Create a NEW VDS and import into it>`**: you give the
+     datacenter, a new name, and either **clone** version, uplink count,
+     uplink names and MTU from an existing switch in this vCenter, or
+     enter them (blank is vCenter's default; for the version, the newest
+     this vCenter supports). For a migration switch at the source's VDS
+     version (2.1), enter that version here.
+4. **Names.** Distributed port group names must be unique per datacenter,
+   across all switches. When a name already exists, the script asks for
+   a prefix or suffix (or takes `-NamePrefix` / `-NameSuffix`); a port
+   group that still clashes is skipped with the owning switch named.
+   Keep the source names wherever you can: it makes the VM's network
+   mapping in phase 5 obvious. Write any renamed port group into the
+   mapping table.
+5. Read the log: each zip is imported, skipped, or failed with vCenter's
+   message (an uplink-name failure means 2.2 was missed).
+
+To retry after a failure, run the import again and pick **only** the zips
+that failed: port groups that are already there count as name clashes,
+and the script would ask for a prefix or suffix for them.
+
+**Check.** Every VDS row has its port group on the target switch, with
+the VLAN from the mapping table.
+
+### 2.5 A new switch: hosts and uplinks
+
+Only for option B in 2.4. *"A freshly created VDS has no hosts attached;
+add hosts before workloads can use the imported port groups"* (README).
+In the vSphere Client (Networking, the switch, **Add and Manage Hosts**),
+or with PowerCLI:
 
 ```powershell
-.\Invoke-VDSPortGroupManager.ps1 -vCenterServer <target-vcenter> -Mode Import -BackupDirectory <working-folder>\portgroups
+$vds = Get-VDSwitch -Name '<new-switch>'
+Add-VDSwitchVMHost -VDSwitch $vds -VMHost (Get-Cluster '<target-cluster>' | Get-VMHost)
+# then per host: give the switch its physical uplinks
+Add-VDSwitchPhysicalNetworkAdapter -DistributedSwitch $vds `
+  -VMHostPhysicalNic (Get-VMHostNetworkAdapter -VMHost '<host>' -Physical -Name '<vmnicX>')
 ```
 
-Pick the zips, then the target switch. Three things to know:
+The physical NICs you give it must be free (not used by another switch)
+and carry the VLANs of the port groups on the physical network.
 
-- **Uplink names.** An exported teaming policy refers to uplinks **by
-  name**. VCF-built switches use `uplink1`, `uplink2`; a source switch
-  with other names makes the import fail with *"activeUplinkPortName ...
-  is not valid"* (VDSPortGroupManager README). Either import onto a switch
-  with matching uplink names, or choose **Create a NEW VDS and import into
-  it** and clone the uplink names from an existing switch.
-- **Unique names.** Distributed port group names must be unique per
-  datacenter, across all switches. On a clash the script asks for a
-  prefix or suffix (`-NamePrefix`, `-NameSuffix`), and a port group that
-  still clashes is skipped.
-- **A new switch has no hosts.** If you let the script create a VDS, add
-  the target hosts to it before VMs can use the port groups.
+**Check.** Every host in the target cluster is on the switch, with its
+uplinks connected.
 
-**VDS version.** If you plan live migrations without HCX, the target
-switch's version matters (question 4 in
-[docs/29](29-side-by-side-migration.md#4-which-vds-versions-are-on-both-sides)).
+### 2.6 Standard switch port groups
 
-**Undo.** `-Mode Delete` on the target: it flags port groups in use,
-offers a safety export first, and asks for a typed `YES`.
+A standard switch port group has no export in this toolkit. VMs can move
+from a standard switch to a distributed one
+([KB 344959](https://knowledge.broadcom.com/external/article/344959)), so
+recreate each one as a distributed port group on the target switch, in
+the vSphere Client or with `New-VDPortgroup`, with:
 
-**Check.** Every VDS row in the mapping table has its port group on the
-target, on a switch that every target host in the cluster is connected
-to, with the VLAN from the mapping table.
+- the same **VLAN ID**;
+- the **security** settings it needs (promiscuous mode, MAC address
+  changes, forged transmits), for example for appliances that rely on
+  them;
+- **teaming and failover** that matches the target switch's uplinks.
+
+**Check.** Every standard-switch row in the mapping table has a
+distributed port group on the target with the same VLAN.
+
+### 2.7 Undo
+
+`-Mode Delete` on the **target** vCenter:
+
+```powershell
+.\Invoke-VDSPortGroupManager.ps1 -vCenterServer <target-vcenter> -Mode Delete
+```
+
+Pick the switch and the port groups. Port groups still in use by VMs are
+flagged (vCenter refuses to delete them), the script offers a safety
+export first, and it asks for a typed `YES`. A switch the script created
+in 2.4 is removed in the vSphere Client once it's empty.
+
+**Check for step 2.** Every VDS and standard-switch row in the mapping
+table has its port group on a target switch that every host in the
+cluster is connected to, with the VLAN from the mapping table.
 
 ---
 

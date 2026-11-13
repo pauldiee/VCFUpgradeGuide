@@ -28,6 +28,13 @@
   under those names, used by the import (4.5, 4.9) and the undo; the
   targeted undo doesn't remove context profiles; the full wipe is for an
   empty target only.
+- **`docs/31` step 2 (VDS port groups) as a walkthrough** (#116): 2.1
+  where the port groups land (the VCF-built switch, a migration switch at
+  the source's VDS version, or not a VDS), 2.2 comparing uplink names, VDS
+  version and MTU on both vCenters, 2.3 export, 2.4 import (existing or new
+  switch, unique names), 2.5 hosts and uplinks on a new switch, 2.6
+  standard switch port groups, 2.7 undo. From the VDSPortGroupManager
+  README and code and PowerCLI 9.1.1 help.
 
 ## v2.6.2 – 2026-11-13
 - **New `docs/31`: Carrying over the networks and the firewall** (#110,
