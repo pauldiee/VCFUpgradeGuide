@@ -13,6 +13,20 @@
   moving a VM back, and a wave diagram (`docs/images/without-hcx/`).
   vSphere 9.1 TechDocs, KBs 344959 / 318582 and the PowerCLI help, read
   2026-11-13. The HCX route stays in VCF9-DeploymentPlanning docs/38.
+- Same release, after review: **the wave script** (`Move-Wave.ps1` in the
+  page, driven by a wave CSV: checks every row, dry run by default, tag
+  export, `Move-VM -RunAsync`, waits per task, logs Success/Error/Skipped,
+  re-applies tags, skips VMs already on the target so a wave can be re-run;
+  parses on PS 7 and 5.1, not lab-tested yet), **Outside vCenter, per
+  wave** (vSphere Replication must be stopped, KB 421671; backup,
+  monitoring and performance history, automation reconciliation KB 402027,
+  vApp membership, affinity rules, tasks and events, CMDB), and
+  **Troubleshooting** (a failed migration reverts the VM; nine common
+  errors with cause, fix and KB: 414748, 458498, 433237, 393932, 395832,
+  425574, 429035, 318582, 381543, 394848). *Before the first wave* gains
+  the Modify cluster and target-VDS permissions, DNS and certificate trust.
+  Use-at-your-own-risk note for the script and the PowerCLI examples, as
+  in docs/29 and docs/30.
 
 ## v2.6.4 – 2026-11-13
 - **`docs/31` step 2: different uplink names are mapped, not rebuilt by
