@@ -36,11 +36,6 @@ export type Track = 'vcf' | 'vvf' | 'vsphere' | 'migrate';
 // MIGRATION_PLANNED for the landing page only.
 export const MIGRATION_BAND = 'Side-by-side migration';
 export const MIGRATION_PLANNED: { label: string; blurb: string; icon: string }[] = [
-  {
-    label: 'Phase 6: cutover and clean-up',
-    blurb: 'Gateways, removing network extensions, retiring the source environment.',
-    icon: 'flag-checkered',
-  },
 ];
 
 export interface NavItem {
@@ -163,6 +158,15 @@ export const NAV: NavItem[] = [
     label: 'Phase 5: migrating with HCX',
     icon: 'arrow-right-arrow-left',
     blurb: 'HCX Mobility Groups in waves: a migration type per VM, what HCX carries over, sync and switchover windows, special cases, moving a VM back, and common migration errors. Building HCX stays in the deployment-planning guide.',
+    tracks: ['migrate'],
+  },
+  {
+    slug: '35-cutover-and-clean-up',
+    step: 'Side-by-side migration',
+    band: MIGRATION_BAND,
+    label: 'Phase 6: cutover and clean-up',
+    icon: 'flag-checkered',
+    blurb: 'Per network: what else still uses it, moving the gateway (HCX unextend with Connect cloud network, or the network team without HCX) and the checks after. Then repointing what still points at the source, removing HCX in the order Broadcom documents, and retiring the source after a quiet period.',
     tracks: ['migrate'],
   },
   {

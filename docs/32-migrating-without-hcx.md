@@ -584,8 +584,8 @@ the copy on the target and powering on the original.
       removed, once the wave is signed off.
 - [ ] The tag exports and wave lists are in the working folder.
 
-Then go on with phase 6, cutover and clean-up, in
-[docs/29](29-side-by-side-migration.md#phase-6-cut-over-and-clean-up).
+Then go on with phase 6:
+[Cutting over and cleaning up](35-cutover-and-clean-up.md).
 
 ---
 
