@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.6.9 – 2026-11-13
+- `docs/35` case A (#127, Paul): an L2 stretch between the sites that is
+  the data centers' standard design (DCI, EVPN/VXLAN fabric, anycast
+  gateway) needs no gateway move and no routing change; the stretch stays,
+  only the source hosts leave the VLAN. HCX Network Extension isn't needed
+  for such a VLAN, and extending it anyway risks a loop (*"does not detect
+  or mitigate loops"*). A design check on where the gateway physically is
+  and the traffic path. Case B step 6, the closing checklist and the
+  `vlan-cutover` diagram now remove the stretch only when it was built for
+  the migration. `docs/29` question 2 and `docs/31` *Kept, without HCX*
+  mention the standard stretch.
+
 ## v2.6.8 – 2026-11-13
 - **New `docs/35`: Cutting over and cleaning up** (#124), the last page of
   the set in #105. Phase 6 in order: per network (what else still uses it:

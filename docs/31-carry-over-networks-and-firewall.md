@@ -61,7 +61,12 @@ decides what you build here:
 - **Kept, without HCX:** the source VLANs must be trunked to the target
   hosts' uplinks, and you recreate the port groups or VLAN segments with
   the **same VLAN IDs**. The gateway stays on the physical network or the
-  source until the cutover. An **NSX overlay** segment on the source isn't
+  source until the cutover. Where the L2 stretch between the sites is the
+  standard design (a data center interconnect or an EVPN fabric), the
+  VLANs already reach the target side; check that they're on the target
+  hosts' uplinks, and note in the mapping table that the gateway doesn't
+  move ([docs/35, case A](35-cutover-and-clean-up.md#case-a-the-gateway-doesnt-move)).
+  An **NSX overlay** segment on the source isn't
   a VLAN you can trunk: its subnet lives on a source Tier-1, and the two
   NSX environments don't share layer 2. Recreate it on the target without
   a gateway (step 3), and choose per subnet between moving all its VMs in

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 720" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
 <title id="t">Moving a physical VLAN gateway from the source site to the target site</title>
-<desc id="d">Source site on the left, target site on the right, the core or inter-site routing on top. VLAN 120 reaches both sites: stretched by the physical network, or extended by HCX. Step 1, before the window: the target router has the gateway prepared, shut, with the same IP address and prefix, and the route ready; route filters allow the subnet from the target site. Step 2a: the source gateway goes out of service and its route is withdrawn. Step 2b, with HCX: unextend without Connect cloud network. Step 2c: the target gateway comes up and the route is announced from the target site. Step 3: the core reaches the subnet via the target site only. Step 4: the VMs cache the old gateway's MAC address; the new gateway announces itself or uses the same virtual MAC. Step 6: the VLAN is removed from the links between the sites and from the source hosts. Case A, one router serving both sites: no routing change, unextend without Connect cloud network, remove the VLAN at the end. Case C, the gateway moves into NSX: see the NSX overlay picture for the NSX side.</desc>
+<desc id="d">Source site on the left, target site on the right, the core or inter-site routing on top. VLAN 120 reaches both sites: stretched by the physical network, or extended by HCX. Step 1, before the window: the target router has the gateway prepared, shut, with the same IP address and prefix, and the route ready; route filters allow the subnet from the target site. Step 2a: the source gateway goes out of service and its route is withdrawn. Step 2b, with HCX: unextend without Connect cloud network. Step 2c: the target gateway comes up and the route is announced from the target site. Step 3: the core reaches the subnet via the target site only. Step 4: the VMs cache the old gateway's MAC address; the new gateway announces itself or uses the same virtual MAC. Step 6: the VLAN is removed from the source hosts, and from the links between the sites only if that stretch was built for the migration. Case A, the stretch is the standard design or one L3 device serves both sites: no routing change, and the stretch stays. Case C, the gateway moves into NSX: see the NSX overlay picture for the NSX side.</desc>
 <defs>
 <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
 <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker>
@@ -54,8 +54,8 @@
 <text class="bt" x="320" y="425">Source hosts</text>
 <text class="bs" x="320" y="445">no VMs left on VLAN 120</text>
 <circle cx="170" cy="430" r="13" fill="#64748b"/><text class="step" x="170" y="435">6</text>
-<text x="60" y="490" font-size="12.5" fill="#334155">6: remove VLAN 120 here and from</text>
-<text x="60" y="507" font-size="12.5" fill="#334155">the links between the sites</text>
+<text x="60" y="490" font-size="12.5" fill="#334155">6: remove VLAN 120 here; from the links</text>
+<text x="60" y="507" font-size="12.5" fill="#334155">only if the stretch was built for this</text>
 
 <!-- target boxes -->
 <rect class="box" x="820" y="230" width="240" height="60" rx="7" stroke="#16a34a"/>
@@ -74,7 +74,7 @@
 <text x="40" y="566" font-size="13.5" fill="#0f172a">1  Before the window: target gateway configured but shut, route ready, route filters allow the subnet from the target site.</text>
 <text x="40" y="592" font-size="13.5" fill="#0f172a">2  In the window: a, source gateway down and route withdrawn; b, HCX unextend (if extended); c, target gateway up, route announced.</text>
 <text x="40" y="618" font-size="13.5" fill="#0f172a">4  VMs cache the old gateway's MAC: the new gateway announces itself, or uses the same virtual MAC. Test from a VM straight away.</text>
-<text x="40" y="652" font-size="13" fill="#475569">Case A, one router or fabric serves both sites: no routing change; unextend without Connect cloud network, then step 6.</text>
+<text x="40" y="652" font-size="13" fill="#475569">Case A, the stretch is the standard design (DCI, EVPN, anycast gateway) or one L3 device serves both sites: no routing change, the stretch stays.</text>
 <text x="40" y="676" font-size="13" fill="#475569">Case C, the gateway moves into NSX on the target: the source side is 2a, the NSX side is in the NSX overlay picture (steps 3 to 5).</text>
 <text x="40" y="700" font-size="12" fill="#475569">Red dashed: taken out in the window. Green: brought in. Step 5 in the text: the checks after each network.</text>
 </svg>

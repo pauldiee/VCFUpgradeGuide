@@ -98,7 +98,7 @@ then follow the matching row:
 
 | Gateway now (source) | Gateway after (target) | What the cutover is | Where |
 | --- | --- | --- | --- |
-| Physical router, VLAN | The same physical router or fabric, serving both sites | No gateway move. Remove the VLAN from the source hosts and trunks | [Physical VLANs](#networks-on-physical-vlans), case A |
+| Physical, VLAN, with an L2 stretch between the sites as the standard design (DCI, EVPN fabric, anycast gateway), or one L3 device for both sites | Unchanged | No gateway move and no routing change. The stretch stays; only the source hosts leave the VLAN | [Physical VLANs](#networks-on-physical-vlans), case A |
 | Physical router at the source site, VLAN | Physical router at the target site, VLAN (VDS port group or NSX VLAN segment) | The network team moves the gateway and its route; with HCX first unextend, without ticking *Connect cloud network* | [Physical VLANs](#networks-on-physical-vlans), case B |
 | Physical router, VLAN | NSX Tier-1 on the target (overlay segment or VPC subnet) | The network team takes the old gateway down, NSX on the target takes over: with HCX the unextend with *Connect cloud network*; without HCX the VMs first move to the NSX segment | [Physical VLANs](#networks-on-physical-vlans), case C |
 | NSX Tier-1, overlay | NSX Tier-1 on the target | Withdraw the subnet from the old NSX, advertise it from the new one | [NSX overlay](#networks-on-nsx-overlay) |
@@ -208,19 +208,41 @@ the gateway stayed where it was during the waves (question 2 in
 [docs/29](29-side-by-side-migration.md#2-do-the-vms-keep-their-ip-addresses)).
 With HCX, the VLAN on the source was extended to the target by HCX.
 
-![Moving a physical VLAN gateway from the source site to the target site. Step 1, before the window, the target router has the gateway configured but shut, with the same IP address and prefix, and the route ready; route filters allow the subnet from the target site. Step 2a, the source gateway goes out of service and its route is withdrawn. Step 2b, with HCX, unextend without Connect cloud network. Step 2c, the target gateway comes up and its route is announced. Step 3, the core reaches the subnet via the target site only. Step 4, the VMs cache the old gateway's MAC address, so the new gateway announces itself or uses the same virtual MAC. Step 6, the VLAN is removed from the source hosts and the links between the sites. Case A needs no routing change; for case C the NSX side is in the overlay picture.](images/cutover/vlan-cutover.png)
+![Moving a physical VLAN gateway from the source site to the target site. Step 1, before the window, the target router has the gateway configured but shut, with the same IP address and prefix, and the route ready; route filters allow the subnet from the target site. Step 2a, the source gateway goes out of service and its route is withdrawn. Step 2b, with HCX, unextend without Connect cloud network. Step 2c, the target gateway comes up and its route is announced. Step 3, the core reaches the subnet via the target site only. Step 4, the VMs cache the old gateway's MAC address, so the new gateway announces itself or uses the same virtual MAC. Step 6, the VLAN is removed from the source hosts, and from the links between the sites only if that stretch was built for the migration. Case A, a stretch that is the standard design, needs no routing change and keeps the stretch; for case C the NSX side is in the overlay picture.](images/cutover/vlan-cutover.png)
 
 ### Case A: the gateway doesn't move
 
-The same router or fabric serves both sites, so the VMs on the target
-already use it. There is no routing change:
+The VLAN and its gateway already serve both sites, so the VMs on the
+target use the same gateway as before. Two common designs:
+
+- **The L2 stretch is the standard design** of the data centers: a data
+  center interconnect, or an EVPN/VXLAN fabric that carries the VLAN to
+  both sites, often with an anycast gateway (the same gateway IP and MAC
+  address on every site).
+- **One L3 device serves both sites**, reached over the stretched VLAN.
+
+There is no gateway move and no routing change. The cutover is:
 
 1. With HCX: **Unextend**, *without* **Connect cloud network**: the
    target side reaches the gateway over the physical VLAN, not through a
-   Tier-1.
+   Tier-1. If the VLAN was stretched by the fabric from the start, HCX
+   Network Extension wasn't needed for it: the Mobility Group maps the VMs
+   to the target port group of the same VLAN. Don't extend such a VLAN
+   with HCX as well: *"Network extension does not detect or mitigate
+   loops"*
+   ([Restrictions and Limitations for Network Extension](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/extending-networks-with-vmware-hcx/about-vmware-hcx-network-extension/restrictions-and-limitations-for-network-extension.html)).
 2. Run [the checks](#after-each-network).
-3. Remove the VLAN from the source hosts' uplinks and from the trunks to
-   the source site, once nothing on the source uses it any more.
+3. Remove the VLAN from the **source hosts'** uplinks once nothing on the
+   source uses it any more, or simply when the source hosts are retired.
+   **The stretch between the sites stays**: it's part of the design, not
+   of the migration.
+
+**One design check for the network team**, not part of the cutover:
+where is the gateway physically? With an anycast gateway every site
+routes locally. With a gateway on the source site only, all routed
+traffic of the migrated VMs crosses the interconnect to the source site
+and back. That works, but it should be a decision, especially once the
+source site holds nothing else.
 
 ### Case B: the gateway moves to a router at the target site
 
@@ -244,8 +266,10 @@ already use it. There is no routing change:
    network team how the new gateway announces itself (or that it uses the
    same virtual MAC), and test it from a VM straight after the switch.
 5. Run [the checks](#after-each-network).
-6. Remove the VLAN from the links between the sites and from the source
-   hosts, so that it doesn't stay stretched by accident.
+6. Remove the VLAN from the source hosts. If the stretch between the
+   sites was built for the migration, remove it from the links between the
+   sites too, so that it doesn't stay stretched by accident; if the
+   stretch is the standard design, it stays (case A).
 
 ### Case C: the gateway moves into NSX on the target
 
@@ -501,8 +525,9 @@ resort.
 
 - [ ] Every migrated network has its gateway on the target, and its checks
       passed.
-- [ ] No network is extended or stretched between the sites any more,
-      and no Edge bridge from the migration is left.
+- [ ] No network is extended or stretched between the sites any more
+      for the migration (a stretch that is the data centers' standard
+      design stays), and no Edge bridge from the migration is left.
 - [ ] Every migrated subnet is advertised by the new NSX (or the new
       gateway) only; the old Tier-0s no longer advertise it.
 - [ ] Nothing points at the source: backup, DR, monitoring, automation,
