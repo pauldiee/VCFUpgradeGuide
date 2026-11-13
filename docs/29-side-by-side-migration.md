@@ -141,7 +141,10 @@ What the sources say:
 - **Yes, without HCX:** the VLANs of the source must also be present on
   the target hosts' uplinks, and the default gateway stays where it is
   until the cutover. That's a change on the physical network, so plan it
-  with the network team. For **NSX overlay** segments that doesn't work:
+  with the network team, unless the L2 stretch between the sites is
+  already the standard design (a data center interconnect or an EVPN
+  fabric): then the VLANs reach the target hosts already, and the gateway
+  may never have to move. For **NSX overlay** segments that doesn't work:
   their subnet lives on a source Tier-1 and is advertised by the source
   NSX. Decide per overlay subnet: all its VMs move in one window together
   with the cutover, or an NSX Edge bridge joins the old and new segment
