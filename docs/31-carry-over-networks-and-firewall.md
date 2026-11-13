@@ -453,9 +453,17 @@ This is the step where you decide what goes to the target.
 4. Note any group whose membership is a **segment** that HCX will extend
    (route "HCX extend" in the mapping table). Those come back in 4.8.
 5. Save the files as CSV, keeping the `RawJson` column intact.
+6. **Put the import set in its own folder**, `<working-folder>\dfw\import`,
+   under the **standard names**: `NSX_Groups_sanitized.csv` becomes
+   `NSX_Groups.csv` there, and so on for every type, plus
+   `NSX_ServiceGroups.csv` (checked in 4.3) and `NSX_VMTags.csv`. Why:
+   the undo in 4.10 reads the files by those fixed names from the folder
+   you give it and deletes by ID (script code). Pointed at the raw export,
+   it looks for the old IDs and finds nothing of what the import created.
 
-**Check.** Every row that's left is something you want on the target, and
-nothing that's left refers to something you deleted.
+**Check.** Every row that's left is something you want on the target,
+nothing that's left refers to something you deleted, and
+`dfw\import` holds one file per type under its standard name.
 
 ### 4.5 Dry run the import
 
@@ -463,15 +471,14 @@ nothing that's left refers to something you deleted.
    with every object type except the VM tags:
 
    ```powershell
-   .\Import-NSX-DFW.ps1 -NSXManager <target-nsx> -InputFolder <working-folder>\dfw `
+   .\Import-NSX-DFW.ps1 -NSXManager <target-nsx> -InputFolder <working-folder>\dfw\import `
      -ImportIPSets $true -ImportServices $true -ImportServiceGroups $true `
      -ImportGroups $true -ImportProfiles $true -ImportPolicies $true -WhatIf `
      -LogTarget Both -LogFile <working-folder>\dfw\import-whatif.log
    ```
 
-2. A file dialog opens for each object type. Pick the
-   **`_sanitized.csv`** version wherever there is one (for service
-   groups, the file you checked in 4.3).
+2. A file dialog opens for each object type, in the import folder. Pick
+   the file of that type there; they are your reviewed, sanitized files.
 3. Read what it would do. The import runs in dependency order: IP sets,
    services and service groups, security groups, context profiles, then
    policies and rules (script help). Objects that already exist on the
@@ -561,7 +568,7 @@ So this is not phase 3 work: after each wave in phase 5,
 1. run the import with only the tags:
 
    ```powershell
-   .\Import-NSX-DFW.ps1 -NSXManager <target-nsx> -InputFolder <working-folder>\dfw `
+   .\Import-NSX-DFW.ps1 -NSXManager <target-nsx> -InputFolder <working-folder>\dfw\import `
      -ImportTags $true -LogTarget Both -LogFile <working-folder>\dfw\tags-wave-<n>.log
    ```
 
@@ -574,23 +581,66 @@ a member of the groups it was in on the source.
 
 ### 4.10 Undo
 
-- **Remove what an import created:** `Remove-NSX-ImportedObjects.ps1`
-  reads the same CSVs and deletes in reverse dependency order (policies,
-  groups, service groups, services, IP sets). Objects that are already
-  gone are logged as NOT FOUND, not as errors. Always with `-WhatIf`
-  first:
+![Undoing a DFW import. The import creates IP sets, services, service groups, security groups, context profiles, then policies and rules. The targeted undo deletes in the reverse order: rules, policies, security groups, service groups, services, IP sets; context profiles are not removed. Targeted undo with Remove-NSX-ImportedObjects.ps1 reads the CSV files by their standard names from the input folder and deletes by ID, so point it at the import folder from 4.4; the raw export has the old IDs. ClearVMTags empties the tags on the VMs in NSX_VMTags.csv; objects already gone are logged as NOT FOUND. Full wipe with Remove-NSX-AllCustomObjects.ps1 needs no CSV files, deletes every custom DFW object including context profiles, never touches system-owned objects, and is only for a target with nothing else on it, never the source. Both: WhatIf first, both ask for confirmation.](images/networks-firewall/dfw-undo.png)
 
-  ```powershell
-  .\Remove-NSX-ImportedObjects.ps1 -NSXManager <target-nsx> -InputFolder <working-folder>\dfw `
-    -RemovePolicies $true -RemoveGroups $true -RemoveServiceGroups $true `
-    -RemoveServices $true -RemoveIPSets $true -WhatIf
-  ```
+There are two ways back. Pick the one that fits, and run it with
+`-WhatIf` first: both scripts list what they would delete and ask for
+confirmation before they do.
 
-- **Start the target over:** `Remove-NSX-AllCustomObjects.ps1` deletes
-  **every** custom (not system-owned) DFW object on the NSX Manager you
-  point it at, without needing the CSVs (part 1). Only use it on a target
-  that has nothing else on it yet, never on the source, and always with
-  `-WhatIf` first.
+**Targeted: remove what the import created.**
+`Remove-NSX-ImportedObjects.ps1` deletes the objects listed in the CSV
+files, in the reverse order of the import: *"1. DFW Rules 2. DFW Policies
+3. Security Groups 4. Service Groups 5. Services 6. IP Sets"* (script
+help). Use this when the target already had other DFW content, or when
+only part of the import has to go.
+
+1. Point it at the **import folder** from 4.4. It reads `NSX_Policies.csv`,
+   `NSX_Rules.csv`, `NSX_Groups.csv` and so on by those names and deletes
+   by the IDs in them (script code), so it has to see the same files the
+   import used.
+2. Dry run:
+
+   ```powershell
+   .\Remove-NSX-ImportedObjects.ps1 -NSXManager <target-nsx> -InputFolder <working-folder>\dfw\import `
+     -RemovePolicies $true -RemoveGroups $true -RemoveServiceGroups $true `
+     -RemoveServices $true -RemoveIPSets $true -WhatIf
+   ```
+
+3. Run it without `-WhatIf`. Objects that are already gone are logged as
+   NOT FOUND and skipped.
+4. Two things it leaves alone:
+   - **Context profiles:** the script has no switch for them. Remove
+     imported context profiles in the NSX Manager UI, or use the full
+     wipe below.
+   - **VM tags** are not deleted; `-ClearVMTags $true` empties the tags on
+     the VMs listed in `NSX_VMTags.csv`. *"VM tags are not deleted but can
+     be cleared (set to empty)"* (script help).
+
+**Full wipe: start the target over.** `Remove-NSX-AllCustomObjects.ps1`
+needs no CSV files. It *"Removes all custom (non-system-owned) NSX DFW
+objects directly from inventory"*, context profiles included, and
+*"System-owned objects are never touched by this script"* (script help). This is the
+rehearsal reset from the start of step 4.
+
+1. **Only** on a target that has no other DFW content yet, and **never**
+   on the source: it doesn't know which objects came from the import.
+2. Dry run, with the object types you want gone:
+
+   ```powershell
+   .\Remove-NSX-AllCustomObjects.ps1 -NSXManager <target-nsx> `
+     -RemovePolicies $true -RemoveGroups $true -RemoveServiceGroups $true `
+     -RemoveServices $true -RemoveIPSets $true -RemoveProfiles $true -WhatIf
+   ```
+
+3. Run it without `-WhatIf`.
+4. With `-ClearVMTags $true` it asks for a tag scope filter (for example
+   `env`) so unrelated tags stay; without a filter it clears all tags and
+   asks for an explicit `YES` first (part 1).
+
+**Check.** After a targeted undo, the comparison (4.7) shows the undone
+objects as missing on the destination and nothing else changed. After a
+full wipe, the target has no custom DFW objects left, and you can run
+4.5 again.
 
 ---
 

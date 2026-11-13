@@ -20,6 +20,14 @@
   the script help, read 2026-11-13. With its own diagram of the pipeline
   (`docs/images/networks-firewall/dfw.png`): what is read-only, what
   changes the target, the rehearsal loop, and what comes later.
+- **`docs/31` 4.10 undo made visual and corrected** (#115): a diagram of
+  the import and undo order and the two ways back
+  (`docs/images/networks-firewall/dfw-undo.png`). From the script code:
+  the targeted undo reads the CSVs by their standard names and deletes by
+  ID, so 4.4 now saves the reviewed, sanitized files as an import folder
+  under those names, used by the import (4.5, 4.9) and the undo; the
+  targeted undo doesn't remove context profiles; the full wipe is for an
+  empty target only.
 
 ## v2.6.2 – 2026-11-13
 - **New `docs/31`: Carrying over the networks and the firewall** (#110,

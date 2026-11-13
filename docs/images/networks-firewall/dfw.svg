@@ -30,9 +30,9 @@
 <text x="990" y="131" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.4</text>
 <text x="1021" y="132" font-size="15.5" font-weight="700" fill="#0f172a">Review</text>
 <text x="971" y="160" font-size="12" font-family="Consolas, Menlo, monospace" fill="#2563eb">Excel</text>
-<text x="971" y="184" font-size="13" fill="#1e293b">With the rule owners:</text>
-<text x="971" y="203" font-size="13" fill="#1e293b">delete rows that don't go.</text>
-<text x="971" y="222" font-size="13" fill="#1e293b">Check service groups by hand.</text>
+<text x="971" y="184" font-size="13" fill="#1e293b">With the rule owners: delete rows</text>
+<text x="971" y="203" font-size="13" fill="#1e293b">that don't go. Save the result as</text>
+<text x="971" y="222" font-size="13" fill="#1e293b">the import folder (standard names).</text>
 <path d="M302 170.0 L341 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
 <path d="M607 170.0 L646 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
 <path d="M912 170.0 L951 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
@@ -42,7 +42,7 @@
 <text x="990" y="341" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.5</text>
 <text x="1021" y="342" font-size="15.5" font-weight="700" fill="#0f172a">Dry run</text>
 <text x="971" y="370" font-size="12" font-family="Consolas, Menlo, monospace" fill="#2563eb">Import-NSX-DFW.ps1 -WhatIf</text>
-<text x="971" y="394" font-size="13" fill="#1e293b">Pick the _sanitized.csv files.</text>
+<text x="971" y="394" font-size="13" fill="#1e293b">Uses the import folder from 4.4.</text>
 <text x="971" y="413" font-size="13" fill="#1e293b">Count matches what you kept.</text>
 <text x="971" y="432" font-size="13" fill="#1e293b">No VM tags yet.</text>
 <rect x="650" y="310" width="262" height="140" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
