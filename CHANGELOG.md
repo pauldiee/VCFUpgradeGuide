@@ -1,5 +1,24 @@
 # Changelog
 
+## v2.6.1 – 2026-11-13
+- **New `docs/30`: Carrying over the vCenter configuration** (#107, second
+  page of the set in #105). Phase 2 of the side-by-side migration step by
+  step: roles with VIRoleManager (skipped privileges, no privileges added
+  that newer vSphere introduced, `vcf_reserved_*` on 9.1.1), tag categories
+  and tags with PowerCLI until the tags toolkit is there (assignments
+  exported as a baseline and re-applied per wave, per Jim Millard), custom
+  attributes, storage policies with StoragePolicyManager (skipped rules
+  weaken a policy silently), folders and folder permissions with
+  VIFolderManager (dry run first, hidden root folders), and the other
+  permissions via docs/06. Per step the toolkit link, undo and re-run
+  behaviour, a check, and a closing checklist. Workstation needs
+  PowerShell 7.4+ (KB 409981: VCF PowerCLI 9.x tag cmdlets fail on 5.1).
+  Toolkit authorship and the use-at-your-own-risk disclaimer up front.
+  With an overview diagram of what goes in phase 2 and what per wave
+  (`docs/images/vcenter-config/`). Custom attributes join the tags
+  toolkit in development (docs/29 updated to match).
+  `docs/29` links it.
+
 ## v2.6.0 – 2026-11-13
 - **New `docs/29`: Side-by-side migration** (#106, first page of the set
   in #105). The route for building a new VCF or VVF 9 environment next to

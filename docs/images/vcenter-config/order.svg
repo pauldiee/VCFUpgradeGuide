@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 784" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Carrying over the vCenter configuration: what goes now, what goes per wave</title>
+<desc id="d">Carrying over the vCenter configuration in five steps. Before you start: PowerShell 7.4 or later with VCF.PowerCLI 9, the target joined to the same directory, one working folder for all exports. Step 1, Roles, tool VIRoleManager. Phase 2 on the target: Custom roles created; skipped privileges reviewed. Phase 5 per wave: Nothing per VM. Step 2, Tag categories and tags, tool Tags + attributes (in dev.). Phase 2 on the target: Categories and tags, same cardinality and entity types. Phase 5 per wave: Export assignments before the wave, apply after: they don't follow the VM. Step 3, Custom attributes, tool Tags + attributes (in dev.). Phase 2 on the target: Attribute names created, same target type. Phase 5 per wave: Check the values arrived (KB 344959: they do if the name exists). Step 4, Storage policies, tool StoragePolicyManager. Phase 2 on the target: Imported or mapped to a target policy; skipped rules reviewed. Phase 5 per wave: Check each VM against the policy mapping. Step 5, Folders and permissions, tool VIFolderManager (in test). Phase 2 on the target: Folder trees and folder permissions; no objects moved. Phase 5 per wave: Import with -MoveObjects puts arrived VMs in their folders. Dependencies: folder permissions need the roles from step 1; tag-based storage policy rules need the tags from step 2.</desc>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker><marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker></defs>
+<rect width="1260" height="784" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Carrying over the vCenter configuration: what goes now, what goes per wave</text>
+<text x="630.0" y="64" font-size="13" fill="#475569" text-anchor="middle">Phase 2 creates the definitions on the target. Phase 5 restores, per wave, what belongs to each VM once it has arrived.</text>
+<text x="40" y="104" font-size="13" font-weight="700" fill="#334155">Before you start</text>
+<rect x="170" y="86" width="320" height="28" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="330.0" y="105" font-size="13" fill="#0f172a" text-anchor="middle">&#x2713; PowerShell 7.4+ and VCF.PowerCLI 9</text>
+<rect x="508" y="86" width="320" height="28" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="668.0" y="105" font-size="13" fill="#0f172a" text-anchor="middle">&#x2713; Target joined to the same directory</text>
+<rect x="846" y="86" width="320" height="28" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="1006.0" y="105" font-size="13" fill="#0f172a" text-anchor="middle">&#x2713; One working folder for every export</text>
+<text x="275.0" y="170" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Step and toolkit, in this order</text>
+<rect x="480" y="148" width="350" height="32" rx="6" fill="#dbeafe"/>
+<text x="655.0" y="170" font-size="14" font-weight="700" fill="#1e3a8a" text-anchor="middle">Phase 2: on the target, before any VM</text>
+<rect x="870" y="148" width="360" height="32" rx="6" fill="#fef3c7"/>
+<text x="1050.0" y="170" font-size="14" font-weight="700" fill="#78350f" text-anchor="middle">Phase 5: per wave, after the VMs arrive</text>
+<rect x="96" y="190" width="1148" height="104" fill="#f8fafc"/>
+<rect x="110" y="200" width="330" height="84" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="140" cy="242.0" r="17" fill="#334155"/><text x="140" y="248.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<text x="170" y="230" font-size="15.5" font-weight="700" fill="#0f172a">Roles</text>
+<rect x="170" y="244" width="230" height="26" rx="13" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="285" y="262" font-size="12.5" fill="#0f172a" text-anchor="middle">VIRoleManager</text>
+<path d="M440 242.0 H476" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M830 242.0 H866" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#m)"/>
+<rect x="480" y="200" width="350" height="84" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+<text x="500" y="236" font-size="13.5" fill="#0f172a">Custom roles created;</text>
+<text x="500" y="256" font-size="13.5" fill="#0f172a">skipped privileges reviewed</text>
+<rect x="870" y="200" width="360" height="84" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6"/>
+<text x="890" y="246" font-size="13.5" font-style="italic" fill="#64748b">Nothing per VM</text>
+<rect x="110" y="304" width="330" height="84" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="140" cy="346.0" r="17" fill="#334155"/><text x="140" y="352.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="170" y="334" font-size="15.5" font-weight="700" fill="#0f172a">Tag categories and tags</text>
+<rect x="170" y="348" width="230" height="26" rx="13" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="285" y="366" font-size="12.5" fill="#0f172a" text-anchor="middle">Tags + attributes (in dev.)</text>
+<path d="M440 346.0 H476" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M830 346.0 H866" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#m)"/>
+<rect x="480" y="304" width="350" height="84" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+<text x="500" y="340" font-size="13.5" fill="#0f172a">Categories and tags, same</text>
+<text x="500" y="360" font-size="13.5" fill="#0f172a">cardinality and entity types</text>
+<rect x="870" y="304" width="360" height="84" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+<text x="890" y="340" font-size="13.5" fill="#0f172a">Export assignments before the wave,</text>
+<text x="890" y="360" font-size="13.5" fill="#0f172a">apply after: they don't follow the VM</text>
+<rect x="96" y="398" width="1148" height="104" fill="#f8fafc"/>
+<rect x="110" y="408" width="330" height="84" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="140" cy="450.0" r="17" fill="#334155"/><text x="140" y="456.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="170" y="438" font-size="15.5" font-weight="700" fill="#0f172a">Custom attributes</text>
+<rect x="170" y="452" width="230" height="26" rx="13" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="285" y="470" font-size="12.5" fill="#0f172a" text-anchor="middle">Tags + attributes (in dev.)</text>
+<path d="M440 450.0 H476" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M830 450.0 H866" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#m)"/>
+<rect x="480" y="408" width="350" height="84" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+<text x="500" y="444" font-size="13.5" fill="#0f172a">Attribute names created,</text>
+<text x="500" y="464" font-size="13.5" fill="#0f172a">same target type</text>
+<rect x="870" y="408" width="360" height="84" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+<text x="890" y="444" font-size="13.5" fill="#0f172a">Check the values arrived</text>
+<text x="890" y="464" font-size="13.5" fill="#0f172a">(KB 344959: they do if the name exists)</text>
+<rect x="110" y="512" width="330" height="84" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="140" cy="554.0" r="17" fill="#334155"/><text x="140" y="560.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="170" y="542" font-size="15.5" font-weight="700" fill="#0f172a">Storage policies</text>
+<rect x="170" y="556" width="230" height="26" rx="13" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="285" y="574" font-size="12.5" fill="#0f172a" text-anchor="middle">StoragePolicyManager</text>
+<path d="M440 554.0 H476" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M830 554.0 H866" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#m)"/>
+<rect x="480" y="512" width="350" height="84" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+<text x="500" y="548" font-size="13.5" fill="#0f172a">Imported or mapped to a target</text>
+<text x="500" y="568" font-size="13.5" fill="#0f172a">policy; skipped rules reviewed</text>
+<rect x="870" y="512" width="360" height="84" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+<text x="890" y="548" font-size="13.5" fill="#0f172a">Check each VM against</text>
+<text x="890" y="568" font-size="13.5" fill="#0f172a">the policy mapping</text>
+<rect x="96" y="606" width="1148" height="104" fill="#f8fafc"/>
+<rect x="110" y="616" width="330" height="84" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="140" cy="658.0" r="17" fill="#334155"/><text x="140" y="664.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<text x="170" y="646" font-size="15.5" font-weight="700" fill="#0f172a">Folders and permissions</text>
+<rect x="170" y="660" width="230" height="26" rx="13" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+<text x="285" y="678" font-size="12.5" fill="#0f172a" text-anchor="middle">VIFolderManager (in test)</text>
+<path d="M440 658.0 H476" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M830 658.0 H866" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#m)"/>
+<rect x="480" y="616" width="350" height="84" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+<text x="500" y="652" font-size="13.5" fill="#0f172a">Folder trees and folder</text>
+<text x="500" y="672" font-size="13.5" fill="#0f172a">permissions; no objects moved</text>
+<rect x="870" y="616" width="360" height="84" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+<text x="890" y="652" font-size="13.5" fill="#0f172a">Import with -MoveObjects puts</text>
+<text x="890" y="672" font-size="13.5" fill="#0f172a">arrived VMs in their folders</text>
+<path d="M110 242.0 H58 V658.0 H106" fill="none" stroke="#dc2626" stroke-width="1.8" marker-end="url(#r)"/>
+<text x="50" y="450.0" font-size="12" fill="#b91c1c" text-anchor="middle" transform="rotate(-90 50 450.0)">roles by name</text>
+<path d="M110 346.0 H88 V554.0 H106" fill="none" stroke="#dc2626" stroke-width="1.8" marker-end="url(#r)"/>
+<text x="80" y="450.0" font-size="12" fill="#b91c1c" text-anchor="middle" transform="rotate(-90 80 450.0)">tag-based rules</text>
+<path d="M40 750 H80" stroke="#dc2626" stroke-width="1.8" marker-end="url(#r)"/>
+<text x="90" y="755" font-size="12.5" fill="#334155">needs the earlier step</text>
+<rect x="300" y="741" width="26" height="18" rx="9" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="334" y="755" font-size="12.5" fill="#334155">Toolkit, tested on vSphere 9</text>
+<rect x="550" y="741" width="26" height="18" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+<text x="584" y="755" font-size="12.5" fill="#334155">Toolkit, still in test</text>
+<rect x="800" y="741" width="26" height="18" rx="9" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="834" y="755" font-size="12.5" fill="#334155">Toolkit in development</text>
+</svg>
