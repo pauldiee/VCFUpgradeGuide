@@ -402,10 +402,8 @@ article.
 - [ ] Virtual hardware and VMware Tools upgrades, if wanted, are planned
       as a separate change after sign-off.
 
-Then go on with phase 6, cutover and clean-up, in
-[docs/29](29-side-by-side-migration.md#phase-6-cut-over-and-clean-up):
-unextending the networks and removing HCX are in docs/38 §8 and §11 of
-the deployment-planning guide.
+Then go on with phase 6, unextending the networks and removing HCX:
+[Cutting over and cleaning up](35-cutover-and-clean-up.md).
 
 ---
 

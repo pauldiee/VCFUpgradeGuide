@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 640" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Phase 6: cutting over and cleaning up</title>
+<desc id="d">Phase 6 in five steps. 1, Check the network: its last VM moved; nothing else uses it: physical servers, appliances, DHCP, DNS, NTP. 2, Move the gateway: with HCX unextend and connect the target segment to its gateway; without HCX the network team moves the gateway. 3, Check: gateway, routing, DHCP, DNS, NTP from a migrated VM; firewall groups. Steps 1 to 3 repeat for the next network. 4, Repoint and remove HCX: backup, DR, monitoring, DNS, firewall, automation, CMDB; then service mesh, site pair, plug-in, Connector. 5, Retire the source: archive the exports, a quiet period powered off, then decommission. Per network the order in the window: take the source gateway out of service first, then unextend with Connect cloud network ticked, then check the route is advertised only from the target. HCX does not detect IP conflicts, so the subnet must never be routed from both sides at once.</desc>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker><marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker></defs>
+<rect width="1260" height="640" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Phase 6: cutting over and cleaning up</text>
+<text x="630.0" y="64" font-size="13" fill="#475569" text-anchor="middle">Per network first, then per environment, then the source itself. Cut over a network only when its waves are signed off.</text>
+<rect x="40" y="120" width="212" height="150" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="68" cy="150" r="16" fill="#2563eb"/><text x="68" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<text x="94" y="156" font-size="17" font-weight="700" fill="#0f172a">Check network</text>
+<text x="58" y="196" font-size="13.5" fill="#1e293b">Last VM moved. Nothing</text>
+<text x="58" y="217" font-size="13.5" fill="#1e293b">else uses it: servers,</text>
+<text x="58" y="238" font-size="13.5" fill="#1e293b">appliances, DHCP, DNS.</text>
+<path d="M254 195.0 H278" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="282" y="120" width="212" height="150" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+<circle cx="310" cy="150" r="16" fill="#dc2626"/><text x="310" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="336" y="156" font-size="17" font-weight="700" fill="#0f172a">Move gateway</text>
+<text x="300" y="196" font-size="13.5" fill="#1e293b">HCX: unextend, connect</text>
+<text x="300" y="217" font-size="13.5" fill="#1e293b">the Tier-1. Without HCX:</text>
+<text x="300" y="238" font-size="13.5" fill="#1e293b">network team moves it.</text>
+<path d="M496 195.0 H520" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="524" y="120" width="212" height="150" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="552" cy="150" r="16" fill="#2563eb"/><text x="552" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="578" y="156" font-size="17" font-weight="700" fill="#0f172a">Check</text>
+<text x="542" y="196" font-size="13.5" fill="#1e293b">Gateway, routing, DHCP,</text>
+<text x="542" y="217" font-size="13.5" fill="#1e293b">DNS, NTP from a migrated</text>
+<text x="542" y="238" font-size="13.5" fill="#1e293b">VM. Firewall groups.</text>
+<path d="M738 195.0 H762" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="766" y="120" width="212" height="150" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+<circle cx="794" cy="150" r="16" fill="#dc2626"/><text x="794" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="820" y="156" font-size="17" font-weight="700" fill="#0f172a">Repoint, HCX</text>
+<text x="784" y="196" font-size="13.5" fill="#1e293b">Backup, DR, monitoring,</text>
+<text x="784" y="217" font-size="13.5" fill="#1e293b">DNS, firewall. Then mesh,</text>
+<text x="784" y="238" font-size="13.5" fill="#1e293b">site pair, plug-in.</text>
+<path d="M980 195.0 H1004" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="1008" y="120" width="212" height="150" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+<circle cx="1036" cy="150" r="16" fill="#16a34a"/><text x="1036" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<text x="1062" y="156" font-size="17" font-weight="700" fill="#0f172a">Retire source</text>
+<text x="1026" y="196" font-size="13.5" fill="#1e293b">Archive. A quiet period</text>
+<text x="1026" y="217" font-size="13.5" fill="#1e293b">powered off. Then</text>
+<text x="1026" y="238" font-size="13.5" fill="#1e293b">decommission.</text>
+<path d="M630.0 270 V316 H146.0 V276" stroke="#16a34a" stroke-width="2.2" fill="none" stroke-dasharray="7 5" marker-end="url(#g)"/>
+<text x="388.0" y="308" font-size="13.5" fill="#166534" text-anchor="middle" font-weight="700">next network</text>
+<rect x="40" y="352" width="1180" height="128" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+<text x="60" y="380" font-size="14.5" font-weight="700" fill="#0f172a">In the window of step 2: the subnet is never routed from both sides at once</text>
+<rect x="60.0" y="396" width="356.0" height="66" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="74.0" y="422" font-size="14" font-weight="700" fill="#0f172a">a. Source gateway out of service</text>
+<text x="74.0" y="445" font-size="12.5" fill="#334155">and the subnet no longer advertised there</text>
+<rect x="432.0" y="396" width="356.0" height="66" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="446.0" y="422" font-size="14" font-weight="700" fill="#0f172a">b. Unextend, Connect cloud network</text>
+<text x="446.0" y="445" font-size="12.5" fill="#334155">or bring up the target gateway (no HCX)</text>
+<rect x="804.0" y="396" width="396.0" height="66" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="818.0" y="422" font-size="14" font-weight="700" fill="#0f172a">c. Route advertised from the target only</text>
+<text x="818.0" y="445" font-size="12.5" fill="#334155">then the checks from a migrated VM</text>
+<text x="48" y="516" font-size="13.5" fill="#334155">&#8226; HCX doesn't detect or mitigate IP conflicts, and leaves the target segment disconnected unless you tick Connect cloud network.</text>
+<text x="48" y="540" font-size="13.5" fill="#334155">&#8226; Once a network's gateway has moved and its extension is gone, a VM can only go back with a re-IP or a new extension.</text>
+<text x="48" y="564" font-size="13.5" fill="#334155">&#8226; Remove HCX from the Connector side: service mesh, site pair, the vCenter plug-in, then the Connector VM.</text>
+<rect x="48" y="600" width="22" height="16" rx="4" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="78" y="613" font-size="12.5" fill="#334155">No change</text>
+<rect x="308" y="600" width="22" height="16" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="338" y="613" font-size="12.5" fill="#334155">Changes routing or removes components</text>
+<rect x="648" y="600" width="22" height="16" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="678" y="613" font-size="12.5" fill="#334155">Done</text>
+</svg>

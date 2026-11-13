@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 720" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Moving a physical VLAN gateway from the source site to the target site</title>
+<desc id="d">Source site on the left, target site on the right, the core or inter-site routing on top. VLAN 120 reaches both sites: stretched by the physical network, or extended by HCX. Step 1, before the window: the target router has the gateway prepared, shut, with the same IP address and prefix, and the route ready; route filters allow the subnet from the target site. Step 2a: the source gateway goes out of service and its route is withdrawn. Step 2b, with HCX: unextend without Connect cloud network. Step 2c: the target gateway comes up and the route is announced from the target site. Step 3: the core reaches the subnet via the target site only. Step 4: the VMs cache the old gateway's MAC address; the new gateway announces itself or uses the same virtual MAC. Step 6: the VLAN is removed from the links between the sites and from the source hosts. Case A, one router serving both sites: no routing change, unextend without Connect cloud network, remove the VLAN at the end. Case C, the gateway moves into NSX: see the NSX overlay picture for the NSX side.</desc>
+<defs>
+<marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
+<marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker>
+<style>
+.lbl{font-size:13px;fill:#0f172a;paint-order:stroke;stroke:#ffffff;stroke-width:5px;stroke-linejoin:round}
+.box{fill:#ffffff;stroke-width:1.8}
+.bt{font-size:14px;fill:#0f172a;text-anchor:middle;font-weight:700}
+.bs{font-size:12px;fill:#475569;text-anchor:middle}
+.step{font-size:13px;fill:#ffffff;font-weight:700;text-anchor:middle}
+</style>
+</defs>
+<rect width="1260" height="720" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630" y="38" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Physical VLAN: moving the gateway to the target site (case B)</text>
+<text x="630" y="62" font-size="13" fill="#475569" text-anchor="middle">The network team's change. Same IP address and prefix, so the VMs keep their configuration.</text>
+
+<!-- core -->
+<rect class="box" x="380" y="90" width="500" height="64" rx="8" stroke="#94a3b8"/>
+<text class="bt" x="630" y="116">Core / routing between the sites</text>
+<text class="bs" x="630" y="137">reaches 10.11.120.0/24 via one site only</text>
+<circle cx="900" cy="122" r="13" fill="#2563eb"/><text class="step" x="900" y="127">3</text>
+
+<!-- panels -->
+<rect x="40" y="180" width="560" height="350" rx="10" fill="#dbeafe" fill-opacity="0.35" stroke="#3b82f6" stroke-opacity="0.5"/>
+<text x="58" y="208" font-size="16" font-weight="700" fill="#0f172a">Source site</text>
+<rect x="660" y="180" width="560" height="350" rx="10" fill="#dcfce7" fill-opacity="0.35" stroke="#22c55e" stroke-opacity="0.5"/>
+<text x="1202" y="208" font-size="16" font-weight="700" fill="#0f172a" text-anchor="end">Target site</text>
+
+<!-- routes -->
+<path d="M320 228 L470 158" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#r)"/>
+<text class="lbl" x="345" y="172" style="fill:#b91c1c">route withdrawn</text>
+<path d="M940 228 L790 158" fill="none" stroke="#16a34a" stroke-width="2.6" marker-end="url(#g)"/>
+<text class="lbl" x="915" y="172" text-anchor="end" style="fill:#15803d">route announced</text>
+
+<!-- VLAN interfaces -->
+<path d="M320 290 V398" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-dasharray="7 5"/>
+<path d="M940 290 V398" fill="none" stroke="#16a34a" stroke-width="2.6"/>
+
+<!-- L2 between sites -->
+<path d="M440 430 H820" fill="none" stroke="#475569" stroke-width="3" stroke-dasharray="10 6"/>
+<text class="lbl" x="630" y="420" text-anchor="middle">VLAN 120 between the sites:</text>
+<text class="lbl" x="630" y="452" text-anchor="middle">stretched, or HCX extension</text>
+<circle cx="630" cy="482" r="13" fill="#dc2626"/><text class="step" x="630" y="487">2b</text>
+<text x="650" y="487" font-size="12.5" fill="#0f172a">HCX: unextend, without Connect cloud network</text>
+
+<!-- source boxes -->
+<rect class="box" x="200" y="230" width="240" height="60" rx="7" stroke="#dc2626"/>
+<text class="bt" x="320" y="255">Source router</text>
+<text class="bs" x="320" y="275">gateway .1: out of service</text>
+<circle cx="470" cy="260" r="13" fill="#dc2626"/><text class="step" x="470" y="265">2a</text>
+<rect class="box" x="200" y="400" width="240" height="60" rx="7" stroke="#3b82f6"/>
+<text class="bt" x="320" y="425">Source hosts</text>
+<text class="bs" x="320" y="445">no VMs left on VLAN 120</text>
+<circle cx="170" cy="430" r="13" fill="#64748b"/><text class="step" x="170" y="435">6</text>
+<text x="60" y="490" font-size="12.5" fill="#334155">6: remove VLAN 120 here and from</text>
+<text x="60" y="507" font-size="12.5" fill="#334155">the links between the sites</text>
+
+<!-- target boxes -->
+<rect class="box" x="820" y="230" width="240" height="60" rx="7" stroke="#16a34a"/>
+<text class="bt" x="940" y="255">Target router</text>
+<text class="bs" x="940" y="275">gateway .1: prepared shut, then up</text>
+<circle cx="790" cy="260" r="13" fill="#16a34a"/><text class="step" x="790" y="265">2c</text>
+<circle cx="1090" cy="260" r="13" fill="#64748b"/><text class="step" x="1090" y="265">1</text>
+<rect class="box" x="820" y="400" width="240" height="60" rx="7" stroke="#22c55e"/>
+<text class="bt" x="940" y="425">Target hosts</text>
+<text class="bs" x="940" y="445">migrated VMs on VLAN 120</text>
+<circle cx="1090" cy="430" r="13" fill="#2563eb"/><text class="step" x="1090" y="435">4</text>
+<text x="1110" y="426" font-size="12.5" fill="#334155">ARP:</text>
+<text x="1110" y="442" font-size="12.5" fill="#334155">new MAC?</text>
+
+<!-- notes -->
+<text x="40" y="566" font-size="13.5" fill="#0f172a">1  Before the window: target gateway configured but shut, route ready, route filters allow the subnet from the target site.</text>
+<text x="40" y="592" font-size="13.5" fill="#0f172a">2  In the window: a, source gateway down and route withdrawn; b, HCX unextend (if extended); c, target gateway up, route announced.</text>
+<text x="40" y="618" font-size="13.5" fill="#0f172a">4  VMs cache the old gateway's MAC: the new gateway announces itself, or uses the same virtual MAC. Test from a VM straight away.</text>
+<text x="40" y="652" font-size="13" fill="#475569">Case A, one router or fabric serves both sites: no routing change; unextend without Connect cloud network, then step 6.</text>
+<text x="40" y="676" font-size="13" fill="#475569">Case C, the gateway moves into NSX on the target: the source side is 2a, the NSX side is in the NSX overlay picture (steps 3 to 5).</text>
+<text x="40" y="700" font-size="12" fill="#475569">Red dashed: taken out in the window. Green: brought in. Step 5 in the text: the checks after each network.</text>
+</svg>

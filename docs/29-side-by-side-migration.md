@@ -141,7 +141,12 @@ What the sources say:
 - **Yes, without HCX:** the VLANs of the source must also be present on
   the target hosts' uplinks, and the default gateway stays where it is
   until the cutover. That's a change on the physical network, so plan it
-  with the network team.
+  with the network team. For **NSX overlay** segments that doesn't work:
+  their subnet lives on a source Tier-1 and is advertised by the source
+  NSX. Decide per overlay subnet: all its VMs move in one window together
+  with the cutover, or an NSX Edge bridge joins the old and new segment
+  during the migration, or the subnet goes with HCX after all
+  ([Cutting over and cleaning up, Networks on NSX overlay](35-cutover-and-clean-up.md#networks-on-nsx-overlay)).
 - **No:** every VM gets a new address on the target. Plan DNS, firewall
   rules and application configuration per wave.
 
@@ -363,7 +368,7 @@ Step by step: [Migrating with HCX](33-migrating-with-hcx.md) or
   points at it (backup jobs, monitoring, DNS, firewall rules), and the
   last baseline export is archived.
 
-The detailed steps for this phase come in the cutover page of this set.
+Step by step: [Cutting over and cleaning up](35-cutover-and-clean-up.md).
 
 ---
 
@@ -412,12 +417,8 @@ Published: [Carrying over the vCenter configuration](30-carry-over-vcenter-confi
 (phase 2), [Carrying over the networks and the firewall](31-carry-over-networks-and-firewall.md)
 (phase 3), [Proving the path](34-prove-the-path.md) (phase 4),
 [Migrating with HCX](33-migrating-with-hcx.md) and
-[Migrating without HCX](32-migrating-without-hcx.md) (phase 5).
-
-This page is planned and will be linked here when it's published:
-
-- **Cutover and clean-up:** gateways, removing extensions, retiring the
-  source.
+[Migrating without HCX](32-migrating-without-hcx.md) (phase 5), and
+[Cutting over and cleaning up](35-cutover-and-clean-up.md) (phase 6).
 
 ---
 

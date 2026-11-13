@@ -1,5 +1,50 @@
 # Changelog
 
+## v2.6.8 – 2026-11-13
+- **New `docs/35`: Cutting over and cleaning up** (#124), the last page of
+  the set in #105. Phase 6 in order: per network (what else still uses it:
+  physical servers, appliances, DHCP/DNS/NTP, per the unextend warning;
+  firewall groups; a window with the network team), moving the gateway
+  with HCX (what MON changes, KB 321599 defaults per migration type;
+  Unextend with *Connect cloud network to cloud edge gateway*, *Block reuse
+  of subnet CIDR*, the sequence so the subnet is never routed from both
+  sides; Force Unextend, KB 448117, NSX Federation) or without HCX, the
+  checks after each network, repointing what still points at the source
+  (and watching the source for logins before switching it off), removing
+  HCX in Broadcom's order (KB 317510; KB 314195 and 314206 when stuck), and
+  retiring the source (archive, a quiet period powered off, backups,
+  decommission, hosts to the target via DP docs/40). Phase diagram in
+  `docs/images/cutover/`. docs/29, 32 and 33 link it; the site's empty
+  *Coming* section is hidden now that every phase has a page.
+- Same release, after review (#125, Paul): **NSX overlay networks.**
+  docs/35 gets *Networks on NSX overlay*: the advertisement chain in both
+  NSX environments (segment connectivity, Tier-1 Route Advertisement,
+  Tier-0 Route Redistribution into BGP), one gateway on the old side during
+  the waves (HCX keeps the target interface disconnected; without HCX the
+  target segment has Connectivity None), the choice per subnet without HCX
+  (one window per subnet, or an NSX Edge bridge on a shared VLAN, flagged as
+  a design to prove in phase 4), and the cutover in one window: disconnect
+  on the old NSX, check on the old Tier-0 Edges (`get route`, `get bgp
+  neighbor ... advertised-routes`, KB 339392), connect on the new NSX,
+  check its advertisement, the physical network's prefix filters, DHCP
+  leases. docs/31 step 3: overlay subnets that keep their IPs without HCX
+  are imported with Connectivity None (remove `connectivity_path` from the
+  export, Enter at the prompt), and the import text now matches the
+  script. docs/29 question 2 and docs/31 *Kept, without HCX* say that
+  overlay segments can't be trunked like VLANs.
+- Same release, after review (Paul): **physical VLAN gateways** and
+  pictures. docs/35 gets *Where the gateway is, before and after* (four
+  cases: gateway stays, moves to a router at the target site, moves into
+  NSX, NSX to NSX) and *Networks on physical VLANs* with case A (no move,
+  only clean-up), case B (target gateway prepared shut, route withdrawn and
+  announced, route filters, the ARP cache and the new gateway's MAC, remove
+  the stretch) and case C (into NSX), plus the HCX note that *Connect cloud
+  network* doesn't apply to a DVPG or NSX VLAN target. Two new diagrams:
+  `vlan-cutover` and `overlay-cutover` in `docs/images/cutover/`.
+- Cross-links for the set (#105): `docs/22` points to the side-by-side
+  route as the opposite of Converge and Import; `docs/23` points to
+  docs/33 and docs/35 for using HCX in a migration.
+
 ## v2.6.7 – 2026-11-13
 - **New `docs/34`: Proving the path** (#122). Phase 4 gets its own page
   instead of a short section in docs/29: what "proven" means (five

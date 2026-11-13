@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 780" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Cutting over an NSX overlay subnet from the old NSX to the new NSX</title>
+<desc id="d">Old NSX on the left, new NSX on the right, the physical routers on top. In each NSX the subnet goes up a chain: the segment is connected to a Tier-1, the Tier-1 advertises connected segments to the Tier-0, the Tier-0 redistributes advertised Tier-1 connected segments into BGP toward the physical routers. Step 1, old NSX: turn off Gateway Connectivity on the segment, which takes only this subnet out of the chain. Step 2, on the old Tier-0 Edges: get route and get bgp neighbor advertised-routes no longer show the subnet. Step 3, new NSX: change the segment's connectivity from None to the Tier-1, with the gateway IP, or unextend with Connect cloud network when HCX extended it. Step 4, on the new Tier-0 Edges: the subnet is advertised. Step 5, the physical routers learn the subnet from the new NSX only. Between steps 1 and 3 the subnet has no gateway, which is the outage of the window.</desc>
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker>
+<marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
+<marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker>
+<style>
+.lbl{font-size:13px;fill:#0f172a;paint-order:stroke;stroke:#ffffff;stroke-width:5px;stroke-linejoin:round}
+.box{fill:#ffffff;stroke-width:1.8}
+.bt{font-size:14px;fill:#0f172a;text-anchor:middle;font-weight:700}
+.bs{font-size:12px;fill:#475569;text-anchor:middle}
+.step{font-size:13px;fill:#ffffff;font-weight:700;text-anchor:middle}
+</style>
+</defs>
+<rect width="1260" height="780" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630" y="38" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">NSX overlay subnet: moving the advertisement from the old NSX to the new</text>
+<text x="630" y="62" font-size="13" fill="#475569" text-anchor="middle">One window, both NSX teams and the network team. The subnet is never advertised by both.</text>
+
+<!-- physical -->
+<rect class="box" x="380" y="90" width="500" height="64" rx="8" stroke="#94a3b8"/>
+<text class="bt" x="630" y="116">Physical routers</text>
+<text class="bs" x="630" y="137">learn 10.11.120.0/24 from one NSX only</text>
+<circle cx="900" cy="122" r="13" fill="#2563eb"/><text class="step" x="900" y="127">5</text>
+
+<!-- panels -->
+<rect x="40" y="180" width="560" height="470" rx="10" fill="#dbeafe" fill-opacity="0.35" stroke="#3b82f6" stroke-opacity="0.5"/>
+<text x="58" y="208" font-size="16" font-weight="700" fill="#0f172a">Old NSX (source)</text>
+<rect x="660" y="180" width="560" height="470" rx="10" fill="#dcfce7" fill-opacity="0.35" stroke="#22c55e" stroke-opacity="0.5"/>
+<text x="1202" y="208" font-size="16" font-weight="700" fill="#0f172a" text-anchor="end">New NSX (target)</text>
+
+<!-- arrows: old -->
+<path d="M320 228 L470 158" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#r)"/>
+<text class="lbl" x="345" y="172" style="fill:#b91c1c">BGP: subnet withdrawn</text>
+<path d="M320 348 V292" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#a)"/>
+<path d="M320 468 V412" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#r)"/>
+<!-- arrows: new -->
+<path d="M940 228 L790 158" fill="none" stroke="#16a34a" stroke-width="2.6" marker-end="url(#g)"/>
+<text class="lbl" x="915" y="172" text-anchor="end" style="fill:#15803d">BGP: subnet advertised</text>
+<path d="M940 348 V292" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#a)"/>
+<path d="M940 468 V412" fill="none" stroke="#16a34a" stroke-width="2.6" marker-end="url(#g)"/>
+
+<!-- old boxes -->
+<rect class="box" x="200" y="230" width="240" height="60" rx="7" stroke="#3b82f6"/>
+<text class="bt" x="320" y="255">Tier-0 (Edges)</text>
+<text class="bs" x="320" y="275">Route Redistribution</text>
+<rect class="box" x="200" y="350" width="240" height="60" rx="7" stroke="#3b82f6"/>
+<text class="bt" x="320" y="375">Tier-1</text>
+<text class="bs" x="320" y="395">Route Advertisement</text>
+<rect class="box" x="200" y="470" width="240" height="60" rx="7" stroke="#dc2626"/>
+<text class="bt" x="320" y="495">Segment 10.11.120.0/24</text>
+<text class="bs" x="320" y="515">Gateway Connectivity: off</text>
+<rect class="box" x="200" y="570" width="240" height="50" rx="7" stroke="#94a3b8" stroke-dasharray="6 4"/>
+<text class="bs" x="320" y="600">no VMs left (all migrated)</text>
+
+<!-- old step notes -->
+<circle cx="470" cy="500" r="13" fill="#dc2626"/><text class="step" x="470" y="505">1</text>
+<text x="490" y="496" font-size="13" fill="#0f172a">Disconnect the</text>
+<text x="490" y="513" font-size="13" fill="#0f172a">segment only</text>
+<circle cx="470" cy="260" r="13" fill="#2563eb"/><text class="step" x="470" y="265">2</text>
+<text x="490" y="256" font-size="13" fill="#0f172a">get route,</text>
+<text x="490" y="273" font-size="13" fill="#0f172a">advertised-routes:</text>
+<text x="490" y="290" font-size="13" fill="#0f172a">subnet gone</text>
+<text x="60" y="385" font-size="12" fill="#475569">Other segments on this</text>
+<text x="60" y="401" font-size="12" fill="#475569">Tier-1 stay advertised</text>
+
+<!-- new boxes -->
+<rect class="box" x="820" y="230" width="240" height="60" rx="7" stroke="#22c55e"/>
+<text class="bt" x="940" y="255">Tier-0 (Edges)</text>
+<text class="bs" x="940" y="275">redistributes T1 connected segments</text>
+<rect class="box" x="820" y="350" width="240" height="60" rx="7" stroke="#22c55e"/>
+<text class="bt" x="940" y="375">Tier-1</text>
+<text class="bs" x="940" y="395">advertises connected segments</text>
+<rect class="box" x="820" y="470" width="240" height="60" rx="7" stroke="#16a34a"/>
+<text class="bt" x="940" y="495">Segment 10.11.120.0/24</text>
+<text class="bs" x="940" y="515">Connectivity: None, then Tier-1</text>
+<rect class="box" x="820" y="570" width="240" height="50" rx="7" stroke="#22c55e"/>
+<text class="bs" x="940" y="600">migrated VMs</text>
+
+<!-- new step notes -->
+<circle cx="790" cy="500" r="13" fill="#16a34a"/><text class="step" x="790" y="505">3</text>
+<text x="770" y="489" font-size="13" fill="#0f172a" text-anchor="end">Connect to Tier-1</text>
+<text x="770" y="506" font-size="13" fill="#0f172a" text-anchor="end">with the gateway IP,</text>
+<text x="770" y="523" font-size="13" fill="#0f172a" text-anchor="end">or HCX unextend +</text>
+<text x="770" y="540" font-size="13" fill="#0f172a" text-anchor="end">Connect cloud network</text>
+<circle cx="790" cy="260" r="13" fill="#2563eb"/><text class="step" x="790" y="265">4</text>
+<text x="770" y="256" font-size="13" fill="#0f172a" text-anchor="end">advertised-routes:</text>
+<text x="770" y="273" font-size="13" fill="#0f172a" text-anchor="end">subnet listed</text>
+
+<!-- legend -->
+<path d="M40 685 H100" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-dasharray="7 5"/>
+<text x="112" y="690" font-size="13" fill="#0f172a">Taken out in the window (old NSX)</text>
+<path d="M420 685 H480" fill="none" stroke="#16a34a" stroke-width="2.6"/>
+<text x="492" y="690" font-size="13" fill="#0f172a">Brought in (new NSX)</text>
+<text x="40" y="720" font-size="13" fill="#0f172a">Between steps 1 and 3 the subnet has no gateway: that is the outage of the window. The other way round, both NSX advertise it for a moment.</text>
+<text x="40" y="746" font-size="12" fill="#475569">Edge CLI (KB 339392): get logical-router, vrf &lt;Tier-0 SR id&gt;, get route, get bgp neighbor &lt;peer&gt; advertised-routes. During the waves the target segment</text>
+<text x="40" y="764" font-size="12" fill="#475569">has Connectivity None (without HCX) or a disconnected router interface (with HCX), so only the old NSX advertises the subnet.</text>
+</svg>

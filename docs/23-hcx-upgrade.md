@@ -12,6 +12,12 @@ Automation, Operations orchestrator, Operations for Networks and Log
 Management, and directly before the NSX Global Manager (or NSX Manager
 when not federated).
 
+This page upgrades an HCX installation that is already in use. Using HCX
+to move VMs into a new VCF or VVF 9 environment is in the side-by-side
+migration set: [Migrating with HCX](33-migrating-with-hcx.md) (the waves)
+and [Cutting over and cleaning up](35-cutover-and-clean-up.md) (unextend
+and removing HCX).
+
 **VCF only, as far as Broadcom documents it.** The
 [vSphere Foundation 9.1 upgrade order](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/upgrading-your-vsphere-foundation-to-9-1.html)
 has no HCX step.

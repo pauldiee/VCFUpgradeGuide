@@ -16,6 +16,10 @@ If there's no VCF fleet yet and the goal is to build one from existing
 kit, that's Converge. If a fleet already exists and the goal is to add
 an existing vCenter to it as another workload domain, that's Import.
 
+The opposite route is to leave the existing environment as it is, build a
+new VCF or VVF 9 environment next to it, and move the VMs across: see
+[Side-by-side migration](29-side-by-side-migration.md).
+
 ---
 
 ## Version interop quick-reference
