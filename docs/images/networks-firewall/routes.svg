@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 782" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
 <title id="t">Carrying over the networks and the firewall</title>
-<desc id="d">Carrying over the networks and the firewall. Step 1: a network mapping table built from the networks VMs use. Step 2, VDS port groups (On the source VDS): VDSPortGroupManager. Export zip, import on target VDS. Uplink names must match; names unique per datacenter. Target: VDS port groups VLAN per mapping table. Step 3, NSX segments + profiles (VLAN or overlay): nsx-segment-migration. Edit name CSV, pick transport zone, dry run, import. Overlay needs gateway and subnet. Target: NSX segments profiles bound. Networks HCX extends (IPs kept with HCX): HCX Network Extension. Not recreated by hand. No second gateway for the same subnet until the cutover. Target: Extended network one gateway. Step 4, NSX distributed firewall (IP sets, services, groups, profiles, policies, rules): NSX DFW toolkit (J. Buren). Export, sanitize, review, import -WhatIf, import, compare. After step 3, before any VM. Target: DFW on target nothing missing. VM NSX tags follow per wave in phase 5.</desc>
+<desc id="d">Carrying over the networks and the firewall. Step 1: a network mapping table built from the networks VMs use. Step 2, VDS port groups (On the source VDS): VDSPortGroupManager. Export zip, import on target VDS. Uplink names must match; names unique per datacenter. Target: VDS port groups VLAN per mapping table. Step 3, NSX segments + profiles (VLAN or overlay): nsx-segment-migration. Edit name CSV, pick transport zone, dry run, import. Overlay needs gateway and subnet. Target: NSX segments profiles bound. Networks HCX extends (IPs kept with HCX): HCX Network Extension. HCX creates the target network when you extend it. Don't pre-create it; one gateway until the cutover. Target: Network made by HCX one gateway. Step 4, NSX distributed firewall (IP sets, services, groups, profiles, policies, rules): NSX DFW toolkit (J. Buren). Export, sanitize, review, import -WhatIf, import, compare. After step 3, before any VM. Target: DFW on target nothing missing. VM NSX tags follow per wave in phase 5.</desc>
 <defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker></defs>
 <rect width="1260" height="782" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
 <text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Carrying over the networks and the firewall</text>
@@ -50,12 +50,12 @@
 <rect x="380" y="426" width="470" height="98" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.6"/>
 <rect x="394" y="438" width="230" height="26" rx="13" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
 <text x="509" y="456" font-size="12.5" fill="#0f172a" text-anchor="middle">HCX Network Extension</text>
-<text x="396" y="482" font-size="13" fill="#0f172a">Not recreated by hand. No second</text>
-<text x="396" y="500" font-size="13" fill="#0f172a">gateway for the same subnet</text>
-<text x="396" y="518" font-size="13" fill="#0f172a">until the cutover.</text>
+<text x="396" y="482" font-size="13" fill="#0f172a">HCX creates the target network</text>
+<text x="396" y="500" font-size="13" fill="#0f172a">when you extend it. Don't pre-create</text>
+<text x="396" y="518" font-size="13" fill="#0f172a">it; one gateway until the cutover.</text>
 <path d="M850 475.0 H886" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
 <rect x="890" y="426" width="330" height="98" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
-<text x="910" y="468" font-size="14" font-weight="700" fill="#0f172a">Extended network</text>
+<text x="910" y="468" font-size="14" font-weight="700" fill="#0f172a">Network made by HCX</text>
 <text x="910" y="490" font-size="14" fill="#0f172a">one gateway</text>
 <rect x="40" y="544" width="300" height="98" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
 <circle cx="68" cy="572" r="15" fill="#334155"/><text x="68" y="577" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>

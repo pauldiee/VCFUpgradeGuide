@@ -1,5 +1,41 @@
 # Changelog
 
+## v2.6.3 – 2026-11-13
+- **`docs/31`: networks that HCX extends** (#113). Per the VCF 9.0 HCX user
+  guide, *"When you extend a network, a corresponding network is created
+  at the destination site"*: these networks skip nsx-segment-migration.
+  New subsection with what HCX asks per target type (NSX VLAN, overlay with
+  Destination First Hop Router, VPC subnet), why not to pre-create the
+  segment (HCX blocks the same subnet on the same Tier-1 by default), MON,
+  and a check in step 4 for segment-based DFW groups after the extension.
+  Diagram and closing checklist updated.
+- **`docs/31` step 4 (NSX DFW) as a step-by-step walkthrough** (#115):
+  why it's usually the hardest step (rehearse against an empty target,
+  involve the rule owners, plan time), then 4.1 prepare, 4.2 export (file
+  per object type), 4.3 sanitize (what gets renamed, tags kept when a
+  group condition uses them, service groups to check by hand), 4.4 review,
+  4.5 dry run, 4.6 import (conflict actions), 4.7 compare (results table,
+  review list, HTML report as sign-off), 4.8 groups on HCX-extended
+  networks, 4.9 VM tags per wave, 4.10 undo. From Jeroen Buren's posts and
+  the script help, read 2026-11-13. With its own diagram of the pipeline
+  (`docs/images/networks-firewall/dfw.png`): what is read-only, what
+  changes the target, the rehearsal loop, and what comes later.
+- **`docs/31` 4.10 undo made visual and corrected** (#115): a diagram of
+  the import and undo order and the two ways back
+  (`docs/images/networks-firewall/dfw-undo.png`). From the script code:
+  the targeted undo reads the CSVs by their standard names and deletes by
+  ID, so 4.4 now saves the reviewed, sanitized files as an import folder
+  under those names, used by the import (4.5, 4.9) and the undo; the
+  targeted undo doesn't remove context profiles; the full wipe is for an
+  empty target only.
+- **`docs/31` step 2 (VDS port groups) as a walkthrough** (#116): 2.1
+  where the port groups land (the VCF-built switch, a migration switch at
+  the source's VDS version, or not a VDS), 2.2 comparing uplink names, VDS
+  version and MTU on both vCenters, 2.3 export, 2.4 import (existing or new
+  switch, unique names), 2.5 hosts and uplinks on a new switch, 2.6
+  standard switch port groups, 2.7 undo. From the VDSPortGroupManager
+  README and code and PowerCLI 9.1.1 help.
+
 ## v2.6.2 – 2026-11-13
 - **New `docs/31`: Carrying over the networks and the firewall** (#110,
   third page of the set in #105). Phase 3 of the side-by-side migration

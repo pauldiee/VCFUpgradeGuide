@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 814" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Migrating the NSX distributed firewall, step by step</title>
+<desc id="d">NSX distributed firewall migration in steps. Row one, read-only: the source NSX 4 Manager, 4.2 export to one CSV per object type with a RawJson column, 4.3 sanitize to _sanitized.csv and _id_mapping.csv files with IDs renamed to names and tags kept when a group uses them, 4.4 review in Excel with the rule owners, removing rows. Row two, right to left: 4.5 dry run with WhatIf, read-only; 4.6 import into the target NSX 9 Manager, which changes the target, conflict action Skip first; the target NSX 9 Manager; 4.7 compare source and target with the mapping files, result an HTML report as sign-off. Rehearse first: run 4.2 to 4.7 against an empty target, wipe it with 4.10 undo, fix the export, run again. Later: 4.8 after each HCX extension, re-point groups that have an extended segment as member; 4.9 per wave in phase 5, import the VM tags or use HCX Migrate NSX Tags. Not covered: Gateway Firewall.</desc>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker><marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d97706"/></marker></defs>
+<rect width="1260" height="814" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Migrating the NSX distributed firewall, step by step</text>
+<text x="630.0" y="64" font-size="13" fill="#475569" text-anchor="middle">Jeroen Buren's NSX DFW migration toolkit. Numbers are the subsections of step 4. Only 4.6 and 4.9 change the target.</text>
+<rect x="40" y="100" width="262" height="140" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="1.8"/>
+<text x="56" y="132" font-size="15.5" font-weight="700" fill="#0f172a">Source NSX 4 Manager</text>
+<text x="56" y="160" font-size="13" fill="#1e293b">The DFW as it runs today.</text>
+<text x="56" y="179" font-size="13" fill="#1e293b">Nothing here is changed.</text>
+<rect x="345" y="100" width="262" height="140" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<rect x="359" y="114" width="42" height="24" rx="12" fill="#2563eb"/>
+<text x="380" y="131" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.2</text>
+<text x="411" y="132" font-size="15.5" font-weight="700" fill="#0f172a">Export</text>
+<text x="361" y="160" font-size="12" font-family="Consolas, Menlo, monospace" fill="#2563eb">Export-NSX-DFW.ps1</text>
+<text x="361" y="184" font-size="13" fill="#1e293b">One CSV per object type,</text>
+<text x="361" y="203" font-size="13" fill="#1e293b">each row with a RawJson column.</text>
+<text x="361" y="222" font-size="13" fill="#1e293b">Switch every type on.</text>
+<rect x="650" y="100" width="262" height="140" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<rect x="664" y="114" width="42" height="24" rx="12" fill="#2563eb"/>
+<text x="685" y="131" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.3</text>
+<text x="716" y="132" font-size="15.5" font-weight="700" fill="#0f172a">Sanitize</text>
+<text x="666" y="160" font-size="12" font-family="Consolas, Menlo, monospace" fill="#2563eb">Sanitize-NSX.ps1</text>
+<text x="666" y="184" font-size="13" fill="#1e293b">IDs renamed to names.</text>
+<text x="666" y="203" font-size="13" fill="#1e293b">_sanitized.csv + _id_mapping.csv.</text>
+<text x="666" y="222" font-size="13" fill="#1e293b">Tags used by groups are kept.</text>
+<rect x="955" y="100" width="262" height="140" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<rect x="969" y="114" width="42" height="24" rx="12" fill="#2563eb"/>
+<text x="990" y="131" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.4</text>
+<text x="1021" y="132" font-size="15.5" font-weight="700" fill="#0f172a">Review</text>
+<text x="971" y="160" font-size="12" font-family="Consolas, Menlo, monospace" fill="#2563eb">Excel</text>
+<text x="971" y="184" font-size="13" fill="#1e293b">With the rule owners: delete rows</text>
+<text x="971" y="203" font-size="13" fill="#1e293b">that don't go. Save the result as</text>
+<text x="971" y="222" font-size="13" fill="#1e293b">the import folder (standard names).</text>
+<path d="M302 170.0 L341 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
+<path d="M607 170.0 L646 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
+<path d="M912 170.0 L951 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
+<path d="M1086.0 240 L1086.0 306" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
+<rect x="955" y="310" width="262" height="140" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<rect x="969" y="324" width="42" height="24" rx="12" fill="#2563eb"/>
+<text x="990" y="341" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.5</text>
+<text x="1021" y="342" font-size="15.5" font-weight="700" fill="#0f172a">Dry run</text>
+<text x="971" y="370" font-size="12" font-family="Consolas, Menlo, monospace" fill="#2563eb">Import-NSX-DFW.ps1 -WhatIf</text>
+<text x="971" y="394" font-size="13" fill="#1e293b">Uses the import folder from 4.4.</text>
+<text x="971" y="413" font-size="13" fill="#1e293b">Count matches what you kept.</text>
+<text x="971" y="432" font-size="13" fill="#1e293b">No VM tags yet.</text>
+<rect x="650" y="310" width="262" height="140" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+<rect x="664" y="324" width="42" height="24" rx="12" fill="#dc2626"/>
+<text x="685" y="341" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.6</text>
+<text x="716" y="342" font-size="15.5" font-weight="700" fill="#0f172a">Import</text>
+<text x="666" y="370" font-size="12" font-family="Consolas, Menlo, monospace" fill="#dc2626">Import-NSX-DFW.ps1</text>
+<text x="666" y="394" font-size="13" fill="#1e293b">Changes the target.</text>
+<text x="666" y="413" font-size="13" fill="#1e293b">-ConflictAction Skip first;</text>
+<text x="666" y="432" font-size="13" fill="#1e293b">fix failures, run again.</text>
+<rect x="345" y="310" width="262" height="140" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="1.8"/>
+<text x="361" y="342" font-size="15.5" font-weight="700" fill="#0f172a">Target NSX 9 Manager</text>
+<text x="361" y="370" font-size="13" fill="#1e293b">Policies, rules, groups,</text>
+<text x="361" y="389" font-size="13" fill="#1e293b">services, IP sets, profiles,</text>
+<text x="361" y="408" font-size="13" fill="#1e293b">before the first VM moves.</text>
+<rect x="40" y="310" width="262" height="140" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<rect x="54" y="324" width="42" height="24" rx="12" fill="#2563eb"/>
+<text x="75" y="341" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.7</text>
+<text x="106" y="342" font-size="15.5" font-weight="700" fill="#0f172a">Compare</text>
+<text x="56" y="370" font-size="12" font-family="Consolas, Menlo, monospace" fill="#2563eb">Compare-NSX-Migration.ps1</text>
+<text x="56" y="394" font-size="13" fill="#1e293b">Source vs target, with the</text>
+<text x="56" y="413" font-size="13" fill="#1e293b">_id_mapping files from 4.3.</text>
+<text x="56" y="432" font-size="13" fill="#1e293b">HTML report = sign-off.</text>
+<path d="M955 380.0 L916 380.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
+<path d="M650 380.0 L611 380.0" fill="none" stroke="#dc2626" stroke-width="2.2" marker-end="url(#r)"/>
+<path d="M345 380.0 L306 380.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
+<path d="M171.0 240 L171.0 306" fill="none" stroke="#475569" stroke-width="2.2" stroke-dasharray="6 5" marker-end="url(#m)"/>
+<text x="181.0" y="279.0" font-size="12" fill="#475569">read for the comparison</text>
+<rect x="40" y="476" width="1180" height="72" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="60" y="500" font-size="14" font-weight="700" fill="#0f172a">&#x21BB; Rehearse first</text>
+<text x="60" y="521" font-size="13" fill="#334155">Run 4.2 to 4.7 against a lab or an empty target. Wipe it (4.10 undo: Remove-NSX-ImportedObjects.ps1, or Remove-NSX-AllCustomObjects.ps1</text>
+<text x="60" y="539" font-size="13" fill="#334155">on an empty target only), fix the export, and run it again until the comparison is clean.</text>
+<text x="40" y="576" font-size="14" font-weight="700" fill="#78350f">Later, not in phase 3</text>
+<rect x="40" y="588" width="575.0" height="140" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.8"/>
+<rect x="54" y="602" width="42" height="24" rx="12" fill="#d97706"/>
+<text x="75" y="619" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.8</text>
+<text x="106" y="620" font-size="15.5" font-weight="700" fill="#0f172a">After each HCX extension</text>
+<text x="56" y="648" font-size="13" fill="#1e293b">Groups with an extended segment as member:</text>
+<text x="56" y="667" font-size="13" fill="#1e293b">point them at the network HCX created,</text>
+<text x="56" y="686" font-size="13" fill="#1e293b">then compare again (4.7).</text>
+<rect x="645.0" y="588" width="575.0" height="140" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+<rect x="659.0" y="602" width="42" height="24" rx="12" fill="#dc2626"/>
+<text x="680.0" y="619" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4.9</text>
+<text x="711.0" y="620" font-size="15.5" font-weight="700" fill="#0f172a">Per wave, in phase 5</text>
+<text x="661.0" y="648" font-size="12" font-family="Consolas, Menlo, monospace" fill="#dc2626">Import-NSX-DFW.ps1 -ImportTags $true</text>
+<text x="661.0" y="672" font-size="13" fill="#1e293b">VM tags, only for VMs already on the target</text>
+<text x="661.0" y="691" font-size="13" fill="#1e293b">(others are skipped). Or HCX Migrate NSX Tags.</text>
+<text x="40" y="754" font-size="12.5" fill="#64748b">Not covered by the toolkit: Gateway Firewall policies. Rebuild those on the target gateways yourself.</text>
+<rect x="40" y="772" width="22" height="16" rx="4" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="70" y="785" font-size="12.5" fill="#334155">Read-only</text>
+<rect x="270" y="772" width="22" height="16" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="300" y="785" font-size="12.5" fill="#334155">Changes the target</text>
+<rect x="500" y="772" width="22" height="16" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+<text x="530" y="785" font-size="12.5" fill="#334155">NSX Manager</text>
+<rect x="730" y="772" width="22" height="16" rx="4" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+<text x="760" y="785" font-size="12.5" fill="#334155">After an HCX extension</text>
+</svg>
