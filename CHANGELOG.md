@@ -9,6 +9,15 @@
   segment (HCX blocks the same subnet on the same Tier-1 by default), MON,
   and a check in step 4 for segment-based DFW groups after the extension.
   Diagram and closing checklist updated.
+- **`docs/31` step 4 (NSX DFW) as a step-by-step walkthrough** (#115):
+  why it's usually the hardest step (rehearse against an empty target,
+  involve the rule owners, plan time), then 4.1 prepare, 4.2 export (file
+  per object type), 4.3 sanitize (what gets renamed, tags kept when a
+  group condition uses them, service groups to check by hand), 4.4 review,
+  4.5 dry run, 4.6 import (conflict actions), 4.7 compare (results table,
+  review list, HTML report as sign-off), 4.8 groups on HCX-extended
+  networks, 4.9 VM tags per wave, 4.10 undo. From Jeroen Buren's posts and
+  the script help, read 2026-11-13.
 
 ## v2.6.2 – 2026-11-13
 - **New `docs/31`: Carrying over the networks and the firewall** (#110,
