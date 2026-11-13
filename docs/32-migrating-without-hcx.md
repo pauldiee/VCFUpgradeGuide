@@ -10,12 +10,13 @@ travel with the VM, check, sign off.
 It assumes phases 2 to 4 are done: the configuration
 ([docs/30](30-carry-over-vcenter-configuration.md)) and the networks and
 firewall ([docs/31](31-carry-over-networks-and-firewall.md)) exist on the
-target, and one test VM has gone there and back (phase 4 in
-[docs/29](29-side-by-side-migration.md#phase-4-prove-the-path)).
+target, and the path is proven: every flow tested and one test VM has
+gone there and back ([docs/34, Proving the path](34-prove-the-path.md)).
 
 Facts on this page come from the vSphere 9.1 TechDocs, Broadcom KB
 articles and the PowerCLI help, read word for word on 2026-11-13. Each is
-linked where it's used.
+linked where it's used. The route with HCX is in
+[Migrating with HCX](33-migrating-with-hcx.md).
 
 ---
 
@@ -44,7 +45,8 @@ linked where it's used.
 
 ## Before the first wave
 
-Go through this once, before wave 1:
+Go through this once, before wave 1. The tests behind each item are in
+[Proving the path](34-prove-the-path.md#network-tests-without-hcx).
 
 - [ ] **Phases 2 to 4 are done**, and the test VM went there and back.
 - [ ] **Ports.** Advanced Cross vCenter vMotion needs *"Port 8000 on the

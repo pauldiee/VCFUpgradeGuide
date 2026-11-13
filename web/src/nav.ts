@@ -37,11 +37,6 @@ export type Track = 'vcf' | 'vvf' | 'vsphere' | 'migrate';
 export const MIGRATION_BAND = 'Side-by-side migration';
 export const MIGRATION_PLANNED: { label: string; blurb: string; icon: string }[] = [
   {
-    label: 'Phase 5: migrating with HCX',
-    blurb: 'A short bridge page: which steps of the HCX build guide in the deployment-planning guide (docs/38) fall in which phase, and what a wave looks like with Mobility Groups.',
-    icon: 'arrow-right-arrow-left',
-  },
-  {
     label: 'Phase 6: cutover and clean-up',
     blurb: 'Gateways, removing network extensions, retiring the source environment.',
     icon: 'flag-checkered',
@@ -144,12 +139,30 @@ export const NAV: NavItem[] = [
     tracks: ['migrate'],
   },
   {
+    slug: '34-prove-the-path',
+    step: 'Side-by-side migration',
+    band: MIGRATION_BAND,
+    label: 'Phase 4: prove the path',
+    icon: 'vial-circle-check',
+    blurb: 'The gate before the first wave: every network flow tested from both ends with a command per flow, HCX diagnostics and Transport Analytics, a test VM there and back per route, the checks after each move, measured durations, and a signed evidence sheet.',
+    tracks: ['migrate'],
+  },
+  {
     slug: '32-migrating-without-hcx',
     step: 'Side-by-side migration',
     band: MIGRATION_BAND,
     label: 'Phase 5: migrating without HCX',
     icon: 'right-to-bracket',
     blurb: 'Advanced Cross vCenter vMotion in waves: which way to start a migration, sizing a wave, a five-step runbook per wave, encrypted VMs, VDS versions, EVC, and moving a VM back.',
+    tracks: ['migrate'],
+  },
+  {
+    slug: '33-migrating-with-hcx',
+    step: 'Side-by-side migration',
+    band: MIGRATION_BAND,
+    label: 'Phase 5: migrating with HCX',
+    icon: 'arrow-right-arrow-left',
+    blurb: 'HCX Mobility Groups in waves: a migration type per VM, what HCX carries over, sync and switchover windows, special cases, moving a VM back, and common migration errors. Building HCX stays in the deployment-planning guide.',
     tracks: ['migrate'],
   },
   {

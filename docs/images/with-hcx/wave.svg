@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 640" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">A migration wave with HCX</title>
+<desc id="d">A migration wave with HCX in five steps. 1, Before: Mobility Group per wave. Stop snapshot jobs. Agree the switchover window. 2, Sync: Bulk and RAV copy the disks, then a delta every two hours until switchover. vMotion and Cold have no sync phase. 3, Switchover: Bulk reboots the VM on the target. RAV and vMotion switch over live, one at a time per service mesh. 4, Check: Application owner tests. Network, tags, custom attributes, folder per VM. 5, Sign off: Wave done. Remove the originals that Bulk left in the Migrated VMs folder. After sign-off, the next wave starts at step 1. If a check fails, migrate the VM back with HCX. In the Mobility Group, per group or per VM: placement (compute, storage, folder, disk format), network (extended networks are selected automatically, standard port groups must be mapped), migration type (Bulk, vMotion, RAV, Cold), extended options (vCenter tags, custom attributes, NSX security tags). Leave Upgrade Virtual Hardware, Upgrade VMware Tools and Deactivate Per-VM EVC off until sign-off. Over-estimate the switchover window: a Bulk switchover that doesn't finish in it is canceled.</desc>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker><marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d97706"/></marker></defs>
+<rect width="1260" height="640" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">A migration wave with HCX</text>
+<text x="630.0" y="64" font-size="13" fill="#475569" text-anchor="middle">One Mobility Group per wave. Every wave runs the same five steps; the next wave starts after sign-off.</text>
+<rect x="40" y="120" width="212" height="150" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="68" cy="150" r="16" fill="#2563eb"/><text x="68" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<text x="94" y="156" font-size="17" font-weight="700" fill="#0f172a">Before</text>
+<text x="58" y="196" font-size="13.5" fill="#1e293b">Mobility Group per wave.</text>
+<text x="58" y="217" font-size="13.5" fill="#1e293b">Stop snapshot jobs. Agree</text>
+<text x="58" y="238" font-size="13.5" fill="#1e293b">the switchover window.</text>
+<path d="M254 195.0 H278" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="282" y="120" width="212" height="150" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="310" cy="150" r="16" fill="#2563eb"/><text x="310" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="336" y="156" font-size="17" font-weight="700" fill="#0f172a">Sync</text>
+<text x="300" y="196" font-size="13.5" fill="#1e293b">Bulk, RAV: disks copied,</text>
+<text x="300" y="217" font-size="13.5" fill="#1e293b">then a delta every 2 h.</text>
+<text x="300" y="238" font-size="13.5" fill="#1e293b">vMotion, Cold: no sync.</text>
+<path d="M496 195.0 H520" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="524" y="120" width="212" height="150" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+<circle cx="552" cy="150" r="16" fill="#dc2626"/><text x="552" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="578" y="156" font-size="17" font-weight="700" fill="#0f172a">Switchover</text>
+<text x="542" y="196" font-size="13.5" fill="#1e293b">Bulk: reboot on the target.</text>
+<text x="542" y="217" font-size="13.5" fill="#1e293b">RAV, vMotion: live, one at</text>
+<text x="542" y="238" font-size="13.5" fill="#1e293b">a time per service mesh.</text>
+<path d="M738 195.0 H762" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="766" y="120" width="212" height="150" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="794" cy="150" r="16" fill="#2563eb"/><text x="794" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="820" y="156" font-size="17" font-weight="700" fill="#0f172a">Check</text>
+<text x="784" y="196" font-size="13.5" fill="#1e293b">Application owner tests.</text>
+<text x="784" y="217" font-size="13.5" fill="#1e293b">Network, tags, attributes,</text>
+<text x="784" y="238" font-size="13.5" fill="#1e293b">folder per VM.</text>
+<path d="M980 195.0 H1004" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="1008" y="120" width="212" height="150" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+<circle cx="1036" cy="150" r="16" fill="#16a34a"/><text x="1036" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<text x="1062" y="156" font-size="17" font-weight="700" fill="#0f172a">Sign off</text>
+<text x="1026" y="196" font-size="13.5" fill="#1e293b">Wave done. Remove the</text>
+<text x="1026" y="217" font-size="13.5" fill="#1e293b">originals Bulk left in</text>
+<text x="1026" y="238" font-size="13.5" fill="#1e293b">'Migrated VMs'.</text>
+<path d="M1114.0 270 V316 H146.0 V276" stroke="#16a34a" stroke-width="2.2" fill="none" stroke-dasharray="7 5" marker-end="url(#g)"/>
+<text x="630.0" y="308" font-size="13.5" fill="#166534" text-anchor="middle" font-weight="700">next wave</text>
+<path d="M872.0 120 V98 H630.0 V116" stroke="#d97706" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<text x="751.0" y="90" font-size="13.5" fill="#92400e" text-anchor="middle" font-weight="700">check fails: migrate the VM back with HCX</text>
+<rect x="40" y="352" width="1180" height="128" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+<text x="60" y="380" font-size="14.5" font-weight="700" fill="#0f172a">In the Mobility Group, per group or per VM, from the mapping tables of phases 2 and 3</text>
+<rect x="60.0" y="396" width="269.0" height="66" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="74.0" y="422" font-size="14" font-weight="700" fill="#0f172a">Placement</text>
+<text x="74.0" y="445" font-size="12.5" fill="#334155">compute, storage, folder, disk format</text>
+<rect x="345.0" y="396" width="269.0" height="66" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="359.0" y="422" font-size="14" font-weight="700" fill="#0f172a">Network</text>
+<text x="359.0" y="445" font-size="12.5" fill="#334155">extended: automatic; others: map</text>
+<rect x="630.0" y="396" width="269.0" height="66" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="644.0" y="422" font-size="14" font-weight="700" fill="#0f172a">Migration type</text>
+<text x="644.0" y="445" font-size="12.5" fill="#334155">Bulk, vMotion, RAV or Cold</text>
+<rect x="915.0" y="396" width="269.0" height="66" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="929.0" y="422" font-size="14" font-weight="700" fill="#0f172a">Extended options</text>
+<text x="929.0" y="445" font-size="12.5" fill="#334155">vCenter tags, attributes, NSX tags</text>
+<text x="48" y="516" font-size="13.5" fill="#334155">&#8226; Leave Upgrade Virtual Hardware, Upgrade VMware Tools and Deactivate Per-VM EVC off until sign-off: it keeps the way back open.</text>
+<text x="48" y="540" font-size="13.5" fill="#334155">&#8226; Over-estimate the switchover window: a Bulk switchover that doesn't finish in time is canceled and the source VM powers on again.</text>
+<text x="48" y="564" font-size="13.5" fill="#334155">&#8226; Snapshots taken during a migration (by hand or by a backup job) can disrupt it; stop those jobs for the wave's VMs.</text>
+<rect x="48" y="600" width="22" height="16" rx="4" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="78" y="613" font-size="12.5" fill="#334155">No change to VMs</text>
+<rect x="348" y="600" width="22" height="16" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="378" y="613" font-size="12.5" fill="#334155">Moves VMs to the target</text>
+<rect x="608" y="600" width="22" height="16" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="638" y="613" font-size="12.5" fill="#334155">Done</text>
+</svg>
