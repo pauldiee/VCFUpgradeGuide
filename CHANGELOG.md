@@ -1,5 +1,42 @@
 # Changelog
 
+## v2.6.7 – 2026-11-13
+- **New `docs/34`: Proving the path** (#122). Phase 4 gets its own page
+  instead of a short section in docs/29: what "proven" means (five
+  conditions), choosing test VMs (wave 0, one per way of migrating, the
+  special cases in scope), network tests without HCX with a command per
+  flow (vCenter 443 both ways incl. IPv6, DNS A and PTR, certificate trust,
+  NFC 902, vMotion with `vmkping` at full MTU and the vMotion stack
+  gateway, provisioning network, NTP, layer 2 per VLAN, the Import VMs
+  wizard as a test) and with HCX (data plane diagnostics, Transport
+  Analytics and the underlay minimums, the IX-ESX flows 31031/44046, 443,
+  902, layer 2 over the extension), the test VM there and back per route
+  (Move-Wave.ps1 dry run, apply and re-run; a Mobility Group of one with a
+  switchover schedule; reverse migration; the way back after a power cycle
+  on newer CPUs), the checks after each move, measuring for the waves,
+  what to do when a test fails, an evidence sheet, and a phase diagram
+  (`docs/images/prove-the-path/`). docs/29, 32 and 33 point to it. vSphere
+  9.1 and HCX 9.1 TechDocs and KBs, read 2026-11-13.
+
+## v2.6.6 – 2026-11-13
+- **New `docs/33`: Migrating with HCX** (#121, fifth page of the set in
+  #105). Phase 5 with HCX Mobility Groups, the counterpart of docs/32;
+  building HCX (deploy, site pair, service mesh, network extension,
+  firewall) stays in VCF9-DeploymentPlanning docs/38 and is linked, not
+  repeated. Before the first wave (HCX health, extended vs. mapped
+  networks, the IX-to-ESX flows that later show up as errors: 31031/44046,
+  443, 902), a migration type per VM (Bulk, RAV, HCX vMotion, Cold) with
+  each type's limits, what HCX carries over (vCenter tags, custom
+  attributes, NSX security tags, folder, MAC) and the options to leave off
+  until sign-off, a runbook per wave (Mobility Group, schedules, sync and
+  switchover, the switchover window), HCX 9.1 migration waves (CSV or
+  VCF Operations for networks), outside vCenter (CBT deactivated, RAV's two
+  folders), special cases per type, moving a VM back (the Bulk original in
+  *Migrated VMs*, reverse needs 902), troubleshooting with eight common
+  errors and KBs, and a wave diagram (`docs/images/with-hcx/`). HCX 9.1
+  user guide (updated 2026-11-12) and KBs, read 2026-11-13. docs/29 and
+  docs/32 link it; the site's planned card is replaced by the page.
+
 ## v2.6.5 – 2026-11-13
 - **New `docs/32`: Migrating without HCX** (#119, fourth page of the set
   in #105). Phase 5 with Advanced Cross vCenter vMotion: before the first

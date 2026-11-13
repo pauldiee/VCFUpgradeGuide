@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 640" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Phase 4: proving the path</title>
+<desc id="d">Phase 4 in five steps. 1, Network tests: every flow from both ends, a command per flow, output saved. 2, There: test VMs move as wave 0 with the wave tooling. 3, Check: network, MAC, policy, tags, attributes, folder, NSX tags. 4, Back: the way a failed wave would, also after a power cycle on the target. 5, Measure and record: durations into the wave plan, evidence sheet signed. If a test fails, fix it and run that test and every later one again. Without HCX: vCenter to vCenter 443 both ways, DNS and certificate trust, ESX to ESX 902 for NFC, the vMotion network with vmkping at full MTU. With HCX: data plane diagnostics, Transport Analytics per uplink, IX and ESX flows 31031, 443 and 902, layer 2 over each extended network. Test VMs: one per way of migrating, plus each special case in scope. Evidence: output per test, measured durations, accepted known problems, sign-off. Only a complete, signed evidence sheet opens wave 1.</desc>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d97706"/></marker></defs>
+<rect width="1260" height="640" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Phase 4: proving the path</text>
+<text x="630.0" y="64" font-size="13" fill="#475569" text-anchor="middle">Nothing in phase 5 should be the first time something is tried. Only a complete, signed evidence sheet opens wave 1.</text>
+<rect x="40" y="120" width="212" height="150" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="68" cy="150" r="16" fill="#2563eb"/><text x="68" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<text x="94" y="156" font-size="17" font-weight="700" fill="#0f172a">Network tests</text>
+<text x="58" y="196" font-size="13.5" fill="#1e293b">Every flow from both</text>
+<text x="58" y="217" font-size="13.5" fill="#1e293b">ends, a command per</text>
+<text x="58" y="238" font-size="13.5" fill="#1e293b">flow, output saved.</text>
+<path d="M254 195.0 H278" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="282" y="120" width="212" height="150" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+<circle cx="310" cy="150" r="16" fill="#dc2626"/><text x="310" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="336" y="156" font-size="17" font-weight="700" fill="#0f172a">There</text>
+<text x="300" y="196" font-size="13.5" fill="#1e293b">Test VMs move as wave 0,</text>
+<text x="300" y="217" font-size="13.5" fill="#1e293b">with the wave tooling and</text>
+<text x="300" y="238" font-size="13.5" fill="#1e293b">the wave settings.</text>
+<path d="M496 195.0 H520" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="524" y="120" width="212" height="150" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<circle cx="552" cy="150" r="16" fill="#2563eb"/><text x="552" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="578" y="156" font-size="17" font-weight="700" fill="#0f172a">Check</text>
+<text x="542" y="196" font-size="13.5" fill="#1e293b">Network, MAC, policy,</text>
+<text x="542" y="217" font-size="13.5" fill="#1e293b">tags, attributes, folder,</text>
+<text x="542" y="238" font-size="13.5" fill="#1e293b">NSX tags.</text>
+<path d="M738 195.0 H762" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="766" y="120" width="212" height="150" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+<circle cx="794" cy="150" r="16" fill="#dc2626"/><text x="794" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="820" y="156" font-size="17" font-weight="700" fill="#0f172a">Back</text>
+<text x="784" y="196" font-size="13.5" fill="#1e293b">The way a failed wave</text>
+<text x="784" y="217" font-size="13.5" fill="#1e293b">would, also after a power</text>
+<text x="784" y="238" font-size="13.5" fill="#1e293b">cycle on the target.</text>
+<path d="M980 195.0 H1004" stroke="#475569" stroke-width="2.2" fill="none" marker-end="url(#m)"/>
+<rect x="1008" y="120" width="212" height="150" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+<circle cx="1036" cy="150" r="16" fill="#16a34a"/><text x="1036" y="156" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<text x="1062" y="156" font-size="17" font-weight="700" fill="#0f172a">Record</text>
+<text x="1026" y="196" font-size="13.5" fill="#1e293b">Durations into the wave</text>
+<text x="1026" y="217" font-size="13.5" fill="#1e293b">plan. Evidence sheet</text>
+<text x="1026" y="238" font-size="13.5" fill="#1e293b">signed off.</text>
+<path d="M630.0 270 V316 H146.0 V276" stroke="#d97706" stroke-width="2.2" fill="none" marker-end="url(#a)"/>
+<text x="388.0" y="308" font-size="13.5" fill="#92400e" text-anchor="middle" font-weight="700">a test fails: fix it, then run that test and every later one again</text>
+<rect x="40" y="352" width="1180" height="160" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+<text x="60" y="380" font-size="14.5" font-weight="700" fill="#0f172a">What gets tested</text>
+<rect x="60.0" y="396" width="269.0" height="100" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="74.0" y="420" font-size="14" font-weight="700" fill="#0f172a">Without HCX</text>
+<text x="74.0" y="442" font-size="12.5" fill="#334155">vCenter to vCenter 443, both ways</text>
+<text x="74.0" y="460" font-size="12.5" fill="#334155">DNS and certificate trust</text>
+<text x="74.0" y="478" font-size="12.5" fill="#334155">ESX 902 NFC; vMotion at full MTU</text>
+<rect x="345.0" y="396" width="269.0" height="100" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="359.0" y="420" font-size="14" font-weight="700" fill="#0f172a">With HCX</text>
+<text x="359.0" y="442" font-size="12.5" fill="#334155">Data plane diagnostics</text>
+<text x="359.0" y="460" font-size="12.5" fill="#334155">Transport Analytics per uplink</text>
+<text x="359.0" y="478" font-size="12.5" fill="#334155">IX and ESX: 31031, 443, 902; L2 test</text>
+<rect x="630.0" y="396" width="269.0" height="100" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="644.0" y="420" font-size="14" font-weight="700" fill="#0f172a">Test VMs</text>
+<text x="644.0" y="442" font-size="12.5" fill="#334155">Not production, on a migrated network</text>
+<text x="644.0" y="460" font-size="12.5" fill="#334155">One per way of migrating</text>
+<text x="644.0" y="478" font-size="12.5" fill="#334155">Plus each special case in scope</text>
+<rect x="915.0" y="396" width="269.0" height="100" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="929.0" y="420" font-size="14" font-weight="700" fill="#0f172a">Evidence</text>
+<text x="929.0" y="442" font-size="12.5" fill="#334155">Output per test, with date</text>
+<text x="929.0" y="460" font-size="12.5" fill="#334155">Measured durations</text>
+<text x="929.0" y="478" font-size="12.5" fill="#334155">Accepted known problems, sign-off</text>
+<text x="48" y="548" font-size="13.5" fill="#334155">&#8226; The checks in step 3 are the same as after a real wave, so the wave check is tested too.</text>
+<text x="48" y="572" font-size="13.5" fill="#334155">&#8226; A test VM that can only go back powered off after a reboot on the target is a finding for the wave plan, not a footnote.</text>
+<rect x="48" y="600" width="22" height="16" rx="4" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="78" y="613" font-size="12.5" fill="#334155">No change to VMs</text>
+<rect x="308" y="600" width="22" height="16" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="338" y="613" font-size="12.5" fill="#334155">Moves test VMs</text>
+<rect x="568" y="600" width="22" height="16" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="598" y="613" font-size="12.5" fill="#334155">Done</text>
+</svg>

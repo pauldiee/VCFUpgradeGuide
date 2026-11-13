@@ -296,6 +296,10 @@ In short:
 
 ### Phase 4: prove the path
 
+Step by step, with the test per flow, the test VM there and back per
+route and the evidence sheet: [Proving the path](34-prove-the-path.md).
+In short:
+
 - **Do:**
   - Open the ports. Advanced Cross vCenter vMotion needs *"Port 8000 on
     the ESX host for vMotion"*, *"Port 902 on the ESX host for NFC"* and
@@ -319,7 +323,7 @@ In short:
 
 ### Phase 5: migrate in waves
 
-Without HCX, step by step:
+Step by step: [Migrating with HCX](33-migrating-with-hcx.md) or
 [Migrating without HCX](32-migrating-without-hcx.md). In short:
 
 - **Do:** group the VMs into waves per application, not per host, so an
@@ -406,12 +410,12 @@ dry run where the toolkit has one.
 
 Published: [Carrying over the vCenter configuration](30-carry-over-vcenter-configuration.md)
 (phase 2), [Carrying over the networks and the firewall](31-carry-over-networks-and-firewall.md)
-(phase 3) and [Migrating without HCX](32-migrating-without-hcx.md) (phase 5).
+(phase 3), [Proving the path](34-prove-the-path.md) (phase 4),
+[Migrating with HCX](33-migrating-with-hcx.md) and
+[Migrating without HCX](32-migrating-without-hcx.md) (phase 5).
 
-These pages are planned and will be linked here when they're published:
+This page is planned and will be linked here when it's published:
 
-- **Migrating with HCX:** site pairing, Service Mesh, network extension,
-  choosing the migration type, Mobility Groups.
 - **Cutover and clean-up:** gateways, removing extensions, retiring the
   source.
 
