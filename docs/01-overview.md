@@ -50,6 +50,10 @@ than one shared phase list:
   the VCF Installer) – in that case the full-VCF track applies unmodified.
   →  [Standalone VVF upgrade](14-standalone-vvf-upgrade.md).
 
+Not upgrading in place at all, but building a new 9.x environment and
+moving the VMs into it? That's a different route: see
+[Side-by-side migration](29-side-by-side-migration.md).
+
 Confirm which applies **before** running the planner or committing to a
 phase count – it changes whether SDDC Manager and VCF Management Services
 exist at all for that engagement. The site's `/vcf/` and `/vvf/` landing
@@ -170,6 +174,9 @@ build number.
   cleanup for a fleet driven through VCF Management Services.
 - **[Standalone VVF upgrade](14-standalone-vvf-upgrade.md)** – the 6-step
   manual procedure for VVF with no VCF Management Services layer.
+- **[Side-by-side migration](29-side-by-side-migration.md)** – instead of
+  an in-place upgrade: build a new 9.x environment, carry the
+  configuration over and migrate the VMs, with or without HCX.
 - **[Field notes](04-field-notes.md)** – known issues and gotchas from real
   upgrades, keep it open alongside whichever track applies.
 - **[VxRail Addendum](vxrail-addendum.md)** – Dell VxRail-specific extra

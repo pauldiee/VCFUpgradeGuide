@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.6.0 – 2026-11-13
+- **New `docs/29`: Side-by-side migration** (#106, first page of the set
+  in #105). The route for building a new VCF or VVF 9 environment next to
+  the old one instead of upgrading in place: what a VM doesn't take with
+  it on a cross vCenter migration (tags, custom attributes, permissions,
+  folders, possibly storage policies; KB 344959; tag assignments don't
+  follow the VM even when the tags exist, per Jim Millard), five questions that
+  decide the route (HCX and its licensing, KB 440126; keeping IP
+  addresses; NSX; VDS versions, KB 318582 incl. its 7.0.3 contradiction
+  and William Lam's two options; identity across SSO domains), seven
+  phases each closed by a check, and the PowerShell toolkits per phase
+  (VIFolderManager still in test, the tags toolkit in development, and
+  Jeroen Buren's NSX DFW migration toolkit for the distributed firewall). With
+  a phase diagram (`docs/images/side-by-side-migration/`). Linked from
+  `docs/01`. TechDocs vSphere 9.1, KBs and the VCF HCX 9.1 blog, read
+  2026-11-13. Jeroen Buren's configmgr.nl posts (parts 1 to 3) read the
+  same day.
+
 ## v2.5.1 – 2026-11-12
 - **`docs/28`: new section *Route C: the agents*** (#104). Sort the Log
   Insight agents by platform first: the 9.1 agent supports only RHEL 9/10,

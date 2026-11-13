@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 900" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">Side-by-side migration: seven phases, each with a check</title>
+<desc id="d">Side-by-side migration in seven phases, each with what you do, the tools, and the check that must pass before the next phase. Phase 0, Decide the route: Five questions: HCX, IP addresses, NSX, VDS versions, identity. Tools: Baseline exports of the source. Check: Route chosen and written down before anything is built. Phase 1, Build the target: New VCF or VVF 9 environment, HCX on both sides if chosen. Tools: Deployment planning guide. Check: Target healthy, licensed, reachable from the source. Phase 2, Carry over vCenter configuration: Roles, tags, storage policies, folders and folder permissions. Tools: VIRoleManager, Tags toolkit (in dev.), StoragePolicyManager, VIFolderManager (in test). Check: Every role, tag, policy and folder exists on the target, same names. Phase 3, Carry over networks and firewall: Port groups, NSX segments, NSX DFW policies, before the first VM moves. Tools: VDSPortGroupManager, nsx-segment-migration, NSX DFW toolkit (J. Buren). Check: Every source network mapped, DFW comparison shows nothing missing. Phase 4, Prove the path: Ports, HCX diagnostics, one test VM there and back. Tools: Ports 8000 / 902 / 443, HCX Diagnostics. Check: Test VM runs on the target with network, policy, tags, folder. Phase 5, Migrate in waves: With HCX: Mobility Groups Without: Import VMs (Adv. Cross vCenter vMotion). Tools: VIFolderManager (in test), Tags toolkit (in dev.), NSX VM tags (DFW toolkit). Check: Wave checked by the application owner before the next wave. Phase 6, Cut over and clean up: Gateways to the target, remove network extensions, retire source. Tools: none. Check: Nothing left running on the source environment.</desc>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker><marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker></defs>
+<rect width="1260" height="900" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">Side-by-side migration: seven phases, each closed by a check</text>
+<text x="630.0" y="64" font-size="13" fill="#475569" text-anchor="middle">Old environment stays in production until phase 6. Do not start a phase before the previous check passes.</text>
+<text x="250" y="108" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Phase: what you do</text>
+<text x="660" y="108" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Tools</text>
+<text x="1040" y="108" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Check before you continue</text>
+<rect x="16" y="120" width="1228" height="100" fill="#f8fafc"/>
+<rect x="30" y="130" width="440" height="80" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="62" cy="170.0" r="17" fill="#334155"/><text x="62" y="176.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">0</text>
+<text x="92" y="156" font-size="15.5" font-weight="700" fill="#0f172a">Decide the route</text>
+<text x="92" y="177" font-size="13" fill="#334155">Five questions: HCX, IP addresses,</text>
+<text x="92" y="195" font-size="13" fill="#334155">NSX, VDS versions, identity</text>
+<rect x="490" y="138" width="340" height="28" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="660.0" y="157" font-size="13" fill="#0f172a" text-anchor="middle">Baseline exports of the source</text>
+<path d="M842 170.0 H858" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#g)"/>
+<rect x="860" y="130" width="370" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="880" y="160" font-size="14" font-weight="700" fill="#166534">&#x2713;</text>
+<text x="902" y="163" font-size="13.5" fill="#0f172a">Route chosen and written down</text>
+<text x="902" y="183" font-size="13.5" fill="#0f172a">before anything is built</text>
+<rect x="30" y="230" width="440" height="80" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="62" cy="270.0" r="17" fill="#334155"/><text x="62" y="276.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<text x="92" y="256" font-size="15.5" font-weight="700" fill="#0f172a">Build the target</text>
+<text x="92" y="277" font-size="13" fill="#334155">New VCF or VVF 9 environment,</text>
+<text x="92" y="295" font-size="13" fill="#334155">HCX on both sides if chosen</text>
+<rect x="490" y="238" width="340" height="28" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="660.0" y="257" font-size="13" fill="#0f172a" text-anchor="middle">Deployment planning guide</text>
+<path d="M842 270.0 H858" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#g)"/>
+<rect x="860" y="230" width="370" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="880" y="260" font-size="14" font-weight="700" fill="#166534">&#x2713;</text>
+<text x="902" y="263" font-size="13.5" fill="#0f172a">Target healthy, licensed,</text>
+<text x="902" y="283" font-size="13.5" fill="#0f172a">reachable from the source</text>
+<rect x="16" y="320" width="1228" height="100" fill="#f8fafc"/>
+<rect x="30" y="330" width="440" height="80" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="62" cy="370.0" r="17" fill="#334155"/><text x="62" y="376.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="92" y="356" font-size="15.5" font-weight="700" fill="#0f172a">Carry over vCenter configuration</text>
+<text x="92" y="377" font-size="13" fill="#334155">Roles, tags, storage policies,</text>
+<text x="92" y="395" font-size="13" fill="#334155">folders and folder permissions</text>
+<rect x="490" y="338" width="165" height="28" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="572.5" y="357" font-size="12" fill="#0f172a" text-anchor="middle">VIRoleManager</text>
+<rect x="665" y="338" width="165" height="28" rx="14" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="747.5" y="357" font-size="12" fill="#0f172a" text-anchor="middle">Tags toolkit (in dev.)</text>
+<rect x="490" y="374" width="165" height="28" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="572.5" y="393" font-size="12" fill="#0f172a" text-anchor="middle">StoragePolicyManager</text>
+<rect x="665" y="374" width="165" height="28" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+<text x="747.5" y="393" font-size="12" fill="#0f172a" text-anchor="middle">VIFolderManager (in test)</text>
+<path d="M842 370.0 H858" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#g)"/>
+<rect x="860" y="330" width="370" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="880" y="360" font-size="14" font-weight="700" fill="#166534">&#x2713;</text>
+<text x="902" y="363" font-size="13.5" fill="#0f172a">Every role, tag, policy and folder</text>
+<text x="902" y="383" font-size="13.5" fill="#0f172a">exists on the target, same names</text>
+<rect x="30" y="430" width="440" height="80" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="62" cy="470.0" r="17" fill="#334155"/><text x="62" y="476.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="92" y="456" font-size="15.5" font-weight="700" fill="#0f172a">Carry over networks and firewall</text>
+<text x="92" y="477" font-size="13" fill="#334155">Port groups, NSX segments, NSX DFW</text>
+<text x="92" y="495" font-size="13" fill="#334155">policies, before the first VM moves</text>
+<rect x="490" y="438" width="165" height="28" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="572.5" y="457" font-size="12" fill="#0f172a" text-anchor="middle">VDSPortGroupManager</text>
+<rect x="665" y="438" width="165" height="28" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="747.5" y="457" font-size="12" fill="#0f172a" text-anchor="middle">nsx-segment-migration</text>
+<rect x="490" y="474" width="165" height="28" rx="14" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5"/>
+<text x="572.5" y="493" font-size="12" fill="#0f172a" text-anchor="middle">NSX DFW toolkit (J. Buren)</text>
+<path d="M842 470.0 H858" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#g)"/>
+<rect x="860" y="430" width="370" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="880" y="460" font-size="14" font-weight="700" fill="#166534">&#x2713;</text>
+<text x="902" y="463" font-size="13.5" fill="#0f172a">Every source network mapped,</text>
+<text x="902" y="483" font-size="13.5" fill="#0f172a">DFW comparison shows nothing missing</text>
+<rect x="16" y="520" width="1228" height="100" fill="#f8fafc"/>
+<rect x="30" y="530" width="440" height="80" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="62" cy="570.0" r="17" fill="#334155"/><text x="62" y="576.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="92" y="556" font-size="15.5" font-weight="700" fill="#0f172a">Prove the path</text>
+<text x="92" y="577" font-size="13" fill="#334155">Ports, HCX diagnostics,</text>
+<text x="92" y="595" font-size="13" fill="#334155">one test VM there and back</text>
+<rect x="490" y="538" width="340" height="28" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="660.0" y="557" font-size="13" fill="#0f172a" text-anchor="middle">Ports 8000 / 902 / 443</text>
+<rect x="490" y="574" width="340" height="28" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="660.0" y="593" font-size="13" fill="#0f172a" text-anchor="middle">HCX Diagnostics</text>
+<path d="M842 570.0 H858" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#g)"/>
+<rect x="860" y="530" width="370" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="880" y="560" font-size="14" font-weight="700" fill="#166534">&#x2713;</text>
+<text x="902" y="563" font-size="13.5" fill="#0f172a">Test VM runs on the target with</text>
+<text x="902" y="583" font-size="13.5" fill="#0f172a">network, policy, tags, folder</text>
+<rect x="30" y="630" width="440" height="80" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="62" cy="670.0" r="17" fill="#334155"/><text x="62" y="676.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<text x="92" y="656" font-size="15.5" font-weight="700" fill="#0f172a">Migrate in waves</text>
+<text x="92" y="677" font-size="13" fill="#334155">With HCX: Mobility Groups</text>
+<text x="92" y="695" font-size="13" fill="#334155">Without: Import VMs (Adv. Cross vCenter vMotion)</text>
+<rect x="490" y="638" width="165" height="28" rx="14" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+<text x="572.5" y="657" font-size="12" fill="#0f172a" text-anchor="middle">VIFolderManager (in test)</text>
+<rect x="665" y="638" width="165" height="28" rx="14" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="747.5" y="657" font-size="12" fill="#0f172a" text-anchor="middle">Tags toolkit (in dev.)</text>
+<rect x="490" y="674" width="165" height="28" rx="14" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5"/>
+<text x="572.5" y="693" font-size="12" fill="#0f172a" text-anchor="middle">NSX VM tags (DFW toolkit)</text>
+<path d="M842 670.0 H858" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#g)"/>
+<rect x="860" y="630" width="370" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="880" y="660" font-size="14" font-weight="700" fill="#166534">&#x2713;</text>
+<text x="902" y="663" font-size="13.5" fill="#0f172a">Wave checked by the application</text>
+<text x="902" y="683" font-size="13.5" fill="#0f172a">owner before the next wave</text>
+<rect x="16" y="720" width="1228" height="100" fill="#f8fafc"/>
+<rect x="30" y="730" width="440" height="80" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.6"/>
+<circle cx="62" cy="770.0" r="17" fill="#334155"/><text x="62" y="776.0" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+<text x="92" y="756" font-size="15.5" font-weight="700" fill="#0f172a">Cut over and clean up</text>
+<text x="92" y="777" font-size="13" fill="#334155">Gateways to the target, remove</text>
+<text x="92" y="795" font-size="13" fill="#334155">network extensions, retire source</text>
+<text x="660" y="775.0" font-size="13" fill="#64748b" text-anchor="middle" font-style="italic">Covered in the cutover doc of this set</text>
+<path d="M842 770.0 H858" fill="none" stroke="#16a34a" stroke-width="2" marker-end="url(#g)"/>
+<rect x="860" y="730" width="370" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+<text x="880" y="760" font-size="14" font-weight="700" fill="#166534">&#x2713;</text>
+<text x="902" y="763" font-size="13.5" fill="#0f172a">Nothing left running</text>
+<text x="902" y="783" font-size="13.5" fill="#0f172a">on the source environment</text>
+<path d="M250 210 V228" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M250 310 V328" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M250 410 V428" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M250 510 V528" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M250 610 V628" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<path d="M250 710 V728" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="40" y="860" width="26" height="18" rx="9" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="74" y="874" font-size="12.5" fill="#334155">Toolkit, tested on vSphere 9</text>
+<rect x="278" y="860" width="26" height="18" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+<text x="312" y="874" font-size="12.5" fill="#334155">Toolkit, still in test</text>
+<rect x="516" y="860" width="26" height="18" rx="9" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="550" y="874" font-size="12.5" fill="#334155">Toolkit in development</text>
+<rect x="754" y="860" width="26" height="18" rx="9" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5"/>
+<text x="788" y="874" font-size="12.5" fill="#334155">Toolkit by Jeroen Buren</text>
+<rect x="992" y="860" width="26" height="18" rx="9" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="1026" y="874" font-size="12.5" fill="#334155">Check or reference</text>
+</svg>
