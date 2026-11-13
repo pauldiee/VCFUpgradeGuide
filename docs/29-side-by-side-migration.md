@@ -270,6 +270,10 @@ it:
 
 ### Phase 3: carry over the networks and the firewall
 
+Step by step, with the commands and a check per step:
+[Carrying over the networks and the firewall](31-carry-over-networks-and-firewall.md).
+In short:
+
 - **Do:**
   - Recreate every network the VMs use. VDS port groups go across with
     VDSPortGroupManager; NSX segments and segment profiles with
@@ -398,13 +402,11 @@ dry run where the toolkit has one.
 ## The rest of this set
 
 Published: [Carrying over the vCenter configuration](30-carry-over-vcenter-configuration.md)
-(phase 2).
+(phase 2) and [Carrying over the networks and the firewall](31-carry-over-networks-and-firewall.md)
+(phase 3).
 
 These pages are planned and will be linked here when they're published:
 
-- **Carrying over the networks and the firewall:** VDS port groups and
-  NSX segments, the mapping table, uplink names and VLANs, and the NSX
-  distributed firewall.
 - **Migrating with HCX:** site pairing, Service Mesh, network extension,
   choosing the migration type, Mobility Groups.
 - **Migrating without HCX:** Advanced Cross vCenter vMotion, VDS version

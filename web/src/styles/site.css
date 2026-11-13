@@ -140,6 +140,7 @@ body {
 .nav-panel--reference { left: 50%; transform: translate(-50%, -6px); width: min(720px, 86vw); }
 .nav-item:hover .nav-panel--reference,
 .nav-item:focus-within .nav-panel--reference { transform: translate(-50%, 0); }
+.nav-panel--migration { width: min(340px, 86vw); }
 .ref-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5) var(--space-6); }
 .ref-band h4 {
   font-size: var(--fs-eyebrow);
@@ -807,6 +808,16 @@ details[open] > .sidebar__reference-summary::before { transform: rotate(90deg); 
   max-width: 900px;
 }
 .planning-card--track .planning-card__icon { font-size: 2rem; }
+/* Planned pages of a set (e.g. /migrate/): not links yet, so quieter and dashed. */
+.planning-card--planned {
+  border-style: dashed;
+  box-shadow: none;
+  cursor: default;
+}
+.planning-card--planned .planning-card__icon,
+.planning-card--planned .planning-card__title,
+.planning-card--planned .planning-card__cta { color: var(--text-quiet); }
+.planning-card--planned:hover { transform: none; }
 .planning-card--track .planning-card__title { margin-top: var(--space-3); }
 
 .workflow--secondary { padding-top: 0; }

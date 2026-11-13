@@ -50,6 +50,17 @@ of the split. If a future addition would apply to only one track, put it
 in that track's own doc (or a new `docs/NN-*.md` promoted from it), not
 back into the shared `01-overview.md`.
 
+**Side-by-side migration is its own route, not a track.** `docs/29`
+onwards (build a new 9.x environment, carry the configuration over,
+migrate the VMs; umbrella issue #105) have `band: MIGRATION_BAND` and
+`tracks: ['migrate']` in `web/src/nav.ts`. That band is deliberately not in
+`REFERENCE_BANDS`: the set gets its own landing page (`/migrate/`,
+`web/src/pages/migrate.astro`), its own dropdown in the top navigation, its
+own sidebar group and a breadcrumb back to `/migrate/`, and a third card on
+the start page. Pages that are planned but not written yet are listed in
+`MIGRATION_PLANNED` (shown as "Coming" on `/migrate/`); move an entry from
+there into `NAV` when its doc is published.
+
 **Public.** This repo is public and is the first section of a planned
 general **VMware Docs** site (docs.hollebollevsan.nl) – future guides need
 not be upgrade-specific or even VCF-specific, just VMware. Scaffolded
@@ -95,6 +106,7 @@ here – see the Related repo section in `README.md`.
 | `docs/22-converge-and-import-existing-infrastructure.md` | Converge (VCF Installer, brownfield vSphere into a new VCF/VVF instance) vs. Import (VCF Operations, an existing vCenter into a new workload domain on an already-running fleet) – prerequisites, version bars, shared NSX auto-selection back-in-time trap (planning; VCF or VVF, Import specifically VCF only) |
 | `docs/29-side-by-side-migration.md` | Side-by-side migration landing doc: new 9.x environment next to the old one, configuration and networks carried over, VMs migrated with or without HCX; first page of the set tracked in #105, phase diagram in `docs/images/side-by-side-migration/` (PNG shown, SVG is the editable source; re-render the PNG after editing) (planning; VCF or VVF) |
 | `docs/30-carry-over-vcenter-configuration.md` | Phase 2 of the side-by-side migration (docs/29) in depth: roles, tags, custom attributes, storage policies, folders and permissions, per step with commands and a check; overview diagram in `docs/images/vcenter-config/` (PNG shown, SVG is the editable source) (planning; VCF or VVF) |
+| `docs/31-carry-over-networks-and-firewall.md` | Phase 3 of the side-by-side migration (docs/29) in depth: network mapping table, VDS port groups, NSX segments, NSX DFW; overview diagram in `docs/images/networks-firewall/` (PNG shown, SVG is the editable source) (planning; VCF or VVF) |
 | `docs/09-avi-license-hub-upgrade.md` | Avi Load Balancer + License Hub upgrade, before SDDC Manager (phase guide; VCF or VVF, if Avi is in use) |
 | `docs/23-hcx-upgrade.md` | VMware HCX upgrade – HCX Manager per paired site, then Service Mesh; version/pairing rules, rollback, VCF Operations lifecycle from 9.1 on (phase guide; **VCF only**, if HCX is in use) |
 | `docs/10-nsx-edge-finalize.md` | NSX Edge cluster upgrade + NSX finalize, replacing plain Phase 8 (phase guide; VCF or VVF) |
