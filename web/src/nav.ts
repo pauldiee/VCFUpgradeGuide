@@ -105,6 +105,15 @@ export const NAV: NavItem[] = [
     tracks: ['vcf', 'vvf'],
   },
   {
+    slug: '30-carry-over-vcenter-configuration',
+    step: 'Planning',
+    band: 'Planning & licensing',
+    label: 'Carrying over the vCenter configuration',
+    icon: 'tags',
+    blurb: 'Phase 2 of a side-by-side migration, step by step: roles, tag categories and tags, custom attributes, storage policies, folders and permissions, with the commands and a check after each step.',
+    tracks: ['vcf', 'vvf'],
+  },
+  {
     slug: '24-vcf-operations-sizing-and-scaling',
     step: 'Planning',
     band: 'Planning & licensing',
