@@ -146,7 +146,7 @@ Sometimes on a separate switch. Decide per mapping-table row:
 
 | Target switch | When | Watch out for |
 | --- | --- | --- |
-| The VDS VCF built | The default: the hosts and uplinks are already there | Uplink **names** must match the source switch's (2.2) |
+| The VDS VCF built | The default: the hosts and uplinks are already there | Uplink **names** usually differ from the source switch's; the import maps them (2.2, 2.4) |
 | A new VDS at the **source's** VDS version | Live migration without HCX, where the VDS versions differ (question 4 in [docs/29](29-side-by-side-migration.md#4-which-vds-versions-are-on-both-sides)) | It needs its own hosts and physical uplinks (2.5); a switch outside the one VCF built is a design decision, check it against the target design |
 | Not on a VDS at all | The network is an NSX segment on the target, or HCX extends it | Step 3, or [Networks that HCX extends](#networks-that-hcx-extends) |
 
@@ -155,10 +155,12 @@ Sometimes on a separate switch. Decide per mapping-table row:
 ### 2.2 Compare the switches
 
 An exported port group's teaming policy refers to uplinks **by name**.
-VCF-built switches use `uplink1`, `uplink2`; a source switch with other
-names (`Uplink 1`, `lag1`, ...) makes the import fail with
-*"activeUplinkPortName ... is not valid"* (VDSPortGroupManager README).
-Compare before you export. On **both** vCenters:
+VCF-built switches use `uplink1`, `uplink2`; a source switch often has
+other names (`Uplink 1`, `lag1`, ...). Restoring vCenter's own backup onto
+such a switch fails with *"activeUplinkPortName ... is not valid"*
+(VDSPortGroupManager README). VDSPortGroupManager 1.2.0 and later checks
+this before it imports and maps the names for you (2.4); you only need to
+know which name goes where. Compare the switches on **both** vCenters:
 
 ```powershell
 Get-VDSwitch | Select-Object Name, Version, NumUplinkPorts, Mtu,
@@ -166,17 +168,20 @@ Get-VDSwitch | Select-Object Name, Version, NumUplinkPorts, Mtu,
 ```
 
 - **Names match:** import onto the target switch as is (2.4).
-- **Names differ:** the script can't rewrite a teaming policy. Either
-  recreate those port groups on the target switch by hand with the same
-  VLAN and settings (like 2.6), or use a new switch whose uplink names
-  match (2.4, option B; it clones names only from a switch in the
-  **target** vCenter).
+- **Names differ:** write down the uplink map, source name → target
+  name, for example `Uplink 1` → `uplink1`, `Uplink 2` → `uplink2`. Map
+  the uplinks that carry the same physical role (the same vmnics and the
+  same physical switches); the order in the list is not enough. You pass
+  this map to the import in 2.4.
+- **LACP:** a source port group that uses a LAG (`lag1`) as its active
+  uplink can be mapped to plain uplinks, but its load-balancing policy may
+  need to change too. The import warns when you do this.
 - **MTU** is set on the switch, not on the port group. Check that the
   target switch's MTU is at least the source switch's when networks carry
   jumbo frames.
 
-**Check.** For every source switch you know whether its uplink names and
-MTU fit the target switch.
+**Check.** For every source switch you have an uplink map (or know that
+the names match), and you know the MTU fits the target switch.
 
 ### 2.3 Export from the source
 
@@ -186,6 +191,10 @@ MTU fit the target switch.
    .\Invoke-VDSPortGroupManager.ps1 -vCenterServer <source-vcenter> -Mode Export -BackupDirectory <working-folder>\portgroups
    ```
 
+   The script runs on the workstation (PowerShell 7.4+, VCF.PowerCLI),
+   not on the vCenter. It has been lab-tested against vCenter 9.1.1 and
+   9.0.2; exporting from a vCenter 7 or 8 source hasn't been tested yet,
+   so check the export (2.3) and the import's dry check (2.4) carefully.
 2. Pick the source switch, then the port groups: a number, a list
    (`1,3,5`), a range (`2-6`) or `all`. Each entry shows its VLAN and port
    count; uplink port groups are left out.
@@ -196,17 +205,27 @@ MTU fit the target switch.
 4. Read the summary: *succeeded / skipped (NSX-backed) / failed*. The log
    file is in `Logs\` next to the script.
 
-**Check.** One `<portgroup>.zip` per port group in the mapping table, and
-the summary shows no failures.
+Next to each zip the export writes a **settings file**, `<portgroup>.json`:
+the port group's complete configuration as the vSphere API returns it,
+with a readable summary on top (VLAN, uplink order, shaping, NetFlow,
+allocation). Keep both files together; the import needs the settings file
+to map uplink names.
+
+**Check.** One `<portgroup>.zip` and one `<portgroup>.json` per port group
+in the mapping table, and the summary shows no failures.
 
 ### 2.4 Import into the target
 
-1. Run the import against the **target** vCenter:
+1. Run the import against the **target** vCenter, with the uplink map from
+   2.2 if the names differ:
 
    ```powershell
-   .\Invoke-VDSPortGroupManager.ps1 -vCenterServer <target-vcenter> -Mode Import -BackupDirectory <working-folder>\portgroups
+   .\Invoke-VDSPortGroupManager.ps1 -vCenterServer <target-vcenter> -Mode Import -BackupDirectory <working-folder>\portgroups `
+     -UplinkMap @{ 'Uplink 1' = 'uplink1'; 'Uplink 2' = 'uplink2' }
    ```
 
+   Without `-UplinkMap`, the script asks per missing name which target
+   uplink it maps to, with a *skip* option.
 2. Pick the zips.
 3. Pick the target switch:
    - **A. An existing switch**, normally the one VCF built (2.1).
@@ -223,15 +242,33 @@ the summary shows no failures.
    Keep the source names wherever you can: it makes the VM's network
    mapping in phase 5 obvious. Write any renamed port group into the
    mapping table.
-5. Read the log: each zip is imported, skipped, or failed with vCenter's
-   message (an uplink-name failure means 2.2 was missed).
+5. Read the log. Per port group the script first checks the uplink names
+   its teaming order uses against the target switch (a port group that
+   inherits its uplink order from the switch has none of its own):
+   - **Names present:** restored from the zip, vCenter's own backup.
+   - **Names missing:** reported before anything is created, then the
+     port group is **rebuilt from the settings file** with the mapped
+     names, in one step that either completes or creates nothing. The
+     rebuild carries the complete configuration; in a lab test (vCenter
+     9.1.1 and 9.0.2, both directions) the rebuilt port groups were
+     identical to the source on every field, including traffic shaping,
+     fixed allocation, NetFlow and settings inherited from the switch
+     ([README](https://github.com/pauldiee/VDSPortGroupManager#other-uplink-names-on-the-target-switch)).
+   - **Zip from a newer vCenter:** a port group backup from vCenter 9.1.1
+     can't be restored on 9.0.2 (*"Uncompress and Deserialize failed on
+     backup config blob"*, lab-verified); the script then rebuilds from the
+     settings file instead.
+   - A NIOC network resource pool that the target switch doesn't have
+     falls back to the default pool, with a warning.
 
 To retry after a failure, run the import again and pick **only** the zips
 that failed: port groups that are already there count as name clashes,
 and the script would ask for a prefix or suffix for them.
 
 **Check.** Every VDS row has its port group on the target switch, with
-the VLAN from the mapping table.
+the VLAN from the mapping table, and the uplink order on the mapped
+uplinks. To check the settings, export the target port groups again and
+compare the `Summary` in the settings files with the source's.
 
 ### 2.5 A new switch: hosts and uplinks
 
