@@ -383,15 +383,26 @@ target Tier-1 from the CSV. VLAN segments skip the check.
 **Overlay subnets that keep their IP addresses without HCX.** Don't give
 these a gateway on the target yet: the old Tier-1 still has it, and a
 second, connected segment with the same subnet can be advertised from
-both NSX environments at once. Import them with **Connectivity None**:
-remove `connectivity_path` from those segments in the export `.json`
-before the import, and press Enter at the gateway prompt. NSX allows that
+both NSX environments at once. Import them with **Connectivity None**: run
+the import for those segments with `-Disconnected`. The script removes
+`connectivity_path` before the import, keeps the subnets and skips the
+gateway prompt. Select only those segments in the menu, and import the
+rest in a separate run without the switch.
+
+```powershell
+.\Import-NSXSegments.ps1 -NSXManager <target-nsx> -InputPath <working-folder>\segments\export.json -Disconnected -WhatIf
+.\Import-NSXSegments.ps1 -NSXManager <target-nsx> -InputPath <working-folder>\segments\export.json -Disconnected
+```
+
+NSX allows that
 (*"If a segment is not connected to a gateway, subnet is optional"*) and
 lets you connect the segment to a Tier-1 later (*"you can change the
 connectivity of segment from "None" to a tier-0 or tier-1 gateway"*,
 [Create an NSX Segment](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/segments/add-an-nsx-segment.html)).
-Write the gateway IP and the target Tier-1 in the mapping table; the
-connection is made at the cutover
+The import ends with a table of these segments: the gateway each one
+connects to at the cutover (the source gateway, with a Tier-1 renamed
+per the CSV) and its subnets. Write the gateway IP and the target Tier-1
+in the mapping table; the connection is made at the cutover
 ([docs/35, Networks on NSX overlay](35-cutover-and-clean-up.md#networks-on-nsx-overlay)).
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.7.2 – 2026-11-16
+- `docs/31` step 3, overlay subnets that keep their IP addresses without
+  HCX (#135, Paul): import them with `Import-NSXSegments.ps1 -Disconnected`
+  (nsx-segment-migration 2.3) instead of removing `connectivity_path` from
+  the export JSON by hand; the import ends with a table of the gateway to
+  connect each segment to at the cutover.
+
 ## v2.7.1 – 2026-11-16
 - `docs/30` *Before you start* and the `docs/15` prerequisites (#133, Paul):
   link the deployment-planning guide's new page on PowerShell 7 and
