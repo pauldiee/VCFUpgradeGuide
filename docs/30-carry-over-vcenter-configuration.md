@@ -85,11 +85,13 @@ development, are written by Paul van Dieen, the author of this guide
 > a problem? Open an issue in the toolkit's GitHub repository.
 
 **What has been tested.** The toolkits have been tested with vSphere 9
-vCenters on both sides; VIFolderManager is still in test (lab-tested on
-VCF 9.1.1 and 9.0.2). Exporting from an **older source vCenter** (7.x or
-8.x) hasn't been tested yet. Open each export file and check that it
-holds what you expect before you import it. Where a toolkit has a dry
-run, use it first.
+vCenters on both sides, and from a **vCenter 8.0 U3 source** into a
+vCenter 9.1.1 target (lab, 2026-11-16, with a test set per toolkit: roles,
+tag and vSAN policies, folders with permissions). VIFolderManager is
+still in test, and the vCenter 8 test had no hosts, so no VMs were moved
+into folders. A **7.x source** hasn't been tested. Open each export file
+and check that it holds what you expect before you import it. Where a
+toolkit has a dry run, use it first.
 
 **Things all three toolkits do the same way:**
 
@@ -160,22 +162,39 @@ What the import does:
 - **Privileges that don't exist on the target** are listed and skipped;
   the role is created with the rest. Read that list: a privilege that
   was renamed or removed in vSphere 9 may leave the role short of what it
-  needs.
+  needs. From a vCenter 8.0 U3 source, four privileges don't exist on
+  9.1.1: `vSphereClient.UtilizeVerificationCode`,
+  `IntercomNamespace.Read`, `IntercomNamespace.Write` and
+  `Observability.Admin`; the import reports *"4 privilege(s) not found in
+  target vCenter and will be skipped"* (lab-verified, 8.0.3 build 25600417
+  to 9.1.1 build 25784172, 2026-11-16).
 - The import copies only the privileges the role had on the source. It
   doesn't add privileges that newer vSphere versions introduced. Check
   each imported role against what its holders must be able to do on 9.x.
 
 **On a vCenter 9.1.1 target**, a new custom role also gets a permission
 on the vCenter root for a group `VSPHERE.LOCAL\vcf_reserved_<n>`. Leave
-it alone. (Lab-verified on VCF 9.1.1, 2026-11-12; not on 9.0.2; no
-Broadcom source found.)
+it alone. It belongs to the VCF roles of VCF single sign-on: *"To use VCF
+roles, the vCenter instance creates local groups and new global
+permissions to support the intended VCF role. Do not modify the new
+global permissions that have been added and which are for principals
+whose names start with vcf_reserved_. Modifying global permissions could
+break your system as it causes VCF authorization issues"*
+([Managing VCF Roles](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/vcf-built-in-roles.html)).
+The vSphere Client's Global Permissions page doesn't show these groups;
+*"You can retrieve all accounts for auditing or any other purpose by using
+CLI/API"* (vCenter 9.1.1 release notes). That every custom role gets one
+is lab-verified (VCF 9.1.1, 2026-11-12 and 2026-11-16; not on 9.0.2); the
+page doesn't say why.
 
 **Undo.** To remove a role you imported by mistake:
 `Remove-VIRole -Role (Get-VIRole -Name '<role>')`. On a 9.1.1 target this
 reports the role as in use because of the `vcf_reserved` permission above
 (lab-verified). `-Force` removes a role *"even if it is associated with a
 permission"* (PowerCLI help); whether that is safe for the
-`vcf_reserved` permission hasn't been tested, so try it in a lab first.
+`vcf_reserved` permission hasn't been tested, and Broadcom's *"Do not
+modify"* above argues against it: on a VCF 9.1.1 target, leave a test
+role in place rather than force it out.
 
 **Check.** Run this on both vCenters and compare the two files:
 
@@ -327,6 +346,13 @@ What the import does:
 Read every skipped item. A rule that was skipped makes the policy on the
 target weaker than on the source, and a VM placed on it gets different
 storage behaviour without any error.
+
+When **every** rule of a policy is skipped, for example a tag-based
+policy whose tag isn't on the target yet, the import reports the missing
+tag and then fails with *"The storage policy cannot have both CommonRule
+and AnyOfRuleSets null or empty"* (lab-verified 2026-11-16,
+[StoragePolicyManager #6](https://github.com/pauldiee/StoragePolicyManager/issues/6)).
+That's why step 2 comes first: create the tags, then import the policies.
 
 **Undo:** `Remove-SpbmStoragePolicy -StoragePolicy (Get-SpbmStoragePolicy
 -Name '<policy>')`, as long as no VM uses the policy yet. Then fix the
@@ -539,9 +565,15 @@ Checked on 2026-11-13.
 - Jim Millard, 2026-05:
   [Migrating tags after cross-vCenter vMotion](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html)
 - Toolkit READMEs and code:
-  [VIRoleManager](https://github.com/pauldiee/VIRoleManager) 1.2.3,
-  [StoragePolicyManager](https://github.com/pauldiee/StoragePolicyManager) 1.0.3,
-  [VIFolderManager](https://github.com/pauldiee/VIFolderManager) 1.1.0
+  [VIRoleManager](https://github.com/pauldiee/VIRoleManager) 1.3.0,
+  [StoragePolicyManager](https://github.com/pauldiee/StoragePolicyManager) 1.1.0,
+  [VIFolderManager](https://github.com/pauldiee/VIFolderManager) 1.2.0
+  (read 2026-11-16, with their `tests/` scripts and lab results)
+- Read on 2026-11-16:
+  [Managing VCF Roles](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/vcf-built-in-roles.html)
+  (VCF 9.1, `vcf_reserved_`),
+  [vCenter 9.1.1.0 release notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-1-0-release-notes/vcenter-9-1-1-0-release-notes.html)
+  (VCF reserved groups hidden from Global Permissions)
 - PowerCLI cmdlet syntax and help (`New-TagCategory`, `New-Tag`,
   `Get-TagAssignment`, `New-CustomAttribute`, `Get-VIPermission`,
   `New-VIPermission`, `Remove-VIRole`, `Remove-SpbmStoragePolicy`,

@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.9.1 – 2026-11-16
+- `docs/30` (#140, Paul): the three vCenter configuration toolkits are
+  lab-tested from a vCenter 8.0 U3 source into 9.1.1 (roles, tag and vSAN
+  policies, folders with permissions; no VMs), a 7.x source is not. Step
+  1 names the four privileges that 8.0.3 has and 9.1.1 doesn't, and the
+  `vcf_reserved_` permission is now sourced (*Managing VCF Roles*: don't
+  modify it). Step 4: a policy whose rules are all skipped fails to
+  import (StoragePolicyManager #6), so tags come first. Toolkit versions
+  in the sources updated.
+
 ## v2.9.0 – 2026-11-16
 - The rest of the migration-set gaps (#129 items 2 to 5, Paul):
   - Applications split across both sides during the waves: `docs/31`
