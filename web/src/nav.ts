@@ -121,7 +121,7 @@ export const NAV: NavItem[] = [
     band: MIGRATION_BAND,
     label: 'Phase 2: vCenter configuration',
     icon: 'tags',
-    blurb: 'Phase 2 of a side-by-side migration, step by step: roles, tag categories and tags, custom attributes, storage policies, folders and permissions, with the commands and a check after each step.',
+    blurb: 'Phase 2 of a side-by-side migration, step by step: roles, tag categories and tags, custom attributes, storage policies, folders and permissions, resource pools and DRS rules, templates and content libraries, with the commands and a check after each step.',
     tracks: ['migrate'],
   },
   {

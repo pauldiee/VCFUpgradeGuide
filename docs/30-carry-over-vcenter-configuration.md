@@ -22,6 +22,8 @@ toolkits' own documentation and code, and PowerCLI 13.5.1 (VCF.PowerCLI
 - [Step 3: custom attributes](#step-3-custom-attributes)
 - [Step 4: storage policies](#step-4-storage-policies)
 - [Step 5: folders and permissions](#step-5-folders-and-permissions)
+- [Step 6: resource pools, DRS groups and rules](#step-6-resource-pools-drs-groups-and-rules)
+- [Step 7: templates and content libraries](#step-7-templates-and-content-libraries)
 - [Phase 2 is done when](#phase-2-is-done-when)
 - [Sources](#sources)
 
@@ -398,6 +400,108 @@ later wave.
 
 ---
 
+## Step 6: resource pools, DRS groups and rules
+
+Resource pools, VM groups, host groups and VM/Host rules belong to the
+**cluster**, not to the VM. KB 344959 lists what does travel with the VM:
+*"Per-VM DRS settings are migrated during Cross vCenter vMotion, including
+DRS enablement, DRS mode (manual, partial, full automated), VM
+affinity/anti-affinity rules. the same applies to HA. The per-VM HA
+overrides are carried over during migration"*
+([KB 344959](https://knowledge.broadcom.com/external/article/344959)).
+Resource pools, DRS groups and VM/Host rules are not in that list:
+recreate them on the target cluster before the wave that needs them, and
+pick the target resource pool when you migrate.
+
+**Export them from the source**, per cluster:
+
+```powershell
+$cl = '<source-cluster>'
+Get-Cluster $cl | Get-ResourcePool |
+  Select-Object Name, @{N='Parent';E={$_.Parent.Name}}, CpuSharesLevel, NumCpuShares, CpuReservationMHz,
+    CpuLimitMHz, CpuExpandableReservation, MemSharesLevel, NumMemShares, MemReservationGB, MemLimitGB,
+    MemExpandableReservation | Export-Csv <working-folder>\cluster\$cl-pools.csv -NoTypeInformation
+Get-DrsClusterGroup -Cluster $cl |
+  Select-Object Name, GroupType, @{N='Members';E={$_.Member.Name -join ';'}} |
+  Export-Csv <working-folder>\cluster\$cl-groups.csv -NoTypeInformation
+Get-DrsVMHostRule -Cluster $cl |
+  Select-Object Name, Enabled, Type, @{N='VMGroup';E={$_.VMGroup.Name}}, @{N='HostGroup';E={$_.VMHostGroup.Name}} |
+  Export-Csv <working-folder>\cluster\$cl-vmhost-rules.csv -NoTypeInformation
+Get-DrsRule -Cluster $cl |
+  Select-Object Name, Enabled, Type, @{N='VMs';E={(Get-VM -Id $_.VMIds).Name -join ';'}} |
+  Export-Csv <working-folder>\cluster\$cl-vm-rules.csv -NoTypeInformation
+```
+
+These lines were run read-only against a VCF 9.1.1 lab vCenter with
+VCF.PowerCLI on 2026-11-16 (Lab-verified). Leave out what the platform
+created for itself: on that lab cluster the export also held the
+Supervisor's `Namespaces` pool with its `svc-*` children, a resource pool
+for the NSX Edge cluster, and the Edge anti-affinity rule. The target
+platform makes its own.
+
+**Recreate them on the target cluster.** Host groups name hosts, so map
+them to the target hosts; VM groups can only hold VMs that are on the
+target, so add each VM to its group after its wave. Two things to know
+before a wave:
+
+- **VM groups with a start dependency.** For a VM in a VM group used by a
+  start or boot dependency rule, migrating it leaves *"a stale entry in the
+  new vCenter Server Database"*. Broadcom's procedure: *"Remove the VM from
+  it's VM_Group under Source vCenter"*, migrate, then *"Add VM into the new
+  VM_Group with it's subsequent dependencies"*
+  ([KB 301490](https://knowledge.broadcom.com/external/article/301490)).
+- **The account that migrates.** Moving a VM with affinity or
+  anti-affinity rules, DRS or HA overrides needs *"Host > Inventory >
+  Modify cluster"* on the destination; without it the migration fails
+  with *"Permission to perform this operation was denied"*
+  ([KB 429035](https://knowledge.broadcom.com/external/article/429035),
+  vCenter 8.x). Give the role from step 1 that privilege, or remove the
+  rules before the move and add them after.
+
+**Check.** Every resource pool, host group and VM/Host rule from the
+export exists on the target cluster or is written down as left out, and
+the migration account has *Modify cluster* on the target.
+
+---
+
+## Step 7: templates and content libraries
+
+A VM migration moves VMs; templates and content library items stay
+behind.
+
+**VM templates in the inventory.** HCX doesn't take them: *"HCX does not
+support direct migration of VM templates. Templates must be in a
+powered-on or powered-off VM state"*. The workaround is to convert the
+template to a VM, migrate that, and *"Convert to Template"* on the target
+([KB 416264](https://knowledge.broadcom.com/external/article/416264)).
+The same works without HCX: a converted template is a powered-off VM, so
+it goes with the cross vCenter migration wizard like any other. Put the
+templates in their own wave, early, so the target can build new VMs.
+
+**Content libraries.** A library on the target can subscribe to a
+published library on the source, but VM templates (`.vmtx`) in a library
+only synchronize between linked vCenters: *"To synchronize VM Templates
+(.VMTX ) between Content Libraries across different vCenter Servers, the
+Publisher and Subscriber vCenter Servers must participate in Enhanced
+Linked Mode (ELM) or vCenter Group"*
+([KB 414494](https://knowledge.broadcom.com/external/article/414494),
+vCenter 8.0.x to 9.1.x). A source vCenter that stays separate from the
+target can't do that, so:
+
+- **OVF templates and other files:** subscribe a target library to the
+  source library, synchronize, and check the item count.
+- **VM templates in a library:** move them as VMs (deploy one on the
+  source, migrate it, and add it to a target library as a template).
+- **Before the source is retired:** a subscription points at the source
+  vCenter. Make sure everything you keep is stored in a target library
+  that doesn't depend on it.
+
+**Check.** Every template that's still in use is on the target, as a
+template or in a target library, and no target library depends on the
+source any more by the time the source is retired.
+
+---
+
 ## Phase 2 is done when
 
 - [ ] Every custom role is on the target, and skipped privileges have
@@ -410,6 +514,10 @@ later wave.
       policy, and skipped rules have been reviewed.
 - [ ] The folder trees match, and folder permissions are in place.
 - [ ] Other permissions are recreated or listed for later waves.
+- [ ] Resource pools, host groups and VM/Host rules are on the target
+      cluster, and the migration account has *Modify cluster* there.
+- [ ] Templates and content library items in use have a route to the
+      target (step 7).
 - [ ] All exports are in the working folder.
 
 Then go on with phase 3:
@@ -439,3 +547,15 @@ Checked on 2026-11-13.
   `New-VIPermission`, `Remove-VIRole`, `Remove-SpbmStoragePolicy`,
   `Remove-Tag`, `Remove-TagCategory`): VMware.VimAutomation.Core and
   .Storage 13.5.1 (VCF.PowerCLI 9.1.1)
+- Steps 6 and 7, read on 2026-11-16:
+  [KB 301490](https://knowledge.broadcom.com/external/article/301490)
+  (VM groups with a start dependency),
+  [KB 429035](https://knowledge.broadcom.com/external/article/429035)
+  (*Modify cluster* for VMs with rules or overrides),
+  [KB 416264](https://knowledge.broadcom.com/external/article/416264)
+  (templates with HCX),
+  [KB 414494](https://knowledge.broadcom.com/external/article/414494)
+  (VM templates in subscribed libraries need linked vCenters); the step 6
+  export lines (`Get-ResourcePool`, `Get-DrsClusterGroup`,
+  `Get-DrsVMHostRule`, `Get-DrsRule`) run read-only against a VCF 9.1.1
+  lab vCenter with VCF.PowerCLI on 2026-11-16
