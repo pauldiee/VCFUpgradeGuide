@@ -196,9 +196,13 @@ migration errors. Test them by hand as well:
 
 | Flow | Test | Error when it's closed | Source |
 | --- | --- | --- | --- |
-| **Source ESX to source IX, 31031** (44046 for RAV) | From the ESX shell: `nc -zv <IX-IP> 31031`; and `vmkping -I vmkN -d -s 1472 <IX-IP>` (8972 for MTU 9000) | Bulk or RAV stuck at 0% base sync | [KB 319757](https://knowledge.broadcom.com/external/article/319757) |
+| **Source ESX to source IX, 31031 and 32032** (unencrypted / encrypted) | From the ESX shell: `nc -zv <IX-IP> 31031` and `nc -zv <IX-IP> 32032`; and `vmkping -I vmkN -d -s 1472 <IX-IP>` (8972 for MTU 9000) | Bulk or RAV stuck at 0% base sync | [KB 319757](https://knowledge.broadcom.com/external/article/319757) |
 | **Target IX to target ESX, 443** | From the IX shell: `openssl s_client -connect <host-ip>:443` returns the certificate chain | *"Storage not accessible error observed"* | [KB 447075](https://knowledge.broadcom.com/external/article/447075) |
 | **IX to ESX, 902** (the source side, for the way back) | Data plane diagnostics shows failed probes | *"Storage not accessible error observed"* on a reverse migration | [KB 393791](https://knowledge.broadcom.com/external/article/393791) |
+
+KB 319757 says *"31031 (or 44046 for RAV)"*; the Ports and Protocols
+listings for HCX 9.1.0 and 9.1.1 don't name 44046 and give 31031 and 32032
+for this flow (read 2026-11-16), so test those two.
 
 KB 319757 adds two host checks: only **one VMkernel per host tagged for
 vSphere Replication**, and the **same subnet mask** on the ESX

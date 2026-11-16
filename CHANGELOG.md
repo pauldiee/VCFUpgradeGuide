@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.9.2 – 2026-11-16
+- `docs/33`, `docs/34` (#142, Paul): ESX to IX on 31031 and 32032, as the
+  Ports and Protocols listings for HCX 9.1.0 and 9.1.1 give it (read
+  2026-11-16). 44046 for RAV comes from KB 319757 only and is now named
+  as the KB's wording. The `docs/33` checklist also points to HCX Manager
+  to IX on 8123 (bulk migration control), now in docs/38 §3.4 of the
+  deployment-planning guide.
+
 ## v2.9.1 – 2026-11-16
 - `docs/30` (#140, Paul): the three vCenter configuration toolkits are
   lab-tested from a vCenter 8.0 U3 source into 9.1.1 (roles, tag and vSAN
