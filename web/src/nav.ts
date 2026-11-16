@@ -130,7 +130,7 @@ export const NAV: NavItem[] = [
     band: MIGRATION_BAND,
     label: 'Phase 3: networks and firewall',
     icon: 'network-wired',
-    blurb: 'Phase 3 of a side-by-side migration, step by step: the network mapping table, VDS port groups, NSX segments and profiles, and the NSX distributed firewall with Jeroen Buren\'s toolkit, each with commands, undo and a check.',
+    blurb: 'Phase 3 of a side-by-side migration, step by step: the network mapping table, VDS port groups, NSX segments and profiles, the NSX distributed firewall with Jeroen Buren\'s toolkit, and the services on the NSX gateways (NAT, load balancer, DHCP, DNS, VPN, gateway firewall), each with commands, undo and a check.',
     tracks: ['migrate'],
   },
   {

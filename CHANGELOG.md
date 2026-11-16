@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.8.0 – 2026-11-16
+- Services on the source NSX gateways in the migration set (#129 item 1,
+  Paul): NAT, load balancer, DHCP, DNS forwarder, IPsec and L2 VPN, and
+  the gateway firewall don't go with the segments or the DFW toolkit.
+  `docs/31` has a new step 5: list them per gateway and per subnet (with
+  the Tier-1 route advertisement types for NAT IPs, VIPs, the DNS listener
+  and VPN endpoints), where each one lands on the target (an NSX Edge
+  cluster on the target Tier-1, the HA mode per service, Avi for workload
+  load balancing because the NSX load balancer left the VCF entitlement in
+  9.0, KB 401492 / KB 439411, vDefend licensing for the gateway firewall,
+  DHCP profiles the segment tool doesn't create), and how to build them
+  disabled and switch them over at the cutover. `docs/29` question 3 and
+  phase 3, and `docs/35` (before the cutover, a new step 5 in the overlay
+  cutover, and a check after each network) point there.
+
 ## v2.7.3 – 2026-11-16
 - `docs/31` step 2.3 (#137, Paul): exporting VDS port groups from a vCenter
   8 source is now lab-tested (VDSPortGroupManager 1.4.0, vCenter 8.0 U3 to

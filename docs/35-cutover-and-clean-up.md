@@ -81,6 +81,12 @@ Per network:
       ([Removing a Network Extension](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/extending-networks-with-vmware-hcx/removing-a-network-extension.html)).
       Check where the network's DHCP relay, DNS and NTP servers are, and
       that the migrated VMs can still reach them after the cutover.
+- [ ] **Services on the source NSX gateway.** NAT rules, load balancer
+      VIPs, a DNS forwarder, VPN endpoints or gateway firewall rules this
+      subnet depends on are in the cutover plan, with their target ready
+      ([docs/31, step 5](31-carry-over-networks-and-firewall.md#step-5-services-on-the-nsx-gateways)).
+      A service that other subnets still need stays on the source until
+      the last of them has moved.
 - [ ] **Firewall groups.** Groups that refer to the extended network or
       its segment are reviewed
       ([docs/31, 4.8](31-carry-over-networks-and-firewall.md#48-groups-that-refer-to-hcx-extended-networks)).
@@ -388,11 +394,20 @@ network team:
    segments (or has a rule that covers this subnet), the new Tier-0
    redistributes advertised Tier-1 connected segments, and on its Edges
    `get bgp neighbor <peer-ip> advertised-routes` now lists the subnet.
-5. **The physical network:** the network team confirms the subnet is
+5. **The gateway services of this subnet**, from the cutover plan
+   ([docs/31, step 5](31-carry-over-networks-and-firewall.md#step-5-services-on-the-nsx-gateways)):
+   on the old gateway, disable the NAT rules and the DNS service (or
+   remove the VIP, VPN session) that belong to this subnet; on the new
+   gateway, enable or create them. Their IPs follow the same chain as the
+   subnet: on the new Tier-1 the matching route advertisement types (*All
+   NAT IP's*, *All DNS Forwarder Routes*, *All LB VIP Routes*, *All IPSec
+   Local Endpoints*) must be on, and on the old Tier-0 Edges the IPs must
+   be gone from `advertised-routes`, as in steps 2 and 4.
+6. **The physical network:** the network team confirms the subnet is
    learned from the new Tier-0's peers only. If the physical side filters
    what it accepts per peer (prefix lists), that filter must allow the
    subnet from the new peers; agree that change before the window.
-6. Run [the checks](#after-each-network).
+7. Run [the checks](#after-each-network).
 
 Between steps 1 and 3 the subnet has no gateway: that is the outage of
 the window. Doing step 3 before step 1 avoids it, but then both NSX
@@ -418,6 +433,7 @@ From a migrated VM on the network, and from outside:
 | DHCP lease renewal, DNS resolution, NTP | Work, from servers the VM can still reach |
 | A traceroute from the VM | The path no longer goes through the source site |
 | Firewall rules on the target that should hit | They hit |
+| Each gateway service of the subnet: a NAT translation, a VIP, a DNS query to the forwarder, a VPN tunnel | Works, through the target gateway |
 
 Then, per network, update the network mapping table
 ([docs/31, step 1](31-carry-over-networks-and-firewall.md#step-1-the-network-mapping-table))
