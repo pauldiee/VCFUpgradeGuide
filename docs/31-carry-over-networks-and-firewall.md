@@ -27,6 +27,7 @@ blogs, and the toolkits' own documentation and code, checked on
 - [Step 2: VDS port groups](#step-2-vds-port-groups)
 - [Step 3: NSX segments and segment profiles](#step-3-nsx-segments-and-segment-profiles)
 - [Step 4: the NSX distributed firewall](#step-4-the-nsx-distributed-firewall)
+- [Step 5: services on the NSX gateways](#step-5-services-on-the-nsx-gateways)
 - [Phase 3 is done when](#phase-3-is-done-when)
 - [Sources](#sources)
 
@@ -44,6 +45,7 @@ blogs, and the toolkits' own documentation and code, checked on
 | Any network whose VMs keep their IP addresses through HCX | Extend with HCX Network Extension; HCX creates the target network | Extended network | HCX, see [Networks that HCX extends](#networks-that-hcx-extends) |
 | NSX DFW: IP sets, services, groups, context profiles, policies and rules | Export, sanitize, import | NSX DFW | [NSX DFW migration toolkit](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit) (Jeroen Buren) |
 | NSX tags on VMs | Per wave, after the VM arrives | NSX tags | Same toolkit, or HCX *Migrate NSX Tags* (phase 5) |
+| Services on NSX gateways: NAT, load balancer, DHCP, DNS forwarder, VPN, gateway firewall | List per subnet, rebuild on the target gateway, switch over in the subnet's cutover window | Target gateway, or Avi for load balancing | By hand, see [step 5](#step-5-services-on-the-nsx-gateways) |
 
 ---
 
@@ -840,6 +842,98 @@ full wipe, the target has no custom DFW objects left, and you can run
 
 ---
 
+## Step 5: services on the NSX gateways
+
+**Only when the source uses NSX gateways.** A subnet on an NSX overlay
+segment often needs more from its source Tier-1 or Tier-0 than routing:
+NAT, a load balancer VIP, DHCP, a DNS forwarder, an IPsec or L2 VPN, the
+gateway firewall. These live on the gateway, not on the segment. Step 3
+carries the segments and the DFW toolkit carries the distributed firewall
+(*"The export script currently excludes Gateway Firewall policies"*,
+[part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/));
+neither carries the gateway services. If the subnet's routing moves at the
+cutover and its services don't, the application works only half.
+
+### 5.1 List them, per gateway and per subnet
+
+On the **source** NSX Manager, for every Tier-1 and Tier-0 that a segment
+in the mapping table connects to:
+
+| Service | What to write down |
+| --- | --- |
+| NAT | Every rule: action (SNAT, DNAT, reflexive, no-SNAT, no-DNAT), source, destination, translated IP and port, the gateway, *Apply To*, firewall setting, priority |
+| Load balancer | Every virtual server (VIP and port), its pool members, monitors, profiles and certificates, and the Tier-1 the LB service is attached to |
+| DHCP | Per segment: the DHCP type (segment DHCP server, gateway DHCP server or DHCP relay), the DHCP profile, ranges, static bindings, options, lease time; for relay, the DHCP servers it relays to |
+| DNS forwarder | **Networking**, **IP Management**, **DNS**: the gateway, the listener IP, the default zone and the FQDN zones with their DNS servers |
+| IPsec VPN, L2 VPN | Per VPN service: the gateway, local endpoint IPs, sessions, peers, profiles, and for L2 VPN the segments in each session |
+| Gateway firewall | The gateway policies and rules per gateway |
+| Route advertisement | Per Tier-1, which types are advertised besides the connected segments: *"All NAT IP's"*, *"All DNS Forwarder Routes"*, *"All LB VIP Routes"*, *"All LB SNAT IP Routes"*, *"All IPSec Local Endpoints"* |
+
+Then link each service to the subnets that use it, in the mapping table.
+A NAT rule, a VIP or a DNS forwarder serves clients on certain subnets;
+it has to move in the cutover window of the subnet it belongs to, or stay
+on the source until the last subnet that needs it has moved. A service
+that serves subnets in different waves is a planning decision for phase 0.
+
+Sources for the field names and the route advertisement types:
+[Configure an NSX NAT](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/network-address-translation/configure-an-nsx-nat.html),
+[Add an NSX DNS Forwarder Service](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/ip-address-management-ipam/add-an-nsx-dns-forwarder-service.html),
+[Configure NSX DHCP Service](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/nsx-dhcp-policy-ui/configure-nsx-dhcp-service.html),
+[Add an NSX Tier-1 Gateway](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/tier-1-gateways/add-an-nsx-tier-1-gateway.html).
+
+### 5.2 Where each one lands on the target
+
+First the gateway itself. A target Tier-1 that only routes may have no
+NSX Edge cluster. To run services it needs one: *"Select an NSX Edge
+cluster if you want this tier-1 gateway to host stateful services such as
+NAT, load balancer, or firewall"*, and then *"a service router will always
+be created (even if you do not configure stateful services), affecting the
+north/south traffic pattern"*
+([Add an NSX Tier-1 Gateway](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/tier-1-gateways/add-an-nsx-tier-1-gateway.html)).
+The gateway's HA mode limits what it can run, see the table. If the target
+uses VPCs instead of Tier-1 gateways, where each service goes is a design
+question; see the
+[VCF 9 deployment planning guide](https://vcf-planning.hollebollevsan.nl/).
+
+| Service | On the target | Watch out |
+| --- | --- | --- |
+| NAT | NAT rules on the target Tier-1 or Tier-0 | SNAT and DNAT: *"Supported on tier-0/tier-1 gateways running in active-standby mode"*, and *"Stateful NAT services are supported when using Stateful Active-Active HA mode"*. A Tier-0 in plain active-active only offers *Reflexive* ([NAT](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/network-address-translation.html), [Configure an NSX NAT](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/network-address-translation/configure-an-nsx-nat.html)) |
+| Load balancer | Usually **Avi Load Balancer**, not the NSX load balancer | From VCF 9.0, *"General purpose load balancing features are no longer part of the VCF entitlement"*; the NSX load balancer is supported only for VCF appliances and Layer 4 for vSphere Supervisor ([KB 401492](https://knowledge.broadcom.com/external/article/401492)). Existing NSX LB use on VCF 9.0/9.1 may continue *"until May 30, 2027, provided they have secured the equivalent Avi licenses"*, and Broadcom points to the vDefend and Avi Conversion Tool (vACT) for the move ([KB 439411](https://knowledge.broadcom.com/external/article/439411)). Decide this in phase 0: it's a licence and a design question |
+| DHCP | The same DHCP type on the target segment, with a DHCP profile on the target | nsx-segment-migration copies the segment as it is, including its DHCP fields, but doesn't create DHCP profiles: create the profile on the target first and check the segment's DHCP profile reference in the export. The target is a different NSX, so it starts without the source's leases; keep the ranges and static bindings the same |
+| DNS forwarder | A DNS service on the target Tier-1 or Tier-0 with the **same listener IP** | VMs send their queries to that IP. Create it with **Admin Status** off and turn it on in the cutover window ([Add an NSX DNS Forwarder Service](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/ip-address-management-ipam/add-an-nsx-dns-forwarder-service.html)) |
+| IPsec VPN, L2 VPN | A VPN service on a target gateway in **active-standby** | IPsec VPN and L2 VPN are on the list of services that a stateful active-active gateway does not support ([Stateful Services on Tier-0 and Tier-1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/tier-0-gateways/stateful-services-on-tier-0-and-tier-1-gateways.html)). On a Tier-0, *"the local endpoint IP address must be different from the Tier-0 gateway's uplink interface IP address"* ([Add Local Endpoints](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/virtual-private-network-vpn/add-local-endpoints.html)). The remote peer is configured against the source endpoint: agree with whoever runs the other side whether the endpoint IP moves or changes. L2 VPN needs a new peer code from the server side ([NSX VPN services](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/virtual-private-network-vpn/adding-nsx-vpn-services.html)) |
+| Gateway firewall | Gateway policies on the target gateway, rebuilt by hand | The DFW toolkit leaves them out (above). On the target it's a vDefend feature: *VMware vDefend Gateway Firewall* is one of the vDefend component keys ([KB 424676](https://knowledge.broadcom.com/external/article/424676)), and in NSX 9.1 *"vDefend features (including DFW) require the License Hub component for license management"* ([KB 446503](https://knowledge.broadcom.com/external/article/446503)). Check the target's licence before the first wave |
+
+### 5.3 Build them ready, switch them on at the cutover
+
+Services that own an IP address on the gateway are advertised like a
+subnet: NAT IPs, LB VIPs, the DNS listener and IPsec local endpoints each
+have their own route advertisement type on the Tier-1 (5.1). Built and
+active on the target while the source still runs them, they would be
+advertised from both NSX environments, the same problem as a subnet with
+two gateways
+([docs/35, Networks on NSX overlay](35-cutover-and-clean-up.md#networks-on-nsx-overlay)).
+So:
+
+- **Build them now, disabled**, where the object has a switch: a NAT rule
+  has **Enabled**
+  ([Configure an NSX NAT](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/network-address-translation/configure-an-nsx-nat.html)),
+  a DNS service has **Admin Status**.
+- **Otherwise prepare them from the list** and create them in the window.
+- **Gateway firewall rules** carry no IP of their own: build them now, on
+  the target gateway, so traffic is filtered from the moment the subnet
+  arrives.
+- Write each service in the cutover plan of its subnet: what to switch
+  off on the source, what to switch on on the target
+  ([docs/35, the cutover](35-cutover-and-clean-up.md#the-cutover)).
+
+**Check.** Every gateway service from 5.1 has a target in the mapping
+table, the target gateway has an NSX Edge cluster and an HA mode that
+supports it, the load balancer route (NSX LB or Avi) and its licence are
+decided, and the target's DHCP profiles exist.
+
+---
+
 ## Phase 3 is done when
 
 - [ ] Every network in use has a row in the mapping table, with a target
@@ -853,7 +947,11 @@ full wipe, the target has no custom DFW objects left, and you can run
 - [ ] No subnet has a gateway on both sides while HCX extends it.
 - [ ] The DFW comparison shows nothing missing on the destination, and
       mismatches are explained.
-- [ ] Gateway firewall rules, if any, are rebuilt or listed for later.
+- [ ] Every service on a source NSX gateway (NAT, load balancer, DHCP,
+      DNS forwarder, VPN, gateway firewall) is listed with the subnets
+      that use it, and has a place on the target (step 5).
+- [ ] Gateway firewall rules are rebuilt on the target gateway; NAT rules
+      and DNS services are built disabled or prepared for the window.
 - [ ] Exports, mapping files and the comparison report are in the working
       folder.
 
@@ -886,3 +984,20 @@ Checked on 2026-11-13.
   [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration)
 - PowerCLI cmdlet syntax (`Get-NetworkAdapter`, `Export-VDPortGroup`,
   `New-VDPortgroup -BackupPath`): VCF.PowerCLI 9.1.1
+- Step 5, read on 2026-11-16: NSX administration guide for VCF 9.0,
+  [Network Address Translation](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/network-address-translation.html),
+  [Configure an NSX NAT](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/network-address-translation/configure-an-nsx-nat.html),
+  [Stateful Services on Tier-0 and Tier-1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/tier-0-gateways/stateful-services-on-tier-0-and-tier-1-gateways.html),
+  [Add an NSX Tier-1 Gateway](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/tier-1-gateways/add-an-nsx-tier-1-gateway.html),
+  [Configure NSX DHCP Service](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/nsx-dhcp-policy-ui/configure-nsx-dhcp-service.html),
+  [Add an NSX DNS Forwarder Service](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/ip-address-management-ipam/add-an-nsx-dns-forwarder-service.html),
+  [NSX VPN services](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/virtual-private-network-vpn/adding-nsx-vpn-services.html),
+  [Add Local Endpoints](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/virtual-private-network-vpn/add-local-endpoints.html);
+  [KB 401492](https://knowledge.broadcom.com/external/article/401492)
+  (NSX load balancer entitlement from VCF 9.0),
+  [KB 439411](https://knowledge.broadcom.com/external/article/439411)
+  (NSX LB to Avi, until 30 May 2027),
+  [KB 424676](https://knowledge.broadcom.com/external/article/424676) and
+  [KB 446503](https://knowledge.broadcom.com/external/article/446503)
+  (vDefend keys, License Hub in NSX 9.1); nsx-segment-migration source
+  (no DHCP profile handling)

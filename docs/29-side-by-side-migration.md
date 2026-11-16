@@ -170,6 +170,16 @@ What the sources say:
   ([part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/)).
   For the NSX tags on the VMs themselves, HCX also has a **Migrate NSX
   Tags** option per Mobility Group. That's NSX tags, not vSphere tags.
+- **Yes, with services on the gateways:** NAT, a load balancer, DHCP, a
+  DNS forwarder, an IPsec or L2 VPN or the gateway firewall on a source
+  Tier-1 or Tier-0 don't go with the segments or the DFW. List them now,
+  per subnet: they decide which subnets move together, and two of them are
+  decisions with a cost. A workload load balancer on the target is Avi
+  Load Balancer, because *"General purpose load balancing features are no
+  longer part of the VCF entitlement"* from VCF 9.0
+  ([KB 401492](https://knowledge.broadcom.com/external/article/401492)),
+  and the gateway firewall needs a vDefend licence on the target. Details
+  in [docs/31, step 5](31-carry-over-networks-and-firewall.md#step-5-services-on-the-nsx-gateways).
 
 ### 4. Which VDS versions are on both sides?
 
@@ -296,6 +306,10 @@ In short:
     *"Policies and Rules (depend on Groups and Services)"*
     ([part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/)).
     The VM tags come later, in phase 5.
+  - If the source NSX gateways run services (NAT, load balancer, DHCP,
+    DNS forwarder, VPN, gateway firewall), give each one a place on the
+    target and build it ready, switched off where it owns an IP address,
+    so it can be switched over in its subnet's cutover window.
 - **Check:** every source network a VM uses has a target in the mapping
   table, and the target network is present on every target host that
   will run those VMs. For the DFW: the toolkit's comparison script
@@ -448,3 +462,5 @@ Read word for word on 2026-11-13.
   [Migrating tags after cross-vCenter vMotion](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html)
 - William Lam, 2026-02:
   [Cross vCenter vMotion workloads from vSphere 7.0 to vSphere 9.0](https://williamlam.com/2026/02/cross-vcenter-vmotion-workloads-from-vsphere-7-0-to-vsphere-9-0.html)
+- [KB 401492](https://knowledge.broadcom.com/external/article/401492),
+  VMware NSX Load Balancer Entitlement Changes (read 2026-11-16)
