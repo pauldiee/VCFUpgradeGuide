@@ -40,7 +40,12 @@ toolkits' own documentation and code, and PowerCLI 13.5.1 (VCF.PowerCLI
   The [PowerCLI installation guide](https://developer.broadcom.com/powercli/installation-guide)
   adds: *"PowerShell 5.1 is being deprecated. [...] PowerShell 7.4 or later
   is officially supported and is our minimum recomended version for use."*
-  Start the toolkits from `pwsh`, not from `powershell.exe`.
+  Start the toolkits from `pwsh`, not from `powershell.exe`. Microsoft
+  ended support for 7.4 (and 7.5) on 10-Nov-2026, so install **7.6 LTS**
+  (supported until 14-Nov-2028, per Microsoft's PowerShell support
+  lifecycle). Installing PowerShell 7 and VCF.PowerCLI on the workstation,
+  with or without internet access, step by step:
+  [planning guide, Jump Host PowerShell](https://vcf-planning.hollebollevsan.nl/docs/42-jump-host-powershell/).
 - VCF.PowerCLI 9.0 or later:
   `Install-Module -Name VCF.PowerCLI -Scope CurrentUser`.
 - The toolkits: [VIRoleManager](https://github.com/pauldiee/VIRoleManager),
