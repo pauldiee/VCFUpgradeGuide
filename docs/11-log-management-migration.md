@@ -24,7 +24,9 @@ and is deployed from **VCF Operations**, not upgraded in place.
 - **From 8.x (VCF 5.x source):** no direct upgrade path. Deploy 9.1 fresh
   from VCF Operations and tick **Import configuration from an earlier
   Operations for logs instance** in the wizard – it takes an 8.x
-  configuration. Agents and log sources are then re-pointed by hand.
+  configuration. Agents are then replaced by the 9.1 agent in most
+  cases (re-pointing the 8.x agent is the fallback for an OS the 9.1
+  agent doesn't support), and log sources are re-pointed by hand.
   What goes which way, part by part, is in
   [Log Insight to Log Management](28-log-insight-to-log-management.md).
 

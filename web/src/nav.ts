@@ -310,7 +310,7 @@ export const NAV: NavItem[] = [
     band: 'Phase guides',
     label: 'Log Insight to Log Management',
     icon: 'route',
-    blurb: 'Log Insight / Aria Operations for Logs 8.x to Log Management 9.1, part by part: what the import brings, converting alerts and dashboards to management packs, re-pointing agents, old log data, and what you rebuild yourself.',
+    blurb: 'Log Insight / Aria Operations for Logs 8.x to Log Management 9.1, part by part: what the import brings, converting alerts and dashboards to management packs, replacing agents with the 9.1 agent, old log data, and what you rebuild yourself.',
     tracks: ['vcf', 'vvf'],
   },
   {

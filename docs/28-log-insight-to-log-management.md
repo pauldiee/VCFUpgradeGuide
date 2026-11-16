@@ -21,13 +21,13 @@ Operations for Logs 8.x to log management 9.1 exists"*. You deploy Log
 Management 9.1 from VCF Operations next to the old cluster and move things
 over along five routes:
 
-![Log Insight to Log Management 9.1: eleven parts of a Log Insight instance, each with its route and where it ends up in VCF Operations 9.1. A, import at deploy: forwarding rules (copied but inactive) and the link to the old cluster (queryable for 90 days). D, log data tools: Logs Data Transfer for up to 90 days of logs, archive import from NFS. B, content pack to management pack: custom alerts, dashboards, third-party content packs, and saved queries and extracted fields (result not documented). C, re-point by hand: agents, log sources and upstream forwarders. E, not documented: users, roles, AD and data sets are recreated in VCF Operations Access Control.](images/log-insight-migration/routes.png)
+![Log Insight to Log Management 9.1: eleven parts of a Log Insight instance, each with its route and where it ends up in VCF Operations 9.1. A, import at deploy: forwarding rules (copied but inactive) and the link to the old cluster (queryable for 90 days). D, log data tools: Logs Data Transfer for up to 90 days of logs, archive import from NFS. B, content pack to management pack: custom alerts, dashboards, third-party content packs, and saved queries and extracted fields (result not documented). C, reinstall or re-point by hand: agents get the 9.1 agent, log sources and upstream forwarders are pointed at the new FQDN. E, not documented: users, roles, AD and data sets are recreated in VCF Operations Access Control.](images/log-insight-migration/routes.png)
 
 | Route | What it is | Covers |
 | --- | --- | --- |
 | **A** Import at deploy | A checkbox in the Log Management deploy wizard | Forwarding rules; the link to the old cluster |
 | **B** Content pack to management pack | Export from Log Insight, convert with Broadcom's converter, install the `.pak` in VCF Operations | Alerts, dashboards, other custom and third-party content |
-| **C** Re-point by hand | Change the target on each sender | Agents, log sources, forwarders that send to Log Insight |
+| **C** Reinstall or re-point by hand | Install the 9.1 agent where you can; change the target on every other sender | Agents, log sources, forwarders that send to Log Insight |
 | **D** Log data tools | Query, copy or re-import old log data | Logs on the old cluster, archives |
 | **E** Not documented | Rebuild it in VCF Operations | Users, roles, authentication, data sets, notifications |
 
@@ -47,7 +47,7 @@ over along five routes:
 | Saved queries, extracted fields | B | Include them in the content pack. For alerts, select them *"along with their associated extracted fields"* | **Not documented.** Broadcom names *"dashboards, queries, alerts"* as custom content that goes this way, but lists only dashboards, alerts and symptom definitions in the result. Check after install. 9.1 has its own Fields Library with export/import between VCF Operations instances |
 | Third-party content packs | B | Run the converter on the pack file | A *"content-only management pack"* (no metrics) |
 | VMware content packs | – | Nothing to move: *"Content packs have been deprecated in VCF Operations 9.1 and they have been replaced with the content integrated into management packs"* ([KB 443089](https://knowledge.broadcom.com/external/article/443089)) | Built-in management pack content |
-| Agents | C | Re-point to the new FQDN. From 8.18 this is manual; the old cluster keeps collecting until you do | Log Collection. Agent authentication needs *"agent version 9.1 or higher"* |
+| Agents | C | **Install the 9.1 agent** and point it at the new FQDN. Re-pointing the 8.x agent is only the fallback for an OS the 9.1 agent doesn't support ([Route C](#route-c-the-agents)). From 8.18 this is manual; the old cluster keeps collecting until you do | Log Collection. Agent authentication needs *"agent version 9.1 or higher"* |
 | Log sources (vCenter, ESX, NSX and so on) | C | *"Reconfigure required log sources to point to your new instance"* | Log Collection |
 | Forwarders that send *to* Log Insight | C | *"you must reconfigure the log forwarder to send logs to the new 9.1 log management component FQDN"* | Log Management ingestion |
 | Users, roles, AD / VIDM login | E | **Not documented** for a Log Insight import. Recreate them in VCF Operations | Log access is *"converged into the VCF Operations role based access control"*: Access Control → Roles, Scopes |
@@ -83,9 +83,9 @@ anything.
 4. **Export custom content while the old cluster is still there (B).**
    Do this before you power anything off: once the old cluster is gone,
    there's nothing to export from.
-5. **Re-point collection (C).** Agents (see
-   [Route C: the agents](#route-c-the-agents)), log sources, and anything
-   that forwards into Log Insight. Then activate the copied forwarding
+5. **Move collection (C).** Replace the agents with the 9.1 agent (see
+   [Route C: the agents](#route-c-the-agents)), then re-point log sources
+   and anything that forwards into Log Insight. Then activate the copied forwarding
    rules (A).
 6. **Move the log data you need (D), within 90 days.**
    - **Logs Data Transfer** copies up to 90 days. *"All source nodes of
@@ -150,9 +150,26 @@ and
 The import doesn't touch the agents. From 8.18, *"you must manually
 reconfigure the agents and log sources"*, and until you do, *"legacy
 appliances continue collecting data"*. That gives you room to move them in
-batches without a gap. What you do with each agent depends on what it runs
-on, because the 9.1 agent supports far fewer platforms than the Log Insight
-agent did. Installing a new agent from scratch (download, `rpm -i` /
+batches without a gap.
+
+**Plan on reinstalling, not re-pointing.** For most agents the move means
+installing the 9.1 agent, not editing the old one:
+
+- Agent authentication needs agent *"version 9.1 or higher"*, so an 8.x
+  agent can never send a token ([step 5](#5-enforce-authentication-last-if-at-all)).
+- An 8.x agent trusts Log Insight's certificate, not the new one
+  ([step 2](#2-linux-install-the-91-agent-re-point-only-as-a-fallback)).
+- Broadcom doesn't say an 8.x agent is supported against Log Management
+  9.1, or that it auto-updates to 9.1 once it points there. The closest
+  statement is about **9.0**: KB 402647 calls the 8.18.x Windows agent
+  *"backwards compatible"* with VCF Operations for Logs 9.0.x, adds that it
+  *"will not be able to automatically trust"* the 9.0.x server, and for
+  9.1.x points to the Fluent Bit MSI instead.
+
+Re-pointing the existing agent is the fallback for a host whose OS the 9.1
+agent doesn't support, and a reason to plan that OS upgrade. What you do
+with each agent depends on what it runs on, because the 9.1 agent supports
+far fewer platforms than the Log Insight agent did. Installing a new agent from scratch (download, `rpm -i` /
 `dpkg -i`, secrets) is covered in the deployment-planning guide,
 [Log Management §4](https://vcf-planning.hollebollevsan.nl/docs/31-log-management/).
 This section is about the move.
@@ -165,16 +182,24 @@ agent version, agent group). Then put every agent in one of these groups:
 | Agent runs on | 9.1 agent? | What to do |
 | --- | --- | --- |
 | **Linux, supported OS:** RHEL 9/10, SLES 15 SP7/16, Ubuntu 22.04/24.04/26.04 LTS, Debian 12/13, Photon 4.0+, with OpenSSL 3.0+ and systemd 235+ | Yes | Install the 9.1 agent (RPM or Debian package via Log Collection → Agent → DOWNLOAD AGENT) and point it at Log Management |
-| **Linux, older OS** (for example RHEL 8, Ubuntu 20.04, SLES 12) | **No.** Not on the 9.1 list | **Not documented.** Options: re-point the existing 8.x agent and test it, send syslog, or use a third-party shipper such as Fluent Bit. Plan the OS upgrade |
+| **Linux, older OS** (for example RHEL 8, Ubuntu 20.04, SLES 12) | **No.** Not on the 9.1 list | **Not documented.** Options until the OS is upgraded: re-point the existing 8.x agent and test it ([step 2](#2-linux-install-the-91-agent-re-point-only-as-a-fallback)), send syslog, or use a third-party shipper such as Fluent Bit. Plan the OS upgrade, then install the 9.1 agent |
 | **Windows Server 2022 / 2025** | **No native agent** in 9.1: *"For windows systems, see, Set up the Windows system to collect logs"* | Replace the Log Insight Windows agent with **Fluent Bit** ([step 3](#3-windows-fluent-bit-replaces-the-agent)) |
 | **Windows Server 2019 or older** | No | **Not documented.** Fluent Bit is documented for 2022 and 2025 only |
 | **VCF components with an embedded agent** (shown as *VCF Component = yes*) | Built in | Leave them. *"These agents are not configurable"*; they follow the log source configuration in VCF Operations |
-| **Agents you installed on VMware products yourself** (vCenter per KB 371900, SDDC Manager per KB 396643) | Depends on the appliance | Check first whether VCF Operations now collects that product as a log source. If so, remove your own agent so logs don't arrive twice. SDDC Manager on VCF still needs the script: see [planning guide `05` §B.6](https://vcf-planning.hollebollevsan.nl/docs/05-day2-deployments/) |
+| **Agents you installed on VMware products yourself** (vCenter per KB 371900, SDDC Manager per KB 396643) | Depends on the appliance | Check first whether VCF Operations now collects that product as a log source. If so, remove your own agent so logs don't arrive twice. **vCenter 9.1** does this for you: it *"ships with the Log Insight Agent"*, and the upgrade to 9.1 deletes a previously installed agent, its configuration and any syslog targets (KB 433089); enable vCenter log collection in Log Management instead. SDDC Manager on VCF still needs the script: see [planning guide `05` §B.6](https://vcf-planning.hollebollevsan.nl/docs/05-day2-deployments/) |
 
-### 2. Re-point a Linux agent
+### 2. Linux: install the 9.1 agent, re-point only as a fallback
 
-On a supported OS, installing the 9.1 agent is the clean route. For an 8.x
-agent you keep, change the target in `/etc/liagent.ini` under `[server]`.
+On a supported OS, install the 9.1 agent: download the RPM or Debian
+package from Log Collection → Agent → DOWNLOAD AGENT, set the Log
+Management FQDN (and a `secret` if you'll use authentication), and remove
+the old Log Insight agent so the host doesn't run two. Do this host by
+host or in batches; the old cluster keeps collecting from the hosts you
+haven't done yet.
+
+**Fallback: re-point the 8.x agent.** Only for a host whose OS the 9.1
+agent doesn't support, and only after testing it against Log Management.
+Change the target in `/etc/liagent.ini` under `[server]`.
 These are the settings Broadcom uses in its 8.x KBs (371900, 386897); the
 9.1 pages show `hostname`, `proto=cfapi` and `secret`:
 
@@ -287,9 +312,13 @@ tokens for third-party shippers, and only then enforce authentication.
   transfers."*
 - **Agent authentication is new and optional.** Enforce it only after
   every agent has moved and can send a token; see
-  [step 5 of Route C](#5-enforce-authentication-last-if-at-all). Whether
-  an 8.x agent works against Log Management at all isn't stated; Broadcom
-  only says to re-point the agents.
+  [step 5 of Route C](#5-enforce-authentication-last-if-at-all).
+- **Re-pointing an agent is the exception, not the plan.** Broadcom only
+  says to *"reconfigure the agents"*; whether an 8.x agent works against
+  Log Management 9.1 isn't stated (only 9.0 has a *"backwards compatible"*
+  line, KB 402647), and it can't authenticate. Install
+  the 9.1 agent wherever the OS allows it, and keep the re-pointed 8.x
+  agents on a list until their OS is upgraded.
 - **Scopes don't limit logs.** *"Object Scopes and Log Data Sets are
   independent"*. Giving a user Cluster A doesn't limit their logs to
   Cluster A; only the Log Data Set does.
@@ -326,3 +355,14 @@ TechDocs for VCF 9.1, all read word for word on 2026-11-12:
 - [KB 386897](https://knowledge.broadcom.com/external/article/386897/update-aria-operations-for-logs-agents-t.html)
   and [KB 371900](https://knowledge.broadcom.com/external/article/371900/install-and-configure-aria-operations-fo.html):
   Log Insight 8.x agent settings and certificate trust
+
+Re-read word for word on 2026-11-16: the upgrade page's post-upgrade
+actions, Overview of Log Management Agents, Agent Authentication and
+Configuring Agents (no change), plus:
+
+- [KB 402647](https://knowledge.broadcom.com/external/article/402647/the-windows-agent-is-not-available-to-do.html):
+  8.18.x Windows agent backwards compatible with 9.0.x, no automatic trust,
+  Fluent Bit from 9.1.x
+- [KB 433089](https://knowledge.broadcom.com/external/article/433089/known-issues-and-limitations-for-log-col.html):
+  vCenter 9.1 ships the agent and removes a previously installed one on
+  upgrade

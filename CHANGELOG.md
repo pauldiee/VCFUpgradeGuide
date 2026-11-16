@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.7.0 – 2026-11-16
+- `docs/28` agents (#131, Paul): installing the 9.1 agent is now the
+  default route, re-pointing the 8.x agent only the fallback for an OS the
+  9.1 agent doesn't support. Route C is *Reinstall or re-point*; Route C
+  opens with why (agent authentication needs 9.1, the 8.x agent trusts the
+  old certificate, 8.x against Log Management and auto-update to 9.1 are
+  not documented); step 2 is now *Linux: install the 9.1 agent, re-point
+  only as a fallback*; order of work, gotchas and the route diagram follow.
+  `docs/11`, the nav blurb and `README.md` say the same. Sources re-read
+  on 2026-11-16; added KB 402647 (8.18.x Windows agent *"backwards
+  compatible"* with 9.0.x only, no automatic trust) and KB 433089 (vCenter
+  9.1 ships its own agent and deletes a self-installed one on upgrade).
+
 ## v2.6.9 – 2026-11-13
 - `docs/35` case A (#127, Paul): an L2 stretch between the sites that is
   the data centers' standard design (DCI, EVPN/VXLAN fabric, anycast
