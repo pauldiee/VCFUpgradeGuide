@@ -51,9 +51,12 @@ toolkits' own documentation and code, and PowerCLI 13.5.1 (VCF.PowerCLI
 - VCF.PowerCLI 9.0 or later:
   `Install-Module -Name VCF.PowerCLI -Scope CurrentUser`.
 - The toolkits: [VIRoleManager](https://github.com/pauldiee/VIRoleManager),
+  [VITagManager](https://github.com/pauldiee/VITagManager),
   [StoragePolicyManager](https://github.com/pauldiee/StoragePolicyManager)
   and [VIFolderManager](https://github.com/pauldiee/VIFolderManager).
-  Download each as a zip or clone it.
+  Download each as a zip or clone it; how, and what to do on a jump host
+  without internet:
+  [docs/29, Getting them](29-side-by-side-migration.md#toolkits).
 
 **Accounts.** An administrator on both vCenters. The toolkits ask for
 credentials once and save them as `<vCenter>.cred` next to the script. On
@@ -70,9 +73,8 @@ target to the same directory first (question 5 in
 vCenters. Every export lands there. It's your reference for the checks,
 and your record of what the source looked like.
 
-**Who made the toolkits.** VIRoleManager, StoragePolicyManager and
-VIFolderManager, and the tags and custom attributes toolkit in
-development, are written by Paul van Dieen, the author of this guide
+**Who made the toolkits.** VIRoleManager, VITagManager,
+StoragePolicyManager and VIFolderManager are written by Paul van Dieen, the author of this guide
 ([hollebollevsan.nl](https://www.hollebollevsan.nl)).
 
 > **Use at your own risk.** These are community tools, not Broadcom
@@ -87,16 +89,20 @@ development, are written by Paul van Dieen, the author of this guide
 **What has been tested.** The toolkits have been tested with vSphere 9
 vCenters on both sides, and from a **vCenter 8.0 U3 source** into a
 vCenter 9.1.1 target (lab, 2026-11-16, with a test set per toolkit: roles,
-tag and vSAN policies, folders with permissions). VIFolderManager is
-still in test, and the vCenter 8 test had no hosts, so no VMs were moved
-into folders. A **7.x source** hasn't been tested. Open each export file
+tag and vSAN policies, folders with permissions, tag categories and
+custom attributes). The vCenter 8 test had no hosts, so no VMs were
+moved into folders there.
+VITagManager's VM part (assignments and values per wave, VMs with the
+same name) was tested from a VCF 9.0.2 source into 9.1.1 (lab,
+2026-11-16). A **7.x source** hasn't been tested. Open each export file
 and check that it holds what you expect before you import it. Where a
 toolkit has a dry run, use it first.
 
-**Things all three toolkits do the same way:**
+**Things all four toolkits do the same way:**
 
-- **Running an import twice is safe.** Roles and storage policies that
-  already exist are skipped; folders that exist are reused. So after a
+- **Running an import twice is safe.** Roles, storage policies, tag
+  categories, tags and attributes that already exist are skipped;
+  folders that exist are reused. So after a
   partial run or a fix, just run it again.
 - **Self-signed certificates** (a lab, or a vCenter without a CA-signed
   certificate yet): add `-SkipCertificateValidation`. In production, fix
@@ -104,19 +110,19 @@ toolkit has a dry run, use it first.
 - **Wrong or changed password:** add `-ResetCredentials` to be asked
   again.
 - **Pickers** accept a number, a comma-separated list, or `all`
-  (VIFolderManager also ranges like `2-6`).
+  (VIFolderManager and VITagManager also ranges like `2-6`).
 
 ---
 
 ## The order, and why
 
-![Carrying over the vCenter configuration in five steps. Before you start: PowerShell 7.4 or later with VCF.PowerCLI 9, the target joined to the same directory, one working folder. Step 1, roles with VIRoleManager: in phase 2 custom roles created and skipped privileges reviewed; nothing per VM. Step 2, tag categories and tags with the tags and custom attributes toolkit in development: in phase 2 categories and tags with the same cardinality and entity types; in phase 5 export assignments before each wave and apply them after, because they don't follow the VM. Step 3, custom attributes, same toolkit: in phase 2 attribute names with the same target type; in phase 5 check that the values arrived. Step 4, storage policies with StoragePolicyManager: in phase 2 imported or mapped, skipped rules reviewed; in phase 5 check each VM against the policy mapping. Step 5, folders and permissions with VIFolderManager, still in test: in phase 2 folder trees and folder permissions without moving objects; in phase 5 an import with -MoveObjects puts arrived VMs in their folders. Folder permissions need the roles from step 1; tag-based storage policy rules need the tags from step 2.](images/vcenter-config/order.png)
+![Carrying over the vCenter configuration in five steps. Before you start: PowerShell 7.4 or later with VCF.PowerCLI 9, the target joined to the same directory, one working folder. Step 1, roles with VIRoleManager: in phase 2 custom roles created and skipped privileges reviewed; nothing per VM. Step 2, tag categories and tags with VITagManager: in phase 2 categories and tags with the same cardinality and entity types; in phase 5 export assignments before each wave and apply them after, because they don't follow the VM. Step 3, custom attributes, same toolkit: in phase 2 attribute names with the same target type; in phase 5 check that the values arrived. Step 4, storage policies with StoragePolicyManager: in phase 2 imported or mapped, skipped rules reviewed; in phase 5 check each VM against the policy mapping. Step 5, folders and permissions with VIFolderManager: in phase 2 folder trees and folder permissions without moving objects; in phase 5 an import with -MoveObjects puts arrived VMs in their folders. Folder permissions need the roles from step 1; tag-based storage policy rules need the tags from step 2.](images/vcenter-config/order.png)
 
 | Step | What | Tool | Needs first |
 | --- | --- | --- | --- |
 | 1 | Roles | VIRoleManager | – |
-| 2 | Tag categories and tags | PowerCLI (toolkit in development) | – |
-| 3 | Custom attributes | PowerCLI (same toolkit, in development) | – |
+| 2 | Tag categories and tags | VITagManager | – |
+| 3 | Custom attributes | VITagManager, same run | – |
 | 4 | Storage policies | StoragePolicyManager | Step 2, for tag-based rules |
 | 5 | Folders and permissions | VIFolderManager, PowerCLI | Step 1 and the target's directory |
 
@@ -212,8 +218,9 @@ privilege whether that's acceptable.
 
 ## Step 2: tag categories and tags
 
-**Toolkit:** in development. Until then, PowerCLI as below, based on Jim
-Millard's [Copy-vcTags.ps1 and Migrate-vcTags.ps1](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html).
+**Toolkit:** [VITagManager](https://github.com/pauldiee/VITagManager) (lab-tested; run the dry run
+first anyway). It handles step 3 as well. Without it: PowerCLI, at the end of
+this step.
 
 There are two parts to tags, and they move at different times:
 
@@ -227,15 +234,70 @@ get migrated with it even if the corresponding tags & categories are
 present in the target vCenter"*, and that the assignments must be
 captured before the VM moves, *"or that information is lost forever"*
 ([Migrating tags after cross-vCenter vMotion](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html),
-Jim Millard, 2026-05).
+Jim Millard, 2026-05). VITagManager follows the same split: `-Content
+Definitions` now, `-Content Assignments` per wave.
 
-A toolkit for tags and custom attributes together is being developed for
-this set. Until it's available, use PowerCLI.
+**Export from the source.** One JSON file with the tag categories (with
+their cardinality and entity types), the tags, and the custom attribute
+names for step 3:
 
-**Copy categories and tags.** Connected to both vCenters, this creates
-every source category and tag that the target doesn't have yet. It's
-the same approach as Jim Millard's `Copy-vcTags.ps1`. Try it against a
-lab or a test vCenter first.
+```powershell
+.\Invoke-VITagManager.ps1 -vCenterServer <source-vcenter> -Mode Export -Content Definitions -BackupDirectory <working-folder>\tags
+```
+
+Add `-Category` (names or wildcards, for example `-Category 'Backup*','Tier'`)
+to take only some categories. Categories that belong to products you're
+leaving behind can stay where they are. Custom attributes that vCenter and
+other products create and manage themselves (names starting with
+`com.vmware.`, `com.vrlcm.`, `AutoDeploy.` or `VMSP-`, and attributes on
+non-inventory objects such as scheduled tasks) are left out; the log lists
+them (VITagManager README).
+
+**Import into the target**, first as a dry run:
+
+```powershell
+.\Invoke-VITagManager.ps1 -vCenterServer <target-vcenter> -Mode Import -Content Definitions -BackupDirectory <working-folder>\tags -DryRun
+```
+
+You pick the export file (the newest is marked). Read the log, then run
+the same command without `-DryRun`. What the import does:
+
+- Categories, tags and attributes that are **missing** are created with
+  the source's settings. One that **already exists** is left alone; if
+  its cardinality, entity types or target type differ, the log says so.
+- It **never removes** anything.
+- Pass the same `-Category` as on the export, or use it here to import
+  only part of a full export.
+
+The log file goes to `Logs\` next to the script unless you pass
+`-LogDirectory`. Keep it with the exports.
+
+**Export the assignments now, as a baseline.** You'll export them again
+right before each wave, but take this one now so you have the full
+picture before anything moves:
+
+```powershell
+.\Invoke-VITagManager.ps1 -vCenterServer <source-vcenter> -Mode Export -Content Assignments -BackupDirectory <working-folder>\tags
+```
+
+This holds the tags and custom attribute values of every VM, host,
+cluster, datastore, folder, network and the other inventory objects.
+
+**Running it again** creates only what's still missing, so it's safe to
+repeat: a second import reports everything as already present. **Undo:**
+`Remove-Tag` and `Remove-TagCategory` on the target.
+
+**Check.** Run the Definitions import once more with `-DryRun`: nothing
+to create, and no category with different settings. From a vCenter 8.0.3
+source into 9.1.1, the categories arrived with the same cardinality and
+entity types, including one without restrictions (lab-verified,
+2026-11-16).
+
+**Without the toolkit (PowerCLI).** Connected to both vCenters, this
+creates every source category and tag that the target doesn't have yet,
+the same approach as Jim Millard's
+[Copy-vcTags.ps1](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html).
+Try it against a lab or a test vCenter first.
 
 ```powershell
 $src = Connect-VIServer <source-vcenter>
@@ -258,11 +320,7 @@ foreach ($tag in Get-Tag -Server $src) {
 `-Cardinality` is `Single` (one tag of this category per object) or
 `Multiple`; `-EntityType` limits which object types the category can be
 assigned to. Both are copied from the source, so a category behaves the
-same on the target.
-
-**Export the assignments now, as a baseline.** You'll export them again
-right before each wave, but take this one now so you have the full
-picture before anything moves:
+same on the target. A baseline of the assignments with PowerCLI:
 
 ```powershell
 Get-TagAssignment -Server $src | Select-Object `
@@ -271,18 +329,12 @@ Get-TagAssignment -Server $src | Select-Object `
   Export-Csv -Path <working-folder>\tag-assignments-baseline.csv -NoTypeInformation
 ```
 
-**Running it again** creates only what's still missing, so it's safe to
-repeat. **Undo:** `Remove-Tag` and `Remove-TagCategory` on the target.
-
-**Check.** `Get-TagCategory` and `Get-Tag` on both vCenters return the
-same names, and each category has the same cardinality and entity types.
-
 ---
 
 ## Step 3: custom attributes
 
-**Toolkit:** the tags and custom attributes toolkit, in development.
-Until then, PowerCLI as below.
+**Toolkit:** [VITagManager](https://github.com/pauldiee/VITagManager), the same run as step 2. Without it:
+PowerCLI, below.
 
 Custom attributes are the extra annotation fields on VMs and hosts.
 [KB 344959](https://knowledge.broadcom.com/external/article/344959) lists
@@ -290,7 +342,16 @@ them among the definitions that aren't migrated when they *don't* exist
 on the target, and among the metadata that *is* migrated when they do.
 So create the attribute names on the target first.
 
-Compare first; most environments have only a few:
+The Definitions export and import of step 2 already include the
+attribute names, each with its target type; a global attribute (no
+target type) is created as a global one (lab-verified on 9.1.1,
+2026-11-16). The Assignments export holds the values, so a wave import
+in phase 5 also fills in values that didn't arrive. A value that is
+already set to something else on the target is reported and kept, unless
+you add `-OverwriteValues`.
+
+**Without the toolkit (PowerCLI).** Compare first; most environments have
+only a few:
 
 ```powershell
 Get-CustomAttribute -Server $src | Select-Object Name, TargetType
@@ -308,7 +369,8 @@ An attribute without a target type on the source is a global one; create
 it with `-TargetType $null` (*"If the value is $null the custom attribute
 is global and applies to all target types"*, PowerCLI help).
 
-**Check.** Both lists match. After the test VM in phase 4, compare its
+**Check.** The attribute names and target types match on both vCenters
+(`Get-CustomAttribute`). After the test VM in phase 4, compare its
 values with `Get-Annotation` on both sides.
 
 ---
@@ -367,8 +429,8 @@ migrated VM against it.
 
 ## Step 5: folders and permissions
 
-**Toolkit:** [VIFolderManager](https://github.com/pauldiee/VIFolderManager) (still in test, so the dry run is not
-optional). Other permissions: PowerCLI.
+**Toolkit:** [VIFolderManager](https://github.com/pauldiee/VIFolderManager) (lab-tested; run the dry run
+first anyway). Other permissions: PowerCLI.
 
 **Folders, without moving anything yet.** Export all four folder types
 from the source:
