@@ -22,6 +22,7 @@ it's used.
 
 - [Is this the right route?](#is-this-the-right-route)
 - [What a VM does not take with it](#what-a-vm-does-not-take-with-it)
+- [What doesn't move live, and what stays out](#what-doesnt-move-live-and-what-stays-out)
 - [Phase 0: answer five questions](#phase-0-answer-five-questions)
 - [The phases](#the-phases)
 - [Toolkits](#toolkits)
@@ -88,6 +89,65 @@ Two things you restore afterwards, in phase 5:
   *"or that information is lost forever"*
   ([Migrating tags after cross-vCenter vMotion](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html),
   Jim Millard).
+
+---
+
+## What doesn't move live, and what stays out
+
+Make this list in phase 0, per VM, from the inventory. Every VM ends up in
+one of three groups: it moves live in a wave, it moves powered off in a
+window, or it doesn't move at all.
+
+**Out of scope: rebuilt on the target, not migrated.**
+
+- **The infrastructure itself.** HCX says it directly: *"VMware software
+  appliances (including, but not limited to vCenter and NSX Manager)
+  cannot be migrated with HCX"*
+  ([Understanding vMotion and Cold Migration](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/understanding-vmware-hcx-vmotion-and-cold-migration.html)).
+  The target has its own vCenter, NSX Manager and Edges from phase 1. The
+  same goes for VMs that a product deploys for itself on the source
+  (Supervisor and its services, NSX Edges, system VMs of the cluster),
+  and for the appliances that point at the source vCenter, such as backup
+  proxies: deploy new ones against the target.
+- **Kubernetes nodes with persistent volumes.** Cross vCenter migration
+  *"is explicitly NOT supported for virtual machines consuming Persistent
+  Volumes (PVs) provisioned via the CNS-CSI driver"*; Broadcom's route is
+  to build new clusters on the target and move the workloads with Velero
+  backup and restore
+  ([KB 433258](https://knowledge.broadcom.com/external/article/433258)).
+  Plan Kubernetes as its own migration, on the target Supervisor.
+- **VMs protected by vSphere Replication.** *"Cross vCenter migration is
+  not supported for virtual machines protected by vSphere Replication, and
+  replication does not continue to operate after such a migration"*. Stop
+  or remove the replication first, migrate, and set up protection again on
+  the target
+  ([KB 421671](https://knowledge.broadcom.com/external/article/421671)).
+  Plan when each VM is unprotected.
+
+**Moves only powered off, in a window.**
+
+- **Shared disks: WSFC with shared disks, Oracle RAC (multi-writer).**
+  HCX lists *"Virtual machines cannot be migrated while they are using a
+  shared SCSI bus, flagged for multi-writer, enabled for fault tolerance,
+  or configured for shared VMDK disk sharing"*, for vMotion and for Bulk
+  migration
+  ([Understanding Bulk Migration](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/understanding-vmware-hcx-bulk-migration.html)).
+  The cause is vSphere's, so it applies without HCX too: *"vSphere does
+  not support live migration for VMs with virtual SCSI bus sharing"*. The
+  way: *"Shut down the source VM and any other cluster nodes"* that share
+  the disks, use cold migration, and update the other nodes with the new
+  disk locations before powering them on
+  ([KB 442091](https://knowledge.broadcom.com/external/article/442091)).
+  The whole cluster is down for that window.
+- **Other HCX limits** from the same pages: physical-mode RDMs (*"cannot
+  be migrated"* with Bulk; virtual-mode RDMs *"are converted to VMDKs at
+  the destination"*), mounted ISO images, DirectPath I/O devices, virtual
+  NVMe controllers, encrypted VMs, an attached serial port (*"You can use
+  Bulk Migration"* for those). Without HCX, see the special cases in
+  [docs/32](32-migrating-without-hcx.md#special-cases).
+
+**Check.** Every VM in the inventory has a group: a wave, a powered-off
+window, or out of scope with a reason and an owner.
 
 ---
 
@@ -372,6 +432,11 @@ Step by step: [Migrating with HCX](33-migrating-with-hcx.md) or
     the VM is skipped with a warning."*
     ([part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/)).
     Or use HCX's **Migrate NSX Tags** option on the Mobility Group.
+  - An application that runs on both sides for a while is protected by
+    two DFWs, and a tag-based group only sees the VMs in its own NSX.
+    Add the other side's IP addresses to its groups for as long as it's
+    split, and take them out after its last wave
+    ([docs/31, 4.9](31-carry-over-networks-and-firewall.md#49-vm-tags-per-wave-phase-5)).
 - **Check:** after each wave, the application owner confirms the
   application works, and the VMs have their network, storage policy,
   tags (vSphere and NSX) and folder. Only then start the next wave.
@@ -464,3 +529,14 @@ Read word for word on 2026-11-13.
   [Cross vCenter vMotion workloads from vSphere 7.0 to vSphere 9.0](https://williamlam.com/2026/02/cross-vcenter-vmotion-workloads-from-vsphere-7-0-to-vsphere-9-0.html)
 - [KB 401492](https://knowledge.broadcom.com/external/article/401492),
   VMware NSX Load Balancer Entitlement Changes (read 2026-11-16)
+- Read on 2026-11-16, for *What doesn't move live*:
+  HCX user guide for VCF 9.1,
+  [Understanding vMotion and Cold Migration](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/understanding-vmware-hcx-vmotion-and-cold-migration.html)
+  and
+  [Understanding Bulk Migration](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/understanding-vmware-hcx-bulk-migration.html);
+  [KB 433258](https://knowledge.broadcom.com/external/article/433258)
+  (CNS-CSI persistent volumes),
+  [KB 421671](https://knowledge.broadcom.com/external/article/421671)
+  (vSphere Replication),
+  [KB 442091](https://knowledge.broadcom.com/external/article/442091)
+  (SCSI bus sharing)

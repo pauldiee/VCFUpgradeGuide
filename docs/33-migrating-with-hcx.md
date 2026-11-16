@@ -119,7 +119,10 @@ A rule of thumb that follows from the table:
 - **RAV** for many VMs that can't go down. Plan the window for the
   switchovers one after the other.
 - **HCX vMotion** for a single VM that can't go down.
-- **Cold** for VMs and templates that are off anyway.
+- **Cold** for VMs that are off anyway. Templates only after converting
+  them to VMs: *"HCX does not support direct migration of VM templates"*
+  ([KB 416264](https://knowledge.broadcom.com/external/article/416264);
+  see [docs/30, step 7](30-carry-over-vcenter-configuration.md#step-7-templates-and-content-libraries)).
 
 ---
 
@@ -321,6 +324,18 @@ Manager can't be migrated with HCX. A VM with more than 64 disks stalls at 0% ba
 ESX 8.0 and earlier; ESX 8.0 U1 raised the limit
 ([KB 370723](https://knowledge.broadcom.com/external/article/370723)).
 
+**Shared disks (WSFC, Oracle RAC).** None of the live types and not
+Bulk: *"Clustered disks are not supported for host-based replication"*.
+Broadcom's way is downtime for the whole cluster: *"Shut down the source
+VM and any other cluster nodes"* that share the disks, use **Cold
+Migration**, and update the other nodes with the new disk locations
+before powering them on
+([KB 442091](https://knowledge.broadcom.com/external/article/442091)).
+
+**Kubernetes nodes, VMs protected by vSphere Replication.** Out of scope
+for a VM migration; see
+[docs/29](29-side-by-side-migration.md#what-doesnt-move-live-and-what-stays-out).
+
 ---
 
 ## Moving a VM back
@@ -435,3 +450,8 @@ Read word for word on 2026-11-13.
 - Building HCX:
   [HCX migration to VCF 9.1](https://vcf-planning.hollebollevsan.nl/docs/38-hcx-migration/)
   (VCF 9 Deployment Planning guide, docs/38)
+- Read on 2026-11-16:
+  [KB 416264](https://knowledge.broadcom.com/external/article/416264)
+  (templates with HCX),
+  [KB 442091](https://knowledge.broadcom.com/external/article/442091)
+  (SCSI bus sharing)

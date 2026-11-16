@@ -500,6 +500,23 @@ LUNs"* (Requirements and Limitations for vMotion Without Shared Storage).
 separate batch (*"the selected virtual machines must be in the same power
 state"*).
 
+**Shared disks (WSFC, Oracle RAC).** *"vSphere does not support live
+migration for VMs with virtual SCSI bus sharing"*: shut down every node
+that shares the disks, move them powered off, and update the other nodes
+with the new disk locations before powering them on
+([KB 442091](https://knowledge.broadcom.com/external/article/442091),
+written for HCX, but the restriction it names is vSphere's).
+
+**VMs protected by vSphere Replication.** Cross vCenter migration isn't
+supported for them and replication stops working after it: remove the
+replication first, protect the VM again on the target
+([KB 421671](https://knowledge.broadcom.com/external/article/421671)).
+
+**Kubernetes nodes with persistent volumes, templates.** Kubernetes
+workloads don't move this way, and templates move as VMs: see
+[docs/29](29-side-by-side-migration.md#what-doesnt-move-live-and-what-stays-out)
+and [docs/30, step 7](30-carry-over-vcenter-configuration.md#step-7-templates-and-content-libraries).
+
 **MAC addresses.** *"its MAC addresses are transferred to the target
 vCenter. The source vCenter adds the MAC addresses to a denylist so that
 it does not assign them to newly created virtual machines"*
@@ -625,3 +642,8 @@ Read word for word on 2026-11-13.
 - Jim Millard, 2026-05:
   [Migrating tags after cross-vCenter vMotion](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html)
 - PowerCLI help for `Move-VM` (VCF.PowerCLI 9.1.1)
+- Read on 2026-11-16:
+  [KB 442091](https://knowledge.broadcom.com/external/article/442091)
+  (SCSI bus sharing),
+  [KB 421671](https://knowledge.broadcom.com/external/article/421671)
+  (vSphere Replication and cross vCenter migration)

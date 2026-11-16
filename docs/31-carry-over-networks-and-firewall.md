@@ -777,6 +777,33 @@ So this is not phase 3 work: after each wave in phase 5,
 **Check.** Every VM of the wave carries its NSX tags on the target and is
 a member of the groups it was in on the source.
 
+**While an application is split across both sides.** A wave is meant to
+be a whole application, but a large one, or one whose database moves
+separately, can run partly on the source and partly on the target for a
+while. Each side then has its own DFW, and a tag-based group only holds
+VMs from its own NSX: tags are set on VMs in that NSX's inventory (the
+import above skips VMs that aren't there), and the source NSX doesn't
+know the VMs that left. A rule that allows one tier to reach another by
+tag then misses the half on the other side, in both NSX environments.
+For as long as the application is split:
+
+1. **Before the wave**, list the application's flows between the VMs that
+   move and the VMs that stay (the rules that use its groups).
+2. **Add the IP addresses of the other side** to those groups, as an IP
+   set, on both sides: on the target, the IPs of the VMs still on the
+   source; on the source, the IPs of the VMs that left. With kept IP
+   addresses that's the same list as before the move.
+3. **Test the flows** right after the wave, with the application owner,
+   as part of the wave's sign-off.
+4. **When the last VM of the application has moved**, take the IP sets
+   out of the target groups, so the rules work on tags again, and check
+   once more that the application works. The source rules go with the
+   source.
+
+**Check.** No application spans both sides with rules that only match on
+tags; every IP set added for a split application is written down with the
+wave that removes it.
+
 ### 4.10 Undo
 
 ![Undoing a DFW import. The import creates IP sets, services, service groups, security groups, context profiles, then policies and rules. The targeted undo deletes in the reverse order: rules, policies, security groups, service groups, services, IP sets; context profiles are not removed. Targeted undo with Remove-NSX-ImportedObjects.ps1 reads the CSV files by their standard names from the input folder and deletes by ID, so point it at the import folder from 4.4; the raw export has the old IDs. ClearVMTags empties the tags on the VMs in NSX_VMTags.csv; objects already gone are logged as NOT FOUND. Full wipe with Remove-NSX-AllCustomObjects.ps1 needs no CSV files, deletes every custom DFW object including context profiles, never touches system-owned objects, and is only for a target with nothing else on it, never the source. Both: WhatIf first, both ask for confirmation.](images/networks-firewall/dfw-undo.png)

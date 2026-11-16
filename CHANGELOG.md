@@ -1,5 +1,26 @@
 # Changelog
 
+## v2.9.0 – 2026-11-16
+- The rest of the migration-set gaps (#129 items 2 to 5, Paul):
+  - Applications split across both sides during the waves: `docs/31`
+    4.9 adds the other side's IP addresses to the groups while an
+    application runs on both DFWs, and takes them out after its last
+    wave; `docs/29` phase 5 points there.
+  - What doesn't move live, and what stays out: a new section in
+    `docs/29` (infrastructure appliances and VMs a product deploys for
+    itself, Kubernetes nodes with CNS-CSI volumes per KB 433258, VMs
+    protected by vSphere Replication per KB 421671, shared disks per KB
+    442091, the other HCX limits); `docs/32` and `docs/33` special cases
+    point there.
+  - Templates and content libraries: `docs/30` step 7 (templates move as
+    VMs per KB 416264; VM templates in a library only sync between linked
+    vCenters per KB 414494). `docs/33` no longer says cold migration
+    takes templates.
+  - Resource pools, DRS groups and rules: `docs/30` step 6 (cluster
+    objects, KB 344959 per-VM settings only; export lines lab-checked
+    read-only on 9.1.1; KB 301490 VM groups with a start dependency; KB
+    429035 *Modify cluster* on the destination).
+
 ## v2.8.0 – 2026-11-16
 - Services on the source NSX gateways in the migration set (#129 item 1,
   Paul): NAT, load balancer, DHCP, DNS forwarder, IPsec and L2 VPN, and
