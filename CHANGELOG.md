@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.7.3 – 2026-11-16
+- `docs/31` step 2.3 (#137, Paul): exporting VDS port groups from a vCenter
+  8 source is now lab-tested (VDSPortGroupManager 1.4.0, vCenter 8.0 U3 to
+  9.1.1, all four test port groups identical to the source after the
+  import, also when rebuilt with mapped uplink names). A vCenter 7 source
+  stays untested. The sources list names VDSPortGroupManager 1.4.0.
+
 ## v2.7.2 – 2026-11-16
 - `docs/31` step 3, overlay subnets that keep their IP addresses without
   HCX (#135, Paul): import them with `Import-NSXSegments.ps1 -Disconnected`

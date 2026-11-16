@@ -203,8 +203,10 @@ the names match), and you know the MTU fits the target switch.
 
    The script runs on the workstation (PowerShell 7.4+, VCF.PowerCLI),
    not on the vCenter. It has been lab-tested against vCenter 9.1.1 and
-   9.0.2; exporting from a vCenter 7 or 8 source hasn't been tested yet,
-   so check the export (2.3) and the import's dry check (2.4) carefully.
+   9.0.2, and from a vCenter 8.0 U3 source into 9.1.1 (VDSPortGroupManager
+   1.4.0, 2026-11-16: all four test port groups identical to the source
+   after the import). A vCenter 7 source is not tested; check the export
+   (2.3) and the import's dry check (2.4) carefully there.
 2. Pick the source switch, then the port groups: a number, a list
    (`1,3,5`), a range (`2-6`) or `all`. Each entry shows its VLAN and port
    count; uplink port groups are left out.
@@ -260,7 +262,8 @@ in the mapping table, and the summary shows no failures.
      port group is **rebuilt from the settings file** with the mapped
      names, in one step that either completes or creates nothing. The
      rebuild carries the complete configuration; in a lab test (vCenter
-     9.1.1 and 9.0.2, both directions) the rebuilt port groups were
+     9.1.1 and 9.0.2, both directions, and 8.0 U3 to 9.1.1) the rebuilt
+     port groups were
      identical to the source on every field, including traffic shaping,
      fixed allocation, NetFlow and settings inherited from the switch
      ([README](https://github.com/pauldiee/VDSPortGroupManager#other-uplink-names-on-the-target-switch)).
@@ -879,7 +882,7 @@ Checked on 2026-11-13.
   and the script help in his
   [repository](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit)
 - Toolkit READMEs:
-  [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.1.2,
+  [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16),
   [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration)
 - PowerCLI cmdlet syntax (`Get-NetworkAdapter`, `Export-VDPortGroup`,
   `New-VDPortgroup -BackupPath`): VCF.PowerCLI 9.1.1
