@@ -65,16 +65,23 @@ Go through this once, before wave 1. The tests behind each item are in
       networks"*
       ([Migrate Mobility Group Workloads in Migration Waves](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/migrating-mobility-groups-from-migration-waves/migrating-mobility-group-workloads-in-migration-waves.html)).
 - [ ] **The firewall flows between the IX appliances and the ESX hosts
-      are open**, on both sides. The site-to-site flows are in docs/38
-      §3.4. Three that show up later as migration errors, per the KBs in
-      [Troubleshooting](#troubleshooting):
-      - source ESX to the source IX on **31031** (Bulk) and **44046** (RAV)
+      are open**, on both sides. The site-to-site flows, and HCX Manager
+      to the IX on **8123** (bulk migration control) on each side, are in
+      docs/38 §3.4. Three that show up later as migration errors, per the
+      KBs in [Troubleshooting](#troubleshooting):
+      - source ESX to the source IX on **31031** and **32032** (unencrypted
+        and encrypted replication, per the 9.1.0 and 9.1.1 Ports and
+        Protocols listings). KB 319757 also names *"44046 for RAV"*; those
+        listings don't, so for 9.1 open 31031 and 32032
         ([KB 319757](https://knowledge.broadcom.com/external/article/319757));
       - target IX to the target ESX on **443**
         ([KB 447075](https://knowledge.broadcom.com/external/article/447075));
-      - IX to the ESX hosts on **902**, which a reverse migration needs on
-        the source side
+      - IX to the ESX hosts on **902**, on both sides: on the target side a
+        forward Bulk or RAV migration needs it
+        ([KB 432334](https://knowledge.broadcom.com/external/article/432334)),
+        on the source side a reverse migration
         ([KB 393791](https://knowledge.broadcom.com/external/article/393791)).
+        The service mesh diagnostics can pass while it's closed.
 - [ ] **The target objects exist with the same names**: tag categories and
       tags, custom attributes, folders, storage policies (phase 2). HCX
       can carry tags and attributes over per VM (see
@@ -389,9 +396,11 @@ the wave is signed off.
 | Error | Cause | What to do | KB |
 | --- | --- | --- | --- |
 | *"Storage not accessible error observed"* (Bulk or RAV, forward) | The target IX can't reach the target ESX hosts on **443**, so replication can't write to the datastore | Allow 443 from the target IX to the target ESX hosts, then retry or resume | [447075](https://knowledge.broadcom.com/external/article/447075) |
+| *"Storage not accessible error observed"*, hangs in *"Initial Sync in Progress"*, diagnostics clean | The target IX can't reach the target ESX hosts on **902**; app.log: *"No accessible host for datastore is found for syncing"* | Allow 902 from the target IX to the target hosts | [432334](https://knowledge.broadcom.com/external/article/432334) |
+| *"Thumbprint exchange with HBR server on appliance … failed"* | A proxy on the HCX Manager without local exclusions | Add the local networks to **Proxy Exclusions** (9443 → Administration → Proxy), restart the HCX Manager services | [402723](https://knowledge.broadcom.com/external/article/402723) |
 | *"Storage not accessible error observed"* (reverse migration) | The IX can't reach the ESX hosts on **902** | Check the firewall between the IX and the hosts the VM goes back to; redeploying the IX helps when it worked before | [393791](https://knowledge.broadcom.com/external/article/393791) |
 | *"Storage not accessible error observed"*, on HCX older than 4.9 | Stale fleet entries after a partial service mesh cleanup | Fixed in HCX 4.9.0 and later | [314193](https://knowledge.broadcom.com/external/article/314193) |
-| Stuck at **0% base sync**, no error | The source ESX can't reach the IX on **31031** (44046 for RAV); also MTU, more than one VMkernel tagged for vSphere Replication, a subnet mask mismatch | `nc -zv <IX-IP> 31031` from the ESX shell; `vmkping -d` with the right size; one replication VMkernel per host | [319757](https://knowledge.broadcom.com/external/article/319757) |
+| Stuck at **0% base sync**, no error | The source ESX can't reach the IX on **31031** (32032 when replication is encrypted; the KB also names 44046 for RAV, which the 9.1 port listings don't); also MTU, more than one VMkernel tagged for vSphere Replication, a subnet mask mismatch | `nc -zv <IX-IP> 31031` (and 32032) from the ESX shell; `vmkping -d` with the right size; one replication VMkernel per host | [319757](https://knowledge.broadcom.com/external/article/319757) |
 | Stuck at **0% base sync** for one VM | More than 64 disks on ESX 8.0 or earlier | Reduce to 64 disks, or upgrade the source hosts to 8.0 U1 or later | [370723](https://knowledge.broadcom.com/external/article/370723) |
 | Stuck at **0% base sync** on a retry, `NFC_FILE_LOCKED` | Stale entries from the earlier failed attempt | Cancel, clean up, and make sure no folder of the attempt is left on the target | [305316](https://knowledge.broadcom.com/external/article/305316) |
 | *"Migration Canceled by user, rollback completed"* at the end of the window | The Bulk switchover didn't finish within the switchover window | A longer window, or a time with less activity on the VM | [429534](https://knowledge.broadcom.com/external/article/429534) |
