@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.7.1 – 2026-11-16
+- `docs/30` *Before you start* and the `docs/15` prerequisites (#133, Paul):
+  link the deployment-planning guide's new page on PowerShell 7 and
+  VCF.PowerCLI on a jump host, with and without internet access, and note
+  that Microsoft ended support for PowerShell 7.4 and 7.5 on 10-Nov-2026
+  (7.6 LTS runs to 14-Nov-2028). `docs/31` and `docs/32` already point to
+  `docs/30` for the workstation requirements.
+
 ## v2.7.0 – 2026-11-16
 - `docs/28` agents (#131, Paul): installing the 9.1 agent is now the
   default route, re-pointing the 8.x agent only the fallback for an OS the

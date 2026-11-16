@@ -79,7 +79,10 @@ Per the [script's GitHub repo](https://github.com/vmware/powershell-script-for-v
 
 - **SDDC Manager 5.2.2+ / 9.x**
 - **VCF.PowerCLI 9.1**
-- **PowerShell 7.4+**
+- **PowerShell 7.4+** (Microsoft ended support for 7.4 on 10-Nov-2026;
+  use 7.6 LTS). Installing PowerShell 7 and VCF.PowerCLI, with or without
+  internet access, and keeping one PowerCLI version per host:
+  [planning guide, Jump Host PowerShell](https://vcf-planning.hollebollevsan.nl/docs/42-jump-host-powershell/).
 
 ```powershell
 Install-Module -Name VCF.PowerCLI -MinimumVersion 9.1
