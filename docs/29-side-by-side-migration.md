@@ -288,7 +288,7 @@ Identity Broker, see
 
 ## The phases
 
-![Side-by-side migration in seven phases. 0, decide the route: the five questions, with baseline exports of the source; check: route chosen and written down. 1, build the target: new VCF or VVF 9 environment, HCX on both sides if chosen; check: target healthy, licensed, reachable. 2, carry over vCenter configuration: roles, tags, storage policies, folders and folder permissions, with VIRoleManager, VITagManager in test, StoragePolicyManager and VIFolderManager in test; check: everything exists on the target with the same names. 3, carry over the networks and the firewall: VDS port groups, NSX segments and NSX distributed firewall policies, with VDSPortGroupManager, nsx-segment-migration and Jeroen Buren's NSX DFW toolkit; check: every source network has a mapped target and the DFW comparison is clean. 4, prove the path: ports 8000, 902 and 443, HCX diagnostics, one test VM there and back; check: test VM runs with network, policy, tags and folder. 5, migrate in waves: HCX Mobility Groups or Import VMs, then VIFolderManager to restore folders, VITagManager for the vSphere tags and attribute values, and the NSX tags on the VMs; check: each wave verified by the application owner. 6, cut over and clean up: gateways to the target, remove network extensions, retire the source; check: nothing left running on the source.](images/side-by-side-migration/phases.png)
+![Side-by-side migration in seven phases. 0, decide the route: the five questions, with baseline exports of the source; check: route chosen and written down. 1, build the target: new VCF or VVF 9 environment, HCX on both sides if chosen; check: target healthy, licensed, reachable. 2, carry over vCenter configuration: roles, tags, storage policies, folders and folder permissions, with VIRoleManager, VITagManager, StoragePolicyManager and VIFolderManager; check: everything exists on the target with the same names. 3, carry over the networks and the firewall: VDS port groups, NSX segments and NSX distributed firewall policies, with VDSPortGroupManager, nsx-segment-migration and Jeroen Buren's NSX DFW toolkit; check: every source network has a mapped target and the DFW comparison is clean. 4, prove the path: ports 8000, 902 and 443, HCX diagnostics, one test VM there and back; check: test VM runs with network, policy, tags and folder. 5, migrate in waves: HCX Mobility Groups or Import VMs, then VIFolderManager to restore folders, VITagManager for the vSphere tags and attribute values, and the NSX tags on the VMs; check: each wave verified by the application owner. 6, cut over and clean up: gateways to the target, remove network extensions, retire the source; check: nothing left running on the source.](images/side-by-side-migration/phases.png)
 
 Each phase below has three parts: what it's for, what you do, and the
 check that closes it. Don't start a phase before the previous check
@@ -330,7 +330,7 @@ it:
 2. **Tag categories and tags.** Tag-based storage policy rules refer to
    them, and the tag assignments you re-apply in phase 5 need them
    ([KB 344959](https://knowledge.broadcom.com/external/article/344959)).
-   VITagManager carries them over (still in test, so dry run first).
+   VITagManager carries them over (lab-tested; dry run first).
 3. **Custom attributes.** Same KB, same reason; VITagManager takes the
    attribute names along in the same run.
 4. **Storage policies** (StoragePolicyManager). Tag-based rules are
@@ -457,6 +457,61 @@ PowerShell toolkits for the configuration work in phases 0, 2, 3 and 5.
 They export to files you can read and keep, and import into the target
 vCenter or NSX Manager.
 
+**Why the toolkits, and not the vSphere Client or a few PowerCLI lines.**
+You can rebuild all of this by hand. The toolkits exist because a
+side-by-side migration has traps that a quick copy misses, and because
+you want proof of what you moved:
+
+- **A record of the source.** Every export is a file you can read, keep
+  and compare. It's your baseline in phase 0, and the record of what the
+  old environment looked like after it's gone.
+- **See before you change.** Where a toolkit has a dry run (`-DryRun`, or
+  `-WhatIf` for the NSX segments), it lists what it would create, move or
+  set, and changes nothing.
+- **Safe to run again.** What already exists on the target is skipped or
+  reused, so after a partial run or a fix you just run it again. The
+  vCenter toolkits don't delete anything on an import.
+- **Version differences reported, not hidden.** Privileges that a newer
+  vCenter no longer has are listed and skipped (VIRoleManager: four of
+  them from 8.0 U3 to 9.1.1); capabilities and tags that a storage policy
+  needs but the target lacks are reported (StoragePolicyManager); uplink
+  names that differ on a VCF-built switch are mapped (VDSPortGroupManager
+  `-UplinkMap`).
+- **What vCenter manages itself stays out.** System roles, the folders
+  that vCenter, the Supervisor and NSX create (`vCLS`, `Namespaces`,
+  `NSX Managed Folders`, `Virtual Private Clouds`), and the custom
+  attributes that vCenter and other products keep for themselves are
+  skipped.
+- **Per wave, not just once.** Tag assignments and folder placement don't
+  travel with a VM. VITagManager and VIFolderManager restore them after
+  each wave; VMs that haven't arrived yet are listed and skipped, so the
+  same export serves every wave.
+- **Tested on this route.** The vCenter toolkits were run in a lab from a
+  vCenter 8.0 U3 source and from VCF 9.0.2 into VCF 9.1.1 (2026-11-16),
+  and what that showed is written down on the pages that use them.
+
+**Getting them.** Each toolkit is a public GitHub repository, linked in
+the table below. Put them on the workstation or jump host you run the
+migration from:
+
+- **With git:** `git clone https://github.com/pauldiee/<toolkit>.git`, for
+  example `git clone https://github.com/pauldiee/VITagManager.git`.
+  `git pull` in the folder fetches a newer version later.
+- **Without git:** on the repository page, **Code** > **Download ZIP**,
+  and extract it. Windows marks files downloaded from the internet, and
+  under the `RemoteSigned` execution policy PowerShell won't run such
+  unsigned scripts; unblock the folder once with
+  `Get-ChildItem -Recurse | Unblock-File`
+  ([about_Execution_Policies](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_execution_policies)).
+- **Jump host without internet:** download on another machine and copy
+  the folders across, together with PowerShell 7 and VCF.PowerCLI
+  ([planning guide, Jump Host PowerShell](https://vcf-planning.hollebollevsan.nl/docs/42-jump-host-powershell/)).
+
+Start each toolkit from its own folder in `pwsh`. Its README lists the
+parameters; the vCenter toolkits print their version when they start. Use one
+working folder for all exports
+([docs/30, Before you start](30-carry-over-vcenter-configuration.md#before-you-start)).
+
 **Who made them.** VIRoleManager, VITagManager, StoragePolicyManager,
 VIFolderManager, VDSPortGroupManager and nsx-segment-migration are
 written by Paul van Dieen, the author of this guide
@@ -475,18 +530,18 @@ toolkit is written by Jeroen Buren
 
 | Toolkit | Moves | Status |
 | --- | --- | --- |
-| [VIRoleManager](https://github.com/pauldiee/VIRoleManager) | vCenter roles and their privileges | Tested against vSphere 9 |
-| [VITagManager](https://github.com/pauldiee/VITagManager) | Tag categories and tags, custom attributes, and per wave the tag assignments and attribute values on the VMs | **Still in test.** Lab-tested from vCenter 8.0 U3 and VCF 9.0.2 into 9.1.1. Run with `-DryRun` first |
-| [StoragePolicyManager](https://github.com/pauldiee/StoragePolicyManager) | VM storage policies (SPBM), incl. tag-based rules | Tested against vSphere 9 |
-| [VIFolderManager](https://github.com/pauldiee/VIFolderManager) | Folder trees (VM, host, datastore, network), which objects sit where, and permissions on folders | **Still in test.** Lab-tested on VCF 9.1.1 and 9.0.2. Run with `-DryRun` first |
+| [VIRoleManager](https://github.com/pauldiee/VIRoleManager) | vCenter roles and their privileges | Tested against vSphere 9, and from vCenter 8.0 U3 into 9.1.1 (lab) |
+| [VITagManager](https://github.com/pauldiee/VITagManager) | Tag categories and tags, custom attributes, and per wave the tag assignments and attribute values on the VMs | Lab-tested from vCenter 8.0 U3 and VCF 9.0.2 into 9.1.1. Run with `-DryRun` first |
+| [StoragePolicyManager](https://github.com/pauldiee/StoragePolicyManager) | VM storage policies (SPBM), incl. tag-based rules | Tested against vSphere 9, and from vCenter 8.0 U3 into 9.1.1 (lab) |
+| [VIFolderManager](https://github.com/pauldiee/VIFolderManager) | Folder trees (VM, host, datastore, network), which objects sit where, and permissions on folders | Lab-tested on VCF 9.1.1 and 9.0.2, and from vCenter 8.0 U3 into 9.1.1. Run with `-DryRun` first |
 | [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) | VDS port groups, also onto a switch with other uplink names (`-UplinkMap`, 1.2.0+) | Lab-tested on vCenter 9.1.1 and 9.0.2 |
 | [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration) | NSX segments, segment profiles and their bindings | NSX 4.x and 9.x |
 | [NSX DFW migration toolkit](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit), by Jeroen Buren | NSX distributed firewall: IP sets, services and service groups, security groups, policies and rules, VM tags. Renames NSX-V-era IDs to their names, rolls an import back, and compares source and target | Written for an NSX 4 to NSX 9 migration; no Gateway Firewall. See his posts: [part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/), [part 2](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-part-2/), [part 3](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-part-3/) |
 
 The vCenter toolkits have been tested with vSphere 9 vCenters on both
-sides. Exporting from an **older source vCenter** (7.x or 8.x) hasn't been
-tested yet. Check the export file before you import it, and import with a
-dry run where the toolkit has one.
+sides, and from a **vCenter 8.0 U3 source** into 9.1.1 (lab, 2026-11-16).
+A **7.x source** hasn't been tested. Check the export file before you
+import it, and import with a dry run where the toolkit has one.
 
 ---
 

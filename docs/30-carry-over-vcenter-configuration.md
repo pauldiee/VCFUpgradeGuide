@@ -51,9 +51,12 @@ toolkits' own documentation and code, and PowerCLI 13.5.1 (VCF.PowerCLI
 - VCF.PowerCLI 9.0 or later:
   `Install-Module -Name VCF.PowerCLI -Scope CurrentUser`.
 - The toolkits: [VIRoleManager](https://github.com/pauldiee/VIRoleManager),
+  [VITagManager](https://github.com/pauldiee/VITagManager),
   [StoragePolicyManager](https://github.com/pauldiee/StoragePolicyManager)
   and [VIFolderManager](https://github.com/pauldiee/VIFolderManager).
-  Download each as a zip or clone it.
+  Download each as a zip or clone it; how, and what to do on a jump host
+  without internet:
+  [docs/29, Getting them](29-side-by-side-migration.md#toolkits).
 
 **Accounts.** An administrator on both vCenters. The toolkits ask for
 credentials once and save them as `<vCenter>.cred` next to the script. On
@@ -87,8 +90,8 @@ StoragePolicyManager and VIFolderManager are written by Paul van Dieen, the auth
 vCenters on both sides, and from a **vCenter 8.0 U3 source** into a
 vCenter 9.1.1 target (lab, 2026-11-16, with a test set per toolkit: roles,
 tag and vSAN policies, folders with permissions, tag categories and
-custom attributes). VIFolderManager and VITagManager are still in test,
-and the vCenter 8 test had no hosts, so no VMs were moved into folders.
+custom attributes). The vCenter 8 test had no hosts, so no VMs were
+moved into folders there.
 VITagManager's VM part (assignments and values per wave, VMs with the
 same name) was tested from a VCF 9.0.2 source into 9.1.1 (lab,
 2026-11-16). A **7.x source** hasn't been tested. Open each export file
@@ -113,12 +116,12 @@ toolkit has a dry run, use it first.
 
 ## The order, and why
 
-![Carrying over the vCenter configuration in five steps. Before you start: PowerShell 7.4 or later with VCF.PowerCLI 9, the target joined to the same directory, one working folder. Step 1, roles with VIRoleManager: in phase 2 custom roles created and skipped privileges reviewed; nothing per VM. Step 2, tag categories and tags with VITagManager, still in test: in phase 2 categories and tags with the same cardinality and entity types; in phase 5 export assignments before each wave and apply them after, because they don't follow the VM. Step 3, custom attributes, same toolkit: in phase 2 attribute names with the same target type; in phase 5 check that the values arrived. Step 4, storage policies with StoragePolicyManager: in phase 2 imported or mapped, skipped rules reviewed; in phase 5 check each VM against the policy mapping. Step 5, folders and permissions with VIFolderManager, still in test: in phase 2 folder trees and folder permissions without moving objects; in phase 5 an import with -MoveObjects puts arrived VMs in their folders. Folder permissions need the roles from step 1; tag-based storage policy rules need the tags from step 2.](images/vcenter-config/order.png)
+![Carrying over the vCenter configuration in five steps. Before you start: PowerShell 7.4 or later with VCF.PowerCLI 9, the target joined to the same directory, one working folder. Step 1, roles with VIRoleManager: in phase 2 custom roles created and skipped privileges reviewed; nothing per VM. Step 2, tag categories and tags with VITagManager: in phase 2 categories and tags with the same cardinality and entity types; in phase 5 export assignments before each wave and apply them after, because they don't follow the VM. Step 3, custom attributes, same toolkit: in phase 2 attribute names with the same target type; in phase 5 check that the values arrived. Step 4, storage policies with StoragePolicyManager: in phase 2 imported or mapped, skipped rules reviewed; in phase 5 check each VM against the policy mapping. Step 5, folders and permissions with VIFolderManager: in phase 2 folder trees and folder permissions without moving objects; in phase 5 an import with -MoveObjects puts arrived VMs in their folders. Folder permissions need the roles from step 1; tag-based storage policy rules need the tags from step 2.](images/vcenter-config/order.png)
 
 | Step | What | Tool | Needs first |
 | --- | --- | --- | --- |
 | 1 | Roles | VIRoleManager | – |
-| 2 | Tag categories and tags | VITagManager, still in test | – |
+| 2 | Tag categories and tags | VITagManager | – |
 | 3 | Custom attributes | VITagManager, same run | – |
 | 4 | Storage policies | StoragePolicyManager | Step 2, for tag-based rules |
 | 5 | Folders and permissions | VIFolderManager, PowerCLI | Step 1 and the target's directory |
@@ -215,8 +218,8 @@ privilege whether that's acceptable.
 
 ## Step 2: tag categories and tags
 
-**Toolkit:** [VITagManager](https://github.com/pauldiee/VITagManager) (still in test, so the dry run is not
-optional). It handles step 3 as well. Without it: PowerCLI, at the end of
+**Toolkit:** [VITagManager](https://github.com/pauldiee/VITagManager) (lab-tested; run the dry run
+first anyway). It handles step 3 as well. Without it: PowerCLI, at the end of
 this step.
 
 There are two parts to tags, and they move at different times:
@@ -426,8 +429,8 @@ migrated VM against it.
 
 ## Step 5: folders and permissions
 
-**Toolkit:** [VIFolderManager](https://github.com/pauldiee/VIFolderManager) (still in test, so the dry run is not
-optional). Other permissions: PowerCLI.
+**Toolkit:** [VIFolderManager](https://github.com/pauldiee/VIFolderManager) (lab-tested; run the dry run
+first anyway). Other permissions: PowerCLI.
 
 **Folders, without moving anything yet.** Export all four folder types
 from the source:

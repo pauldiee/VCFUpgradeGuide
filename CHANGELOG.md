@@ -9,9 +9,19 @@
   the toolkit table and the credits name it; `docs/32` exports and
   re-applies the tags of a wave with it (`-VMName` from the wave list).
   Lab-tested from vCenter 8.0.3 and VCF 9.0.2 into 9.1.1, 2026-11-16.
-- Diagrams `phases` and `order`: the tags chips are now "VITagManager
-  (in test)", the "Toolkit in development" legend entry is gone, PNGs
-  re-rendered.
+- Review (Paul): VITagManager and VIFolderManager are now **lab-tested**
+  instead of "still in test" in `docs/29`, `docs/30` and both diagrams;
+  the toolkit table also says that VIRoleManager and StoragePolicyManager
+  were tested from vCenter 8.0 U3, and the stale "8.x hasn't been tested"
+  line is fixed (7.x still hasn't).
+- `docs/29` Toolkits: new **why the toolkits** (a record of the source,
+  dry run, safe re-runs, version differences reported, system objects
+  left out, per wave, tested on this route) and **getting them** (git
+  clone, ZIP with `Unblock-File`, offline jump host); `docs/30` Before
+  you start lists VITagManager and links there.
+- Diagrams `phases` and `order`: every toolkit chip is now "tested", the
+  "Toolkit in development" and "still in test" legend entries are gone,
+  PNGs re-rendered.
 
 ## v2.9.2 – 2026-11-16
 - `docs/33`, `docs/34` (#142, Paul): ESX to IX on 31031 and 32032, as the
