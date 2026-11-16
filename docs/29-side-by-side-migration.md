@@ -288,7 +288,7 @@ Identity Broker, see
 
 ## The phases
 
-![Side-by-side migration in seven phases. 0, decide the route: the five questions, with baseline exports of the source; check: route chosen and written down. 1, build the target: new VCF or VVF 9 environment, HCX on both sides if chosen; check: target healthy, licensed, reachable. 2, carry over vCenter configuration: roles, tags, storage policies, folders and folder permissions, with VIRoleManager, the tags and custom attributes toolkit in development, StoragePolicyManager and VIFolderManager in test; check: everything exists on the target with the same names. 3, carry over the networks and the firewall: VDS port groups, NSX segments and NSX distributed firewall policies, with VDSPortGroupManager, nsx-segment-migration and Jeroen Buren's NSX DFW toolkit; check: every source network has a mapped target and the DFW comparison is clean. 4, prove the path: ports 8000, 902 and 443, HCX diagnostics, one test VM there and back; check: test VM runs with network, policy, tags and folder. 5, migrate in waves: HCX Mobility Groups or Import VMs, then VIFolderManager to restore folders and the NSX tags on the VMs; check: each wave verified by the application owner. 6, cut over and clean up: gateways to the target, remove network extensions, retire the source; check: nothing left running on the source.](images/side-by-side-migration/phases.png)
+![Side-by-side migration in seven phases. 0, decide the route: the five questions, with baseline exports of the source; check: route chosen and written down. 1, build the target: new VCF or VVF 9 environment, HCX on both sides if chosen; check: target healthy, licensed, reachable. 2, carry over vCenter configuration: roles, tags, storage policies, folders and folder permissions, with VIRoleManager, VITagManager in test, StoragePolicyManager and VIFolderManager in test; check: everything exists on the target with the same names. 3, carry over the networks and the firewall: VDS port groups, NSX segments and NSX distributed firewall policies, with VDSPortGroupManager, nsx-segment-migration and Jeroen Buren's NSX DFW toolkit; check: every source network has a mapped target and the DFW comparison is clean. 4, prove the path: ports 8000, 902 and 443, HCX diagnostics, one test VM there and back; check: test VM runs with network, policy, tags and folder. 5, migrate in waves: HCX Mobility Groups or Import VMs, then VIFolderManager to restore folders, VITagManager for the vSphere tags and attribute values, and the NSX tags on the VMs; check: each wave verified by the application owner. 6, cut over and clean up: gateways to the target, remove network extensions, retire the source; check: nothing left running on the source.](images/side-by-side-migration/phases.png)
 
 Each phase below has three parts: what it's for, what you do, and the
 check that closes it. Don't start a phase before the previous check
@@ -300,8 +300,7 @@ there's no reason to rush a phase.
 - **Do:** answer the [five questions](#phase-0-answer-five-questions).
   Then take a **baseline export** of the source with the toolkits below
   (roles, storage policies, folders, port groups, segments) and of the
-  tag assignments, with PowerCLI until the tags and custom attributes
-  toolkit is there. Even when
+  tag assignments and attribute values (VITagManager). Even when
   you rebuild part of it by hand, that export is your reference and your
   record of what the source looked like.
 - **Check:** the route is written down: HCX or not, IP addresses kept or
@@ -331,11 +330,9 @@ it:
 2. **Tag categories and tags.** Tag-based storage policy rules refer to
    them, and the tag assignments you re-apply in phase 5 need them
    ([KB 344959](https://knowledge.broadcom.com/external/article/344959)).
-   The toolkit for this (tags and custom attributes together) is still
-   being developed; until then, recreate them in the vSphere Client or
-   with PowerCLI.
-3. **Custom attributes.** Same KB, same reason, and the same toolkit in
-   development; until then, recreate the attribute names by hand.
+   VITagManager carries them over (still in test, so dry run first).
+3. **Custom attributes.** Same KB, same reason; VITagManager takes the
+   attribute names along in the same run.
 4. **Storage policies** (StoragePolicyManager). Tag-based rules are
    matched by category and tag name, so step 2 must be done first.
 5. **Folders and folder permissions** (VIFolderManager), folders only,
@@ -416,11 +413,11 @@ Step by step: [Migrating with HCX](33-migrating-with-hcx.md) or
     workload back to the legacy environment"*.
   - Without HCX: in the target vSphere Client, right-click the cluster or
     host and choose **Import VMs**.
-  - Right **before** each wave, export the tag assignments of its VMs
-    (`Get-TagAssignment`); right **after** it, assign the same tags on the
-    target (`New-TagAssignment`). The tags and custom attributes toolkit
-    will do this once it's
-    available.
+  - Right **before** each wave, export the tag assignments and custom
+    attribute values of its VMs with VITagManager (`-Content Assignments
+    -VMListPath <wave-file>`); right **after** it, import them on the
+    target with the same wave file, dry run first
+    ([docs/30, step 2](30-carry-over-vcenter-configuration.md#step-2-tag-categories-and-tags)).
   - After each wave, run VIFolderManager's import again with
     `-MoveObjects`: VMs that have arrived go back into their folders, VMs
     that haven't are listed and skipped, so the same export works for
@@ -460,9 +457,9 @@ PowerShell toolkits for the configuration work in phases 0, 2, 3 and 5.
 They export to files you can read and keep, and import into the target
 vCenter or NSX Manager.
 
-**Who made them.** VIRoleManager, StoragePolicyManager, VIFolderManager,
-VDSPortGroupManager, nsx-segment-migration and the tags and custom
-attributes toolkit are written by Paul van Dieen, the author of this guide
+**Who made them.** VIRoleManager, VITagManager, StoragePolicyManager,
+VIFolderManager, VDSPortGroupManager and nsx-segment-migration are
+written by Paul van Dieen, the author of this guide
 ([hollebollevsan.nl](https://www.hollebollevsan.nl)). The NSX DFW migration
 toolkit is written by Jeroen Buren
 ([configmgr.nl](https://configmgr.nl)).
@@ -479,7 +476,7 @@ toolkit is written by Jeroen Buren
 | Toolkit | Moves | Status |
 | --- | --- | --- |
 | [VIRoleManager](https://github.com/pauldiee/VIRoleManager) | vCenter roles and their privileges | Tested against vSphere 9 |
-| Tags and custom attributes toolkit | Tag categories and tags, custom attributes, and their assignments and values on objects | **In development**, not yet available |
+| [VITagManager](https://github.com/pauldiee/VITagManager) | Tag categories and tags, custom attributes, and per wave the tag assignments and attribute values on the VMs | **Still in test.** Lab-tested from vCenter 8.0 U3 and VCF 9.0.2 into 9.1.1. Run with `-DryRun` first |
 | [StoragePolicyManager](https://github.com/pauldiee/StoragePolicyManager) | VM storage policies (SPBM), incl. tag-based rules | Tested against vSphere 9 |
 | [VIFolderManager](https://github.com/pauldiee/VIFolderManager) | Folder trees (VM, host, datastore, network), which objects sit where, and permissions on folders | **Still in test.** Lab-tested on VCF 9.1.1 and 9.0.2. Run with `-DryRun` first |
 | [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) | VDS port groups, also onto a switch with other uplink names (`-UplinkMap`, 1.2.0+) | Lab-tested on vCenter 9.1.1 and 9.0.2 |

@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.9.3 – 2026-11-16
+- `docs/29`, `docs/30`, `docs/32` (#144, Paul): VITagManager replaces the
+  tags and custom attributes toolkit "in development". `docs/30` steps 2
+  and 3 now carry the definitions over with it (export, `-Category`, dry
+  run, import that never removes; system custom attributes skipped),
+  with the PowerCLI way kept as the fallback; `docs/29` phases 2 and 5,
+  the toolkit table and the credits name it; `docs/32` exports and
+  re-applies the tags of a wave with it (`-VMName` from the wave list).
+  Lab-tested from vCenter 8.0.3 and VCF 9.0.2 into 9.1.1, 2026-11-16.
+- Diagrams `phases` and `order`: the tags chips are now "VITagManager
+  (in test)", the "Toolkit in development" legend entry is gone, PNGs
+  re-rendered.
+
 ## v2.9.2 – 2026-11-16
 - `docs/33`, `docs/34` (#142, Paul): ESX to IX on 31031 and 32032, as the
   Ports and Protocols listings for HCX 9.1.0 and 9.1.1 give it (read

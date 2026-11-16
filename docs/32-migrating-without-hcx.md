@@ -153,13 +153,18 @@ target datastores, the window, and who signs it off.
 
 1. **Export the tag assignments** of the wave's VMs, right before you
    start. Tag assignments don't travel with the VM (Jim Millard,
-   [Migrating tags after cross-vCenter vMotion](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html)):
+   [Migrating tags after cross-vCenter vMotion](https://blog.millard.org/2026/05/migrating-tags-after-cross-vcenter.html)).
+   With [VITagManager](https://github.com/pauldiee/VITagManager), which
+   takes the custom attribute values along too, for the VMs of wave 1 in
+   the wave list:
 
    ```powershell
-   Get-TagAssignment -Server $src -Entity (Get-VM -Server $src -Name <wave-vm-names>) | Select-Object `
-     @{N='VM';E={$_.Entity.Name}}, @{N='Category';E={$_.Tag.Category.Name}}, @{N='Tag';E={$_.Tag.Name}} |
-     Export-Csv -Path <working-folder>\tags-wave-<n>.csv -NoTypeInformation
+   $waveVMs = (Import-Csv <working-folder>\waves.csv | Where-Object Wave -eq 1).VM
+   .\Invoke-VITagManager.ps1 -vCenterServer <source-vcenter> -Mode Export -Content Assignments -VMName $waveVMs -BackupDirectory <working-folder>\tags
    ```
+
+   [The wave script](#the-wave-script) below exports the tags itself,
+   with plain PowerCLI.
 
 2. **Check the VMs**: not in a state that blocks vMotion (see
    [Virtual Machine Conditions and Limitations for vSphere vMotion](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/9-1/vcenter-and-host-management/migrating-virtual-machines/migration-with-vmotion/virtual-machine-conditions-and-limitation-for-vmotion.html)),
@@ -228,15 +233,20 @@ For the VMs that arrived:
    import with `-MoveObjects` (dry run first); VMs that haven't arrived are
    listed and skipped
    ([docs/30, step 5](30-carry-over-vcenter-configuration.md#step-5-folders-and-permissions)).
-2. **vSphere tags:** re-apply the assignments from the wave's export:
+2. **vSphere tags:** re-apply the assignments from the wave's export,
+   dry run first, then the same command without `-DryRun`. Pick the
+   wave's export file in the menu (the newest is marked):
 
    ```powershell
-   Import-Csv <working-folder>\tags-wave-<n>.csv | ForEach-Object {
-     $vm  = Get-VM -Server $dst -Name $_.VM
-     $tag = Get-Tag -Server $dst -Category $_.Category -Name $_.Tag
-     New-TagAssignment -Server $dst -Entity $vm -Tag $tag
-   }
+   .\Invoke-VITagManager.ps1 -vCenterServer <target-vcenter> -Mode Import -Content Assignments -VMName $waveVMs -BackupDirectory <working-folder>\tags -DryRun
    ```
+
+   VMs that haven't arrived are counted as not found and listed in the
+   log, so a partial wave is fine. Tags that are already there are left
+   alone; a tag in a one-tag-per-object category is skipped when the VM
+   already has another one. VMs are matched by name; when a name occurs
+   twice on the target, the VM's UUID decides, otherwise the VM is
+   skipped (VITagManager README; lab-verified, 2026-11-16).
 
 3. **NSX tags**, when the target uses the distributed firewall
    ([docs/31, 4.9](31-carry-over-networks-and-firewall.md#49-vm-tags-per-wave-phase-5)).
