@@ -74,7 +74,7 @@
 <text x="910" y="586" font-size="14" font-weight="700" fill="#0f172a">DFW on target</text>
 <text x="910" y="608" font-size="14" fill="#0f172a">nothing missing</text>
 <rect x="40" y="676" width="1180" height="40" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
-<text x="630.0" y="701" font-size="13.5" fill="#78350f" text-anchor="middle">Later, in phase 5 per wave: NSX tags on the arrived VMs (DFW toolkit or HCX "Replicate Security Tag"), so they fall into their security groups.</text>
+<text x="630.0" y="701" font-size="13.5" fill="#78350f" text-anchor="middle">Later, in phase 5 per wave: NSX tags on the arrived VMs (DFW toolkit or HCX "Replicate Security Tags"), so they fall into their security groups.</text>
 <rect x="40" y="739" width="26" height="18" rx="9" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
 <text x="74" y="753" font-size="12.5" fill="#334155">Toolkit by Paul van Dieen</text>
 <rect x="340" y="739" width="26" height="18" rx="9" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5"/>

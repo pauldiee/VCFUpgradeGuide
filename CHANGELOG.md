@@ -1,5 +1,19 @@
 # Changelog
 
+## v3.0.1 – 2026-11-18
+- `docs/33` (#152, Paul): new section **Migration Settings, option by
+  option**, following the Mobility Group wizard step: Migration Type,
+  Service Mesh, the Transfer and Switchover choices (including Defer
+  switchover), and every Advanced Option under Virtual Hardware, Guest OS,
+  Security and Transfer & Switchover, with what it does, which migration
+  types support it and advice. Verbatim from the VCF 9.1 HCX user guide;
+  labels as the HCX 9.1 UI shows them, TechDocs names in brackets. The intro
+  links the MON explanation in the deployment-planning guide (docs/38 §8.4).
+- `docs/29`, `docs/31`, `docs/33`, `docs/34` and the `dfw`, `dfw-hcx` and
+  `routes` diagrams (#152): **Replicate Security Tags**, as the UI and the
+  TechDocs option table name it (the TechDocs text says "Tag"). Upgrade VM
+  Tools and Disable HCX Per-VM EVC also follow the UI now.
+
 ## v3.0.0 – 2026-11-18
 - `docs/31` 2.4 (#151, Paul): use VDSPortGroupManager 1.6.1 or later for a
   rebuild with uplink mapping; up to 1.6.0 a source port group with VM

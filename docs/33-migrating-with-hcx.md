@@ -10,8 +10,10 @@ Building HCX is not on this page. Deploying HCX on both sides, the site
 pair, the service mesh, network extension and the firewall flows are in
 the deployment-planning guide,
 [HCX migration to VCF 9.1](https://vcf-planning.hollebollevsan.nl/docs/38-hcx-migration/)
-(docs/38 there). This page starts where that one says *Run the migration
-waves*.
+(docs/38 there), including how Mobility Optimized Networking (MON) routes
+migrated VMs
+([§8.4](https://vcf-planning.hollebollevsan.nl/docs/38-hcx-migration/#84-mobility-optimized-networking-mon)).
+This page starts where that one says *Run the migration waves*.
 
 It assumes phases 2 to 4 are done: the configuration
 ([docs/30](30-carry-over-vcenter-configuration.md)) and the networks and
@@ -32,6 +34,7 @@ HCX is in [Migrating without HCX](32-migrating-without-hcx.md).
 - [Before the first wave](#before-the-first-wave)
 - [Choosing a migration type per VM](#choosing-a-migration-type-per-vm)
 - [What HCX carries over](#what-hcx-carries-over)
+- [Migration Settings, option by option](#migration-settings-option-by-option)
 - [Running a wave](#running-a-wave)
 - [Migration waves in HCX 9.1](#migration-waves-in-hcx-91)
 - [Outside vCenter, per wave](#outside-vcenter-per-wave)
@@ -144,7 +147,7 @@ group or per VM
 | --- | --- | --- |
 | **vSphere tags** | **Migrate vCenter Tags**: *"The vCenter Tags are replicated from the source site to the destination site"* | All four types |
 | **Custom attributes** | **Migrate Custom Attributes** | All four types |
-| **NSX tags** | **Replicate Security Tag**: *"Replicates tags that are associated with a virtual machine undergoing migration"* | All four types |
+| **NSX tags** | **Replicate Security Tags**: *"Replicates tags that are associated with a virtual machine undergoing migration"* | All four types |
 | **Folder** | The folder in the Mobility Group's placement, per group or per VM | All four types |
 | **MAC address** | **Retain MAC**: default and fixed for vMotion and RAV; an option for Bulk. Cold *"preserves"* IP and MAC | Bulk: tick it |
 
@@ -154,8 +157,8 @@ as the options are ticked. Check the result after each wave all the same.
 Four options change the VM and narrow the way back. Leave them **off**
 until the wave is signed off:
 
-- **Upgrade Virtual Hardware** and **Upgrade VMware Tools**.
-- **Deactivate Per-VM EVC**: *"If this option is selected then this
+- **Upgrade Virtual Hardware** and **Upgrade VM Tools**.
+- **Disable HCX Per-VM EVC** (TechDocs: Deactivate Per-VM EVC): *"If this option is selected then this
   virtual machine might not be able to vMotion back to the source site"*.
 - **Generate a new Security Identifier (SID)** (Bulk, Windows): *"If the
   virtual machine is connected to the domain, it is moved to workgroup"*.
@@ -169,6 +172,86 @@ Two options deal with what blocks a migration:
   ([Understanding Virtual Machine Snapshots During Migrations](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/additional-migration-settings/understanding-snapshots-during-virtual-machine-migration.html)).
   Agree with the application owner whether the snapshots can go.
 - **Force Unmount ISO Images** (vMotion, Bulk, RAV).
+
+## Migration Settings, option by option
+
+The Mobility Group wizard has five steps: **Workload Selection**,
+**Destination Settings**, **Migration Settings**, **Customize VM Settings**
+and **Review & Submit**. This section goes through the third one. The labels
+below are the ones the HCX 9.1 UI shows; where TechDocs uses another name, it
+is in brackets. Sources: the VCF 9.1 HCX user guide pages
+[Additional Migration Settings][ams],
+[Migrating Virtual Machines with Mobility Groups][mg],
+[Manage Mobility Group Workloads][mgw] and
+[Understanding Bulk Migration][bulk] (updated 16 November 2026).
+
+What you set here is the group default. The screen itself says so:
+*"Individual migrations allow overriding the selections made for the
+group"*, and TechDocs: *"To override the default settings for specific
+virtual machines in the group, select and expand the virtual machine entry,
+and set different options"* ([Mobility Groups][mg]).
+
+### Type, service mesh and schedules
+
+| Setting | What it does | Advice |
+| --- | --- | --- |
+| **Migration Type** | Bulk, HCX vMotion, Replication Assisted vMotion, Cold (and OS Assisted for non-vSphere sources). The advanced options below depend on it: *"The available options depend on the selected migration type"* ([Additional Migration Settings][ams]) | Per the [type table](#choosing-a-migration-type-per-vm); set the group to the type most VMs need and override the rest per VM |
+| **Service Mesh** | *"For Bulk, vMotion, and RAV migration types, you can select a service mesh to use for migration operations."* *"If no service mesh is selected for migration, VCF Operations HCX automatically selects the service mesh to use"* ([Mobility Groups][mg]). With HCX newer than 9.1.0 on both sides and several meshes, the workload *"gets distributed among each of these service meshes in a round robin algorithm"* | Leave it empty with one service mesh. Pick one when you have several and want a wave on a specific path |
+| **Transfer: Start now / Set transfer schedule** | *"The Transfer schedule identifies the date and time when base synchronization to the destination site begins"* ([Mobility Groups][mg]). For Bulk, RAV and OS Assisted only: *"Transfer scheduling is not available for vMotion, HCX Assisted vMotion (Direct), or Cold migration"* | Start the transfer days before the window, so only the delta is left at the switchover |
+| **Switchover: Start after transfer is complete** | The switchover follows the initial sync directly; for Bulk that means a reboot as soon as the copy is done | Only for VMs whose owner accepts a reboot at any moment |
+| **Switchover: Set switchover schedule** | *"The Switchover schedule defines the date and time when the final data synchronization occurs and the workload is switched over to the destination site"* ([Mobility Groups][mg]) | The normal choice for a wave: the agreed window |
+| **Switchover: Defer switchover** | Keeps the VM in sync without a date. TechDocs describes the same operation on a running group: it *"keeps the migration in data sync phase until the switchover is explicitly opted for by specifying a schedule in future or an immediate switchover"* ([Manage Mobility Group Workloads][mgw]) | When the window isn't agreed yet. Set a schedule or **Switchover Now** later; meanwhile a delta sync runs every two hours ([Sync and switchover](#3-sync-and-switchover)) |
+
+### Advanced Options
+
+Support per type from the table in [Additional Migration Settings][ams]
+(*Yes* = available, *fixed* = always on and not selectable, *–* = not
+available).
+
+**Virtual Hardware**
+
+| Option | What it does | Bulk | vMotion | RAV | Cold | Advice |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Retain MAC** | *"Causes a virtual machine to keep its current MAC address during HCX Bulk migration operation."* Not within one vCenter: *"Bulk migration from one cluster to another in a single VC environment does not retain the MAC address of the VM even if the option is explicitly selected"* ([Understanding Bulk Migration][bulk]) | Yes | fixed | fixed | – | **On** for Bulk: a new MAC breaks anything tied to the old one, such as DHCP reservations |
+| **Upgrade VM Tools** (Upgrade VMware Tools) | *"Allows HCX to upgrade VMware Tools to the latest supported version as part of the migration operation"* | Yes | Yes | Yes | – | **Off** until the wave is signed off |
+| **Remove Snapshots** | *"Causes HCX to consolidate snapshot files during migration of the virtual machine."* Bulk removes snapshots anyway (see [What HCX carries over](#what-hcx-carries-over)) | Yes | Yes | Yes | – | Agree with the application owner first; the snapshots are gone afterwards |
+| **Migrate vCenter Tags** | *"Migrates vCenter tags that are associated with a virtual machine undergoing migration"* | Yes | Yes | Yes | Yes | **On**; the tags must exist on the target (phase 2) |
+| **Migrate vSphere Datasets** | *"vSphere datasets are key value pairs that are shared between the vSphere management layer and the guest operating system"* | Yes | – | – | – | **On** for Bulk when something in the guest or in your tooling uses datasets; harmless otherwise |
+| **Upgrade Virtual Hardware** | *"Allows HCX to upgrade virtual machine hardware to the latest supported version as part of the migration operation"* (vMotion: at the next reboot) | Yes | Yes | Yes | Yes | **Off** until sign-off: it narrows the way back |
+| **Disable HCX Per-VM EVC** (Deactivate Per-VM EVC) | *"If this option is selected then this virtual machine might not be able to vMotion back to the source site"* | Yes | Yes | Yes | – | **Off** until sign-off |
+| **Migrate Custom Attributes** | *"Migrates VMware Custom Attributes associated with a virtual machine undergoing migration"* | Yes | Yes | Yes | Yes | **On**; the attributes must exist on the target (phase 2) |
+| **Force unmount ISO images** | *"Causes HCX to remove mounted ISO images before migrating the virtual machine."* Without it: *"Virtual machines with mounted ISO images cannot be migrated"* ([Understanding Bulk Migration][bulk]) | Yes | Yes | Yes | – | **On**, after checking that no VM needs its ISO |
+
+**Guest OS** (Bulk only)
+
+| Option | What it does | Advice |
+| --- | --- | --- |
+| **Personalization Script** | *"Uploads a customization script to a migrated virtual machine."* At most 1500 characters; on Linux it needs VMware Tools 10.1.0 or later, and *"the enable-custom-scripts option is deactivated by default for security and must be enabled manually to run the custom script"* | Only for a change that must happen at the target, such as a re-IP. Test it on one VM first |
+| **DNS Customizations** (DNS Customization) | *"Sets the Primary and the Secondary DNS servers for the migrated virtual machine"* | Only when the target uses other DNS servers. With kept IP addresses and the same DNS, leave it off |
+| **Generate a new Security Identifier (SID)** | Windows only. *"If the virtual machine is connected to the domain, it is moved to workgroup, and no DNS suffix is set"*, and it needs an active local administrator | **Off** for a migration: the VM must keep its identity and domain membership |
+
+**Security**
+
+| Option | What it does | Bulk | vMotion | RAV | Cold | Advice |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Replicate Security Tags** (Replicate Security Tag in the text) | *"Replicates tags that are associated with a virtual machine undergoing migration"*: the NSX tags | Yes | Yes | Yes | Yes | **On** when the source uses NSX tags for DFW groups; see [docs/31, 4.9](31-carry-over-networks-and-firewall.md#49-vm-tags-per-wave-phase-5) |
+
+**Transfer & Switchover**
+
+| Option | What it does | Bulk | vMotion | RAV | Cold | Advice |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Force Power-Off VM** | *"By default, HCX attempts to shut down the virtual machine guest gracefully during the HCX Bulk migration operation."* *"Checking this option causes HCX to force the power-off"*; without it, *"If the OS interrupts the termination process, the migration operation fails"*. It can be set per VM | Yes | – | – | – | Per VM, for VMs that are known not to shut down cleanly |
+| **Enable Seed Checkpoint** | *"If a migration is unsuccessful or canceled, Seed Checkpoint retains the target disks that are created at the target site."* *"To use this option, select a specific datastore for migration and not a datastore cluster"* | Yes | – | Yes | – | **On**: a retry then doesn't copy everything again ([When a migration fails](#when-a-migration-fails)) |
+| **Expedited Switchover** | *"Reduces migration downtime by bypassing the final offline sync, and immediately recovering the VM at the destination after the VM at the source is powered off"*; *"Drag the slider to indicate an acceptable data loss"* | Yes | – | – | – | **Off** unless the application owner signs off on the data loss. The UI marks it with a warning sign; TechDocs gives no further reason than the data loss itself |
+
+TechDocs lists a few more per-VM options that are not on this screen, such
+as **Hostname**, **Domain Name** (Linux) and **Guest Shutdown Timeout** (Bulk,
+5 to 30 minutes) ([Additional Migration Settings][ams]).
+
+[ams]: https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/additional-migration-settings.html
+[mg]: https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/migrating-virtual-machines-using-mobility-groups.html
+[mgw]: https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/migrating-virtual-machines-using-mobility-groups/manage-mobility-group-workloads.html
+[bulk]: https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/understanding-vmware-hcx-bulk-migration.html
 
 ---
 
@@ -207,10 +290,10 @@ In the HCX UI, **Migration**, **Create Mobility Group**, then
 4. **Network per VM:** extended networks are selected; map the rest.
 5. **Migration type** per group, and per VM where the
    [type table](#choosing-a-migration-type-per-vm) says otherwise.
-6. **Options:** the extended options from
-   [What HCX carries over](#what-hcx-carries-over). For Bulk, also
-   consider **Force Power-Off VM** for VMs that don't shut down cleanly,
-   and **Enable Seed Checkpoint** (see
+6. **Options:** the **Migration Settings** step, option by option in
+   [Migration Settings, option by option](#migration-settings-option-by-option).
+   For Bulk, also consider **Force Power-Off VM** for VMs that don't shut
+   down cleanly, and **Enable Seed Checkpoint** (see
    [When a migration fails](#when-a-migration-fails)).
 7. **Schedules** for Bulk and RAV: *"The Transfer schedule identifies the
    date and time when base synchronization to the destination site

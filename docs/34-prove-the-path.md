@@ -262,7 +262,7 @@ Use the wave tooling, so the test proves it too.
 
 1. **A Mobility Group for wave 0**, with one test VM per migration type,
    and the options the waves will use: Migrate vCenter Tags, Migrate
-   Custom Attributes, Replicate Security Tag; Upgrade Virtual Hardware,
+   Custom Attributes, Replicate Security Tags; Upgrade Virtual Hardware,
    Upgrade VMware Tools and Deactivate Per-VM EVC **off**
    ([docs/33, What HCX carries over](33-migrating-with-hcx.md#what-hcx-carries-over)).
 2. **Bulk and RAV with a switchover schedule**, not *as soon as

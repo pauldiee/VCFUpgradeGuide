@@ -44,7 +44,7 @@ blogs, and the toolkits' own documentation and code, checked on
 | NSX segment (VLAN or overlay) | Recreate | NSX segment | [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration) |
 | Any network whose VMs keep their IP addresses through HCX | Extend with HCX Network Extension; HCX creates the target network | Extended network | HCX, see [Networks that HCX extends](#networks-that-hcx-extends) |
 | NSX DFW: IP sets, services, groups, context profiles, policies and rules | Export, sanitize, import | NSX DFW | [NSX DFW migration toolkit](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit) (Jeroen Buren) |
-| NSX tags on VMs | Per wave, after the VM arrives | NSX tags | With HCX: *Replicate Security Tag* (phase 5); without HCX: the same toolkit |
+| NSX tags on VMs | Per wave, after the VM arrives | NSX tags | With HCX: *Replicate Security Tags* (phase 5); without HCX: the same toolkit |
 | Services on NSX gateways: NAT, load balancer, DHCP, DNS forwarder, VPN, gateway firewall | List per subnet, rebuild on the target gateway, switch over in the subnet's cutover window | Target gateway, or Avi for load balancing | By hand, see [step 5](#step-5-services-on-the-nsx-gateways) |
 
 ---
@@ -510,7 +510,7 @@ membership. So:
 - **Plan time for it** in the migration plan, separate from the network
   work in steps 2 and 3.
 
-![Migrating the NSX distributed firewall step by step with Jeroen Buren's toolkit. Read-only: from the source NSX 4 Manager, 4.2 export to one CSV per object type, 4.3 sanitize to renamed IDs with _sanitized and _id_mapping files while keeping tags that groups use, 4.4 review in Excel with the rule owners and check service groups by hand, 4.5 dry run with WhatIf. Changes the target: 4.6 import into the target NSX 9 Manager, conflict action Skip first. Read-only: 4.7 compare source and target with the mapping files, HTML report as sign-off. Rehearse 4.2 to 4.7 against a lab or empty target and wipe it with 4.10 until the comparison is clean. Later: 4.8 after each HCX extension, re-point groups with an extended segment as member; 4.9 per wave in phase 5, import the VM tags or use HCX Replicate Security Tag. Gateway Firewall is not covered.](images/networks-firewall/dfw.png)
+![Migrating the NSX distributed firewall step by step with Jeroen Buren's toolkit. Read-only: from the source NSX 4 Manager, 4.2 export to one CSV per object type, 4.3 sanitize to renamed IDs with _sanitized and _id_mapping files while keeping tags that groups use, 4.4 review in Excel with the rule owners and check service groups by hand, 4.5 dry run with WhatIf. Changes the target: 4.6 import into the target NSX 9 Manager, conflict action Skip first. Read-only: 4.7 compare source and target with the mapping files, HTML report as sign-off. Rehearse 4.2 to 4.7 against a lab or empty target and wipe it with 4.10 until the comparison is clean. Later: 4.8 after each HCX extension, re-point groups with an extended segment as member; 4.9 per wave in phase 5, import the VM tags or use HCX Replicate Security Tags. Gateway Firewall is not covered.](images/networks-firewall/dfw.png)
 
 The walkthrough below goes through it in nine steps:
 
@@ -856,7 +856,7 @@ warning."* (part 1).
 
 So this is not phase 3 work. Per wave in phase 5:
 
-**With HCX:** tick **Replicate Security Tag** in the Mobility Group, per
+**With HCX:** tick **Replicate Security Tags** in the Mobility Group, per
 group or per VM: it *"Replicates tags that are associated with a virtual
 machine undergoing migration"*
 ([docs/33, what HCX carries over](33-migrating-with-hcx.md)). The tags
@@ -912,14 +912,14 @@ and two NSX environments. This overview puts the pieces from 4.1 to 4.9,
 [docs/33](33-migrating-with-hcx.md) and
 [docs/35](35-cutover-and-clean-up.md) in order.
 
-![The DFW with HCX-extended networks, phase by phase, in three lanes. HCX: phase 1 deploy, pair and build the Service Mesh; phase 3 extend the networks marked HCX extend, HCX creates the target network; phase 4 diagnostics, Transport Analytics and a test VM there and back; phase 5 per wave, Replicate Security Tag on in the Mobility Group so NSX tags go with the VM; phase 6 per network, unextend with Connect cloud network. Target DFW: phase 3, steps 4.2 to 4.7, groups with an extended segment pointed at the HCX network (4.8), optionally dummy VMs carrying every tag; phase 4, the test VM has its tags and groups and the expected rules hit; phase 5, check tags and groups per VM, and for a split application an IP set with the VMs still on the source; phase 6, check the groups of the network, take the IP sets out after the last VM of a split application, remove the dummy VMs. Source DFW: keeps running unchanged, the export only reads it; in phase 5 a split application gets an IP set with the VMs that left; the rules retire with the source.](images/networks-firewall/dfw-hcx.png)
+![The DFW with HCX-extended networks, phase by phase, in three lanes. HCX: phase 1 deploy, pair and build the Service Mesh; phase 3 extend the networks marked HCX extend, HCX creates the target network; phase 4 diagnostics, Transport Analytics and a test VM there and back; phase 5 per wave, Replicate Security Tags on in the Mobility Group so NSX tags go with the VM; phase 6 per network, unextend with Connect cloud network. Target DFW: phase 3, steps 4.2 to 4.7, groups with an extended segment pointed at the HCX network (4.8), optionally dummy VMs carrying every tag; phase 4, the test VM has its tags and groups and the expected rules hit; phase 5, check tags and groups per VM, and for a split application an IP set with the VMs still on the source; phase 6, check the groups of the network, take the IP sets out after the last VM of a split application, remove the dummy VMs. Source DFW: keeps running unchanged, the export only reads it; in phase 5 a split application gets an IP set with the VMs that left; the rules retire with the source.](images/networks-firewall/dfw-hcx.png)
 
 | Phase | HCX | Target DFW | Source DFW |
 | --- | --- | --- | --- |
 | 1 | Deploy, pair, Service Mesh | – | Unchanged |
 | 3 | Extend the "HCX extend" networks | 4.2 to 4.7; groups with an extended segment point at HCX's network (4.8); optionally dummy VMs (below) | Unchanged; the export only reads it |
 | 4 | Diagnostics, Transport Analytics, test VM there and back | The test VM has its tags and groups, the expected rules hit ([docs/34](34-prove-the-path.md)) | Unchanged |
-| 5, per wave | Replicate Security Tag in the Mobility Group (4.9) | Check tags and groups per VM; split application: IP set of the VMs still on the source (4.9) | Split application: IP set of the VMs that left (4.9) |
+| 5, per wave | Replicate Security Tags in the Mobility Group (4.9) | Check tags and groups per VM; split application: IP set of the VMs still on the source (4.9) | Split application: IP set of the VMs that left (4.9) |
 | 6, per network | Unextend with Connect cloud network ([docs/35](35-cutover-and-clean-up.md)) | Check the groups of the network (4.8); IP sets out after the last VM of a split application; remove the dummy VMs | Retires with the source |
 
 **Optional: groups with members before the first wave.** On the target,
