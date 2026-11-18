@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.9.9 – 2026-11-18
+- `docs/31` 2.4 (#150, Paul): VDSPortGroupManager 1.6.0 asks for the backup
+  folder when `-BackupDirectory` is left out (Enter for the default, `B`
+  for the Windows folder browser, or a path) and shows how many backups
+  it holds; no prompt in an unattended run. Sources list the version.
+
 ## v2.9.8 – 2026-11-18
 - Site (#149, Paul): images in the docs are clickable, like the
   WordPress lightbox. Click (or Enter) opens the image large in an

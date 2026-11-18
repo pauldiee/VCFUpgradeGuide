@@ -240,6 +240,13 @@ in the mapping table, and the summary shows no failures.
 
    Without `-UplinkMap`, the script asks per missing name which target
    uplink it maps to, with a *skip* option.
+
+   Without `-BackupDirectory`, version 1.6.0 and later asks for the folder
+   right after the mode: Enter for `Backups\` next to the script, `B` for
+   the Windows folder browser, or type a path. It shows how many backups
+   the folder holds and asks again when it holds none (README). Handy when
+   the export was copied over from the workstation that ran 2.3. With
+   `-BackupName` (an unattended run) there is no prompt.
 2. Pick the zips.
 3. Pick the target switch:
    - **A. An existing switch**, normally the one VCF built (2.1).
@@ -1145,7 +1152,7 @@ Checked on 2026-11-13.
   `Seed-NSX-DFW-Dummy-VMs.ps1` read 2026-11-18, last toolkit change
   2026-04-24)
 - Toolkit READMEs:
-  [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16),
+  [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16; the folder prompt in 2.4 from 1.6.0, read 2026-11-18),
   [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration)
 - PowerCLI cmdlet syntax (`Get-NetworkAdapter`, `Export-VDPortGroup`,
   `New-VDPortgroup -BackupPath`): VCF.PowerCLI 9.1.1
