@@ -428,7 +428,7 @@ Step by step: [Migrating with HCX](33-migrating-with-hcx.md) or
     UUID) exists in the destination NSX fabric inventory. If it doesn't,
     the VM is skipped with a warning."*
     ([part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/)).
-    Or use HCX's **Migrate NSX Tags** option on the Mobility Group.
+    Or use HCX's **Replicate Security Tag** option on the Mobility Group.
   - An application that runs on both sides for a while is protected by
     two DFWs, and a tag-based group only sees the VMs in its own NSX.
     Add the other side's IP addresses to its groups for as long as it's

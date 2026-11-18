@@ -44,7 +44,7 @@ blogs, and the toolkits' own documentation and code, checked on
 | NSX segment (VLAN or overlay) | Recreate | NSX segment | [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration) |
 | Any network whose VMs keep their IP addresses through HCX | Extend with HCX Network Extension; HCX creates the target network | Extended network | HCX, see [Networks that HCX extends](#networks-that-hcx-extends) |
 | NSX DFW: IP sets, services, groups, context profiles, policies and rules | Export, sanitize, import | NSX DFW | [NSX DFW migration toolkit](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit) (Jeroen Buren) |
-| NSX tags on VMs | Per wave, after the VM arrives | NSX tags | Same toolkit, or HCX *Migrate NSX Tags* (phase 5) |
+| NSX tags on VMs | Per wave, after the VM arrives | NSX tags | Same toolkit, or HCX *Replicate Security Tag* (phase 5) |
 | Services on NSX gateways: NAT, load balancer, DHCP, DNS forwarder, VPN, gateway firewall | List per subnet, rebuild on the target gateway, switch over in the subnet's cutover window | Target gateway, or Avi for load balancing | By hand, see [step 5](#step-5-services-on-the-nsx-gateways) |
 
 ---
@@ -495,7 +495,7 @@ membership. So:
 - **Plan time for it** in the migration plan, separate from the network
   work in steps 2 and 3.
 
-![Migrating the NSX distributed firewall step by step with Jeroen Buren's toolkit. Read-only: from the source NSX 4 Manager, 4.2 export to one CSV per object type, 4.3 sanitize to renamed IDs with _sanitized and _id_mapping files while keeping tags that groups use, 4.4 review in Excel with the rule owners and check service groups by hand, 4.5 dry run with WhatIf. Changes the target: 4.6 import into the target NSX 9 Manager, conflict action Skip first. Read-only: 4.7 compare source and target with the mapping files, HTML report as sign-off. Rehearse 4.2 to 4.7 against a lab or empty target and wipe it with 4.10 until the comparison is clean. Later: 4.8 after each HCX extension, re-point groups with an extended segment as member; 4.9 per wave in phase 5, import the VM tags or use HCX Migrate NSX Tags. Gateway Firewall is not covered.](images/networks-firewall/dfw.png)
+![Migrating the NSX distributed firewall step by step with Jeroen Buren's toolkit. Read-only: from the source NSX 4 Manager, 4.2 export to one CSV per object type, 4.3 sanitize to renamed IDs with _sanitized and _id_mapping files while keeping tags that groups use, 4.4 review in Excel with the rule owners and check service groups by hand, 4.5 dry run with WhatIf. Changes the target: 4.6 import into the target NSX 9 Manager, conflict action Skip first. Read-only: 4.7 compare source and target with the mapping files, HTML report as sign-off. Rehearse 4.2 to 4.7 against a lab or empty target and wipe it with 4.10 until the comparison is clean. Later: 4.8 after each HCX extension, re-point groups with an extended segment as member; 4.9 per wave in phase 5, import the VM tags or use HCX Replicate Security Tag. Gateway Firewall is not covered.](images/networks-firewall/dfw.png)
 
 The walkthrough below goes through it in nine steps:
 
@@ -772,7 +772,7 @@ So this is not phase 3 work: after each wave in phase 5,
 
    (with `-WhatIf` first), and pick `NSX_VMTags.csv`;
 2. check the warnings: VMs of later waves are skipped, which is expected;
-3. or use HCX's **Migrate NSX Tags** option on the Mobility Group instead.
+3. or use HCX's **Replicate Security Tag** option on the Mobility Group instead.
 
 **Check.** Every VM of the wave carries its NSX tags on the target and is
 a member of the groups it was in on the source.

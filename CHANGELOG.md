@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.9.4 – 2026-11-18
+- `docs/29`, `docs/31` (#147, Paul): the HCX option that carries NSX tags
+  along with a VM is **Replicate Security Tag**, as the HCX user guide
+  names it (Additional Migration Settings, quoted in `docs/33`), not
+  "Migrate NSX Tags". Fixed in the docs/29 phase 5 list, the docs/31
+  "What goes where" table and 4.9, and the `dfw` and `routes` diagrams;
+  PNGs re-rendered.
+
 ## v2.9.3 – 2026-11-16
 - `docs/29`, `docs/30`, `docs/32` (#144, Paul): VITagManager replaces the
   tags and custom attributes toolkit "in development". `docs/30` steps 2
