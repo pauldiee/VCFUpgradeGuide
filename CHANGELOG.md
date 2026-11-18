@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.4 – 2026-11-18
+- `docs/30` step 2 (#155): the baseline export of all tag assignments needs
+  VITagManager 1.0.0 or later. Earlier versions stopped the whole export on
+  one tag on an object PowerCLI can't load (field report, vCenter 8.0.3:
+  `vim.vslm.host.VStorageObjectManager ... has already been deleted`) and
+  wrote nothing. Tags on first-class disks and content library items are
+  not carried over. Version mentions updated.
+
 ## v3.0.3 – 2026-11-18
 - `docs/30` (#154): the shared toolkit notes follow VIRoleManager 1.4.0,
   StoragePolicyManager 1.2.0 and VITagManager 0.2.0, which now behave like

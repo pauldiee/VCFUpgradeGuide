@@ -119,7 +119,8 @@ toolkit has a dry run, use it first.
   failure is a red `FAILED` line that the summary lists again. The exit
   code is 0 without failures, 1 with failures, 2 when an unattended run
   hit a question. This holds from VIRoleManager 1.4.0,
-  StoragePolicyManager 1.2.0, VITagManager 0.2.0 and VIFolderManager
+  StoragePolicyManager 1.2.0, VITagManager 0.2.0 (1.0.0 for the
+  baseline export of assignments) and VIFolderManager
   1.3.0.
 
 ---
@@ -294,6 +295,16 @@ picture before anything moves:
 
 This holds the tags and custom attribute values of every VM, host,
 cluster, datastore, folder, network and the other inventory objects.
+Use **VITagManager 1.0.0 or later** for it: earlier versions read all
+tag assignments of the vCenter in one call, and one tag on an object
+PowerCLI can't load (for example a first-class disk) stopped the whole
+export with *"The object 'vim.vslm.host.VStorageObjectManager:vstorageObjectManager'
+has already been deleted or has not been completely created"*; nothing
+was written (field report on vCenter 8.0.3,
+[VITagManager #4](https://github.com/pauldiee/VITagManager/issues/4)).
+1.0.0 reads the tags per object and lists an object it can't read as a
+failure, without losing the rest. Tags on other kinds of objects, such
+as first-class disks or content library items, are not carried over.
 
 **Running it again** creates only what's still missing, so it's safe to
 repeat: a second import reports everything as already present. **Undo:**
@@ -649,7 +660,7 @@ Checked on 2026-11-13.
   (read 2026-11-16, with their `tests/` scripts and lab results; the
   folder prompt, failure summary and unattended runs from VIFolderManager
   1.3.0, VIRoleManager 1.4.0, StoragePolicyManager 1.2.0 and
-  VITagManager 0.2.0, read 2026-11-18)
+  VITagManager 0.2.0 and 1.0.0, read 2026-11-18)
 - Read on 2026-11-16:
   [Managing VCF Roles](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/vcf-built-in-roles.html)
   (VCF 9.1, `vcf_reserved_`),
