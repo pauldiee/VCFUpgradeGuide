@@ -421,7 +421,10 @@ Step by step: [Migrating with HCX](33-migrating-with-hcx.md) or
   - After each wave, run VIFolderManager's import again with
     `-MoveObjects`: VMs that have arrived go back into their folders, VMs
     that haven't are listed and skipped, so the same export works for
-    every wave. Use `-DryRun` first.
+    every wave. Use `-DryRun` first. From VIFolderManager 1.3.0 this step
+    can run without prompts, for example from the wave runbook:
+    `-Mode Import -ExportFile 'Folders_<dc>_*' -Datacenter <dc> -FolderType VM -MoveObjects -ApplyPermissions:$false`;
+    exit code 1 means something failed.
   - With the NSX DFW: apply the NSX tags to the VMs of the wave, so they
     fall into the right security groups. The toolkit only tags VMs that
     have arrived: it *"verifies that the VM's external ID (the vCenter

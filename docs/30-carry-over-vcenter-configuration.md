@@ -439,7 +439,9 @@ from the source:
 .\Invoke-VIFolderManager.ps1 -vCenterServer <source-vcenter> -Mode Export -FolderType VM,Host,Datastore,Network -BackupDirectory <working-folder>\folders
 ```
 
-You pick the datacenters; each gets one JSON file. Folders that vCenter,
+You pick the datacenters (or pass `-Datacenter`); each gets one JSON
+file. Without `-BackupDirectory` the script asks for the folder after the
+mode, and **B** opens a folder browser (1.3.0). Folders that vCenter,
 the Supervisor or NSX manage themselves (`vCLS`, `Namespaces`,
 `NSX Managed Folders`, `Virtual Private Clouds`) are skipped.
 
@@ -450,8 +452,10 @@ phase: the VMs aren't there yet.
 .\Invoke-VIFolderManager.ps1 -vCenterServer <target-vcenter> -Mode Import -BackupDirectory <working-folder>\folders -MoveObjects:$false -ApplyPermissions -DryRun
 ```
 
-Read the log, then run the same command without `-DryRun`. What the
-import does:
+Read the log, then run the same command without `-DryRun`. From 1.3.0
+anything that fails (a folder, a move, a permission) is a red `FAILED`
+line, the summary lists it, and the run ends with exit code 1; a role or
+folder that is missing only gives a yellow skip. What the import does:
 
 - Folders with the same path are reused, missing ones are created.
   Nothing is renamed or removed.
@@ -630,7 +634,9 @@ Checked on 2026-11-13.
   [VIRoleManager](https://github.com/pauldiee/VIRoleManager) 1.3.0,
   [StoragePolicyManager](https://github.com/pauldiee/StoragePolicyManager) 1.1.0,
   [VIFolderManager](https://github.com/pauldiee/VIFolderManager) 1.2.0
-  (read 2026-11-16, with their `tests/` scripts and lab results)
+  (read 2026-11-16, with their `tests/` scripts and lab results; the
+  folder prompt, failure summary and unattended runs from VIFolderManager
+  1.3.0, read 2026-11-18)
 - Read on 2026-11-16:
   [Managing VCF Roles](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/vcf-built-in-roles.html)
   (VCF 9.1, `vcf_reserved_`),

@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.0.2 – 2026-11-18
+- `docs/30` step 5 and `docs/29` (#153): VIFolderManager 1.3.0. The
+  backup-folder prompt with a folder browser, red `FAILED` lines with a
+  failure list and exit code 1 (a missing role or folder is a yellow
+  skip), and the per-wave folder import without prompts (`-ExportFile`,
+  `-Datacenter`). Sources line updated.
+
 ## v3.0.1 – 2026-11-18
 - `docs/33` (#152, Paul): new section **Migration Settings, option by
   option**, following the Mobility Group wizard step: Migration Type,
