@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.9.6 – 2026-11-18
+- `docs/31` 4.8 (#148, lab test Paul): NSX 9.1.1 refuses a group whose
+  member is a path to a segment that doesn't exist (*"The path=[...] is
+  invalid"*, error 500012), and a rule that uses that group then fails
+  with *"could not be found"*; lab-verified 2026-11-18 with the same
+  PATCH as the import. So correcting the path (or a second import
+  folder) is required, not optional. Correction: a rule's *applied to*
+  can't hold a segment path at all on 9.1.1 (*"Valid values are groups
+  or labels pointing to groups"*), so the find and replace is limited to
+  `NSX_Groups.csv`. What HCX names the target network is still open.
+
 ## v2.9.5 – 2026-11-18
 - `docs/31` step 4 (#148, Paul): the DFW together with HCX network
   extension.

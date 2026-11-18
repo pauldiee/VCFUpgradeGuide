@@ -780,13 +780,19 @@ Keep the HTML report with the exports: it's the sign-off for this step.
 ### 4.8 Groups that refer to HCX-extended networks
 
 A security group with a segment as member refers to that segment by its
-path, and so can a rule's *applied to*. A network that HCX extends only
-exists on the target after the extension (see
-[Networks that HCX extends](#networks-that-hcx-extends)), under a name
-HCX chooses. The export still holds the path of the **source** segment,
-which the target doesn't have. This page doesn't yet confirm what HCX
-names the network, nor whether the NSX 9 import accepts a path to a
-segment that doesn't exist; both wait for a lab test.
+path. A network that HCX extends only exists on the target after the
+extension (see [Networks that HCX extends](#networks-that-hcx-extends)),
+under a name HCX chooses. The export still holds the path of the
+**source** segment, which the target doesn't have, and NSX 9 refuses
+that group: a PATCH like the import's returns *"The path=[...] is
+invalid"* (error 500012), and a rule that uses the missing group then
+fails with *"could not be found"* (lab-verified on NSX 9.1.1,
+2026-11-18). The import logs both as failed and carries on (script
+code), so the rest of the import is not held up. A rule's *applied to* can't point at
+a segment directly: NSX 9.1.1 answers *"Valid values are groups or
+labels pointing to groups"* (same test), so groups are the only place to
+correct. This page doesn't yet confirm what HCX names the network on
+the target.
 
 So, for the groups you noted in 4.4:
 
@@ -796,10 +802,9 @@ So, for the groups you noted in 4.4:
    arrive.
 2. **Look up the network HCX created** in the target NSX Manager, and its
    path.
-3. **Correct the path before the import.** In the import folder, replace
-   the source segment's ID with the new one in the `RawJson` column (a
-   find and replace across the files also catches a rule's *applied
-   to*). Check first that the old ID occurs nowhere else.
+3. **Correct the path before the import.** In `NSX_Groups.csv` in the
+   import folder, replace the source segment's ID with the new one in the
+   `RawJson` column. Check first that the old ID occurs nowhere else.
 4. **A network that can only be extended later:** keep its groups, and
    the rules that use them, out of the first import, in a second import
    folder under the standard names. Correct the path and import that
@@ -809,8 +814,9 @@ So, for the groups you noted in 4.4:
    because the member path differs from the source on purpose; write
    that down with the sign-off.
 
-**Check.** No group or rule on the target refers to a segment that
-doesn't exist.
+**Check.** The import log shows no failed groups or rules, and every
+group with an extended segment as member points at the network HCX
+created.
 
 ### 4.9 VM tags, per wave (phase 5)
 
