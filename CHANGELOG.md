@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.9.7 – 2026-11-18
+- `docs/31` 4.1 (#148, lab test Paul): new point, a DFW licence on the
+  target. Without a licence the NSX API refuses DFW policies and rules
+  too (403, error 505, *"This feature is not supported with the current
+  applied license"*) while groups still go through; lab-verified on NSX
+  9.0.2 with no licence applied. Rehearse in a lab in evaluation mode
+  or with a licence. The 4.1 check names the licence.
+
 ## v2.9.6 – 2026-11-18
 - `docs/31` 4.8 (#148, lab test Paul): NSX 9.1.1 refuses a group whose
   member is a path to a segment that doesn't exist (*"The path=[...] is

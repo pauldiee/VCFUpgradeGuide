@@ -544,13 +544,26 @@ puts the firewall work of both sides in order, phase by phase.
    next to the exports. One exception: `Export-NSX-SystemObjects.ps1`
    (4.2) has no `-LogTarget`; its `-LogFile` writes a PowerShell
    transcript (script code).
-7. **What's not covered.** *"The export script currently excludes Gateway
+7. **A DFW licence on the target.** Without one, the NSX API refuses
+   DFW policies and rules, not just the UI: a PATCH returns 403 with
+   *"This feature is not supported with the current applied license.
+   Please upgrade your license in order to use this feature."* (error
+   505), while groups still go through (lab-verified on NSX 9.0.2 with
+   no licence applied, 2026-11-18). The import would then create the
+   groups and fail on every policy and rule. In NSX 9.1, *"vDefend
+   features (including DFW) require the License Hub component for
+   license management"*
+   ([KB 446503](https://knowledge.broadcom.com/external/article/446503)).
+   Check the target's licence, and for a rehearsal (4.2 to 4.7) use a lab
+   in evaluation mode or with a licence.
+8. **What's not covered.** *"The export script currently excludes Gateway
    Firewall policies, focusing only on DFW"* (part 1). List the gateway
    firewall rules separately and rebuild them on the target's gateways
    yourself.
 
 **Check.** The scripts are on a Windows desktop that can reach both NSX
-Managers on 443, and the run folder exists.
+Managers on 443, the target has a DFW licence, and the run folder
+exists.
 
 ### 4.2 Export from the source
 
