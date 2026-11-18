@@ -44,7 +44,7 @@ blogs, and the toolkits' own documentation and code, checked on
 | NSX segment (VLAN or overlay) | Recreate | NSX segment | [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration) |
 | Any network whose VMs keep their IP addresses through HCX | Extend with HCX Network Extension; HCX creates the target network | Extended network | HCX, see [Networks that HCX extends](#networks-that-hcx-extends) |
 | NSX DFW: IP sets, services, groups, context profiles, policies and rules | Export, sanitize, import | NSX DFW | [NSX DFW migration toolkit](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit) (Jeroen Buren) |
-| NSX tags on VMs | Per wave, after the VM arrives | NSX tags | Same toolkit, or HCX *Replicate Security Tag* (phase 5) |
+| NSX tags on VMs | Per wave, after the VM arrives | NSX tags | With HCX: *Replicate Security Tag* (phase 5); without HCX: the same toolkit |
 | Services on NSX gateways: NAT, load balancer, DHCP, DNS forwarder, VPN, gateway firewall | List per subnet, rebuild on the target gateway, switch over in the subnet's cutover window | Target gateway, or Avi for load balancing | By hand, see [step 5](#step-5-services-on-the-nsx-gateways) |
 
 ---
@@ -511,7 +511,9 @@ The walkthrough below goes through it in nine steps:
 | [4.8](#48-groups-that-refer-to-hcx-extended-networks) | Groups that refer to HCX-extended networks | – | By hand |
 | [4.9](#49-vm-tags-per-wave-phase-5) | VM tags, per wave (phase 5) | `Import-NSX-DFW.ps1 -ImportTags` | **Yes** |
 
-Undo is at the end, in [4.10](#410-undo).
+Undo is at the end, in [4.10](#410-undo). With HCX network extension,
+[The DFW with HCX-extended networks](#the-dfw-with-hcx-extended-networks-phase-by-phase)
+puts the firewall work of both sides in order, phase by phase.
 
 ### 4.1 Prepare
 
@@ -537,9 +539,11 @@ Undo is at the end, in [4.10](#410-undo).
    (`Get-Credential`); nothing is stored.
 5. **A folder per run** in your working folder, for example
    `<working-folder>\dfw`. Everything below writes into it.
-6. **Logging.** Every script takes `-LogTarget Screen|File|Both` and
+6. **Logging.** The scripts take `-LogTarget Screen|File|Both` and
    `-LogFile <path>`. Use `Both` for the real runs, so you keep a record
-   next to the exports.
+   next to the exports. One exception: `Export-NSX-SystemObjects.ps1`
+   (4.2) has no `-LogTarget`; its `-LogFile` writes a PowerShell
+   transcript (script code).
 7. **What's not covered.** *"The export script currently excludes Gateway
    Firewall policies, focusing only on DFW"* (part 1). List the gateway
    firewall rules separately and rebuild them on the target's gateways
@@ -580,6 +584,23 @@ Managers on 443, and the run folder exists.
    object. The import uses only `RawJson`; the other columns are for you.
    The export already strips read-only fields such as `_create_time` and
    `_revision`, which would otherwise fail on the target (part 1).
+4. **System objects: tags and descriptions.** The export above leaves out
+   the system-owned services and groups (the built-in ones, such as
+   HTTPS or DNS), because they exist on every NSX. Their objects
+   *"cannot be created or deleted, but their 'tags' and 'description'
+   fields can be modified by users"* (script help of
+   `Export-NSX-SystemObjects.ps1`). Take those changes along with a
+   second, read-only export:
+
+   ```powershell
+   .\Export-NSX-SystemObjects.ps1 -NSXManager <source-nsx> -OutputFolder <working-folder>\dfw\system `
+     -LogFile <working-folder>\dfw\export-system.log
+   ```
+
+   It writes `NSX_SystemServices.csv` and `NSX_SystemGroups.csv`, and
+   only for objects with tags or a description (`-OnlyModified`, on by
+   default). No file means nobody changed a system object: nothing to do
+   in 4.6.
 
 **Check.** Every file is there, and the row counts look like the source
 (for example, the number of policies in `NSX_Policies.csv` matches what
@@ -649,7 +670,10 @@ This is the step where you decide what goes to the target.
 3. Watch for dependencies when you delete: a rule that stays needs its
    groups and services; a group that stays needs the groups it refers to.
 4. Note any group whose membership is a **segment** that HCX will extend
-   (route "HCX extend" in the mapping table). Those come back in 4.8.
+   (route "HCX extend" in the mapping table). In the export such a member
+   is a path to the **source** segment, and HCX creates a different
+   network on the target. How to import those groups is in 4.8; decide
+   it now, because it can change what goes in the import folder.
 5. Save the files as CSV, keeping the `RawJson` column intact.
 6. **Put the import set in its own folder**, `<working-folder>\dfw\import`,
    under the **standard names**: `NSX_Groups_sanitized.csv` becomes
@@ -698,6 +722,20 @@ what you kept in 4.4.
 4. Fix the cause of any failure (often a reference to something you
    deleted in 4.4), then run the import again: what's already there is
    skipped.
+5. **System objects**, only if 4.2 wrote `NSX_SystemServices.csv` or
+   `NSX_SystemGroups.csv`. The script only updates *"tags"* and
+   *"description"* on the system objects that already exist on the
+   target; both types are off unless you switch them on (script help):
+
+   ```powershell
+   .\Import-NSX-SystemObjects.ps1 -NSXManager <target-nsx> -InputFolder <working-folder>\dfw\system `
+     -ImportServices $true -ImportGroups $true -WhatIf `
+     -LogTarget Both -LogFile <working-folder>\dfw\import-system.log
+   ```
+
+   Then run it without `-WhatIf`. An object that doesn't exist on the
+   target is logged as NOT FOUND (*"different NSX version?"*, script
+   code). The undo in 4.10 doesn't take these changes back.
 
 **Check.** The log shows no failures, and in the NSX Manager UI of the
 target the policies appear in the right order under Security →
@@ -742,16 +780,37 @@ Keep the HTML report with the exports: it's the sign-off for this step.
 ### 4.8 Groups that refer to HCX-extended networks
 
 A security group with a segment as member refers to that segment by its
-path. A network that HCX extends only exists on the target after the
-extension (see [Networks that HCX extends](#networks-that-hcx-extends)),
-and this page doesn't confirm what HCX names it.
+path, and so can a rule's *applied to*. A network that HCX extends only
+exists on the target after the extension (see
+[Networks that HCX extends](#networks-that-hcx-extends)), under a name
+HCX chooses. The export still holds the path of the **source** segment,
+which the target doesn't have. This page doesn't yet confirm what HCX
+names the network, nor whether the NSX 9 import accepts a path to a
+segment that doesn't exist; both wait for a lab test.
 
-1. Take the list from 4.4 (groups with an extended segment as member).
-2. After each extension, open those groups on the target and point them
-   at the network HCX created.
-3. Run the comparison (4.7) again for groups.
+So, for the groups you noted in 4.4:
 
-**Check.** No group on the target refers to a segment that doesn't exist.
+1. **Extend first, where you can.** HCX is paired in phase 1, so the
+   networks marked "HCX extend" can be extended in phase 3, before the
+   DFW import (4.5). The target network then exists when the groups
+   arrive.
+2. **Look up the network HCX created** in the target NSX Manager, and its
+   path.
+3. **Correct the path before the import.** In the import folder, replace
+   the source segment's ID with the new one in the `RawJson` column (a
+   find and replace across the files also catches a rule's *applied
+   to*). Check first that the old ID occurs nowhere else.
+4. **A network that can only be extended later:** keep its groups, and
+   the rules that use them, out of the first import, in a second import
+   folder under the standard names. Correct the path and import that
+   folder after the extension. The undo (4.10) then also runs per
+   folder.
+5. Run the comparison (4.7) again. Expect these groups as MISMATCH,
+   because the member path differs from the source on purpose; write
+   that down with the sign-off.
+
+**Check.** No group or rule on the target refers to a segment that
+doesn't exist.
 
 ### 4.9 VM tags, per wave (phase 5)
 
@@ -761,7 +820,16 @@ only be set on VMs that are on the target already: the import
 destination NSX fabric inventory. If it doesn't, the VM is skipped with a
 warning."* (part 1).
 
-So this is not phase 3 work: after each wave in phase 5,
+So this is not phase 3 work. Per wave in phase 5:
+
+**With HCX:** tick **Replicate Security Tag** in the Mobility Group, per
+group or per VM: it *"Replicates tags that are associated with a virtual
+machine undergoing migration"*
+([docs/33, what HCX carries over](33-migrating-with-hcx.md)). The tags
+then arrive with the VM, and you only check them. For a VM where they
+didn't arrive, use the import below.
+
+**Without HCX**, or as the fallback, after each wave:
 
 1. run the import with only the tags:
 
@@ -771,8 +839,7 @@ So this is not phase 3 work: after each wave in phase 5,
    ```
 
    (with `-WhatIf` first), and pick `NSX_VMTags.csv`;
-2. check the warnings: VMs of later waves are skipped, which is expected;
-3. or use HCX's **Replicate Security Tag** option on the Mobility Group instead.
+2. check the warnings: VMs of later waves are skipped, which is expected.
 
 **Check.** Every VM of the wave carries its NSX tags on the target and is
 a member of the groups it was in on the source.
@@ -804,6 +871,53 @@ For as long as the application is split:
 tags; every IP set added for a split application is written down with the
 wave that removes it.
 
+### The DFW with HCX-extended networks, phase by phase
+
+With HCX network extension, the firewall work is spread over four phases
+and two NSX environments. This overview puts the pieces from 4.1 to 4.9,
+[docs/33](33-migrating-with-hcx.md) and
+[docs/35](35-cutover-and-clean-up.md) in order.
+
+![The DFW with HCX-extended networks, phase by phase, in three lanes. HCX: phase 1 deploy, pair and build the Service Mesh; phase 3 extend the networks marked HCX extend, HCX creates the target network; phase 4 diagnostics, Transport Analytics and a test VM there and back; phase 5 per wave, Replicate Security Tag on in the Mobility Group so NSX tags go with the VM; phase 6 per network, unextend with Connect cloud network. Target DFW: phase 3, steps 4.2 to 4.7, groups with an extended segment pointed at the HCX network (4.8), optionally dummy VMs carrying every tag; phase 4, the test VM has its tags and groups and the expected rules hit; phase 5, check tags and groups per VM, and for a split application an IP set with the VMs still on the source; phase 6, check the groups of the network, take the IP sets out after the last VM of a split application, remove the dummy VMs. Source DFW: keeps running unchanged, the export only reads it; in phase 5 a split application gets an IP set with the VMs that left; the rules retire with the source.](images/networks-firewall/dfw-hcx.png)
+
+| Phase | HCX | Target DFW | Source DFW |
+| --- | --- | --- | --- |
+| 1 | Deploy, pair, Service Mesh | – | Unchanged |
+| 3 | Extend the "HCX extend" networks | 4.2 to 4.7; groups with an extended segment point at HCX's network (4.8); optionally dummy VMs (below) | Unchanged; the export only reads it |
+| 4 | Diagnostics, Transport Analytics, test VM there and back | The test VM has its tags and groups, the expected rules hit ([docs/34](34-prove-the-path.md)) | Unchanged |
+| 5, per wave | Replicate Security Tag in the Mobility Group (4.9) | Check tags and groups per VM; split application: IP set of the VMs still on the source (4.9) | Split application: IP set of the VMs that left (4.9) |
+| 6, per network | Unextend with Connect cloud network ([docs/35](35-cutover-and-clean-up.md)) | Check the groups of the network (4.8); IP sets out after the last VM of a split application; remove the dummy VMs | Retires with the source |
+
+**Optional: groups with members before the first wave.** On the target,
+tag-based groups stay empty until the first VMs arrive with their tags.
+`Seed-NSX-DFW-Dummy-VMs.ps1` creates small powered-off dummy VMs on the
+target and gives them every NSX tag from `NSX_VMTags.csv`, *"so that NSX
+DFW tag-based groups are populated before real VMs are migrated"*
+(script help). That lets you see in phase 3 or 4 that every tag-based
+group picks up members, before a real VM depends on it.
+
+- One dummy VM per 30 tags: *"NSX enforces a hard limit of 30 tags per
+  VM"*, and a tag used by many VMs still needs only one dummy VM (script
+  help).
+- It needs the target vCenter as well as the target NSX Manager, and
+  PowerCLI (the script loads `VMware.VimAutomation.Core`). Without a
+  template (`-TemplateVM`) it builds a VM with no disks, 1 vCPU and 4 MB
+  of memory.
+- Dry run first; it supports `-WhatIf`. The file is called
+  `Seed-NSX-DFW-Dummy-VMs.ps1`, while the examples in its help say
+  `Seed-NSX-DFW-DummyVMs.ps1`.
+
+  ```powershell
+  .\Seed-NSX-DFW-Dummy-VMs.ps1 -NSXManager <target-nsx> -VCenter <target-vcenter> `
+    -TagsCsv <working-folder>\dfw\import\NSX_VMTags.csv `
+    -Datacenter <datacenter> -Cluster <cluster> -Datastore <datastore> -WhatIf `
+    -LogTarget Both -LogFile <working-folder>\dfw\seed.log
+  ```
+
+- While they exist, the dummy VMs are members of every tag-based group.
+  Remove them from vCenter when the real VMs carry their tags (script
+  notes); at the latest in phase 6.
+
 ### 4.10 Undo
 
 ![Undoing a DFW import. The import creates IP sets, services, service groups, security groups, context profiles, then policies and rules. The targeted undo deletes in the reverse order: rules, policies, security groups, service groups, services, IP sets; context profiles are not removed. Targeted undo with Remove-NSX-ImportedObjects.ps1 reads the CSV files by their standard names from the input folder and deletes by ID, so point it at the import folder from 4.4; the raw export has the old IDs. ClearVMTags empties the tags on the VMs in NSX_VMTags.csv; objects already gone are logged as NOT FOUND. Full wipe with Remove-NSX-AllCustomObjects.ps1 needs no CSV files, deletes every custom DFW object including context profiles, never touches system-owned objects, and is only for a target with nothing else on it, never the source. Both: WhatIf first, both ask for confirmation.](images/networks-firewall/dfw-undo.png)
@@ -833,7 +947,9 @@ only part of the import has to go.
 
 3. Run it without `-WhatIf`. Objects that are already gone are logged as
    NOT FOUND and skipped.
-4. Two things it leaves alone:
+4. What it leaves alone (also the full wipe below): tags and
+   descriptions put on system objects in 4.6, and the dummy VMs of the
+   seed script, which you delete in vCenter. And two more:
    - **Context profiles:** the script has no switch for them. Remove
      imported context profiles in the NSX Manager UI, or use the full
      wipe below.
@@ -1006,6 +1122,9 @@ Checked on 2026-11-13.
   [part 3](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-part-3/),
   and the script help in his
   [repository](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit)
+  (read 2026-11-13; `Export-/Import-NSX-SystemObjects.ps1` and
+  `Seed-NSX-DFW-Dummy-VMs.ps1` read 2026-11-18, last toolkit change
+  2026-04-24)
 - Toolkit READMEs:
   [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16),
   [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration)

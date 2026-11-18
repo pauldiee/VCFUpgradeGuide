@@ -1,5 +1,25 @@
 # Changelog
 
+## v2.9.5 – 2026-11-18
+- `docs/31` step 4 (#148, Paul): the DFW together with HCX network
+  extension.
+  - New subsection **The DFW with HCX-extended networks, phase by
+    phase**, with a timeline diagram (`dfw-hcx`): what HCX, the target
+    DFW and the source DFW do in phases 1, 3, 4, 5 and 6.
+  - 4.8 now gives the order for groups (and *applied to*) with an
+    extended segment: extend first where you can, correct the segment
+    path in the import files, or keep those groups and their rules in a
+    second import folder; expect them as MISMATCH in the comparison.
+    What HCX names the target network, and whether the NSX 9 import
+    accepts a path to a segment that doesn't exist, wait for a lab test.
+  - 4.9: with HCX, Replicate Security Tag is the default and the
+    `-ImportTags` run the fallback.
+  - Toolkit scripts not covered before: `Export-/Import-NSX-SystemObjects.ps1`
+    (tags and descriptions on system-owned services and groups, 4.2 and
+    4.6) and `Seed-NSX-DFW-Dummy-VMs.ps1` (dummy VMs that fill tag-based
+    groups before the first wave). 4.1 logging and 4.10 undo updated to
+    match.
+
 ## v2.9.4 – 2026-11-18
 - `docs/29`, `docs/31` (#147, Paul): the HCX option that carries NSX tags
   along with a VM is **Replicate Security Tag**, as the HCX user guide

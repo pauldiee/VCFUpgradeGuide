@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 700" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title id="t">The DFW with HCX-extended networks, phase by phase</title>
+<desc id="d">The NSX distributed firewall together with HCX network extension, phase by phase, in three lanes. HCX: phase 1 deploy, pair and build the Service Mesh; phase 3 extend the networks marked HCX extend, HCX creates the target network; phase 4 diagnostics, Transport Analytics and a test VM there and back; phase 5 per wave, Replicate Security Tag on in the Mobility Group so NSX tags go with the VM; phase 6 per network, unextend with Connect cloud network. Target DFW: phase 3, steps 4.2 to 4.7, groups with an extended segment pointed at the HCX network (4.8), optionally dummy VMs carrying every tag; phase 4, the test VM has its tags and groups and the expected rules hit; phase 5, check tags and groups per VM, and for a split application an IP set with the VMs still on the source; phase 6, check the groups of the network, take the IP sets out after the last VM of a split application, remove the dummy VMs. Source DFW: keeps running unchanged, the export only reads it; in phase 5 a split application gets an IP set with the VMs that left; the rules retire with the source.</desc>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker></defs>
+<rect width="1260" height="700" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+<text x="630.0" y="40" font-size="20" fill="#0f172a" font-weight="700" text-anchor="middle">The DFW with HCX-extended networks, phase by phase</text>
+<text x="630.0" y="64" font-size="13" fill="#475569" text-anchor="middle">What happens to the firewall on each side while HCX extends a network. Numbers are the subsections of step 4.</text>
+<text x="299.0" y="102" font-size="14" fill="#0f172a" font-weight="700" text-anchor="middle">Phase 1</text>
+<text x="299.0" y="120" font-size="12" fill="#475569" text-anchor="middle">build the target</text>
+<text x="504.0" y="102" font-size="14" fill="#0f172a" font-weight="700" text-anchor="middle">Phase 3</text>
+<text x="504.0" y="120" font-size="12" fill="#475569" text-anchor="middle">networks and firewall</text>
+<text x="709.0" y="102" font-size="14" fill="#0f172a" font-weight="700" text-anchor="middle">Phase 4</text>
+<text x="709.0" y="120" font-size="12" fill="#475569" text-anchor="middle">prove the path</text>
+<text x="914.0" y="102" font-size="14" fill="#0f172a" font-weight="700" text-anchor="middle">Phase 5, per wave</text>
+<text x="914.0" y="120" font-size="12" fill="#475569" text-anchor="middle">migrate</text>
+<text x="1119.0" y="102" font-size="14" fill="#0f172a" font-weight="700" text-anchor="middle">Phase 6, per network</text>
+<text x="1119.0" y="120" font-size="12" fill="#475569" text-anchor="middle">cut over</text>
+<path d="M200 134 L1218 134" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#m)"/>
+<rect x="36" y="146" width="1188" height="140" rx="10" fill="#f8fafc"/>
+<rect x="40" y="150" width="150" height="132" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
+<text x="54" y="212.0" font-size="15" fill="#0f172a" font-weight="700">HCX</text>
+<text x="54" y="231.0" font-size="12" fill="#334155">network extension</text>
+<rect x="36" y="290" width="1188" height="194" rx="10" fill="#f8fafc"/>
+<rect x="40" y="294" width="150" height="186" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+<text x="54" y="383.0" font-size="15" fill="#0f172a" font-weight="700">Target NSX</text>
+<text x="54" y="402.0" font-size="12" fill="#334155">distributed firewall</text>
+<rect x="36" y="488" width="1188" height="112" rx="10" fill="#f8fafc"/>
+<rect x="40" y="492" width="150" height="104" rx="10" fill="#f1f5f9" stroke="#475569" stroke-width="1.8"/>
+<text x="54" y="540.0" font-size="15" fill="#0f172a" font-weight="700">Source NSX</text>
+<text x="54" y="559.0" font-size="12" fill="#334155">distributed firewall</text>
+<rect x="200" y="150" width="198" height="132" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+<text x="212" y="202.75" font-size="12.5" fill="#1e293b">Deploy HCX on both</text>
+<text x="212" y="220.25" font-size="12.5" fill="#1e293b">sides, pair the sites,</text>
+<text x="212" y="237.75" font-size="12.5" fill="#1e293b">build the Service Mesh.</text>
+<rect x="405" y="150" width="198" height="132" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+<text x="417" y="194.0" font-size="12.5" fill="#1e293b">Extend the networks</text>
+<text x="417" y="211.5" font-size="12.5" fill="#1e293b">marked “HCX extend”.</text>
+<text x="417" y="229.0" font-size="12.5" fill="#1e293b">HCX creates the</text>
+<text x="417" y="246.5" font-size="12.5" fill="#1e293b">target network.</text>
+<rect x="610" y="150" width="198" height="132" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+<text x="622" y="202.75" font-size="12.5" fill="#1e293b">Run Diagnostics,</text>
+<text x="622" y="220.25" font-size="12.5" fill="#1e293b">Transport Analytics.</text>
+<text x="622" y="237.75" font-size="12.5" fill="#1e293b">Test VM there and back.</text>
+<rect x="815" y="150" width="198" height="132" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+<text x="827" y="194.0" font-size="12.5" fill="#1e293b">Mobility Group:</text>
+<text x="827" y="211.5" font-size="12.5" fill="#1e293b">Replicate Security Tag</text>
+<text x="827" y="229.0" font-size="12.5" fill="#1e293b">on. The VM's NSX tags</text>
+<text x="827" y="246.5" font-size="12.5" fill="#1e293b">go with it.</text>
+<rect x="1020" y="150" width="198" height="132" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+<text x="1032" y="194.0" font-size="12.5" fill="#1e293b">Unextend with</text>
+<text x="1032" y="211.5" font-size="12.5" fill="#1e293b">Connect cloud network:</text>
+<text x="1032" y="229.0" font-size="12.5" fill="#1e293b">one gateway, on the</text>
+<text x="1032" y="246.5" font-size="12.5" fill="#1e293b">target.</text>
+<rect x="405" y="294" width="198" height="186" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
+<text x="417" y="338.75" font-size="12.5" fill="#1e293b">4.2–4.7: export, sanitize,</text>
+<text x="417" y="356.25" font-size="12.5" fill="#1e293b">review, import, compare.</text>
+<text x="417" y="373.75" font-size="12.5" fill="#1e293b">Groups with an extended</text>
+<text x="417" y="391.25" font-size="12.5" fill="#1e293b">segment: point them at</text>
+<text x="417" y="408.75" font-size="12.5" fill="#1e293b">the HCX network (4.8).</text>
+<text x="417" y="426.25" font-size="12.5" fill="#1e293b">Optional: dummy VMs</text>
+<text x="417" y="443.75" font-size="12.5" fill="#1e293b">with every tag (seed).</text>
+<rect x="610" y="294" width="198" height="186" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+<text x="622" y="365.0" font-size="12.5" fill="#1e293b">Test VM: its NSX tags</text>
+<text x="622" y="382.5" font-size="12.5" fill="#1e293b">arrived, it is in its</text>
+<text x="622" y="400.0" font-size="12.5" fill="#1e293b">groups, the expected</text>
+<text x="622" y="417.5" font-size="12.5" fill="#1e293b">rules hit.</text>
+<rect x="815" y="294" width="198" height="186" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
+<text x="827" y="347.5" font-size="12.5" fill="#1e293b">Check tags and groups</text>
+<text x="827" y="365.0" font-size="12.5" fill="#1e293b">per VM of the wave.</text>
+<text x="827" y="382.5" font-size="12.5" fill="#1e293b">Split application: an</text>
+<text x="827" y="400.0" font-size="12.5" fill="#1e293b">IP set with the VMs</text>
+<text x="827" y="417.5" font-size="12.5" fill="#1e293b">still on the source,</text>
+<text x="827" y="435.0" font-size="12.5" fill="#1e293b">in its groups.</text>
+<rect x="1020" y="294" width="198" height="186" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
+<text x="1032" y="347.5" font-size="12.5" fill="#1e293b">Check the groups of</text>
+<text x="1032" y="365.0" font-size="12.5" fill="#1e293b">this network (4.8).</text>
+<text x="1032" y="382.5" font-size="12.5" fill="#1e293b">Last VM of a split</text>
+<text x="1032" y="400.0" font-size="12.5" fill="#1e293b">application moved:</text>
+<text x="1032" y="417.5" font-size="12.5" fill="#1e293b">IP sets out again.</text>
+<text x="1032" y="435.0" font-size="12.5" fill="#1e293b">Remove the dummy VMs.</text>
+<rect x="200" y="492" width="608" height="104" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="1.6" stroke-dasharray="5 4"/>
+<text x="504.0" y="548.0" font-size="12.5" fill="#1e293b" text-anchor="middle">The source DFW keeps running as it is. The export (4.2) only reads it.</text>
+<rect x="815" y="492" width="198" height="104" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
+<text x="827" y="530.75" font-size="12.5" fill="#1e293b">Split application: an</text>
+<text x="827" y="548.25" font-size="12.5" fill="#1e293b">IP set with the VMs</text>
+<text x="827" y="565.75" font-size="12.5" fill="#1e293b">that left, in its groups.</text>
+<rect x="1020" y="492" width="198" height="104" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="1.6" stroke-dasharray="5 4"/>
+<text x="1032" y="539.5" font-size="12.5" fill="#1e293b">The rules retire</text>
+<text x="1032" y="557.0" font-size="12.5" fill="#1e293b">with the source.</text>
+<rect x="40" y="627" width="26" height="18" rx="5" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+<text x="74" y="641" font-size="12.5" fill="#334155">HCX action</text>
+<rect x="300" y="627" width="26" height="18" rx="5" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="334" y="641" font-size="12.5" fill="#334155">Changes a firewall</text>
+<rect x="560" y="627" width="26" height="18" rx="5" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="594" y="641" font-size="12.5" fill="#334155">Check, read-only</text>
+<rect x="820" y="627" width="26" height="18" rx="5" fill="#f8fafc" stroke="#475569" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="854" y="641" font-size="12.5" fill="#334155">No change</text>
+<text x="40" y="676" font-size="12.5" fill="#475569">Without HCX there is no extension: the tags come with the toolkit per wave (4.9), and the gateway moves at the cutover (docs/35).</text>
+</svg>
