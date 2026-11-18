@@ -122,6 +122,10 @@ toolkit has a dry run, use it first.
   StoragePolicyManager 1.2.0, VITagManager 0.2.0 (1.0.0 for the
   baseline export of assignments) and VIFolderManager
   1.3.0.
+- **Long steps show a progress bar** with "n of N", the percentage and
+  the time left, for example while an export reads the permissions of
+  hundreds of folders (VIFolderManager 1.4.0, VITagManager 1.1.0,
+  VIRoleManager 1.5.0, StoragePolicyManager 1.3.0).
 
 ---
 

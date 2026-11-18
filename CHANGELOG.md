@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.0.5 – 2026-11-18
+- `docs/30` (#156): the shared toolkit notes mention the progress bar of
+  VIFolderManager 1.4.0, VITagManager 1.1.0, VIRoleManager 1.5.0 and
+  StoragePolicyManager 1.3.0.
+
 ## v3.0.4 – 2026-11-18
 - `docs/30` step 2 (#155): the baseline export of all tag assignments needs
   VITagManager 1.0.0 or later. Earlier versions stopped the whole export on
