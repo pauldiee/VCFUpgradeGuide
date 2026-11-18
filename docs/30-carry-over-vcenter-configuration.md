@@ -109,8 +109,18 @@ toolkit has a dry run, use it first.
   the certificate trust instead.
 - **Wrong or changed password:** add `-ResetCredentials` to be asked
   again.
-- **Pickers** accept a number, a comma-separated list, or `all`
-  (VIFolderManager and VITagManager also ranges like `2-6`).
+- **Pickers** accept a number, a comma-separated list, a range like
+  `2-6`, or `all`, and filter by name: `*text*` or `/text` narrows the
+  list, `reset` clears it. `cancel` (or `q`) stops.
+- **The folder** is asked for after the mode when you don't pass it:
+  Enter keeps the default, **B** opens a folder browser, or type a path.
+  The commands below pass it, so they don't ask.
+- **Every run writes a log** to `Logs\` next to the script, and a
+  failure is a red `FAILED` line that the summary lists again. The exit
+  code is 0 without failures, 1 with failures, 2 when an unattended run
+  hit a question. This holds from VIRoleManager 1.4.0,
+  StoragePolicyManager 1.2.0, VITagManager 0.2.0 and VIFolderManager
+  1.3.0.
 
 ---
 
@@ -144,7 +154,9 @@ Tags are a special case: even when they exist on the target, the
 **Toolkit:** [VIRoleManager](https://github.com/pauldiee/VIRoleManager).
 
 **Export from the source.** VIRoleManager lists the custom roles (system
-roles are left out). Pick them by number, or `all`:
+roles are left out). A VCF vCenter has dozens of its own service roles in
+that list, so pick yours by number or filter on their names, or pass
+them with `-RoleName` (names or wildcards):
 
 ```powershell
 .\Invoke-VIRoleManager.ps1 -vCenterServer <source-vcenter> -Mode Export -FilePath <working-folder>\roles
@@ -636,7 +648,8 @@ Checked on 2026-11-13.
   [VIFolderManager](https://github.com/pauldiee/VIFolderManager) 1.2.0
   (read 2026-11-16, with their `tests/` scripts and lab results; the
   folder prompt, failure summary and unattended runs from VIFolderManager
-  1.3.0, read 2026-11-18)
+  1.3.0, VIRoleManager 1.4.0, StoragePolicyManager 1.2.0 and
+  VITagManager 0.2.0, read 2026-11-18)
 - Read on 2026-11-16:
   [Managing VCF Roles](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/vcf-built-in-roles.html)
   (VCF 9.1, `vcf_reserved_`),

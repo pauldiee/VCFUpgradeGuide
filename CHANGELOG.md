@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.3 – 2026-11-18
+- `docs/30` (#154): the shared toolkit notes follow VIRoleManager 1.4.0,
+  StoragePolicyManager 1.2.0 and VITagManager 0.2.0, which now behave like
+  VIFolderManager 1.3.0: pickers with ranges and a name filter, the folder
+  prompt with a folder browser, a log per run, red `FAILED` lines and exit
+  codes 0/1/2. Step 1 mentions the VCF service roles in the role list and
+  `-RoleName` with wildcards. Sources line updated.
+
 ## v3.0.2 – 2026-11-18
 - `docs/30` step 5 and `docs/29` (#153): VIFolderManager 1.3.0. The
   backup-folder prompt with a folder browser, red `FAILED` lines with a
