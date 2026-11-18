@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.9.8 – 2026-11-18
+- Site (#149, Paul): images in the docs are clickable, like the
+  WordPress lightbox. Click (or Enter) opens the image large in an
+  overlay; Esc, the close button or a click beside it closes it; arrow
+  keys and buttons step through the page's images; a click on the image
+  zooms to twice the size with scrolling; a button opens it in a new
+  tab. Plain script in `BaseLayout.astro` and CSS in `site.css`, no
+  library; hidden in print. Tested in a local preview.
+
 ## v2.9.7 – 2026-11-18
 - `docs/31` 4.1 (#148, lab test Paul): new point, a DFW licence on the
   target. Without a licence the NSX API refuses DFW policies and rules
