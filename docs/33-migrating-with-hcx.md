@@ -286,7 +286,11 @@ In the HCX UI, **Migration**, **Create Mobility Group**, then
 3. **Destination settings for the group:** compute, storage, **folder**
    and disk format, from the mapping tables. *"The settings you provide
    are applied to all members of the group by default"*; override them
-   per VM where needed.
+   per VM where needed. For the folder per VM: VIFolderManager 1.5.0 and
+   later, imported on the target with `-MoveObjects:$false -Csv` before
+   the wave, creates the folders and lists per VM its folder path and
+   that folder's ID on the target vCenter
+   ([docs/30, step 5](30-carry-over-vcenter-configuration.md#step-5-folders-and-permissions)).
 4. **Network per VM:** extended networks are selected; map the rest.
 5. **Migration type** per group, and per VM where the
    [type table](#choosing-a-migration-type-per-vm) says otherwise.

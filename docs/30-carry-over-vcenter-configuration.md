@@ -484,7 +484,16 @@ phase: the VMs aren't there yet.
 Read the log, then run the same command without `-DryRun`. From 1.3.0
 anything that fails (a folder, a move, a permission) is a red `FAILED`
 line, the summary lists it, and the run ends with exit code 1; a role or
-folder that is missing only gives a yellow skip. What the import does:
+folder that is missing only gives a yellow skip.
+
+**Placement list for HCX (1.5.0 and later).** Add `-Csv` to this import
+and VIFolderManager writes `<export>_target-<datacenter>.csv` next to the
+export: per VM its folder path and the ID of that folder on the target
+vCenter. That's the destination folder per VM in the HCX Mobility Group
+([docs/33](33-migrating-with-hcx.md)). The export holds the vCenter IDs of
+every folder and object as well; the import still matches by name.
+
+What the import does:
 
 - Folders with the same path are reused, missing ones are created.
   Nothing is renamed or removed.
@@ -666,7 +675,8 @@ Checked on 2026-11-13.
   (read 2026-11-16, with their `tests/` scripts and lab results; the
   folder prompt, failure summary and unattended runs from VIFolderManager
   1.3.0, VIRoleManager 1.4.0, StoragePolicyManager 1.2.0 and
-  VITagManager 0.2.0 and 1.0.0, read 2026-11-18)
+  VITagManager 0.2.0 and 1.0.0, and the placement list of VIFolderManager
+  1.5.0, read 2026-11-18)
 - Read on 2026-11-16:
   [Managing VCF Roles](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/vcf-built-in-roles.html)
   (VCF 9.1, `vcf_reserved_`),

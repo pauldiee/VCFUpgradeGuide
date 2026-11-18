@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.0.7 – 2026-11-18
+- `docs/30` step 5, `docs/29` and `docs/33` (#158): VIFolderManager 1.5.0
+  writes, on import with `-Csv`, per VM the destination folder and its ID
+  on the target vCenter: run it with `-MoveObjects:$false` before an HCX
+  wave and use it for the folder per VM in the Mobility Group.
+
 ## v3.0.6 – 2026-11-18
 - `docs/30` step 2 (#157): VITagManager 1.2.0 reads tag assignments
   through vCenter's tagging API; the per-object way took about 20 minutes
