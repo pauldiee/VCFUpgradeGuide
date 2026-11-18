@@ -281,7 +281,15 @@ in the mapping table, and the summary shows no failures.
      backup config blob"*, lab-verified); the script then rebuilds from the
      settings file instead.
    - A NIOC network resource pool that the target switch doesn't have
-     falls back to the default pool, with a warning.
+     falls back to the default pool, with a warning; a VM vNIC network
+     resource pool is left out the same way. **Use version 1.6.1 or
+     later for a rebuild:** up to 1.6.0, a source port group with VM vNIC
+     pool `-1` ("no pool") failed with `invalidVmVnicResourcePoolKey`
+     (field-verified on a live import, 2026-11-18; reproduced and fixed
+     in the lab).
+   - A port group that fails is logged in red as `FAILED`, and the
+     summary lists every failed one with the vCenter message (1.6.1 and
+     later; exit code 1).
 
 To retry after a failure, run the import again and pick **only** the zips
 that failed: port groups that are already there count as name clashes,
@@ -1152,7 +1160,7 @@ Checked on 2026-11-13.
   `Seed-NSX-DFW-Dummy-VMs.ps1` read 2026-11-18, last toolkit change
   2026-04-24)
 - Toolkit READMEs:
-  [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16; the folder prompt in 2.4 from 1.6.0, read 2026-11-18),
+  [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16; the folder prompt in 2.4 from 1.6.0 and the VM vNIC pool fix and failure summary from 1.6.1, read 2026-11-18),
   [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration)
 - PowerCLI cmdlet syntax (`Get-NetworkAdapter`, `Export-VDPortGroup`,
   `New-VDPortgroup -BackupPath`): VCF.PowerCLI 9.1.1

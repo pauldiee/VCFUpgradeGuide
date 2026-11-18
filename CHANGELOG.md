@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.0 – 2026-11-18
+- `docs/31` 2.4 (#151, Paul): use VDSPortGroupManager 1.6.1 or later for a
+  rebuild with uplink mapping; up to 1.6.0 a source port group with VM
+  vNIC pool `-1` failed with `invalidVmVnicResourcePoolKey`
+  (field-verified on a live import, fixed and lab-tested in 1.6.1).
+  Failures are logged in red and listed in the summary (exit code 1).
+  Sources list the version.
+
 ## v2.9.9 – 2026-11-18
 - `docs/31` 2.4 (#150, Paul): VDSPortGroupManager 1.6.0 asks for the backup
   folder when `-BackupDirectory` is left out (Enter for the default, `B`
