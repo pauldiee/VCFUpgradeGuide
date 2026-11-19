@@ -213,11 +213,19 @@ page doesn't say why.
 **Undo.** To remove a role you imported by mistake:
 `Remove-VIRole -Role (Get-VIRole -Name '<role>')`. On a 9.1.1 target this
 reports the role as in use because of the `vcf_reserved` permission above
-(lab-verified). `-Force` removes a role *"even if it is associated with a
-permission"* (PowerCLI help); whether that is safe for the
-`vcf_reserved` permission hasn't been tested, and Broadcom's *"Do not
-modify"* above argues against it: on a VCF 9.1.1 target, leave a test
-role in place rather than force it out.
+(lab-verified). Deleting the role together with that permission does work:
+the vSphere Client's *Delete role* with the option to remove its
+permissions, or `RemoveAuthorizationRole(<roleId>, $false)` through the
+API, removes the role and its own `vcf_reserved_<roleId>` permission.
+Lab-verified on VCF 9.1.1 (2026-11-19): one role by hand and 200 test
+roles by script; neither the roles nor the permissions came back (checked
+after 5 minutes), and no `vcf_reserved` permission was left pointing at a
+deleted role. Broadcom's *"Do not modify"* above is about the permissions
+of roles that stay; deleting a custom role isn't covered there. Not
+checked: whether VCF Operations notices. The local group
+`vcf_reserved_<roleId>` was gone as well (vSphere Client, Single Sign On,
+Users and Groups). Only delete a role you created yourself,
+and only when no other permission uses it.
 
 **Check.** Run this on both vCenters and compare the two files:
 

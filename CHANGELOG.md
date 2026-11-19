@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.0.8 – 2026-11-19
+- `docs/30` step 1 (#159): removing an imported custom role on a VCF 9.1.1
+  target, with its own `vcf_reserved_<roleId>` permission, is lab-verified
+  (one role by hand, 200 by script; nothing came back after 5 minutes,
+  and the local `vcf_reserved_<roleId>` group was gone too).
+  Replaces the advice to leave such a role in place.
+
 ## v3.0.7 – 2026-11-18
 - `docs/30` step 5, `docs/29` and `docs/33` (#158): VIFolderManager 1.5.0
   writes, on import with `-Csv`, per VM the destination folder and its ID
