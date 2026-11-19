@@ -116,7 +116,12 @@ and
 1. **Export** from Log Insight. Go to Content Packs → **My Content** →
    gear icon → **Export**. Select the alerts, dashboards and queries, plus
    the extracted fields they use. You can make one pack for everything or
-   several smaller ones.
+   several smaller ones. Fields used by what you select go along
+   automatically, but *"If the custom dashboards, saved queries, and alerts
+   contain the `_index` field in their filters, the filters are excluded
+   from the export content"*
+   ([Export a Content Pack](https://techdocs.broadcom.com/us/en/vmware-cis/aria/aria-operations-for-logs/8-16/using-vmware-aria-operations-for-logs-8-16/working-with-content-packs/using-content-packs/export-a-content-pack.html),
+   8.16). Check those filters after the move.
 2. **Get the converter** from the Broadcom Support Portal, under Drivers
    and Tools, in the log management section. Use
    `cp-to-mp-convertor-jar-with-dependencies-jdk17.jar` for Java 17 to 24,
@@ -129,15 +134,44 @@ and
    ```
 
    The first converts one pack, the second all packs in a directory. Each
-   pack gets its own output folder with a `.pak`.
+   pack gets its own output folder with a `.pak`, next to the content as
+   separate files (`logextractedfields.xml`, `alertdefs.xml`,
+   `symptomdefs.xml`, `dashboard.json` and others).
+
+   On a workstation with little free memory, Java can stop right away with
+   *"The paging file is too small for this operation to complete"* and
+   *"There is insufficient memory for the Java Runtime Environment to
+   continue"*. A content pack is small, so a small heap is enough:
+   `java -Xms64m -Xmx1g -jar cp-to-mp-convertor-jar-with-dependencies-jdk17.jar ...`
+   (seen and fixed in the field, 2026-11-19).
+
+   A pack that VMware ships itself is skipped (*"will be skipped during
+   conversion, since respective content in VCF Operations already
+   exists"*) unless you rename the file or add `-force`, according to
+   [Brock Peterson](https://www.brockpeterson.com/post/vcf-operations-for-logs-content-pack-converter)
+   (community, November 2026). He also shows the converter warning that an
+   extracted field's regex *"is estimated to consume high CPU"*.
 4. **Allow unsigned PAKs.** In the VCF Operations admin UI
    (`https://<vcf-ops-fqdn>/admin`), go to Administrator Settings →
    Security Settings → **ENABLE UNSIGNED PAK INSTALLATION**. Broadcom calls
    this *"a temporary modification of the security posture"* but doesn't
    give the step to switch it back. Turn it off yourself after the last
    install.
-5. **Install** the `.pak` from Software Install → Install Software Update,
-   with **Ignore the PAK File Signature Checking** ticked.
+5. **Install** the `.pak`. Broadcom gives two routes, one per page:
+   - the alerts page: in the admin UI, Software Install → Install Software
+     Update, with **Ignore the PAK File Signature Checking** ticked;
+   - the content pack page: in VCF Operations, Operate → Administration →
+     Integrations → **Repository** → ADD → BROWSE, and *"Install the pack
+     file even if it is already installed and ignore signature checking"*.
+
+   Either way the result is *"a content-only management pack, meaning it
+   will not have any metrics and the source is content pack converter
+   tool"*.
+
+   **Only the extracted fields?** Skip the `.pak` and import
+   `logextractedfields.xml` from the output folder: Operate → Administration
+   → Configurations → Log Management → **Fields Library** → IMPORT
+   (Brock Peterson, above). Dashboards and alerts don't come along that way.
 6. **Check** under Operate → Configuration → **Alert Definitions** (alerts)
    and the management pack's content tab (dashboards, symptom
    definitions). Then look for your saved queries and extracted fields,
