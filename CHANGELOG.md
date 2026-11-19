@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.0.9 – 2026-11-19
+- `docs/30` (#161): `-Report` in VIFolderManager 1.6.0 and VITagManager 1.3.0
+  writes the VI Export Viewer with the export in it; log lines and a text
+  progress line for consoles that show no progress bar.
+
 ## v3.0.8 – 2026-11-19
 - `docs/30` step 1 (#159): removing an imported custom role on a VCF 9.1.1
   target, with its own `vcf_reserved_<roleId>` permission, is lab-verified
