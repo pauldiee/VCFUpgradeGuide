@@ -125,7 +125,19 @@ toolkit has a dry run, use it first.
 - **Long steps show a progress bar** with "n of N", the percentage and
   the time left, for example while an export reads the permissions of
   hundreds of folders (VIFolderManager 1.4.0, VITagManager 1.1.0,
-  VIRoleManager 1.5.0, StoragePolicyManager 1.3.0).
+  VIRoleManager 1.5.0, StoragePolicyManager 1.3.0). Some consoles, an
+  RDP session for example, show no progress bar at all, so the long steps
+  also write log lines with counts (VITagManager 1.2.1, VIFolderManager
+  1.5.1), and VDSPortGroupManager 1.7.1 writes a text progress line every
+  5% on export and import.
+- **An HTML report of the export:** add `-Report` to an export of
+  VIFolderManager (1.6.0) or VITagManager (1.3.0) and an HTML file lands
+  next to the JSON. It's the
+  [VI Export Viewer](https://github.com/pauldiee/VIExportViewer) with the
+  export in it: it opens offline in any browser, shows what the export
+  holds, compares a source and a target export (drop the second file on
+  it), and prints to PDF for the migration file. The viewer also opens
+  exports made without `-Report`.
 
 ---
 
