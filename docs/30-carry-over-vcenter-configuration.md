@@ -222,8 +222,9 @@ roles by script; neither the roles nor the permissions came back (checked
 after 5 minutes), and no `vcf_reserved` permission was left pointing at a
 deleted role. Broadcom's *"Do not modify"* above is about the permissions
 of roles that stay; deleting a custom role isn't covered there. Not
-checked: whether the local group `vcf_reserved_<roleId>` stays behind, and
-whether VCF Operations notices. Only delete a role you created yourself,
+checked: whether VCF Operations notices. The local group
+`vcf_reserved_<roleId>` was gone as well (vSphere Client, Single Sign On,
+Users and Groups). Only delete a role you created yourself,
 and only when no other permission uses it.
 
 **Check.** Run this on both vCenters and compare the two files:
