@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.1.0 – 2026-11-19
+- `docs/28` route B (#163): the second install route for a converted `.pak`
+  (Integrations, Repository; content pack page), `_index` filters left out of
+  an export, the Java memory error on a small workstation and its fix,
+  skipped VMware packs and `-force`, and importing only the extracted fields
+  in the Fields Library (community source).
+
 ## v3.0.9 – 2026-11-19
 - `docs/30` (#161): `-Report` in VIFolderManager 1.6.0 and VITagManager 1.3.0
   writes the VI Export Viewer with the export in it; log lines and a text
