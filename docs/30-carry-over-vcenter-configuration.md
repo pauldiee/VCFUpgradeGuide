@@ -337,7 +337,12 @@ was written (field report on vCenter 8.0.3,
 1.0.0 reads the tags per object and lists an object it can't read as a
 failure, without losing the rest. **1.2.0** reads them through vCenter's
 tagging API in a few calls: on a field export of 2820 objects the
-per-object way took about 20 minutes. Tags on other kinds of objects, such
+per-object way took about 20 minutes. **1.3.1** gives every call to that
+API two minutes: at a customer an import stopped on it for more than ten
+minutes (field report, greenfield vCenter 9.1.1, cause not found yet,
+[VITagManager #15](https://github.com/pauldiee/VITagManager/issues/15)).
+Without an answer in time the tags are read per object, with a yellow line
+in the log. Tags on other kinds of objects, such
 as first-class disks or content library items, are not carried over.
 
 **Running it again** creates only what's still missing, so it's safe to

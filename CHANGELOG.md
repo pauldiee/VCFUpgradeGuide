@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.3 – 2026-11-25
+- `docs/30` step 2 (tags): VITagManager 1.3.1 gives every call to the
+  tagging API two minutes and then reads the tags per object, after a
+  field report of a call that hung on a greenfield vCenter 9.1.1 (#167).
+
 ## v3.1.2 – 2026-11-25
 - `docs/30` step 1 (roles): VIRoleManager 1.6.0 asks what to do with a
   role that already exists on the target (skip, update all, pick) and can
