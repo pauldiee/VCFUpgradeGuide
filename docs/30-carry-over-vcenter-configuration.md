@@ -337,12 +337,21 @@ was written (field report on vCenter 8.0.3,
 1.0.0 reads the tags per object and lists an object it can't read as a
 failure, without losing the rest. **1.2.0** reads them through vCenter's
 tagging API in a few calls: on a field export of 2820 objects the
-per-object way took about 20 minutes. **1.3.1** gives every call to that
-API two minutes: at a customer an import stopped on it for more than ten
-minutes (field report, greenfield vCenter 9.1.1, cause not found yet,
+per-object way took about 20 minutes. **Use 1.4.0 or later**: it reads
+every tag assignment in one pass through vCenter's tagging associations
+API (`GET /api/vcenter/tagging/associations`,
+[List Associations](https://developer.broadcom.com/xapis/vsphere-automation-api/8.0.3/vcenter/api/vcenter/tagging/associations/get/),
+documented for vSphere 7.0 U3 and 8.0). At a customer the older call
+`list-attached-tags-on-objects` took 8 seconds for one VM and hung for
+ten, on a greenfield vCenter 9.1.1, while the associations API answered in
+0.13 seconds (field test,
 [VITagManager #15](https://github.com/pauldiee/VITagManager/issues/15)).
-Without an answer in time the tags are read per object, with a yellow line
-in the log. Tags on other kinds of objects, such
+If that API is not available, 1.4.0 falls back to the older tagging API
+(two minutes per call) and then to per object, with a yellow line in the
+log. With a self-signed vCenter certificate that this host doesn't trust,
+add `-SkipCertificateValidation`, or the fallback is used. **Don't use
+1.3.1:** through the older tagging API it read no tag assignments at all
+(an export held none, without a warning). Tags on other kinds of objects, such
 as first-class disks or content library items, are not carried over.
 
 **Running it again** creates only what's still missing, so it's safe to

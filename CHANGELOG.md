@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.1.4 – 2026-11-25
+- `docs/30` step 2 (tags): VITagManager 1.4.0 reads tag assignments
+  through the tagging associations API (`/api/vcenter/tagging/associations`),
+  after a field test where the older call took 8 s for one VM; 1.3.1 should
+  not be used, it read no tag assignments through the older API (#167).
+
 ## v3.1.3 – 2026-11-25
 - `docs/30` step 2 (tags): VITagManager 1.3.1 gives every call to the
   tagging API two minutes and then reads the tags per object, after a
