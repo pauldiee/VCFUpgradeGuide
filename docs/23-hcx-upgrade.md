@@ -252,6 +252,35 @@ vCenter, NSX and ESX, so version drift shows up there. For the
 surrounding fleet-patching flow, see
 [Patching an existing VCF 9.1 fleet](20-patching-an-existing-vcf9-fleet.md).
 
+### HCX in 9.1.2
+
+From the VCF Operations HCX section of the [VCF Operations 9.1.2.0
+release
+notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vcf-operations-9-1-2-0-release-notes.html)
+(read 2026-11-24; TechDocs only, not tested). The direct paths from 4.11.x
+to 9.1.2 are not in the table above yet; check them in the
+interoperability matrix.
+
+- **Known issue, coming from 4.11.6 with a backup passphrase.**
+  *"Restoring 9.1.2.0 backups fails due to incorrect passphrase after
+  upgrading from 4.11.6"*: 4.11.6 asks for a passphrase in the SFTP backup
+  configuration, and *"VCF 9.1.2.0 does not yet support user entered
+  passphrase to encrypt backup"*. Fix: *"the customer must manually delete
+  and re-add the SFTP server configuration after upgrading to clear the
+  legacy passphrase state."* Do it right after the upgrade, then take and
+  check a fresh backup.
+- **DVPG to DVPG extension without NSX on the destination.** *"For DVPG to
+  DVPG network extensions, HCX does not require that hosts in the
+  destination vSphere cluster are NSX Transport Nodes."* You do need *"a
+  DVPG-backed Network Profile"* assigned *"to the HCX Intrasite Control
+  network during the compute profile creation on the destination site."*
+- **Evaluation mode is complete.** *"HCX Manager is fully operational
+  during the 90-day evaluation mode."*
+- **Licence without a VCF 9 vCenter.** *"For cases where HCX Manager is not
+  registered with a VCF vCenter 9 instance, users can connect HCX Manager
+  with VCF Operations 9 to retrieve a VCF license. Use cases include
+  migrations to vCenter 8 or to VMware vSphere Foundation."*
+
 ---
 
 ## Sources

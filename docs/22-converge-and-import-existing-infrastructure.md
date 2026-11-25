@@ -85,6 +85,29 @@ and [Supported Components and Scenarios to
 Converge](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/deployment/converging-your-existing-vsphere-infrastructure-to-a-vcf-or-vvf-platform-/supported-scenarios-to-converge-to-vcf.html)
 for the full scenario matrix before committing to a converge plan.
 
+### New in 9.1.2: more host and vCenter layouts qualify
+
+Two layouts that used to need rework before a converge or import are
+accepted from 9.1.2 on. Quoted from the [VCF Installer / SDDC Manager
+9.1.2.0 release
+notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/sddc-manager-9-1-2-0-release-notes.html)
+(read 2026-11-24; TechDocs only, not tested yet). Both apply to converge
+**and** import:
+
+- **Several management and vMotion VMkernel adapters per host.**
+  *"Starting with VCF 9.1.2, you can converge and import ESX hosts that
+  have multiple vMotion and management VMkernel adapters, including both
+  IPv4 and IPv6 addresses. Each host must have at least one management
+  VMkernel adapter and at least one vMotion VMkernel adapter."*
+- **vCenter on its own management VLAN.** *"Starting with VCF 9.1.2, you
+  can converge and import existing vCenter instances that use a management
+  VLAN different from the VCF management VLAN. These vCenter instances
+  connect to a distributed virtual port group associated with that
+  VLAN."*
+
+On an earlier target build, plan to consolidate the VMkernel adapters or
+move vCenter to the VCF management VLAN first.
+
 ---
 
 ## Import: an existing vCenter becomes a new workload domain (VCF only)
@@ -143,6 +166,9 @@ not all spelled out in the official checklist above):
   negotiable.
 - **Static IPs on every VMkernel interface**, except NSX Host TEPs (DHCP
   is fine there).
+- **Multiple management or vMotion VMkernel adapters, or a vCenter on
+  another management VLAN**: supported from a 9.1.2 target, see [New in
+  9.1.2](#new-in-912-more-host-and-vcenter-layouts-qualify).
 
 ### The import wizard, and its one hard constraint
 

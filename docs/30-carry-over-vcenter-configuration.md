@@ -646,6 +646,25 @@ target can't do that, so:
   vCenter. Make sure everything you keep is stored in a target library
   that doesn't depend on it.
 
+**From vCenter 9.1.2: vCenter groups in VCF Operations are enough.** The
+[vCenter 9.1.2.0 release
+notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vcenter-9-1-2-0-release-notes.html)
+(read 2026-11-24): *"Content Library now supports virtual machine
+template synchronization across vCenter instances that are linked using
+vCenter groups in VCF Operations. This allows you to maintain consistent,
+centralized template catalogs across distributed, multi-vCenter
+environments without requiring traditional Enhanced Linked Mode (ELM)
+configurations or manual replication workflows."* The same release fixes
+*"Virtual machine templates might fail to sync when vCenter instances are
+linked by using vCenter grouping in VCF Operations"* (a permission error
+on the subscription), and Content Library transfers now calculate the NFC
+timeout from the file size instead of *"the previous static 20-minute
+limit"*. This helps between vCenters on 9.1.2 that are in one vCenter
+group, for example two target vCenters. The release notes don't say
+whether a source vCenter on 8.x can join such a group; until that is
+confirmed, use the routes above for an 8.x source. TechDocs only, not
+tested yet.
+
 **Check.** Every template that's still in use is on the target, as a
 template or in a target library, and no target library depends on the
 source any more by the time the source is retired.

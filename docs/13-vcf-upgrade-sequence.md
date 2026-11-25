@@ -11,8 +11,10 @@ which applies.
 > **Status: draft.** The phase *ordering and conditionality* below is
 > verified against the [VCF Upgrade Planner](https://vmware.github.io/vcf-upgrade-planner/)
 > (run 2026-08-27, target build 9.1.0.0400). **VCF 9.1.1 went GA on
-> 2026-09-03** – that run predates it, so re-run the planner and the
-> interoperability matrix for a 9.1.1 target build. Per-phase procedure
+> 2026-09-03** and **VCF 9.1.2 on 2026-11-24** – that run predates both, so
+> re-run the planner and the interoperability matrix for your target build
+> (5.2.x and 9.0.x upgrade directly to 9.1.2, see the
+> [Overview](01-overview.md#confirm-a-supported-upgrade-path)). Per-phase procedure
 > detail, IP counts, and version numbers are transcribed from the planner and
 > the supplementary guides and **must be re-confirmed verbatim against
 > Broadcom TechDocs** (and against your actual target build) before being
@@ -288,6 +290,25 @@ segments; that remains supported
 ([KB 443842](https://knowledge.broadcom.com/external/article/443842/vcf-91-brownfield-upgrade-support-for-vc.html)).
 Choose the Management Services network before this phase. See
 [AVN after an upgrade from 5.x](27-avn-after-upgrade.md).
+
+**Known issues for 5.2.x → 9.1.2** ([VCF Operations 9.1.2.0 release
+notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vcf-operations-9-1-2-0-release-notes.html),
+read 2026-11-24; TechDocs only, not seen in the field yet):
+
+- **The input checks for the services runtime can be skipped.** Normally
+  dynamic validation checks that the Platform, Fleet and Instance FQDNs
+  resolve and don't answer ping, and that the IP pool addresses are free.
+  *"If these checks are skipped, any incorrect input that is caught during
+  the "Bootstrap VCF Services Platform" task causes the VCF management
+  services upgrade to fail."* Check DNS and the IP pool by hand before you
+  start this phase. If it already failed, the release notes give a reset:
+  on SDDC Manager as root,
+  `psql -h localhost -U postgres -d platform -c "delete from vcf_management_component where component_type='VSP'"`,
+  then click **Upgrade** again in VCF Operations.
+- **The management domain can show 5.2.4.0 afterwards.** After all
+  management domain components are at 9.1.2, the Component Versions page
+  under **Build → Lifecycle → VCF instances → mgmt** *"appears as
+  5.2.4.0."* Workaround: *"None"*. Check the component builds instead.
 
 **Before moving on:** Management Services cluster healthy; License Server
 reachable; licenses assigned; vCenter(s) still show valid licensing.

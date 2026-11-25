@@ -98,6 +98,9 @@ Go through this once, before wave 1. The tests behind each item are in
       ([Understanding Bulk Migration](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/workload-mobility/vmware-hcx-user-guide-vcf-9-0/migrating-virtual-machines-with-vmware-hcx/understanding-vmware-hcx-bulk-migration.html)).
       Most legacy sources run an older vCenter, and then this doesn't
       apply.
+- [ ] **HCX 9.1.2 or later:** DVPG to DVPG network extension no longer
+      needs NSX transport nodes on the destination, and a backup known
+      issue applies after an upgrade from 4.11.6 (see [HCX in 9.1.2](23-hcx-upgrade.md#hcx-in-912)).
 - [ ] **Each VM has a migration type** in the wave list (next section).
 
 ---
@@ -229,6 +232,19 @@ available).
 | **Personalization Script** | *"Uploads a customization script to a migrated virtual machine."* At most 1500 characters; on Linux it needs VMware Tools 10.1.0 or later, and *"the enable-custom-scripts option is deactivated by default for security and must be enabled manually to run the custom script"* | Only for a change that must happen at the target, such as a re-IP. Test it on one VM first |
 | **DNS Customizations** (DNS Customization) | *"Sets the Primary and the Secondary DNS servers for the migrated virtual machine"* | Only when the target uses other DNS servers. With kept IP addresses and the same DNS, leave it off |
 | **Generate a new Security Identifier (SID)** | Windows only. *"If the virtual machine is connected to the domain, it is moved to workgroup, and no DNS suffix is set"*, and it needs an active local administrator | **Off** for a migration: the VM must keep its identity and domain membership |
+
+**HCX 9.1.2 known issue: on Windows, any guest customization changes the
+SID.** The [VCF Operations 9.1.2.0 release
+notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vcf-operations-9-1-2-0-release-notes.html)
+(read 2026-11-24): *"HCX guest customization for windows VMs changes SID
+and overwrites password to blank entries."* It *"requires the changeSID
+parameter to be set to true at all times"*, because of vCenter API
+behaviour for Vista and later. So on a Windows VM, turning on a
+Personalization Script or DNS Customizations has the same effect as the
+SID option above. The release notes give a sample personalization script
+that resets the password after customization; it does not undo the new
+SID. For Windows VMs that must keep their identity, leave all Guest OS
+options off and change DNS or IP addresses inside the guest instead.
 
 **Security**
 

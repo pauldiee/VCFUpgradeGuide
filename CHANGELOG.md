@@ -1,5 +1,30 @@
 # Changelog
 
+## v3.1.1 – 2026-11-24
+- VCF 9.1.2 (GA 24 Nov 2026) across the guide (#165), quoted from the
+  9.1.2.0 release notes (read 2026-11-24):
+  - `docs/20`: the 9.1.2 patch dependencies and the Upgrade All warning,
+    ESX 9.1.2.0 in the live-patch table (not live-patchable), VCFDT examples
+    on 9.1.2.0, and a new section with the 9.1.2 known issues (parallel
+    staging timeout, 5.2.4.0 version display) and the NSX fixes (12% stall,
+    Backup Operation Check).
+  - `docs/01`: 9.1.2 as the target (VMSA-2026-0011 fixes 9.1.x only in
+    9.1.2), and the sources that reach 9.1.2 but not 9.1.1 (SDDC Manager
+    5.2.5.0, NSX 4.2.5, VCF Operations 8.18.8, ESX 9.0.2.0200).
+  - `docs/13`: status note and the 5.2.x → 9.1.2 known issues in phase 3.
+  - `docs/19`: NSX in VVF from 9.1.2 as the vDefend platform (not full
+    NSX), vSAN Object Storage GA, Configuration Profiles next to Host
+    Profiles.
+  - `docs/22`: converge and import with several management/vMotion
+    VMkernel adapters, and vCenter on another management VLAN.
+  - `docs/23` / `docs/33`: HCX 9.1.2 (DVPG extension without NSX transport
+    nodes, eval mode, licence via VCF Operations, the 4.11.6 backup
+    passphrase issue, Windows guest customization always changing the SID).
+  - `docs/26`: orchestrator log issue fixed in 9.1.2; 8.18.1 → 9.1.2
+    *Create Automation Cluster* failure with a slow Microsoft CA.
+  - `docs/30` step 7: Content Library template sync through vCenter groups
+    in VCF Operations, without ELM.
+
 ## v3.1.0 – 2026-11-19
 - `docs/28` route B (#163): the second install route for a converted `.pak`
   (Integrations, Repository; content pack page), `_index` filters left out of

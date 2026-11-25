@@ -1,7 +1,9 @@
 # Patching an existing VCF 9.1 fleet (maintenance releases)
 
 **This is about applying a maintenance release to a fleet already
-running VCF 9.1** – e.g. 9.1.0.x → 9.1.1 – not the initial 5.2/8.x → 9.x
+running VCF 9.1** – e.g. 9.1.0.x → 9.1.1, or 9.1.0.x / 9.1.1.x → 9.1.2
+(GA 24 Nov 2026, see [Getting to 9.1.2](#getting-to-912-the-dependencies-broadcom-lists))
+– not the initial 5.2/8.x → 9.x
 upgrade, which is its own much larger project covered in [Full VCF
 upgrade sequence](13-vcf-upgrade-sequence.md). Patching is smaller in
 scope but has its own strict component ordering, separate from that
@@ -86,10 +88,12 @@ Live patching is decided **per release**, not per release type: each
 ESX release note carries a **Live Patchable** row (next to **Host Reboot
 Required**), and being an Express Patch or "security only" doesn't make
 a release live-patchable on its own (9.1.0.0200 is security-only and
-still needs a reboot). Read from each release note on 2026-10-14:
+still needs a reboot). Read from each release note on 2026-10-14
+(9.1.2.0 on 2026-11-24):
 
 | ESX release | Build | Released | Type | Live patchable | Host reboot |
 | --- | --- | --- | --- | --- | --- |
+| 9.1.2.0 | 25946735 | 24 Nov 2026 | Maintenance | No | Yes |
 | 9.1.1.0100 | 25782009 | 12 Oct 2026 | Security only | **Yes** | No |
 | 9.1.1.0 | 25714478 | 03 Sep 2026 | Maintenance (bugfix + security) | No | Yes |
 | 9.1.0.0200 | 25557999 | 13 Jul 2026 | Security only | No | Yes |
@@ -231,16 +235,19 @@ release wanted, feed them back with `--id=<id1>,<id2>,<id3>`.
 separate `binaries list` lookup first. Two variants:
 
 ```bash
-# EP patches only, for an already-deployed 9.1.1.0 fleet
+# EP patches only, for an already-deployed 9.1.2.0 fleet
 ./vcf-download-tool binaries list \
   --depot-download-activation-code-file ~/vcf_activation_code.txt \
-  --sku=VCF --vcf-version=9.1.1.0 --type=UPGRADE --patches-only --latest
+  --sku=VCF --vcf-version=9.1.2.0 --type=UPGRADE --patches-only --latest
 
-# Full install binaries (with EPs) for a fresh 9.1.1 deployment
+# Full install binaries (with EPs) for a fresh 9.1.2 deployment
 ./vcf-download-tool binaries list \
   --depot-download-activation-code-file ~/vcf_activation_code.txt \
-  --sku=VCF --vcf-version=9.1.1.0 --type=INSTALL --automated-install --latest
+  --sku=VCF --vcf-version=9.1.2.0 --type=INSTALL --automated-install --latest
 ```
+
+(William Lam's original examples used `--vcf-version=9.1.1.0`; the
+version is the only change here.)
 
 These are `binaries list` calls, not `binaries download` – confirm the
 resolved set looks right before downloading it with one of A-C above.
@@ -248,7 +255,7 @@ resolved set looks right before downloading it with one of A-C above.
 exists in the VCFDT version actually in use (`--version`) before relying
 on it in a patch window.
 
-Key filters (`--vcf-version` accepts ranges like `9.1.0..9.1.1`;
+Key filters (`--vcf-version` accepts ranges like `9.1.0..9.1.2`;
 `--component` takes `VCENTER`, `SDDC_MANAGER_VCF`, `NSX_T_MANAGER`,
 `ESX_HOST`, `VROPS`, `VRLI`, `VRNI`, `VSP`, and others; `--type` is
 `INSTALL` or `UPGRADE` only – there's no `PATCH` type, though `UPGRADE`
@@ -412,6 +419,39 @@ suggestions:
   covers HCX Manager only; the Service Mesh appliances stay manual. See
   [HCX upgrade](23-hcx-upgrade.md#after-91-hcx-through-vcf-operations).
 
+### Getting to 9.1.2: the dependencies Broadcom lists
+
+The [VCF 9.1.2.0 release
+notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes.html)
+(read 2026-11-24) repeat the same pattern for 9.1.2, with one warning in
+capitals:
+
+- *"DO NOT use the Upgrade All button in the VCF Operations UI, before
+  you first comply with all of the VCF 9.1.2 specific patching
+  dependencies between VCF components"*.
+- *"You begin applying the 9.1.2 maintenance release in your 9.1.0.x
+  environment by patching the VCF management services fleet lifecycle
+  component to 9.1.2 before any other VCF component."* The same
+  sentence, with *"9.1.0.x"*, also appears on the row for a 9.1.1.x
+  fleet; read it as "your current environment". Fleet lifecycle goes
+  first either way.
+- *"Do not patch VCF Operations in parallel with other components.
+  Before you patch VCF Operations, ensure that no other lifecycle
+  operations in the environment are in progress."*
+- *"When you patch a software depot instance, patching other components
+  is blocked because the patch binaries are unavailable until the patch
+  process for the software depot completes."*
+- **From 9.1.0.x only**, three more: identity broker and Salt RaaS each
+  after *"the respective VCF management services runtime"* that hosts
+  them, and *"Before you patch the migration service engine component
+  from 9.1.0.x to 9.1.2, you must first patch VCF Automation."*
+
+A fleet on 5.2.x or 9.0.x doesn't patch: it upgrades directly to 9.1.2,
+and *"You start by first upgrading to VCF Operations 9.1.2"*. That is the
+[full upgrade sequence](13-vcf-upgrade-sequence.md), not this page. The
+known issues and fixes that matter for a 9.1.2 patch are under
+[Known issues for a patch to 9.1.2](#known-issues-for-a-patch-to-912).
+
 ### The full 9.1.1 order in practice
 
 A practitioner's documented, component-by-component 9.1.0.x → 9.1.1
@@ -526,7 +566,8 @@ licensing, see [Operations modernization](05-operations-modernization.md)):
    all live here as rows, not under **Build → Lifecycle Management → VCF
    Instance** (that path is for domain-level components instead – see
    below).
-2. Confirm the target version is set to the correct **9.1.1.\*** build.
+2. Confirm the target version is set to the correct **9.1.1.\*** (or
+   **9.1.2.\***) build.
    The tab also shows a yellow banner reminding you that VCF Operations
    patches on its own – don't dismiss it as boilerplate, it's the
    "never in parallel" rule from Step 2:
@@ -583,6 +624,46 @@ run through the same precheck → remediate → upgrade cycle per domain.
   Availability)**, patch SDDC Lifecycle to 9.1.1 first – doing it the
   other way round is unsupported per the order above.
 
+## Known issues for a patch to 9.1.2
+
+From the 9.1.2.0 component release notes, read 2026-11-24. TechDocs
+only, not seen on a real deployment yet.
+
+- **Upgrade All really does break VCF Automation and the services
+  runtime.** [VCF Operations 9.1.2.0 release
+  notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vcf-operations-9-1-2-0-release-notes.html):
+  *"During an upgrade or patch to VCF 9.1.2.0 using Upgrade All or
+  parallel component workflows, VCF Automation and VCF services runtime
+  may remain in package staging and fail after approximately six hours,
+  even when prechecks succeed."* The cause is a shared management
+  vCenter and template folder. Workaround: *"Retry the failed upgrade or
+  patch workflows serially."* The [Upgrade All
+  account](#step-2-respect-the-mandatory-dependency-order) above is the
+  9.1.1 version of the same lesson.
+- **The management domain can show 5.2.4.0 afterwards.** Same release
+  notes: after all management domain components are at 9.1.2, the
+  version on the Component Versions page under **Build → Lifecycle → VCF
+  instances → mgmt** *"appears as 5.2.4.0."* Workaround: *"None"*. A
+  display issue; check the component builds themselves.
+- **Fixed in NSX 9.1.2: the Management Plane upgrade stuck at 12%.**
+  [NSX 9.1.2.0 release
+  notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/nsx-9-1-2-0-release-notes.html),
+  resolved issues: *"During an NSX Manager upgrade (from the UI, API, or
+  vLCM) from version 9.1.0 or 9.1.1, the Management Plane upgrade step
+  fails early, for example, at 12%. The UI reports "Failed to put node
+  <uuid> in maintenance mode.""* The cause was an uneven Controller
+  sharding table. The release notes don't say whether the upgrade *to*
+  9.1.2 is already protected; if it stops at 12% with that message, this
+  is the issue to raise with Broadcom Support.
+- **Fixed in NSX 9.1.2: the "Backup Operation Check" pre-check
+  timeout.** Same page: *"VCF upgrade workflow fails during the NSX
+  pre-check or upgrade validation phase with the error "Failed to
+  execute Backup Operation Check""*, and *"Failure is triggered by the
+  total volume of files on the SFTP target rather than the absence of a
+  recent backup."* NSX never prunes its own backups; clean the NSX
+  directory on the SFTP target before the window (see [SFTP backup
+  target (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/08-backup-target/)).
+
 ## Known gotchas for 9.1.1 Express Patches
 
 - **Patching the License Server replaces its self-signed certificate.**
@@ -622,6 +703,7 @@ ordering and rollback](13-vcf-upgrade-sequence.md#windows-ordering-and-rollback)
 
 - [Binary Depot – Offline Depot & the VCF Download Tool (VCF9-DeploymentPlanning)](https://vcf-planning.hollebollevsan.nl/docs/09-binary-depot/) – the companion repo's full, field-verified offline-depot build-out and the Day-N "filling the depot for a fleet upgrade" procedure Step 1 draws on above
 - [Lifecycle Management of VCF Components](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/lifecycle-management-of-vcf-components.html) – the mandatory dependency-order quotes in Step 2
+- [VCF 9.1.2.0 Release Notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes.html) – "Getting to 9.1.2" and the Upgrade All warning; with the [VCF Operations](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vcf-operations-9-1-2-0-release-notes.html), [NSX](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/nsx-9-1-2-0-release-notes.html) and [ESX](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/esx-9-1-2-0-release-notes.html) 9.1.2.0 release notes (all read 2026-11-24)
 - [Configure a Software Depot Connection Mode](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/connect-sddc-manager-to-a-software-depot-for-downloading-bundles.html)
 - [Set Up an Offline Depot](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/set-up-an-offline-depot-web-server-for-vmware-cloud-foundation.html)
 - [Download Binaries to an Offline Depot by Using the VCF Download Tool](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/lifecycle-management/binary-management-for-vmware-cloud-foundation/download-bundles-to-an-offline-depot.html)

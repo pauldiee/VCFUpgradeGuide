@@ -17,6 +17,14 @@ Foundation tailored for edge use cases"*) and VCF. In the 9.1.1 tables
 the VCF Edge column matches the VCF column on every row, so the tables
 below show VVF vs VCF only. Read "VCF" as "VCF or VCF Edge".
 
+**9.1.2 changes the picture in three places** (release notes, 24 Nov
+2026), not yet in the whitepaper: NSX can be deployed in VVF as the
+platform for vDefend ([Networking](#nsx-in-vvf-from-912-the-vdefend-platform)),
+vSAN Object Storage is GA ([Compute and storage](#compute-and-storage)),
+and vSphere Configuration Profiles manage ESX host configuration. The
+tables below are still the 9.1.1 whitepaper; the notes under them carry the
+9.1.2 changes.
+
 **Legend:** ✓ included · – not included · **Add-on** needs a separately
 purchased Advanced Service, even on that tier · bracketed numbers are the
 whitepaper's footnotes, quoted in [Footnotes that matter](#footnotes-that-matter).
@@ -34,7 +42,7 @@ whitepaper's footnotes, quoted in [Footnotes that matter](#footnotes-that-matter
 | **Log Management** | ✓ **full** (see [Log Management](#log-management)) | ✓ |
 | Lifecycle via VCF Operations fleet management | – (*"VVF customers utilize vLCM"*) | ✓ |
 | VCF Installer | ✓ | ✓ |
-| NSX (overlay, routing, Edge, VPCs) | – | ✓ |
+| NSX (overlay, routing, Edge, VPCs) | – (from 9.1.2: security platform for a vDefend purchase, see [Networking](#nsx-in-vvf-from-912-the-vdefend-platform)) | ✓ |
 | VCF Operations for networks | – | ✓ |
 | VCF Automation | – | ✓ |
 | Private AI Services | – | ✓ (Private AI Services marked [6], [10]) |
@@ -159,7 +167,7 @@ differ:
 | Confidential Computing [15] | – | ✓ |
 | DPU support and dual DPU support | – | ✓ |
 | vSAN cyber recovery clusters | – | ✓ [15] |
-| vSAN Object Storage | – | ✓ [17] (Tech Preview) |
+| vSAN Object Storage | – | ✓ [17] (Tech Preview; GA in 9.1.2, see below) |
 | Host Profiles, Auto Deploy | ✓ | ✓ [3] not integrated with fleet management |
 | External storage (VMFS on FC, NFS v3) | ✓ | ✓ as principal **or** supplemental |
 | External storage (VMFS on iSCSI / FCoE / NVMe, NFS v4.1) | ✓ | ✓ supplemental only |
@@ -167,6 +175,25 @@ differ:
 The external-storage rows reflect VCF's principal/supplemental storage
 model: of the external array types, only VMFS on FC and NFS v3 can be
 principal storage in VCF. VVF has no such distinction.
+
+**What 9.1.2 changes here** (TechDocs, read 2026-11-24):
+
+- **vSAN Object Storage is GA.** The [vSAN 9.1.2.0 release
+  notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vsan-9-1-2-0-release-notes.html)
+  list *"vSAN Object Storage General Availability"*: *"S3-compatible object
+  storage on a vSAN Express Storage Architecture (ESA) cluster"*. Known
+  issue worth knowing up front: *"If you are using VMware Avi Load
+  Balancer and would like to deploy and use vSAN Object Storage, please
+  contact Broadcom Support."* The release notes don't say whether it moves
+  into VVF; until the whitepaper is revised, treat it as VCF only.
+- **vSphere Configuration Profiles manage ESX hosts, next to Host
+  Profiles.** [vCenter 9.1.2.0 release
+  notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vcenter-9-1-2-0-release-notes.html):
+  when you enable them on an existing cluster, attached Host Profiles
+  *"are not detached and you can continue using them"*, and *"You can
+  switch from using vSphere Host Profiles to enabling and using vSphere
+  Configuration Profiles at any time, but the change is irreversible."*
+  Evaluate on a test cluster first.
 
 ---
 
@@ -200,6 +227,38 @@ VCF only, at every level.
 
 Footnote [12] puts a deadline on the built-in VCF load balancing, see
 [the gotcha below](#upgrade-gotcha-built-in-vcf-load-balancing-is-being-retired).
+
+### NSX in VVF from 9.1.2: the vDefend platform
+
+The table above says NSX is VCF only. From 9.1.2 that is no longer the
+whole story, but it is also not "full NSX in VVF". TechDocs, read
+2026-11-24, not tested:
+
+- The [NSX 9.1.2.0 release
+  notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/nsx-9-1-2-0-release-notes.html)
+  add *"NSX Entitlement in VVF"*: *"This feature lets users deploy VMware
+  NSX and vDefend directly in a VMware vSphere Foundation (VVF)
+  environment"*. The restored standalone NSX lifecycle *"also supports NSX
+  platform for vDefend virtual patching, a feature available to customers
+  who purchase VVF and vDefend."* Standalone means: install NSX without
+  the full-stack VCF Installer, upgrade it to 9.1.2 without converging, and
+  operate it from NSX Manager.
+- The [vDefend 9.1 Edition
+  Summary](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/vdefend-feature-and-edition-guide/vdefend-feature-guide-edition-summary.html)
+  (updated 2026-11-24): vDefend *"can be purchased as add-ons with a VMware
+  Cloud Foundation or VMware vSphere Foundation 9.1.2 purchase"*.
+- The vDefend entitlement tables
+  ([Distributed Firewall](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/vdefend-feature-and-edition-guide/vdefend-feature-guide-entitlement/vdef-feature-guide-distributed-firewall-adv-threat-prevention.html),
+  [Gateway Firewall](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/vdefend-feature-and-edition-guide/vdefend-feature-guide-entitlement/vdef-feature-guide-gateway-firewall-adv-threat-prevention.html))
+  split the base features. *"Provided by VCF/VVF License"*: security tags,
+  grouping and Traceflow. *"Provided by VCF License"* only: SpoofGuard and
+  every Edge and routing feature (Active/Standby Edge, distributed and
+  static routing, BFD, BGP, ECMP, VRFs, EVPN, OSPF, NAT, L2 and L3 VPN,
+  QoS). The firewall features themselves come from the vDefend licence.
+
+So for a VVF customer, NSX 9.1.2 is the security platform for a vDefend
+purchase (distributed firewall and the other vDefend features); overlay
+networking, routing, Edge services, NAT and VPN stay VCF only.
 
 ---
 
@@ -341,4 +400,5 @@ the tables above):
 ## Sources
 
 - [VMware Cloud Foundation 9.1.1 and VMware vSphere Foundation 9.1.1: Feature Comparison & Upgrade Paths](https://www.vmware.com/docs/vmware-cloud-foundation-9-1-feature-comparison-and-upgrade-paths) – Broadcom, revision dated Sep 30, 2026 – the full feature-by-feature matrix this doc summarizes, read from the PDF's tables (pages 3 to 21)
+- 9.1.2.0 release notes for [NSX](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/nsx-9-1-2-0-release-notes.html), [vSAN](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vsan-9-1-2-0-release-notes.html) and [vCenter](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes/vcenter-9-1-2-0-release-notes.html), and the vDefend 9.1 [Edition Summary](https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/vdefend/vdefend-firewall/9-1/vdefend-feature-and-edition-guide/vdefend-feature-guide-edition-summary.html) and entitlement tables (all read 2026-11-24) – the 9.1.2 notes on NSX in VVF, vSAN Object Storage and Configuration Profiles
 - Broadcom KB 439411 – Avi licensing and the VCF built-in load-balancer migration deadline (May 30, 2027), referenced by the whitepaper's footnote [12]

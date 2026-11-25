@@ -78,6 +78,15 @@ on 2027-09-17**, so stepping to 9.0 buys no time; 9.1.1 extends general
 support to **August 2028** ([VCF blog, 2026-10-13](https://blogs.vmware.com/cloud-foundation/2026/10/13/customer-favorite-capabilities-accelerating-your-path-to-vcf-9-1-1/); support model:
 [VCF 9 support model and release cadence](https://blogs.vmware.com/cloud-foundation/2025/07/16/vmware-cloud-foundation-9-ushers-in-new-support-model-and-release-cadence/)).
 
+**Since 24 Nov 2026 the target is 9.1.2.** [VMSA-2026-0011](https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/39626)
+(published with it, read 2026-11-24) lists the fix for vCenter and ESX
+9.1.x as *"9.1.2"* and *"ESXi-9.1.2.0-25946735"*, with no 9.1.1.x build: a
+fleet that stops at 9.1.1 stays exposed. The [9.1.2.0 release
+notes](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-2-0-release-notes.html)
+confirm the direct route: *"If your current version is released before VCF
+9.1.2, you can upgrade directly to VCF 9.1.2. You start by first upgrading
+to VCF Operations 9.1.2."*
+
 Supported **source** versions for a 9.1 upgrade (confirm on the release
 notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/release-notes/vmware-cloud-foundation-9-1-0-0-release-notes/upgrade-sequence-to-91.html)):
 
@@ -119,7 +128,18 @@ notes – [Upgrade Sequence to 9.1](https://techdocs.broadcom.com/us/en/vmware-c
 > build, and Operations for Networks 6.14.3 now has a 9.1.1 path. The blog
 > calls one source "VCF 9.0.2 EP2"; the matrix lists only 9.0.2.0100 (late
 > July 2026) for vCenter, ESX and SDDC Manager, so match on the **build
-> number**, not the EP name. **vCenter** detail and the standalone procedure:
+> number**, not the EP name.
+>
+> **The newest 5.2.x / 8.x sources reach only 9.1.2.** Upgrade Path data
+> from the interoperability matrix, read 2026-11-24: SDDC Manager 5.2.5.0
+> (GA 2026-10-22), NSX 4.2.5 and VCF Operations 8.18.8 (both GA
+> 2026-11-19), and ESX 9.0.2.0200 (GA 2026-11-24) have no path to any
+> 9.1.1.x build, because each was released after it (*"the source
+> version's release date (2026-10-22) is after the target version's release
+> date (2026-10-12), making it a newer release"*), and a path to 9.1.2.0.
+> The sources in the table above that reach 9.1.1 keep that path.
+>
+> **vCenter** detail and the standalone procedure:
 > [vCenter manual GUI upgrade](07-vcenter-manual-upgrade.md).
 > **Applying "the latest patch" as preparation can strip the qualified path**,
 > and the next out-of-band security patch can close a path that is open today
@@ -142,21 +162,21 @@ The matrix moves. Re-run every check when a new point release ships (see
 ## Pin a target build
 
 VCF 9.1 shipped as patch builds **9.1.0.0, 9.1.0.0100, 9.1.0.0200,
-9.1.0.0300, 9.1.0.0400**; **VCF 9.1.1 went GA on 2026-09-03**, adding newly
-supported source patch levels and its own target build. If an engagement
-calls for "9.1.1":
+9.1.0.0300, 9.1.0.0400**; **VCF 9.1.1 went GA on 2026-09-03** and **VCF
+9.1.2 on 2026-11-24**, each adding newly supported source patch levels and
+its own target build. If an engagement calls for "9.1.1" or "9.1.2":
 
-- **Re-verify everything against the matrix** for the 9.1.1 target. A point
+- **Re-verify everything against the matrix** for that target. A point
   release re-qualifies **both** the supported *source* versions and the
   *target* builds – it is not "a smaller step" on top of a 9.1.0 plan. Target
   builds, per-component upgrade paths, and the effective versions all
   change.
 - A component already qualified against a 9.1.0.0x00 build is **not**
-  automatically qualified against 9.1.1 – re-run the Upgrade Path tool per
-  component.
+  automatically qualified against a later point release – re-run the
+  Upgrade Path tool per component.
 
-Do not carry a loose "9.1.1" into a runbook; always resolve it to a concrete
-build number.
+Do not carry a loose "9.1.1" or "9.1.2" into a runbook; always resolve it to
+a concrete build number.
 
 > **A component can force the wait.** If a running component sits at a patch
 > level with no path to the current target, and rolling it back would lose
