@@ -191,9 +191,17 @@ lists the JSON files and you pick them:
 
 What the import does:
 
-- A role whose **name already exists** on the target is skipped with a
-  warning. To import it anyway under another name, import that one file
-  with `-NewRoleName`.
+- A role whose **name already exists** on the target is not created
+  again. From VIRoleManager 1.6.0 the script lists those roles and asks:
+  skip them, update them all, or pick the ones to update. Updating adds
+  the privileges of the export that the role misses and the target knows;
+  it never removes any. `-ExistingRole Skip|Update` gives the answer up
+  front; an unattended run skips them. To import a role under another
+  name instead, import that one file with `-NewRoleName`.
+- **Plugin privileges** exist on the target only once that plugin (NSX,
+  a backup or DR product) is registered there. Imported before that, they
+  are left out. Register the plugin, then run the import again and
+  update the existing roles.
 - **Privileges that don't exist on the target** are listed and skipped;
   the role is created with the rest. Read that list: a privilege that
   was renamed or removed in vSphere 9 may leave the role short of what it

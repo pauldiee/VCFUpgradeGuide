@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.1.2 – 2026-11-25
+- `docs/30` step 1 (roles): VIRoleManager 1.6.0 asks what to do with a
+  role that already exists on the target (skip, update all, pick) and can
+  add the privileges it misses; `-ExistingRole Skip|Update` answers up
+  front. New note: plugin privileges are left out until the plugin is
+  registered on the target; import again and update (#166).
+
 ## v3.1.1 – 2026-11-24
 - VCF 9.1.2 (GA 24 Nov 2026) across the guide (#165), quoted from the
   9.1.2.0 release notes (read 2026-11-24):
