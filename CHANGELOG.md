@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.1.8 – 2026-11-26
+- `docs/30` step 5 and `docs/33` Mobility Group: the placement sheet of
+  VIFolderManager (`New-VIFolderPlacementSheet.ps1` 0.1.1) turns the
+  target placement list into an offline HTML page for the HCX operator:
+  per folder, per VM, and what needs attention (#172).
+
 ## v3.1.7 – 2026-11-26
 - `docs/30` step 2 (tags): the baseline export now also asks for
   VITagManager 1.4.0 or later (it said 1.0.0, which includes the broken

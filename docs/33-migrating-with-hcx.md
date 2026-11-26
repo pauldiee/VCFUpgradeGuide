@@ -307,6 +307,9 @@ In the HCX UI, **Migration**, **Create Mobility Group**, then
    the wave, creates the folders and lists per VM its folder path and
    that folder's ID on the target vCenter
    ([docs/30, step 5](30-carry-over-vcenter-configuration.md#step-5-folders-and-permissions)).
+   Its placement sheet turns that list into an offline HTML page to keep
+   open next to HCX: per folder its VMs, per VM its folder, and the VMs
+   and folders whose name alone is ambiguous.
 4. **Network per VM:** extended networks are selected; map the rest.
 5. **Migration type** per group, and per VM where the
    [type table](#choosing-a-migration-type-per-vm) says otherwise.

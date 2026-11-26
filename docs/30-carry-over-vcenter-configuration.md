@@ -542,6 +542,24 @@ vCenter. That's the destination folder per VM in the HCX Mobility Group
 ([docs/33](33-migrating-with-hcx.md)). The export holds the vCenter IDs of
 every folder and object as well; the import still matches by name.
 
+**Placement sheet for the HCX operator.** A CSV next to the HCX screen
+is awkward when someone picks the folder per VM by hand.
+`New-VIFolderPlacementSheet.ps1` (VIFolderManager, 0.1.1) turns the
+newest target list into one HTML page next to it, which opens offline in
+any browser and needs no PowerCLI:
+
+```powershell
+.\New-VIFolderPlacementSheet.ps1 -Path <working-folder>\folders\<export>_target-<datacenter>.csv
+```
+
+The page shows every destination folder with its path, its folder ID on
+the target and its VMs, every VM A-Z with its folder, and a list of what
+needs attention: folders without an ID (the list came from a dry run),
+folder names that occur in more than one path, VM names that occur more
+than once, and VMs in the datacenter root. It has a search box and prints
+to PDF. Make the list and the page right before the wave, so the IDs are
+current (VIFolderManager README).
+
 What the import does:
 
 - Folders with the same path are reused, missing ones are created.
@@ -744,8 +762,8 @@ Checked on 2026-11-13.
   folder prompt, failure summary and unattended runs from VIFolderManager
   1.3.0, VIRoleManager 1.4.0, StoragePolicyManager 1.2.0 and
   VITagManager 0.2.0 and 1.0.0, and the placement list of VIFolderManager
-  1.5.0, read 2026-11-18; the export file pick of VIFolderManager 1.7.0,
-  read 2026-11-26)
+  1.5.0, read 2026-11-18; the export file pick of VIFolderManager 1.7.0
+  and its placement sheet 0.1.1, read 2026-11-26)
 - Read on 2026-11-16:
   [Managing VCF Roles](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/vcf-built-in-roles.html)
   (VCF 9.1, `vcf_reserved_`),
