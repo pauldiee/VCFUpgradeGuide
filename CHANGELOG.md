@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.1.7 – 2026-11-26
+- `docs/30` step 2 (tags): the baseline export now also asks for
+  VITagManager 1.4.0 or later (it said 1.0.0, which includes the broken
+  1.3.1) (#170).
+
 ## v3.1.6 – 2026-11-26
 - `docs/29` phase 0: the HCX option for NSX tags is *Replicate Security
   Tags*, as in docs/31 and docs/33 (was "Migrate NSX Tags") (#169).

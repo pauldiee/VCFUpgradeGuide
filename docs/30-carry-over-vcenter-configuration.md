@@ -327,8 +327,8 @@ picture before anything moves:
 
 This holds the tags and custom attribute values of every VM, host,
 cluster, datastore, folder, network and the other inventory objects.
-Use **VITagManager 1.0.0 or later** for it: earlier versions read all
-tag assignments of the vCenter in one call, and one tag on an object
+Use **VITagManager 1.4.0 or later** for it (see below why not 1.3.1).
+How it got there: versions before 1.0.0 read all tag assignments of the vCenter in one call, and one tag on an object
 PowerCLI can't load (for example a first-class disk) stopped the whole
 export with *"The object 'vim.vslm.host.VStorageObjectManager:vstorageObjectManager'
 has already been deleted or has not been completely created"*; nothing
