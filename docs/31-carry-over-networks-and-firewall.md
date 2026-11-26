@@ -193,9 +193,26 @@ Get-VDSwitch | Select-Object Name, Version, NumUplinkPorts, Mtu,
 - **MTU** is set on the switch, not on the port group. Check that the
   target switch's MTU is at least the source switch's when networks carry
   jumbo frames.
+- **Private VLANs** are set on the switch too: a PVLAN port group only
+  picks a secondary VLAN from the switch's private VLAN map. From
+  VDSPortGroupManager 1.7.2 the import rebuilds PVLAN port groups from
+  the settings file, because PowerCLI can't read their backup (*"Value
+  cannot be null. (Parameter 'array')"*), and *"The target switch must
+  have that private VLAN in its map (Configure, Private VLAN); if it
+  doesn't, the port group is skipped with a message saying which ID to
+  add"* (VDSPortGroupManager README). List the map on both switches and
+  add what the target misses before 2.4:
+
+  ```powershell
+  Get-VDSwitch | ForEach-Object { $sw = $_.Name
+    $_.ExtensionData.Config.PvlanConfig |
+      Select-Object @{N='Switch';E={$sw}}, PrimaryVlanId, SecondaryVlanId, PvlanType }
+  ```
 
 **Check.** For every source switch you have an uplink map (or know that
-the names match), and you know the MTU fits the target switch.
+the names match), you know the MTU fits the target switch, and the target
+switch's private VLAN map holds every private VLAN the source port groups
+use.
 
 ### 2.3 Export from the source
 
@@ -1194,7 +1211,7 @@ Checked on 2026-11-13.
   `NSX-Common.ps1` 1.0.0; until then this page followed the earlier copy
   in his `Repository` repo, read 2026-11-13 and 2026-11-18)
 - Toolkit READMEs:
-  [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16; the folder prompt in 2.4 from 1.6.0 and the VM vNIC pool fix and failure summary from 1.6.1, read 2026-11-18),
+  [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16; the folder prompt in 2.4 from 1.6.0 and the VM vNIC pool fix and failure summary from 1.6.1, read 2026-11-18; private VLAN port groups from 1.7.2, read 2026-11-26),
   [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration)
 - PowerCLI cmdlet syntax (`Get-NetworkAdapter`, `Export-VDPortGroup`,
   `New-VDPortgroup -BackupPath`): VCF.PowerCLI 9.1.1

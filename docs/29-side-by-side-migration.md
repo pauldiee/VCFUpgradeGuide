@@ -228,8 +228,10 @@ What the sources say:
   toolkit can rename before import, and *"The export script currently
   excludes Gateway Firewall policies, focusing only on DFW"*
   ([part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/)).
-  For the NSX tags on the VMs themselves, HCX also has a **Migrate NSX
-  Tags** option per Mobility Group. That's NSX tags, not vSphere tags.
+  For the NSX tags on the VMs themselves, HCX also has a **Replicate
+  Security Tags** option per Mobility Group
+  ([docs/33](33-migrating-with-hcx.md)). That's NSX tags, not vSphere
+  tags.
 - **Yes, with services on the gateways:** NAT, a load balancer, DHCP, a
   DNS forwarder, an IPsec or L2 VPN or the gateway firewall on a source
   Tier-1 or Tier-0 don't go with the segments or the DFW. List them now,

@@ -523,6 +523,13 @@ phase: the VMs aren't there yet.
 .\Invoke-VIFolderManager.ps1 -vCenterServer <target-vcenter> -Mode Import -BackupDirectory <working-folder>\folders -MoveObjects:$false -ApplyPermissions -DryRun
 ```
 
+You pick the export file from the list in `-BackupDirectory`. From 1.7.0
+you can also pick a file elsewhere: **B** in the file list (or **F**
+when the folder holds no exports) opens the Windows file dialog, a typed
+path to a `.json` file is used as the export file, and `-ExportFile`
+takes a path or a wildcard (the newest match is used and logged)
+(VIFolderManager README). `-Csv` then writes next to the chosen file.
+
 Read the log, then run the same command without `-DryRun`. From 1.3.0
 anything that fails (a folder, a move, a permission) is a red `FAILED`
 line, the summary lists it, and the run ends with exit code 1; a role or
@@ -737,7 +744,8 @@ Checked on 2026-11-13.
   folder prompt, failure summary and unattended runs from VIFolderManager
   1.3.0, VIRoleManager 1.4.0, StoragePolicyManager 1.2.0 and
   VITagManager 0.2.0 and 1.0.0, and the placement list of VIFolderManager
-  1.5.0, read 2026-11-18)
+  1.5.0, read 2026-11-18; the export file pick of VIFolderManager 1.7.0,
+  read 2026-11-26)
 - Read on 2026-11-16:
   [Managing VCF Roles](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/fleet-management/managing-identity-and-access-using-vcf-single-sign-on/vcf-built-in-roles.html)
   (VCF 9.1, `vcf_reserved_`),

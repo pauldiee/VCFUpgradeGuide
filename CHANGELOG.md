@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.1.6 – 2026-11-26
+- `docs/29` phase 0: the HCX option for NSX tags is *Replicate Security
+  Tags*, as in docs/31 and docs/33 (was "Migrate NSX Tags") (#169).
+- `docs/31` 2.2: private VLANs. VDSPortGroupManager 1.7.2 rebuilds PVLAN
+  port groups from the settings file and skips one whose private VLAN is
+  missing from the target switch's map; compare the maps first (#169).
+- `docs/30` folders: VIFolderManager 1.7.0 lets the import pick the export
+  file itself (file dialog, typed `.json` path, `-ExportFile`) (#169).
+
 ## v3.1.5 – 2026-11-26
 - `docs/29`, `docs/31`: Jeroen Buren's NSX DFW toolkit moved to its own
   repository, [NSXMigrationToolkit](https://github.com/jeroenburen/NSXMigrationToolkit)
