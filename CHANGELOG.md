@@ -1,5 +1,26 @@
 # Changelog
 
+## v3.1.5 – 2026-11-26
+- `docs/29`, `docs/31`: Jeroen Buren's NSX DFW toolkit moved to its own
+  repository, [NSXMigrationToolkit](https://github.com/jeroenburen/NSXMigrationToolkit)
+  (the old `Repository` path is gone). Step 4 of `docs/31` re-checked
+  against the reworked scripts (shared `NSX-Common.ps1`, read
+  2026-11-26) (#168):
+  - 4.2: `Export-NSX-SystemObjects.ps1` needs `-ExportServices` and
+    `-ExportGroups` now (both default to `$false`) and has `-LogTarget`.
+  - 4.3: `Sanitize-NSX.ps1` takes `-ServiceGroupsFile` (the manual
+    service-group check is gone) and `-NSXManager` for the live tag check
+    of system-owned groups.
+  - 4.5 to 4.10: the import and undo take `-<Type>Csv` instead of the file
+    dialog, so no Windows desktop is needed; every script takes
+    `-Credential`.
+  - 4.7: every `-Compare*` type defaults to `$false`; the command names
+    all five.
+  - 4.10: the targeted undo picks the same files as the import (no more
+    standard names), removes context profiles with `-RemoveProfiles`,
+    deletes policies with their rules first, and `-ClearVMTags` removes
+    only the CSV's tags. `dfw-undo` and `dfw` diagrams redrawn.
+
 ## v3.1.4 – 2026-11-25
 - `docs/30` step 2 (tags): VITagManager 1.4.0 reads tag assignments
   through the tagging associations API (`/api/vcenter/tagging/associations`),

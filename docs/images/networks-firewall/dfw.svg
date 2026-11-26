@@ -32,7 +32,7 @@
 <text x="971" y="160" font-size="12" font-family="Consolas, Menlo, monospace" fill="#2563eb">Excel</text>
 <text x="971" y="184" font-size="13" fill="#1e293b">With the rule owners: delete rows</text>
 <text x="971" y="203" font-size="13" fill="#1e293b">that don't go. Save the result as</text>
-<text x="971" y="222" font-size="13" fill="#1e293b">the import folder (standard names).</text>
+<text x="971" y="222" font-size="13" fill="#1e293b">the import folder.</text>
 <path d="M302 170.0 L341 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
 <path d="M607 170.0 L646 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>
 <path d="M912 170.0 L951 170.0" fill="none" stroke="#475569" stroke-width="2.2" marker-end="url(#m)"/>

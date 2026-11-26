@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 696" role="img" aria-labelledby="t d" font-family="Segoe UI, Helvetica, Arial, sans-serif">
 <title id="t">Undoing a DFW import: order and the two ways back</title>
-<desc id="d">Undoing a DFW import. Import order, left to right: IP sets, services, service groups, security groups, context profiles, policies and rules. Undo order, right to left: rules, policies, security groups, service groups, services, IP sets. Targeted undo with Remove-NSX-ImportedObjects.ps1: reads the CSV files by their standard names from the input folder and deletes by ID, so point it at the import folder from 4.4; it does not remove context profiles; ClearVMTags empties the tags on the VMs in NSX_VMTags.csv; objects already gone are logged as NOT FOUND. Full wipe with Remove-NSX-AllCustomObjects.ps1: needs no CSV files, deletes every custom non-system-owned DFW object including context profiles, only on a target with nothing else on it, never on the source; ClearVMTags asks for a tag scope filter. Both: run with WhatIf first; both ask for confirmation.</desc>
+<desc id="d">Undoing a DFW import. Import order, left to right: IP sets, services, service groups, security groups, context profiles, policies and rules. Undo order, right to left: policies with their rules, context profiles, security groups, service groups, services, IP sets. Targeted undo with Remove-NSX-ImportedObjects.ps1: picks the CSV files like the import, with a file dialog in the input folder or the Csv parameters, and deletes by ID, so pick the same sanitized files the import used; RemoveProfiles removes context profiles too; ClearVMTags removes only the tags in the VM tags CSV; objects already gone are logged as NOT FOUND. Full wipe with Remove-NSX-AllCustomObjects.ps1: needs no CSV files, deletes every custom non-system-owned DFW object including context profiles, only on a target with nothing else on it, never on the source; ClearVMTags clears the tag scope given with ClearTagScope or asked for, and all tags only after a typed YES. Both: run with WhatIf first; both ask for confirmation.</desc>
 <defs><marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker><marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker></defs>
 <rect width="1260" height="696" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
 <text x="630.0" y="40" font-size="20" font-weight="700" fill="#0f172a" text-anchor="middle">4.10 Undo: the order, and the two ways back</text>
@@ -28,22 +28,22 @@
 <text x="526.0" y="219" font-size="13" fill="#0f172a" text-anchor="middle">Service groups</text>
 <rect x="634" y="196" width="180" height="36" rx="18" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
 <text x="724.0" y="219" font-size="13" fill="#0f172a" text-anchor="middle">Security groups</text>
-<rect x="832" y="196" width="180" height="36" rx="18" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="5 4"/>
-<text x="922.0" y="219" font-size="12" fill="#64748b" text-anchor="middle" font-style="italic">not removed</text>
+<rect x="832" y="196" width="180" height="36" rx="18" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
+<text x="922.0" y="219" font-size="13" fill="#0f172a" text-anchor="middle">Context profiles</text>
 <rect x="1030" y="196" width="180" height="36" rx="18" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
-<text x="1120.0" y="219" font-size="13" fill="#0f172a" text-anchor="middle">Rules, then policies</text>
+<text x="1120.0" y="219" font-size="13" fill="#0f172a" text-anchor="middle">Policies + their rules</text>
 <path d="M1210 246 H40" stroke="#dc2626" stroke-width="2.4" fill="none" marker-end="url(#r)"/>
 <rect x="40" y="290" width="575.0" height="300" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
 <text x="60" y="322" font-size="16.5" font-weight="700" fill="#0f172a">Targeted: remove what the import created</text>
 <text x="60" y="346" font-size="12.5" font-family="Consolas, Menlo, monospace" fill="#2563eb">Remove-NSX-ImportedObjects.ps1</text>
-<text x="60" y="378" font-size="13.5" fill="#1e293b">&#8226; Reads the CSV files by their standard names</text>
-<text x="74" y="401" font-size="13.5" fill="#1e293b">(NSX_Groups.csv, ...) from -InputFolder, deletes by ID.</text>
-<text x="60" y="424" font-size="13.5" fill="#1e293b">&#8226; Context profiles: not removed.</text>
-<text x="60" y="447" font-size="13.5" fill="#1e293b">&#8226; -ClearVMTags empties the tags on the VMs</text>
-<text x="74" y="470" font-size="13.5" fill="#1e293b">listed in NSX_VMTags.csv.</text>
+<text x="60" y="378" font-size="13.5" fill="#1e293b">&#8226; Picks the CSV files like the import (file dialog</text>
+<text x="74" y="401" font-size="13.5" fill="#1e293b">in -InputFolder, or -&lt;Type&gt;Csv), deletes by ID.</text>
+<text x="60" y="424" font-size="13.5" fill="#1e293b">&#8226; Context profiles too, with -RemoveProfiles.</text>
+<text x="60" y="447" font-size="13.5" fill="#1e293b">&#8226; -ClearVMTags removes only the tags in the</text>
+<text x="74" y="470" font-size="13.5" fill="#1e293b">VM tags CSV; other tags stay on the VM.</text>
 <text x="60" y="493" font-size="13.5" fill="#1e293b">&#8226; Already gone: logged as NOT FOUND, not an error.</text>
 <rect x="56" y="524" width="543.0" height="50" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.3"/>
-<text x="70" y="545" font-size="13" font-weight="700" fill="#2563eb">Point it at the import folder from 4.4.</text>
+<text x="70" y="545" font-size="13" font-weight="700" fill="#2563eb">Pick the same sanitized files the import used (4.4).</text>
 <text x="70" y="564" font-size="13" font-weight="700" fill="#2563eb">The raw export has the old IDs: nothing is found.</text>
 <rect x="645.0" y="290" width="575.0" height="300" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
 <text x="665.0" y="322" font-size="16.5" font-weight="700" fill="#0f172a">Full wipe: start the target over</text>
@@ -52,8 +52,8 @@
 <text x="665.0" y="401" font-size="13.5" fill="#1e293b">&#8226; Deletes every custom DFW object on that NSX,</text>
 <text x="679.0" y="424" font-size="13.5" fill="#1e293b">context profiles included.</text>
 <text x="665.0" y="447" font-size="13.5" fill="#1e293b">&#8226; System-owned objects are never touched.</text>
-<text x="665.0" y="470" font-size="13.5" fill="#1e293b">&#8226; -ClearVMTags asks for a tag scope filter;</text>
-<text x="679.0" y="493" font-size="13.5" fill="#1e293b">without one, a typed YES to clear all tags.</text>
+<text x="665.0" y="470" font-size="13.5" fill="#1e293b">&#8226; -ClearVMTags with -ClearTagScope (or asked);</text>
+<text x="679.0" y="493" font-size="13.5" fill="#1e293b">a blank answer clears all tags after a typed YES.</text>
 <rect x="661.0" y="524" width="543.0" height="50" rx="8" fill="#ffffff" stroke="#dc2626" stroke-width="1.3"/>
 <text x="675.0" y="545" font-size="13" font-weight="700" fill="#dc2626">Only on a target with nothing else on it.</text>
 <text x="675.0" y="564" font-size="13" font-weight="700" fill="#dc2626">Never on the source.</text>

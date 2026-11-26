@@ -43,7 +43,7 @@ blogs, and the toolkits' own documentation and code, checked on
 | Standard switch port group | Recreate as a VDS port group (step 2, by hand or from a template port group) | VDS port group | – |
 | NSX segment (VLAN or overlay) | Recreate | NSX segment | [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration) |
 | Any network whose VMs keep their IP addresses through HCX | Extend with HCX Network Extension; HCX creates the target network | Extended network | HCX, see [Networks that HCX extends](#networks-that-hcx-extends) |
-| NSX DFW: IP sets, services, groups, context profiles, policies and rules | Export, sanitize, import | NSX DFW | [NSX DFW migration toolkit](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit) (Jeroen Buren) |
+| NSX DFW: IP sets, services, groups, context profiles, policies and rules | Export, sanitize, import | NSX DFW | [NSXMigrationToolkit](https://github.com/jeroenburen/NSXMigrationToolkit) (Jeroen Buren) |
 | NSX tags on VMs | Per wave, after the VM arrives | NSX tags | With HCX: *Replicate Security Tags* (phase 5); without HCX: the same toolkit |
 | Services on NSX gateways: NAT, load balancer, DHCP, DNS forwarder, VPN, gateway firewall | List per subnet, rebuild on the target gateway, switch over in the subnet's cutover window | Target gateway, or Avi for load balancing | By hand, see [step 5](#step-5-services-on-the-nsx-gateways) |
 
@@ -83,7 +83,8 @@ a design choice, not something this page decides. See the
 [VCF 9 deployment planning guide](https://vcf-planning.hollebollevsan.nl/).
 
 **The toolkits.** Paul van Dieen wrote VDSPortGroupManager and
-nsx-segment-migration; Jeroen Buren wrote the NSX DFW migration toolkit.
+nsx-segment-migration; Jeroen Buren wrote the NSX DFW toolkit,
+[NSXMigrationToolkit](https://github.com/jeroenburen/NSXMigrationToolkit).
 The use-at-your-own-risk disclaimer in
 [docs/29](29-side-by-side-migration.md#toolkits) applies to all three:
 test in a lab first, review every export, use the dry run, and check the
@@ -92,9 +93,10 @@ result yourself.
 - VDSPortGroupManager needs VCF.PowerCLI and therefore PowerShell 7.4+
   (see [docs/30](30-carry-over-vcenter-configuration.md#before-you-start)).
 - nsx-segment-migration and the DFW toolkit talk to the NSX Manager REST
-  API directly, without PowerCLI. The DFW toolkit's import opens a Windows
-  file dialog for each CSV (*"System.Windows.Forms is unavailable
-  (non-Windows / no GUI)"* makes it stop), so run it on a Windows desktop.
+  API directly, without PowerCLI (the DFW toolkit's seed script in 4.9
+  is the exception). The DFW toolkit's import and undo open a Windows
+  file dialog for each CSV unless you name the file with its `-<Type>Csv`
+  parameter (script help); without a desktop, name every file.
 
 ---
 
@@ -480,14 +482,18 @@ set up in one go.
 
 ## Step 4: the NSX distributed firewall
 
-**Toolkit:** the [NSX DFW migration toolkit](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit)
+**Toolkit:** [NSXMigrationToolkit](https://github.com/jeroenburen/NSXMigrationToolkit)
 by Jeroen Buren, described in his posts
 ([part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/),
 [part 2](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-part-2/),
 [part 3](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-part-3/)).
 It was written for an NSX 4 source and an NSX 9 target. The scripts are
 newer than the posts: where they differ, this page follows the script
-help (`Get-Help .\<script>.ps1 -Full`), read on 2026-11-13.
+help (`Get-Help .\<script>.ps1 -Full`) and code, read on 2026-11-26 in the
+repository's first version (19 Nov 2026; for example `Import-NSX-DFW.ps1`
+1.9.0, `Sanitize-NSX.ps1` 1.5.0, `Compare-NSX-Migration.ps1` 1.7.0). Every
+script loads the shared `NSX-Common.ps1`, so keep all files of the
+repository together in one folder.
 
 **Why this step takes the most time.** It's usually the hardest part of
 the whole migration. *"A firewall rule references security groups. A
@@ -545,20 +551,26 @@ puts the firewall work of both sides in order, phase by phase.
    [KB 393650](https://knowledge.broadcom.com/external/article/393650)).
    On a greenfield VCF 9.1.1 target this is active by default (field- and
    lab-verified 2026-11-12; no Broadcom page states the default).
-3. **A Windows desktop.** The import opens a Windows file dialog for every
-   CSV and stops without one (*"System.Windows.Forms is unavailable
-   (non-Windows / no GUI)"*, script help). Download the scripts into one
-   folder on that machine; they call each other.
+3. **A machine that reaches both NSX Managers**, with the whole
+   repository in one folder: every script loads `NSX-Common.ps1` from its
+   own folder, and `Sanitize-NSX.ps1` calls the other sanitize scripts.
+   The import and the undo open a Windows file dialog for each CSV,
+   unless you name the file with its `-<Type>Csv` parameter (for example
+   `-GroupsCsv`); with no dialog available the script stops and asks for
+   that parameter (script code). On a Windows desktop the dialogs work;
+   elsewhere, name every file.
 4. **Accounts.** An NSX admin account on the source and the target NSX
    Manager. Every script asks for credentials when it starts
-   (`Get-Credential`); nothing is stored.
+   (`Get-Credential`), unless you pass `-Credential` (the comparison
+   takes `-SourceCredential` and `-DestCredential`); nothing is stored.
 5. **A folder per run** in your working folder, for example
    `<working-folder>\dfw`. Everything below writes into it.
 6. **Logging.** The scripts take `-LogTarget Screen|File|Both` and
    `-LogFile <path>`. Use `Both` for the real runs, so you keep a record
-   next to the exports. One exception: `Export-NSX-SystemObjects.ps1`
-   (4.2) has no `-LogTarget`; its `-LogFile` writes a PowerShell
-   transcript (script code).
+   next to the exports. Every script ends with an exit code: 0 is
+   success, 1 a fatal error, and 2 (export, import, undo, seed) *"finished
+   with errors"* (script notes). Anything but 0 means: read the log
+   before the next step.
 7. **A DFW licence on the target.** Without one, the NSX API refuses
    DFW policies and rules, not just the UI: a PATCH returns 403 with
    *"This feature is not supported with the current applied license.
@@ -576,9 +588,9 @@ puts the firewall work of both sides in order, phase by phase.
    firewall rules separately and rebuild them on the target's gateways
    yourself.
 
-**Check.** The scripts are on a Windows desktop that can reach both NSX
-Managers on 443, the target has a DFW licence, and the run folder
-exists.
+**Check.** The whole repository is in one folder on a machine that can
+reach both NSX Managers on 443, the target has a DFW licence, and the
+run folder exists.
 
 ### 4.2 Export from the source
 
@@ -618,17 +630,20 @@ exists.
    *"cannot be created or deleted, but their 'tags' and 'description'
    fields can be modified by users"* (script help of
    `Export-NSX-SystemObjects.ps1`). Take those changes along with a
-   second, read-only export:
+   second, read-only export. Both types are off unless you switch them
+   on, like everywhere in the toolkit, and the script stops when neither
+   is set (changelog 1.2.0):
 
    ```powershell
    .\Export-NSX-SystemObjects.ps1 -NSXManager <source-nsx> -OutputFolder <working-folder>\dfw\system `
-     -LogFile <working-folder>\dfw\export-system.log
+     -ExportServices $true -ExportGroups $true `
+     -LogTarget Both -LogFile <working-folder>\dfw\export-system.log
    ```
 
    It writes `NSX_SystemServices.csv` and `NSX_SystemGroups.csv`, and
    only for objects with tags or a description (`-OnlyModified`, on by
-   default). No file means nobody changed a system object: nothing to do
-   in 4.6.
+   default). No file, and a warning that none were found, means nobody
+   changed a system object of that type: nothing to do in 4.6.
 
 **Check.** Every file is there, and the row counts look like the source
 (for example, the number of policies in `NSX_Policies.csv` matches what
@@ -647,16 +662,27 @@ Sanitizing renames the IDs to the names and fixes every reference.
    ```powershell
    .\Sanitize-NSX.ps1 -GroupsFile <working-folder>\dfw\NSX_Groups.csv `
      -ServicesFile <working-folder>\dfw\NSX_Services.csv `
+     -ServiceGroupsFile <working-folder>\dfw\NSX_ServiceGroups.csv `
      -RulesFile <working-folder>\dfw\NSX_Rules.csv `
      -PoliciesFile <working-folder>\dfw\NSX_Policies.csv `
-     -ProfilesFile <working-folder>\dfw\NSX_Profiles.csv
+     -ProfilesFile <working-folder>\dfw\NSX_Profiles.csv `
+     -NSXManager <source-nsx> `
+     -LogTarget Both -LogFile <working-folder>\dfw\sanitize.log
    ```
 
+   `-NSXManager` is optional and only reads: with it, the tag check below
+   also looks at the system-owned groups on the **source** NSX Manager,
+   which aren't in the export; without it, only the exported groups are
+   checked (script help). Use it, or a tag that only a built-in group
+   matches on is removed without a warning. If a step fails, the orchestrator stops there (changelog 1.5.0).
 2. What it does, in this order (script header and parts 1 to 3):
    - **Groups:** the ID becomes the display name, every `/groups/<old-id>`
      reference is rewritten. Characters NSX doesn't allow in an ID become
      a dash; two groups with the same name get `-1`, `-2` with a warning.
-   - **Services and service groups:** the same, for `/services/<old-id>`.
+   - **Services, then service groups:** the same, for `/services/<old-id>`.
+     The service groups run second, with the services' new IDs already
+     known, so their members point at the renamed services (script
+     help).
    - **Rules and policies:** group and service references in source,
      destination and *applied to* are rewritten. Policy names lose the
      legacy suffix *":: NSX Service Composer – Firewall"*; names that
@@ -664,28 +690,19 @@ Sanitizing renames the IDs to the names and fixes every reference.
    - **Tags on the objects themselves** (groups, services, profiles) are
      removed as migration artefacts, **except** tags that a group's
      membership condition refers to: those are kept with a warning
-     (`Get-NSXTagsInUse.ps1`). Removing such a tag would silently take an
-     object out of a group, *"breaking firewall coverage with no API
-     error"* (script header).
+     (`Get-NSXTagsInUse` in `NSX-Common.ps1`). Removing them *"would
+     silently change group membership"* (script help of
+     `Sanitize-NSXGroups.ps1`).
 3. Look at the output: next to each input file a `_sanitized.csv`, and
-   an `_id_mapping.csv` (old ID → new ID) per object type. **Keep the
-   mapping files**: 4.7 needs them.
-4. **Service groups: check them yourself.** The export writes service
-   groups to their own file, `NSX_ServiceGroups.csv`, and a service
-   group's members point at services by path (`/infra/services/<id>`).
-   The script notes say to *"Process NSX_Services.csv before
-   NSX_ServiceGroups.csv so that the full ID map is available when
-   rewriting ServiceGroup member paths"*, but the orchestrator takes only
-   one services file. If you have service groups, open
-   `NSX_ServiceGroups.csv` and check that its members point at the
-   **new** service IDs from `NSX_Services_id_mapping.csv`. If they don't,
-   run `Sanitize-NSXServices.ps1` on that file too (see its help), or
-   ask the author.
-5. Read the console or log for warnings: duplicate names that got a
+   the mapping files (old ID → new ID): `NSX_Groups_id_mapping.csv`,
+   `NSX_Services_id_mapping.csv` (services **and** service groups),
+   `NSX_Rules_id_mapping.csv` and `NSX_Policies_id_mapping.csv` (script
+   help). **Keep the mapping files**: 4.7 needs them.
+4. Read the console or log for warnings: duplicate names that got a
    suffix, and tags that were kept.
 
-**Check.** You have a `_sanitized.csv` and an `_id_mapping.csv` for
-groups, services, rules and policies, and you've read every warning.
+**Check.** You have a `_sanitized.csv` for every file you passed, the
+four mapping files, and you've read every warning.
 
 ### 4.4 Review the CSV files
 
@@ -703,17 +720,19 @@ This is the step where you decide what goes to the target.
    network on the target. How to import those groups is in 4.8; decide
    it now, because it can change what goes in the import folder.
 5. Save the files as CSV, keeping the `RawJson` column intact.
-6. **Put the import set in its own folder**, `<working-folder>\dfw\import`,
-   under the **standard names**: `NSX_Groups_sanitized.csv` becomes
-   `NSX_Groups.csv` there, and so on for every type, plus
-   `NSX_ServiceGroups.csv` (checked in 4.3) and `NSX_VMTags.csv`. Why:
-   the undo in 4.10 reads the files by those fixed names from the folder
-   you give it and deletes by ID (script code). Pointed at the raw export,
-   it looks for the old IDs and finds nothing of what the import created.
+6. **Put the import set in its own folder**, `<working-folder>\dfw\import`:
+   the reviewed `_sanitized.csv` files of every type, plus
+   `NSX_IPSets.csv` and `NSX_VMTags.csv` (the sanitizer doesn't touch
+   those). The import and the undo both open their file dialogs in this
+   folder, so you pick from one set. Why it matters: the undo in 4.10
+   deletes by the IDs in the files you give it: *"Select the SAME files
+   you imported"*, the sanitized ones, *"because the destination objects
+   carry the sanitized Ids"* (script help). The raw export has the old IDs, and nothing of what the
+   import created is found.
 
 **Check.** Every row that's left is something you want on the target,
-nothing that's left refers to something you deleted, and
-`dfw\import` holds one file per type under its standard name.
+nothing that's left refers to something you deleted, and `dfw\import`
+holds one file per type and nothing else.
 
 ### 4.5 Dry run the import
 
@@ -727,8 +746,13 @@ nothing that's left refers to something you deleted, and
      -LogTarget Both -LogFile <working-folder>\dfw\import-whatif.log
    ```
 
-2. A file dialog opens for each object type, in the import folder. Pick
-   the file of that type there; they are your reviewed, sanitized files.
+2. It checks the credentials and the connection first, then opens a file
+   dialog for each object type, all at the start, in the import folder
+   (script help and changelog 1.9.0). Pick the file of that type there;
+   they are your reviewed, sanitized files. Without a desktop, or to
+   skip the dialogs, name each file instead: `-IPSetsCsv`,
+   `-ServicesCsv`, `-ServiceGroupsCsv`, `-GroupsCsv`, `-ProfilesCsv`,
+   `-PoliciesCsv` and `-RulesCsv` (`-TagsCsv` in 4.9).
 3. Read what it would do. The import runs in dependency order: IP sets,
    services and service groups, security groups, context profiles, then
    policies and rules (script help). Objects that already exist on the
@@ -761,7 +785,9 @@ what you kept in 4.4.
      -LogTarget Both -LogFile <working-folder>\dfw\import-system.log
    ```
 
-   Then run it without `-WhatIf`. An object that doesn't exist on the
+   It picks the files like the import: a file dialog in `dfw\system`, or
+   `-ServicesCsv` and `-GroupsCsv` (script help). Switch on only the
+   type that 4.2 wrote a file for. Then run it without `-WhatIf`. An object that doesn't exist on the
    target is logged as NOT FOUND (*"different NSX version?"*, script
    code). The undo in 4.10 doesn't take these changes back.
 
@@ -776,16 +802,20 @@ Distributed Firewall.
 
    ```powershell
    .\Compare-NSX-Migration.ps1 -SourceNSX <source-nsx> -DestNSX <target-nsx> `
-     -CompareIPSets $true `
+     -CompareIPSets $true -CompareServices $true -CompareGroups $true `
+     -CompareProfiles $true -ComparePolicies $true `
      -GroupMappingFile <working-folder>\dfw\NSX_Groups_id_mapping.csv `
      -ServiceMappingFile <working-folder>\dfw\NSX_Services_id_mapping.csv `
      -PolicyMappingFile <working-folder>\dfw\NSX_Policies_id_mapping.csv `
      -RuleMappingFile <working-folder>\dfw\NSX_Rules_id_mapping.csv `
-     -OutputFolder <working-folder>\dfw\compare
+     -OutputFolder <working-folder>\dfw\compare `
+     -LogTarget Both -LogFile <working-folder>\dfw\compare.log
    ```
 
-   IP sets are off by default in the comparison (`-CompareIPSets`
-   defaults to `$false`); the other types are on.
+   **Name every type.** Each `-Compare*` switch defaults to `$false`
+   (script help). A type you leave out isn't compared, so it can't fail
+   either, and with none set the script only warns *"No comparisons
+   selected"* and ends with exit code 0 (script code).
 2. Each object gets one of these results (script help):
 
    | Result | Meaning | What you do |
@@ -800,7 +830,9 @@ Distributed Firewall.
    a text file passed as `-GroupReviewList`; they then show as REVIEW and
    don't count as mismatches.
 4. The output folder gets an HTML report and a CSV. The HTML report is
-   meant to be shown to the customer (script help).
+   meant to be shown to the customer (script help). The exit code is 0
+   for *"PASSED (or PASSED WITH REVIEWS)"* and 2 for *"ISSUES FOUND"*
+   (script notes).
 
 **Check.** Overall status PASSED, or every finding explained in writing.
 Keep the HTML report with the exports: it's the sign-off for this step.
@@ -835,8 +867,7 @@ So, for the groups you noted in 4.4:
    `RawJson` column. Check first that the old ID occurs nowhere else.
 4. **A network that can only be extended later:** keep its groups, and
    the rules that use them, out of the first import, in a second import
-   folder under the standard names. Correct the path and import that
-   folder after the extension. The undo (4.10) then also runs per
+   folder. Correct the path and import that folder after the extension. The undo (4.10) then also runs per
    folder.
 5. Run the comparison (4.7) again. Expect these groups as MISMATCH,
    because the member path differs from the source on purpose; write
@@ -872,7 +903,9 @@ didn't arrive, use the import below.
      -ImportTags $true -LogTarget Both -LogFile <working-folder>\dfw\tags-wave-<n>.log
    ```
 
-   (with `-WhatIf` first), and pick `NSX_VMTags.csv`;
+   (with `-WhatIf` first), and pick `NSX_VMTags.csv` (or name it with
+   `-TagsCsv`). The tags are *"added to the tags already on the VM"*
+   (script help);
 2. check the warnings: VMs of later waves are skipped, which is expected.
 
 **Check.** Every VM of the wave carries its NSX tags on the target and is
@@ -936,10 +969,9 @@ group picks up members, before a real VM depends on it.
 - It needs the target vCenter as well as the target NSX Manager, and
   PowerCLI (the script loads `VMware.VimAutomation.Core`). Without a
   template (`-TemplateVM`) it builds a VM with no disks, 1 vCPU and 4 MB
-  of memory.
-- Dry run first; it supports `-WhatIf`. The file is called
-  `Seed-NSX-DFW-Dummy-VMs.ps1`, while the examples in its help say
-  `Seed-NSX-DFW-DummyVMs.ps1`.
+  of memory. It asks for both sets of credentials, or takes
+  `-Credential` (NSX) and `-VCenterCredential`.
+- Dry run first; it supports `-WhatIf`.
 
   ```powershell
   .\Seed-NSX-DFW-Dummy-VMs.ps1 -NSXManager <target-nsx> -VCenter <target-vcenter> `
@@ -954,7 +986,7 @@ group picks up members, before a real VM depends on it.
 
 ### 4.10 Undo
 
-![Undoing a DFW import. The import creates IP sets, services, service groups, security groups, context profiles, then policies and rules. The targeted undo deletes in the reverse order: rules, policies, security groups, service groups, services, IP sets; context profiles are not removed. Targeted undo with Remove-NSX-ImportedObjects.ps1 reads the CSV files by their standard names from the input folder and deletes by ID, so point it at the import folder from 4.4; the raw export has the old IDs. ClearVMTags empties the tags on the VMs in NSX_VMTags.csv; objects already gone are logged as NOT FOUND. Full wipe with Remove-NSX-AllCustomObjects.ps1 needs no CSV files, deletes every custom DFW object including context profiles, never touches system-owned objects, and is only for a target with nothing else on it, never the source. Both: WhatIf first, both ask for confirmation.](images/networks-firewall/dfw-undo.png)
+![Undoing a DFW import. The import creates IP sets, services, service groups, security groups, context profiles, then policies and rules. The targeted undo deletes in the reverse order: policies with their rules, context profiles, security groups, service groups, services, IP sets. Targeted undo with Remove-NSX-ImportedObjects.ps1 picks the CSV files like the import (file dialog in the input folder, or the Csv parameters) and deletes by ID, so pick the same sanitized files the import used; the raw export has the old IDs. RemoveProfiles removes context profiles too; ClearVMTags removes only the tags in the VM tags CSV; objects already gone are logged as NOT FOUND. Full wipe with Remove-NSX-AllCustomObjects.ps1 needs no CSV files, deletes every custom DFW object including context profiles, never touches system-owned objects, and is only for a target with nothing else on it, never the source. Both: WhatIf first, both ask for confirmation.](images/networks-firewall/dfw-undo.png)
 
 There are two ways back. Pick the one that fits, and run it with
 `-WhatIf` first: both scripts list what they would delete and ask for
@@ -962,34 +994,34 @@ confirmation before they do.
 
 **Targeted: remove what the import created.**
 `Remove-NSX-ImportedObjects.ps1` deletes the objects listed in the CSV
-files, in the reverse order of the import: *"1. DFW Rules 2. DFW Policies
-3. Security Groups 4. Service Groups 5. Services 6. IP Sets"* (script
+files, in the reverse order of the import: *"1. DFW Policies (with their
+rules) 2. Context Profiles 3. Security Groups (dependents first)
+4. Service Groups / Services (dependents first) 5. IP Sets"* (script
 help). Use this when the target already had other DFW content, or when
 only part of the import has to go.
 
-1. Point it at the **import folder** from 4.4. It reads `NSX_Policies.csv`,
-   `NSX_Rules.csv`, `NSX_Groups.csv` and so on by those names and deletes
-   by the IDs in them (script code), so it has to see the same files the
-   import used.
+1. Give it the **same files the import used**, the ones in the import
+   folder from 4.4. Like the import, it opens a file dialog per type in
+   `-InputFolder`, or takes `-PoliciesCsv`, `-RulesCsv`, `-ProfilesCsv`,
+   `-GroupsCsv`, `-ServiceGroupsCsv`, `-ServicesCsv`, `-IPSetsCsv` and
+   `-TagsCsv`, and it deletes by the IDs in those files (script help).
 2. Dry run:
 
    ```powershell
    .\Remove-NSX-ImportedObjects.ps1 -NSXManager <target-nsx> -InputFolder <working-folder>\dfw\import `
-     -RemovePolicies $true -RemoveGroups $true -RemoveServiceGroups $true `
-     -RemoveServices $true -RemoveIPSets $true -WhatIf
+     -RemovePolicies $true -RemoveProfiles $true -RemoveGroups $true `
+     -RemoveServiceGroups $true -RemoveServices $true -RemoveIPSets $true -WhatIf `
+     -LogTarget Both -LogFile <working-folder>\dfw\undo.log
    ```
 
 3. Run it without `-WhatIf`. Objects that are already gone are logged as
    NOT FOUND and skipped.
-4. What it leaves alone (also the full wipe below): tags and
+4. **VM tags:** `-ClearVMTags $true` removes *"the tags listed in the VM
+   tags CSV from those VMs. Tags that are not in the CSV stay on the
+   VM"* (script help).
+5. What it leaves alone (also the full wipe below): tags and
    descriptions put on system objects in 4.6, and the dummy VMs of the
-   seed script, which you delete in vCenter. And two more:
-   - **Context profiles:** the script has no switch for them. Remove
-     imported context profiles in the NSX Manager UI, or use the full
-     wipe below.
-   - **VM tags** are not deleted; `-ClearVMTags $true` empties the tags on
-     the VMs listed in `NSX_VMTags.csv`. *"VM tags are not deleted but can
-     be cleared (set to empty)"* (script help).
+   seed script, which you delete in vCenter.
 
 **Full wipe: start the target over.** `Remove-NSX-AllCustomObjects.ps1`
 needs no CSV files. It *"Removes all custom (non-system-owned) NSX DFW
@@ -1008,9 +1040,11 @@ rehearsal reset from the start of step 4.
    ```
 
 3. Run it without `-WhatIf`.
-4. With `-ClearVMTags $true` it asks for a tag scope filter (for example
-   `env`) so unrelated tags stay; without a filter it clears all tags and
-   asks for an explicit `YES` first (part 1).
+4. With `-ClearVMTags $true` it clears tags on the VMs in the NSX
+   inventory: only the tag scope you name with `-ClearTagScope` (for
+   example `env`), so other tags stay. Without `-ClearTagScope` it asks;
+   a blank answer means all tags, confirmed by typing `YES`, and `'*'`
+   clears *"ALL tags on ALL VMs"* (script help).
 
 **Check.** After a targeted undo, the comparison (4.7) shows the undone
 objects as missing on the destination and nothing else changed. After a
@@ -1154,11 +1188,11 @@ Checked on 2026-11-13.
   [part 1](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-the-right-way-a-powershell-toolkit/),
   [part 2](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-part-2/),
   [part 3](https://configmgr.nl/powershell/migrating-nsx-distributed-firewall-policies-part-3/),
-  and the script help in his
-  [repository](https://github.com/jeroenburen/Repository/tree/main/scripts/networking/nsx-migration-toolkit)
-  (read 2026-11-13; `Export-/Import-NSX-SystemObjects.ps1` and
-  `Seed-NSX-DFW-Dummy-VMs.ps1` read 2026-11-18, last toolkit change
-  2026-04-24)
+  and the script help and code in
+  [NSXMigrationToolkit](https://github.com/jeroenburen/NSXMigrationToolkit)
+  (read 2026-11-26, repository version of 2026-11-19 with
+  `NSX-Common.ps1` 1.0.0; until then this page followed the earlier copy
+  in his `Repository` repo, read 2026-11-13 and 2026-11-18)
 - Toolkit READMEs:
   [VDSPortGroupManager](https://github.com/pauldiee/VDSPortGroupManager) 1.4.0 (read 2026-11-16; the folder prompt in 2.4 from 1.6.0 and the VM vNIC pool fix and failure summary from 1.6.1, read 2026-11-18),
   [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration)
