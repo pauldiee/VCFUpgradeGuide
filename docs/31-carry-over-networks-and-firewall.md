@@ -392,7 +392,11 @@ the one that answers (README).
 .\Export-NSXSegments.ps1 -NSXManager <source-nsx> -OutputBase <working-folder>\segments\export
 ```
 
-Select the segments from the menu. You get two files: a `.json` with the
+Select the segments from the menu. In a long list, type a filter first:
+a wildcard (`*prod*`) or `/text` on the whole line, so `/VLAN`,
+`/no gateway`, `/T1:<name>` or `/TZ:<name>` picks a group at once; `all`
+takes what the filter shows (README, Export 2.4 / Import 2.7, read
+2026-11-26). You get two files: a `.json` with the
 full objects, and a `.csv` with a name-mapping table. The export includes
 all custom segment profiles (QoS, SpoofGuard, IP Discovery, MAC
 Discovery, Segment Security) and each segment's profile bindings.
@@ -418,6 +422,14 @@ it starts. Pressing Enter at the gateway prompt leaves the segment
 *"disconnected"*; NSX accepts that (`Import-NSXSegments.ps1`). A segment
 that had a Tier-1 on the source keeps it: the script maps it to the
 target Tier-1 from the CSV. VLAN segments skip the check.
+
+A segment or profile with the same id that **already exists** on the
+target is skipped and listed, not changed: from Import 2.7 the script
+checks the target first, because a PATCH would merge the export into it.
+Pass `-UpdateExisting` only when you mean to overwrite, for example to
+re-apply an export after a partial run. The import ends with exit code 0
+(success or dry run), 1 (fatal error) or 2 (finished with errors; the
+error list shows NSX's own message).
 
 **Overlay subnets that keep their IP addresses without HCX.** Don't give
 these a gateway on the target yet: the old Tier-1 still has it, and a
