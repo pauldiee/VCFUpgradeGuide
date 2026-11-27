@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.2.4 – 2026-11-27
+- `docs/31` step 3 follows nsx-segment-migration Export 2.7.0 / Import
+  3.3.0 / Remove 1.9.0 / Common 1.3.0 (nsx-segment-migration #24): exit
+  codes now as in the vCenter toolkits (1 = something failed, 2 = a
+  prompt needed console input; a failed object gave 2 before), and the
+  banner check shows "Common : v1.3.0" (#176).
+
 ## v3.2.3 – 2026-11-27
 - `docs/31` step 3 follows nsx-segment-migration Import 3.2 (#22): 3.3
   says a Tier-1 in the CSV may be its id or its name (VCF's Tier-1 ids
