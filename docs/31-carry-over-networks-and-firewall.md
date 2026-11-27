@@ -389,7 +389,7 @@ bindings from the source, `Import-NSXSegments.ps1` writes them to the
 target, `Remove-NSXSegments.ps1` deletes them again. It works against NSX
 4.x and 9.x (it tries both API path formats and uses the one that
 answers), needs PowerShell 5.1 or later (7 recommended) and no PowerCLI.
-This step follows Export 2.6, Import 3.1 and Remove 1.8 with
+This step follows Export 2.6, Import 3.2 and Remove 1.8 with
 `NSXSM-Common.ps1` 1.2 (README, read 2026-11-27).
 
 | | What | Changes the target? |
@@ -461,14 +461,17 @@ Open `export.csv`. Each row has a `Type` (`Segment`, `SegmentProfile` or
 
 - **Same name on the target:** leave `NewName` equal to `OldName`.
 - **New name:** fill in `NewName` for a segment or a segment profile.
-- **Tier-1 gateway:** fill in the target Tier-1's **id** when it differs
-  from the source.
+- **Tier-1 gateway:** fill in the target Tier-1 when the segments should
+  connect to another Tier-1 than on the source: its id, or its name. VCF
+  gives its Tier-1s a UUID as id (in the lab `t1-mgmt-a` has id
+  `847ece30-...`), so the name is easier; the import uses it when exactly
+  one Tier-1 on the target has that name.
 
 Keep the CSV next to the JSON with the same name: the import finds it
 there (or pass `-MappingPath`).
 
 **Check.** Every Tier-1 in the CSV exists on the target under its
-`NewName`.
+`NewName` (as id or name). The import checks this too, see 3.4.
 
 ### 3.4 Plan the import runs
 
@@ -525,6 +528,17 @@ Tier-1) and a subnet with the gateway address, and asks for any that are
 missing before it starts. Pressing Enter at the gateway prompt leaves the
 segment disconnected. A segment that had a Tier-1 on the source keeps it,
 mapped to the target Tier-1 from the CSV. VLAN segments skip this check.
+
+**When a gateway is not on the target (Import 3.2).** In runs B and C the
+script first looks up every segment's gateway on the target, after the
+CSV mapping. For one that is missing it asks once, for all segments
+that use it: a gateway of the target by number, `D` to import them
+without a gateway (listed for the cutover, as in run A), `S` to skip them,
+or `cancel`. Nothing is written before you answer. Before 3.2 NSX
+refused each such segment with *"HTTP 404: The requested object :
+/infra/tier-1s/... could not be found"*, after the profiles were
+already written. Filling in the Tier-1 in the CSV (3.3) avoids the
+question.
 
 **Check.** Every segment in the mapping table belongs to exactly one run,
 and you know the target transport zone for each run.
