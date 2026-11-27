@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.2.7 – 2026-11-27
+- `docs/30` and `docs/31`: every vCenter toolkit has a dry run now
+  (VIRoleManager 1.8.0, StoragePolicyManager 1.5.0, VDSPortGroupManager
+  1.9.0); the role and storage-policy imports and the VDS import and
+  delete show the `-DryRun` step first (#178).
+
 ## v3.2.6 – 2026-11-27
 - `docs/30`: VIRoleManager 1.7.0 and StoragePolicyManager 1.4.0 also start
   without `-vCenterServer` and ask on an untrusted certificate (W38).
