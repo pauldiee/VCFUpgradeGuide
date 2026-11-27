@@ -6,6 +6,8 @@
   and ask whether to go on when the vCenter certificate is not trusted,
   instead of connecting silently; `-SkipCertificateValidation` answers it up
   front, an unattended run without it stops with exit code 2 (#177).
+- `docs/31` step 3.3: a segment's id on the target is always its name
+  (nsx-segment-migration Import 3.4.0, #26).
 
 ## v3.2.4 – 2026-11-27
 - `docs/31` step 3 follows nsx-segment-migration Export 2.7.0 / Import
