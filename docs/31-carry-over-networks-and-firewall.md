@@ -384,7 +384,10 @@ step.
 
 **Toolkit:** [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration).
 Works against NSX 4.x and 9.x; it tries both API path formats and uses
-the one that answers (README).
+the one that answers (README). Copy the whole folder to the jump host,
+not one script: from Export 2.5 / Import 2.8 / Remove 1.6 the scripts load
+their shared code from `NSXSM-Common.ps1` next to them and stop when it is
+missing (README, read 2026-11-27).
 
 **Export from the source NSX Manager:**
 
