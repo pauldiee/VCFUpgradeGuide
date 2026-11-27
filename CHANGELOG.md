@@ -1,5 +1,19 @@
 # Changelog
 
+## v3.2.1 – 2026-11-27
+- `docs/31` step 3 (NSX segments) rewritten as steps 3.1 to 3.8 a reader
+  can follow, for nsx-segment-migration Export 2.5 / Import 2.9 / Remove
+  1.7: preparing the jump host (whole folder, saved login in `creds\`),
+  export and menu, the CSV, planning the import runs (one transport zone
+  per run; overlay with and without `-Disconnected`, VLAN), dry run,
+  import with the meaning of the last line and the exit codes (read them
+  with `pwsh -File`), a read-only check on the target, and undo. New
+  traps: pressing Enter at the transport zone prompt keeps the source id,
+  and NSX's own default transport zones had the same id on both lab NSX
+  Managers, so the segments land in the target's default zone instead of
+  the one VCF attached the hosts to; Remove's profile list shows every
+  custom profile on that NSX Manager. Lab timings for 500 segments (#173).
+
 ## v3.2.0 – 2026-11-27
 - `docs/31` step 3 (segments): copy the whole nsx-segment-migration folder;
   from Export 2.5 / Import 2.8 / Remove 1.6 the scripts need

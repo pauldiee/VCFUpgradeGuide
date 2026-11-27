@@ -382,92 +382,235 @@ cluster is connected to, with the VLAN from the mapping table.
 [Networks that HCX extends](#networks-that-hcx-extends) at the end of this
 step.
 
-**Toolkit:** [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration).
-Works against NSX 4.x and 9.x; it tries both API path formats and uses
-the one that answers (README). Copy the whole folder to the jump host,
-not one script: from Export 2.5 / Import 2.8 / Remove 1.6 the scripts load
-their shared code from `NSXSM-Common.ps1` next to them and stop when it is
-missing (README, read 2026-11-27).
+**Toolkit:** [nsx-segment-migration](https://github.com/pauldiee/nsx-segment-migration)
+(Paul van Dieen). Three scripts that talk to the NSX Manager REST API:
+`Export-NSXSegments.ps1` reads segments, custom segment profiles and their
+bindings from the source, `Import-NSXSegments.ps1` writes them to the
+target, `Remove-NSXSegments.ps1` deletes them again. It works against NSX
+4.x and 9.x (it tries both API path formats and uses the one that
+answers), needs PowerShell 5.1 or later (7 recommended) and no PowerCLI.
+This step follows Export 2.5, Import 2.9 and Remove 1.7 (README, read
+2026-11-27).
 
-**Export from the source NSX Manager:**
+| | What | Changes the target? |
+| --- | --- | --- |
+| [3.1](#31-prepare-the-jump-host) | Prepare the jump host | No |
+| [3.2](#32-export-from-the-source) | Export from the source | No |
+| [3.3](#33-fill-in-the-csv) | Fill in the CSV | No |
+| [3.4](#34-plan-the-import-runs) | Plan the import runs | No |
+| [3.5](#35-dry-run) | Dry run | No |
+| [3.6](#36-import) | Import | **Yes** |
+| [3.7](#37-check-the-target) | Check the target | No |
+| [3.8](#38-undo) | Undo | **Yes** |
+
+### 3.1 Prepare the jump host
+
+1. Copy the **whole folder** of the toolkit to the jump host (clone the
+   repository, or download it as a zip and unblock the zip before you
+   extract it). The three scripts load their shared code from
+   `NSXSM-Common.ps1` in the same folder and stop when it is missing.
+2. Open PowerShell 7 (`pwsh`) in that folder.
+3. The first run against an NSX Manager asks for the username and
+   password, and whether to save them. A saved login goes to
+   `creds\<manager>.cred` next to the scripts: on Windows encrypted with
+   DPAPI (only that user on that machine can read it), on Linux and macOS
+   **not** encrypted. Later runs offer *use saved*, *enter new and save*,
+   or *enter new without saving*.
+4. Add `-SkipCertCheck` when the NSX Manager has a self-signed
+   certificate. For a certificate from an internal CA, import the CA's
+   root certificate on the jump host instead.
+
+**Check.** The banner of each script shows its version and the version of
+`NSXSM-Common.ps1` (*"Common : v1.0"*).
+
+### 3.2 Export from the source
 
 ```powershell
 .\Export-NSXSegments.ps1 -NSXManager <source-nsx> -OutputBase <working-folder>\segments\export
 ```
 
-Select the segments from the menu. In a long list, type a filter first:
-a wildcard (`*prod*`) or `/text` on the whole line, so `/VLAN`,
-`/no gateway`, `/T1:<name>` or `/TZ:<name>` picks a group at once; `all`
-takes what the filter shows (README, Export 2.4 / Import 2.7, read
-2026-11-26). You get two files: a `.json` with the
-full objects, and a `.csv` with a name-mapping table. The export includes
-all custom segment profiles (QoS, SpoofGuard, IP Discovery, MAC
-Discovery, Segment Security) and each segment's profile bindings.
+1. Pick the segments from the menu. Type numbers (`1,3,5`), a range
+   (`2-6`) or `all`. In a long list, type a filter first: a wildcard
+   (`*prod*`) or `/text` on the whole line, so `/VLAN`, `/no gateway`,
+   `/T1:<name>` or `/TZ:<name>` picks a group at once; `all` then takes
+   what the filter shows. `reset` clears the filter, `cancel` stops.
+2. `-SegmentFilter 'prod-*'` narrows the list before the menu appears.
 
-**Edit the CSV** where a name changes on the target: fill in `NewName`
-for a segment, a segment profile, or a Tier-1 gateway whose id is
-different on the target. Leave `NewName` equal to `OldName` to keep a
-name.
+You get two files: `export.json` with the full objects, and `export.csv`,
+a name-mapping table. The export includes all custom segment profiles
+(QoS, SpoofGuard, IP Discovery, MAC Discovery, Segment Security) and each
+segment's profile bindings. It changes nothing on the source. In a lab,
+500 segments took 2 seconds (NSX 9.0.2, nsx-segment-migration test plan).
 
-**Dry run, then import into the target NSX Manager:**
+**Check.** The summary shows the number of segments and profiles you
+expected.
 
-```powershell
-.\Import-NSXSegments.ps1 -NSXManager <target-nsx> -InputPath <working-folder>\segments\export.json -WhatIf
-.\Import-NSXSegments.ps1 -NSXManager <target-nsx> -InputPath <working-folder>\segments\export.json
-```
+### 3.3 Fill in the CSV
 
-The import asks for a **transport zone** on the target (or takes
-`-TransportZoneId`), then imports profiles, segments and bindings in that
-order. For an **overlay** transport zone, the script checks each segment
-for a gateway connection (`connectivity_path`, a Tier-0 or Tier-1) and a
-subnet with the gateway address, and asks for any that are missing before
-it starts. Pressing Enter at the gateway prompt leaves the segment
-*"disconnected"*; NSX accepts that (`Import-NSXSegments.ps1`). A segment
-that had a Tier-1 on the source keeps it: the script maps it to the
-target Tier-1 from the CSV. VLAN segments skip the check.
+Open `export.csv`. Each row has a `Type` (`Segment`, `SegmentProfile` or
+`T1Gateway`), `OldName` and `NewName`.
 
-A segment or profile with the same id that **already exists** on the
-target is skipped and listed, not changed: from Import 2.7 the script
-checks the target first, because a PATCH would merge the export into it.
-Pass `-UpdateExisting` only when you mean to overwrite, for example to
-re-apply an export after a partial run. The import ends with exit code 0
-(success or dry run), 1 (fatal error) or 2 (finished with errors; the
-error list shows NSX's own message).
+- **Same name on the target:** leave `NewName` equal to `OldName`.
+- **New name:** fill in `NewName` for a segment or a segment profile.
+- **Tier-1 gateway:** fill in the target Tier-1's **id** when it differs
+  from the source.
 
-**Overlay subnets that keep their IP addresses without HCX.** Don't give
-these a gateway on the target yet: the old Tier-1 still has it, and a
-second, connected segment with the same subnet can be advertised from
-both NSX environments at once. Import them with **Connectivity None**: run
-the import for those segments with `-Disconnected`. The script removes
-`connectivity_path` before the import, keeps the subnets and skips the
-gateway prompt. Select only those segments in the menu, and import the
-rest in a separate run without the switch.
+Keep the CSV next to the JSON with the same name: the import finds it
+there (or pass `-MappingPath`).
 
-```powershell
-.\Import-NSXSegments.ps1 -NSXManager <target-nsx> -InputPath <working-folder>\segments\export.json -Disconnected -WhatIf
-.\Import-NSXSegments.ps1 -NSXManager <target-nsx> -InputPath <working-folder>\segments\export.json -Disconnected
-```
+**Check.** Every Tier-1 in the CSV exists on the target under its
+`NewName`.
 
-NSX allows that
-(*"If a segment is not connected to a gateway, subnet is optional"*) and
-lets you connect the segment to a Tier-1 later (*"you can change the
-connectivity of segment from "None" to a tier-0 or tier-1 gateway"*,
+### 3.4 Plan the import runs
+
+One import run uses **one** transport zone for every segment it imports.
+So split the import into runs:
+
+| Run | Select in the menu | Switch | Transport zone |
+| --- | --- | --- | --- |
+| A | Overlay segments that keep their IP addresses **without** HCX | `-Disconnected` | The target's overlay transport zone |
+| B | The other overlay segments | – | The target's overlay transport zone |
+| C | VLAN segments (filter `/VLAN`) | – | The target's VLAN transport zone |
+
+**Pick the transport zone in every run.** The import asks for it (or
+takes `-TransportZoneId`). Pressing Enter keeps the transport zone **id**
+from the export, and that is a trap on another NSX Manager:
+
+- The transport zones NSX creates itself, `nsx-overlay-transportzone`
+  and `nsx-vlan-transportzone`, had the **same id** on both lab NSX
+  Managers (4.2.4.1 and 9.0.2). With Enter, the import succeeds and the
+  segments land in the target's default transport zone. The hosts of a
+  VCF domain are attached to the transport zone VCF created (in the lab
+  `overlay-vds01-mgmt-01a`), so the segments are not on those hosts.
+- A transport zone the source created itself has an id of its own, which
+  the target doesn't have.
+
+So pick the target's transport zone from the menu every time; the menu
+shows them by name.
+
+**Why run A is disconnected.** These overlay subnets keep their IP
+addresses, but the old Tier-1 still has the gateway until the cutover. A
+second, connected segment with the same subnet could be advertised from
+both NSX environments at once. `-Disconnected` imports them with
+**Connectivity None**: it removes `connectivity_path`, keeps the subnets
+and skips the gateway prompt. NSX allows that (*"If a segment is not
+connected to a gateway, subnet is optional"*) and lets you connect it
+later (*"you can change the connectivity of segment from "None" to a
+tier-0 or tier-1 gateway"*,
 [Create an NSX Segment](https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0/advanced-network-management/administration-guide/segments/add-an-nsx-segment.html)).
-The import ends with a table of these segments: the gateway each one
-connects to at the cutover (the source gateway, with a Tier-1 renamed
-per the CSV) and its subnets. Write the gateway IP and the target Tier-1
-in the mapping table; the connection is made at the cutover
+
+**What run B asks.** For an overlay transport zone, the script checks
+each segment for a gateway connection (`connectivity_path`, a Tier-0 or
+Tier-1) and a subnet with the gateway address, and asks for any that are
+missing before it starts. Pressing Enter at the gateway prompt leaves the
+segment disconnected. A segment that had a Tier-1 on the source keeps it,
+mapped to the target Tier-1 from the CSV. VLAN segments skip this check.
+
+**Check.** Every segment in the mapping table belongs to exactly one run,
+and you know the target transport zone for each run.
+
+### 3.5 Dry run
+
+Run every import first with `-WhatIf`, with the same choices you will
+make for real:
+
+```powershell
+# Run A
+.\Import-NSXSegments.ps1 -NSXManager <target-nsx> -InputPath <working-folder>\segments\export.json -Disconnected -WhatIf
+# Runs B and C
+.\Import-NSXSegments.ps1 -NSXManager <target-nsx> -InputPath <working-folder>\segments\export.json -WhatIf
+```
+
+The dry run changes nothing. It ends with what **would be written**
+(profiles, segments, binding maps) and what is **already on the target**.
+Run A also lists the segments it would import without a gateway.
+
+**Check.** The numbers match what you selected, and nothing you expected
+to be new shows up as already on the target.
+
+### 3.6 Import
+
+Run the same commands without `-WhatIf`, one run at a time. The import
+writes profiles, then segments, then their bindings.
+
+- **Already on the target:** a segment or profile with the same id is
+  skipped and listed (`[EXISTS]`), not changed, because a PATCH would merge
+  the export into it. Pass `-UpdateExisting` only when you mean to
+  overwrite, for example to re-apply an export after a partial run. A run
+  can therefore be repeated safely.
+- **Profiles shared by several runs** are written by the first run and
+  skipped by the next.
+- **`-Confirm`** asks per object; an object you answer No to is reported
+  as `[DECLINED]` and not written, nor are the bindings of a declined
+  segment.
+
+Read the last line of the run:
+
+| Last line | Meaning |
+| --- | --- |
+| *All items imported successfully!* | Everything you selected was written |
+| *Imported n segment(s) ...; m ... already on the target, left as is* | Part was written, part already existed (or was declined) |
+| *Nothing imported: ...* | Everything already existed (or was declined); nothing changed |
+| *Errors:* with a list | Something failed; the list shows NSX's own message |
+
+After run A, the import shows a table of the segments it wrote: the
+gateway each one connects to at the cutover (the source gateway, with a
+Tier-1 renamed per the CSV) and its subnets. Write the gateway IP and the
+target Tier-1 in the mapping table; the connection is made at the cutover
 ([docs/35, Networks on NSX overlay](35-cutover-and-clean-up.md#networks-on-nsx-overlay)).
 
+The import ends with exit code 0 (success or dry run), 1 (fatal error)
+or 2 (finished with errors). To read that code from a scheduled task or
+pipeline, start the script with `pwsh -File`; with `pwsh -Command` a 2
+turns into 1 (README). In the lab, 500 segments with 150 bindings took
+about a minute.
 
-**Undo.** `Remove-NSXSegments.ps1` on the target, with `-WhatIf` first.
-It removes bindings, then segments, then profiles, flags segments with
-attached ports, and asks for a typed `YES`.
+**Check.** The last line of every run says what you expect, and you
+copied the cutover table of run A into the mapping table.
+
+### 3.7 Check the target
+
+1. Run a read-only export against the **target**, filtered on your
+   segments (type `all` in the menu), and compare the counts with 3.2:
+
+   ```powershell
+   .\Export-NSXSegments.ps1 -NSXManager <target-nsx> -SegmentFilter 'prod-*' -OutputBase <working-folder>\segments\check
+   ```
+
+2. In NSX, check a few segments: the transport zone you picked in 3.4
+   (not the default one), the profiles bound, Connectivity None for run A.
+3. In vCenter, each segment shows up as a network on the target hosts that
+   will run the VMs.
 
 **Check.** Every NSX row in the mapping table has its segment on the
-target, in the right transport zone, with its profiles bound. The
-segment is visible as a network on the target hosts that will run the
-VMs.
+target, in the right transport zone, with its profiles bound.
+
+### 3.8 Undo
+
+`Remove-NSXSegments.ps1` on the target, always with `-WhatIf` first:
+
+```powershell
+.\Remove-NSXSegments.ps1 -NSXManager <target-nsx> -SegmentFilter 'prod-*' -WhatIf
+.\Remove-NSXSegments.ps1 -NSXManager <target-nsx> -SegmentFilter 'prod-*'
+```
+
+1. **Segments:** pick them from the menu (Enter without a filter skips
+   the list).
+2. **Profiles:** this list shows **every custom segment profile on that
+   NSX Manager**, not only the ones you imported. Filter first (for
+   example `/prod`) before you type `all`, or press Enter to keep all
+   profiles. NSX refuses to delete a profile that a segment still uses.
+3. The script warns about segments that still have ports attached
+   (*"has 1 port(s) still attached"*); NSX refuses to delete those
+   (*"cannot be deleted as it has 1 VMs or VIFs attached"*). Move or
+   remove those VMs first. After a VM is deleted, NSX can keep its port
+   for a minute or more.
+4. Type `YES` (capitals) to confirm. The script removes each segment's
+   bindings, then the segment, then the profiles. With `-Confirm` you can
+   still say No per object; the last line then says how many were kept.
+
+**Check.** A read-only export with the same `-SegmentFilter` finds no
+segments.
 
 ### Networks that HCX extends
 
