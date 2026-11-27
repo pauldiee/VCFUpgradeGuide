@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.2.0 – 2026-11-27
+- `docs/31` step 3 (segments): copy the whole nsx-segment-migration folder;
+  from Export 2.5 / Import 2.8 / Remove 1.6 the scripts need
+  `NSXSM-Common.ps1` next to them (nsx-segment-migration#11).
+
 ## v3.1.9 – 2026-11-27
 - `docs/31` step 3 (segments): nsx-segment-migration Import 2.7 skips
   segments and profiles that already exist on the target
