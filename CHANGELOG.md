@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.2.3 – 2026-11-27
+- `docs/31` step 3 follows nsx-segment-migration Import 3.2 (#22): 3.3
+  says a Tier-1 in the CSV may be its id or its name (VCF's Tier-1 ids
+  are UUIDs); 3.4 explains the new gateway check, which asks per
+  gateway that is missing on the target (a target gateway, without a
+  gateway, skip, cancel) before anything is written, instead of NSX's
+  HTTP 404 after the profiles were written (#175).
+
 ## v3.2.2 – 2026-11-27
 - `docs/31` step 3 (NSX segments) follows nsx-segment-migration Import
   3.0 and `NSXSM-Common.ps1` 1.1. Step 3.4: when the export comes from
