@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.2.6 – 2026-11-27
+- `docs/30`: VIRoleManager 1.7.0 and StoragePolicyManager 1.4.0 also start
+  without `-vCenterServer` and ask on an untrusted certificate (W38).
+
 ## v3.2.5 – 2026-11-27
 - `docs/30` (things all toolkits do the same way): VITagManager 1.5.0,
   VIFolderManager 1.8.0 and VDSPortGroupManager 1.8.0
