@@ -1,6 +1,6 @@
 # Changelog
 
-## v3.1.9 – 2026-11-26
+## v3.1.9 – 2026-11-27
 - `docs/31` step 3 (segments): nsx-segment-migration Import 2.7 skips
   segments and profiles that already exist on the target
   (`-UpdateExisting` to overwrite), has exit codes 0 / 1 / 2, and the
