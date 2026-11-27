@@ -9,6 +9,11 @@
   Step 3.1: an untrusted certificate without `-SkipCertCheck` showed
   "The property 'Response' cannot be found on this object", which looks
   like a login problem; Common 1.1 shows the real error (#174).
+- `docs/31` step 3 then follows Export 2.6 / Import 3.1 / Remove 1.8 /
+  Common 1.2 (nsx-segment-migration #20): the scripts start without
+  parameters and ask for the NSX Manager and the export, ask whether to go
+  on when the certificate is not trusted, and save the login as
+  `<manager>.cred` next to the scripts, as in the vCenter toolkits.
 
 ## v3.2.1 – 2026-11-27
 - `docs/31` step 3 (NSX segments) rewritten as steps 3.1 to 3.8 a reader

@@ -389,8 +389,8 @@ bindings from the source, `Import-NSXSegments.ps1` writes them to the
 target, `Remove-NSXSegments.ps1` deletes them again. It works against NSX
 4.x and 9.x (it tries both API path formats and uses the one that
 answers), needs PowerShell 5.1 or later (7 recommended) and no PowerCLI.
-This step follows Export 2.5, Import 3.0 and Remove 1.7 with
-`NSXSM-Common.ps1` 1.1 (README, read 2026-11-27).
+This step follows Export 2.6, Import 3.1 and Remove 1.8 with
+`NSXSM-Common.ps1` 1.2 (README, read 2026-11-27).
 
 | | What | Changes the target? |
 | --- | --- | --- |
@@ -412,20 +412,25 @@ This step follows Export 2.5, Import 3.0 and Remove 1.7 with
 2. Open PowerShell 7 (`pwsh`) in that folder.
 3. The first run against an NSX Manager asks for the username and
    password, and whether to save them. A saved login goes to
-   `creds\<manager>.cred` next to the scripts: on Windows encrypted with
+   `<manager>.cred` next to the scripts, as in the vCenter toolkits: on Windows encrypted with
    DPAPI (only that user on that machine can read it), on Linux and macOS
    **not** encrypted. Later runs offer *use saved*, *enter new and save*,
    or *enter new without saving*.
 4. Add `-SkipCertCheck` when the NSX Manager has a self-signed
    certificate. For a certificate from an internal CA, import the CA's
    root certificate on the jump host instead. Without either, the script
-   stops at *Verifying connectivity* with *"the certificate of the NSX
-   Manager is not trusted"*; before `NSXSM-Common.ps1` 1.1 that showed
+   asks at *Verifying connectivity* whether to go on without checking the
+   certificate for this run; No stops it with *"the certificate of the NSX
+   Manager is not trusted"*. Before `NSXSM-Common.ps1` 1.1 that showed
    as *"The property 'Response' cannot be found on this object"*, which
    looks like a login problem but isn't.
+5. You can start each script without parameters: it asks for the NSX
+   Manager (the ones with a saved login are listed as numbers), and the
+   import lets you pick the export from a list. The commands below give
+   the parameters, so you can see what each run does.
 
 **Check.** The banner of each script shows its version and the version of
-`NSXSM-Common.ps1` (*"Common : v1.1"*).
+`NSXSM-Common.ps1` (*"Common : v1.2"*).
 
 ### 3.2 Export from the source
 
@@ -499,8 +504,8 @@ the zone; `KEEP` keeps the zone from the export on purpose. The
 managers are compared by name: an export made with the IP address and
 an import with the FQDN of the same manager also get this question.
 
-**Check.** The import summary ends with the zone it used, for example
-*"Transport zone: overlay-vds01-mgmt-01a [OVERLAY_BACKED], chosen at
+**Check.** The import summary names the zone it used, for example
+*"Transport zone : overlay-vds01-mgmt-01a [OVERLAY_BACKED], chosen at
 the menu"*.
 
 **Why run A is disconnected.** These overlay subnets keep their IP
