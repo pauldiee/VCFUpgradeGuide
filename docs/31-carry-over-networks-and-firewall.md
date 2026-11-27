@@ -389,8 +389,8 @@ bindings from the source, `Import-NSXSegments.ps1` writes them to the
 target, `Remove-NSXSegments.ps1` deletes them again. It works against NSX
 4.x and 9.x (it tries both API path formats and uses the one that
 answers), needs PowerShell 5.1 or later (7 recommended) and no PowerCLI.
-This step follows Export 2.5, Import 2.9 and Remove 1.7 (README, read
-2026-11-27).
+This step follows Export 2.5, Import 3.0 and Remove 1.7 with
+`NSXSM-Common.ps1` 1.1 (README, read 2026-11-27).
 
 | | What | Changes the target? |
 | --- | --- | --- |
@@ -418,10 +418,14 @@ This step follows Export 2.5, Import 2.9 and Remove 1.7 (README, read
    or *enter new without saving*.
 4. Add `-SkipCertCheck` when the NSX Manager has a self-signed
    certificate. For a certificate from an internal CA, import the CA's
-   root certificate on the jump host instead.
+   root certificate on the jump host instead. Without either, the script
+   stops at *Verifying connectivity* with *"the certificate of the NSX
+   Manager is not trusted"*; before `NSXSM-Common.ps1` 1.1 that showed
+   as *"The property 'Response' cannot be found on this object"*, which
+   looks like a login problem but isn't.
 
 **Check.** The banner of each script shows its version and the version of
-`NSXSM-Common.ps1` (*"Common : v1.0"*).
+`NSXSM-Common.ps1` (*"Common : v1.1"*).
 
 ### 3.2 Export from the source
 
@@ -486,7 +490,18 @@ from the export, and that is a trap on another NSX Manager:
   the target doesn't have.
 
 So pick the target's transport zone from the menu every time; the menu
-shows them by name.
+shows them by name. From Import 3.0 the script helps: when the export
+comes from another NSX Manager, the menu says *"Export is from another
+NSX Manager: pick one"*, and Enter shows where the segments would land
+(for example *"lands in 'nsx-overlay-transportzone' [OVERLAY_STANDARD]
+on the target"*) instead of importing them there. Type the number of
+the zone; `KEEP` keeps the zone from the export on purpose. The
+managers are compared by name: an export made with the IP address and
+an import with the FQDN of the same manager also get this question.
+
+**Check.** The import summary ends with the zone it used, for example
+*"Transport zone: overlay-vds01-mgmt-01a [OVERLAY_BACKED], chosen at
+the menu"*.
 
 **Why run A is disconnected.** These overlay subnets keep their IP
 addresses, but the old Tier-1 still has the gateway until the cutover. A

@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.2.2 – 2026-11-27
+- `docs/31` step 3 (NSX segments) follows nsx-segment-migration Import
+  3.0 and `NSXSM-Common.ps1` 1.1. Step 3.4: when the export comes from
+  another NSX Manager, Enter at the transport zone menu shows where the
+  segments would land instead of keeping the source zone; type a number,
+  or `KEEP` on purpose; the summary names the zone used (new check).
+  Step 3.1: an untrusted certificate without `-SkipCertCheck` showed
+  "The property 'Response' cannot be found on this object", which looks
+  like a login problem; Common 1.1 shows the real error (#174).
+
 ## v3.2.1 – 2026-11-27
 - `docs/31` step 3 (NSX segments) rewritten as steps 3.1 to 3.8 a reader
   can follow, for nsx-segment-migration Export 2.5 / Import 2.9 / Remove
