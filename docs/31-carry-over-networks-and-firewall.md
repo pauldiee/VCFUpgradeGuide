@@ -258,7 +258,10 @@ in the mapping table, and the summary shows no failures.
    ```
 
    Without `-UplinkMap`, the script asks per missing name which target
-   uplink it maps to, with a *skip* option.
+   uplink it maps to, with a *skip* option. Add `-DryRun` first
+   (VDSPortGroupManager 1.9.0): it runs the same checks (names in use,
+   uplink mapping, private VLAN map) and logs per port group whether it
+   would be restored from the zip or rebuilt, without creating anything.
 
    Without `-BackupDirectory`, version 1.6.0 and later asks for the folder
    right after the mode: Enter for `Backups\` next to the script, `B` for
@@ -367,7 +370,8 @@ distributed port group on the target with the same VLAN.
 
 Pick the switch and the port groups. Port groups still in use by VMs are
 flagged (vCenter refuses to delete them), the script offers a safety
-export first, and it asks for a typed `YES`. A switch the script created
+export first, and it asks for a typed `YES`. With `-DryRun` (1.9.0) it only
+lists what it would delete, without the backup or the `YES` question. A switch the script created
 in 2.4 is removed in the vSphere Client once it's empty.
 
 **Check for step 2.** Every VDS and standard-switch row in the mapping

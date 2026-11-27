@@ -95,8 +95,10 @@ moved into folders there.
 VITagManager's VM part (assignments and values per wave, VMs with the
 same name) was tested from a VCF 9.0.2 source into 9.1.1 (lab,
 2026-11-16). A **7.x source** hasn't been tested. Open each export file
-and check that it holds what you expect before you import it. Where a
-toolkit has a dry run, use it first.
+and check that it holds what you expect before you import it. Every
+toolkit has a dry run (`-DryRun`: VIRoleManager from 1.8.0,
+StoragePolicyManager from 1.5.0, VDSPortGroupManager from 1.9.0); use it
+first. It logs `[DryRun] Would ...` per object and changes nothing.
 
 **Things all four toolkits do the same way:**
 
@@ -194,6 +196,9 @@ IDs.
 lists the JSON files and you pick them:
 
 ```powershell
+# First as a dry run: what would be created or updated, nothing changed
+.\Invoke-VIRoleManager.ps1 -vCenterServer <target-vcenter> -Mode Import -FilePath <working-folder>\roles -DryRun
+# Then for real
 .\Invoke-VIRoleManager.ps1 -vCenterServer <target-vcenter> -Mode Import -FilePath <working-folder>\roles
 ```
 
@@ -470,6 +475,9 @@ must be done first.
 **Import into the target:**
 
 ```powershell
+# First as a dry run: what would be created, with the rule parts that would be left out
+.\Invoke-StoragePolicyManager.ps1 -vCenterServer <target-vcenter> -Mode Import -FilePath <working-folder>\policies -DryRun
+# Then for real
 .\Invoke-StoragePolicyManager.ps1 -vCenterServer <target-vcenter> -Mode Import -FilePath <working-folder>\policies
 ```
 
