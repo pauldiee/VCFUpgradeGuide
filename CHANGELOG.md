@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.1.9 – 2026-11-27
+- `docs/31` step 3 (segments): nsx-segment-migration Import 2.7 skips
+  segments and profiles that already exist on the target
+  (`-UpdateExisting` to overwrite), has exit codes 0 / 1 / 2, and the
+  segment menu takes a filter (`/VLAN`, `/T1:<name>`, `/TZ:<name>`)
+  (#171).
+
 ## v3.1.8 – 2026-11-26
 - `docs/30` step 5 and `docs/33` Mobility Group: the placement sheet of
   VIFolderManager (`New-VIFolderPlacementSheet.ps1` 0.1.1) turns the
