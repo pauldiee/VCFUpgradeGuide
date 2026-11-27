@@ -1,7 +1,8 @@
 # Changelog
 
 ## v3.2.5 – 2026-11-27
-- `docs/30` (things all toolkits do the same way): the vCenter toolkits
+- `docs/30` (things all toolkits do the same way): VITagManager 1.5.0,
+  VIFolderManager 1.8.0 and VDSPortGroupManager 1.8.0
   start without `-vCenterServer` and ask for it (saved logins as numbers),
   and ask whether to go on when the vCenter certificate is not trusted,
   instead of connecting silently; `-SkipCertificateValidation` answers it up
