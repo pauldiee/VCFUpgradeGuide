@@ -389,7 +389,7 @@ bindings from the source, `Import-NSXSegments.ps1` writes them to the
 target, `Remove-NSXSegments.ps1` deletes them again. It works against NSX
 4.x and 9.x (it tries both API path formats and uses the one that
 answers), needs PowerShell 5.1 or later (7 recommended) and no PowerCLI.
-This step follows Export 2.7.0, Import 3.3.0 and Remove 1.9.0 with
+This step follows Export 2.7.0, Import 3.4.0 and Remove 1.9.0 with
 `NSXSM-Common.ps1` 1.3.0 (README, read 2026-11-27).
 
 | | What | Changes the target? |
@@ -461,6 +461,12 @@ Open `export.csv`. Each row has a `Type` (`Segment`, `SegmentProfile` or
 
 - **Same name on the target:** leave `NewName` equal to `OldName`.
 - **New name:** fill in `NewName` for a segment or a segment profile.
+- **Segment ids:** on the target a segment's id is always its name (the
+  `NewName` when you fill one in), not the id it had on the source. A
+  segment made with an id that differs from its name keeps its name and
+  gets the name as id (Import 3.4.0). NSX doesn't allow spaces, slashes,
+  percent signs, backslashes or semicolons in an id; the import turns them
+  into `_` and says so.
 - **Tier-1 gateway:** fill in the target Tier-1 when the segments should
   connect to another Tier-1 than on the source: its id, or its name. VCF
   gives its Tier-1s a UUID as id (in the lab `t1-mgmt-a` has id
