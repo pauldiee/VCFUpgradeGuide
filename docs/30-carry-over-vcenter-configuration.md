@@ -104,9 +104,17 @@ toolkit has a dry run, use it first.
   categories, tags and attributes that already exist are skipped;
   folders that exist are reused. So after a
   partial run or a fix, just run it again.
-- **Self-signed certificates** (a lab, or a vCenter without a CA-signed
-  certificate yet): add `-SkipCertificateValidation`. In production, fix
-  the certificate trust instead.
+- **Starting without `-vCenterServer`** (VIRoleManager 1.7.0,
+  StoragePolicyManager 1.4.0, VITagManager 1.5.0, VIFolderManager 1.8.0,
+  VDSPortGroupManager 1.8.0): the script asks for the vCenter and lists
+  the ones you saved a login for as numbers. The commands below give
+  `-vCenterServer`, so you can see which vCenter each step runs against.
+- **Certificates this machine doesn't trust** (a lab, or a vCenter without
+  a CA-signed certificate yet): from those versions the script asks
+  whether to go on without checking the certificate for this run. Before,
+  it connected without a word. `-SkipCertificateValidation` gives the
+  answer up front; an unattended run without it stops with exit code 2.
+  In production, fix the certificate trust instead.
 - **Wrong or changed password:** add `-ResetCredentials` to be asked
   again.
 - **Pickers** accept a number, a comma-separated list, a range like

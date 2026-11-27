@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.2.5 – 2026-11-27
+- `docs/30` (things all toolkits do the same way): the vCenter toolkits
+  start without `-vCenterServer` and ask for it (saved logins as numbers),
+  and ask whether to go on when the vCenter certificate is not trusted,
+  instead of connecting silently; `-SkipCertificateValidation` answers it up
+  front, an unattended run without it stops with exit code 2 (#177).
+
 ## v3.2.4 – 2026-11-27
 - `docs/31` step 3 follows nsx-segment-migration Export 2.7.0 / Import
   3.3.0 / Remove 1.9.0 / Common 1.3.0 (nsx-segment-migration #24): exit
