@@ -389,8 +389,8 @@ bindings from the source, `Import-NSXSegments.ps1` writes them to the
 target, `Remove-NSXSegments.ps1` deletes them again. It works against NSX
 4.x and 9.x (it tries both API path formats and uses the one that
 answers), needs PowerShell 5.1 or later (7 recommended) and no PowerCLI.
-This step follows Export 2.6, Import 3.2 and Remove 1.8 with
-`NSXSM-Common.ps1` 1.2 (README, read 2026-11-27).
+This step follows Export 2.7.0, Import 3.3.0 and Remove 1.9.0 with
+`NSXSM-Common.ps1` 1.3.0 (README, read 2026-11-27).
 
 | | What | Changes the target? |
 | --- | --- | --- |
@@ -430,7 +430,7 @@ This step follows Export 2.6, Import 3.2 and Remove 1.8 with
    the parameters, so you can see what each run does.
 
 **Check.** The banner of each script shows its version and the version of
-`NSXSM-Common.ps1` (*"Common : v1.2"*).
+`NSXSM-Common.ps1` (*"Common : v1.3.0"*).
 
 ### 3.2 Export from the source
 
@@ -593,10 +593,13 @@ Tier-1 renamed per the CSV) and its subnets. Write the gateway IP and the
 target Tier-1 in the mapping table; the connection is made at the cutover
 ([docs/35, Networks on NSX overlay](35-cutover-and-clean-up.md#networks-on-nsx-overlay)).
 
-The import ends with exit code 0 (success or dry run), 1 (fatal error)
-or 2 (finished with errors). To read that code from a scheduled task or
-pipeline, start the script with `pwsh -File`; with `pwsh -Command` a 2
-turns into 1 (README). In the lab, 500 segments with 150 bindings took
+The import ends with exit code 0 (success or dry run), 1 (something
+failed: a profile, segment or binding map, or the run could not start) or
+2 (stopped because a prompt needed console input), the same codes as the
+vCenter toolkits in [docs/30](30-carry-over-vcenter-configuration.md).
+Up to Import 3.2 a failed object gave 2. To read the code from a
+scheduled task or pipeline, start the script with `pwsh -File`; with
+`pwsh -Command` a 2 turns into 1 (README). In the lab, 500 segments with 150 bindings took
 about a minute.
 
 **Check.** The last line of every run says what you expect, and you
